@@ -1,0 +1,58 @@
+classDiagram
+    class StructuralPatterns {
+        +String title
+        +String section
+        +String subsection
+        +List~Principle~ principles
+        +List~Pattern~ patterns
+        +List~Risk~ risks
+        +validate() bool
+        +review() ReviewResult
+        +score() ScorecardResult
+    }
+
+    class Principle {
+        +String name
+        +String rationale
+        +String framework
+        +apply() Guidance
+    }
+
+    class Pattern {
+        +String name
+        +String context
+        +String solution
+        +String consequences
+        +matches(Context) bool
+    }
+
+    class ADR {
+        +String title
+        +String status
+        +String context
+        +String decision
+        +String consequences
+        +Date reviewDate
+    }
+
+    class GovernanceCheckpoint {
+        +String name
+        +String owner
+        +String criteria
+        +Boolean required
+        +pass() bool
+    }
+
+    class NFRRequirement {
+        +String category
+        +String metric
+        +String target
+        +String measurement
+        +evaluate() Score
+    }
+
+    StructuralPatterns "1" --> "many" Principle : governed by
+    StructuralPatterns "1" --> "many" Pattern : applies
+    StructuralPatterns "1" --> "many" ADR : documents
+    StructuralPatterns "1" --> "many" GovernanceCheckpoint : gates
+    StructuralPatterns "1" --> "many" NFRRequirement : satisfies
