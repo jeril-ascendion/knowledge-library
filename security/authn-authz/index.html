@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authentication & Authorization | Security Architecture | Architecture Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      securityLevel: 'loose',
+      flowchart: { useMaxWidth: false, htmlLabels: true, curve: 'basis', padding: 24 },
+      sequence: { useMaxWidth: false, actorMargin: 80, messageMargin: 40, boxTextMargin: 10 },
+      themeVariables: {
+        primaryColor: '#1e3a8a',
+        primaryTextColor: '#f1f5f9',
+        primaryBorderColor: '#3b82f6',
+        lineColor: '#60a5fa',
+        secondaryColor: '#1e1b4b',
+        tertiaryColor: '#14532d',
+        background: '#0f172a',
+        mainBkg: '#1e3a8a',
+        nodeBorder: '#3b82f6',
+        clusterBkg: '#1e293b',
+        clusterBorder: '#334155',
+        titleColor: '#f1f5f9',
+        edgeLabelBackground: '#1e293b',
+        fontFamily: 'Inter, system-ui, sans-serif',
+        fontSize: '13px',
+        actorBkg: '#1e3a8a',
+        actorBorder: '#3b82f6',
+        actorTextColor: '#f1f5f9',
+        actorLineColor: '#3b82f6',
+        signalColor: '#93c5fd',
+        signalTextColor: '#f1f5f9',
+        labelBoxBkgColor: '#1e293b',
+        labelTextColor: '#f1f5f9',
+        loopTextColor: '#f1f5f9',
+        noteBkgColor: '#1e3a8a',
+        noteTextColor: '#f1f5f9'
+      }
+    });
+  </script>
+  <style>
+
+    :root {
+      --primary: #1a1f3a;
+      --accent: #4f8ef7;
+      --accent2: #7c3aed;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+
+    /* ── TOP NAV ── */
+    .topnav {
+      background: var(--primary);
+      padding: 0.6rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.82rem;
+      flex-wrap: wrap;
+      border-bottom: 2px solid rgba(79,142,247,0.4);
+    }
+    .topnav a {
+      color: #93c5fd;
+      text-decoration: none;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
+    .topnav a:hover { background: rgba(79,142,247,0.2); }
+    .topnav .sep { color: rgba(255,255,255,0.3); }
+    .topnav .current { color: white; font-weight: 600; }
+
+    /* ── SIDENAV ── */
+    .layout { display: flex; min-height: calc(100vh - 40px); }
+    .sidenav {
+      width: 260px;
+      flex-shrink: 0;
+      background: white;
+      border-right: 1px solid var(--border);
+      padding: 1.25rem 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .sidenav-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      padding: 0 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    .sidenav a {
+      display: block;
+      padding: 0.45rem 1.25rem;
+      font-size: 0.85rem;
+      color: var(--text);
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+      border-left: 3px solid transparent;
+    }
+    .sidenav a:hover { background: #f1f5f9; color: var(--accent); }
+    .sidenav a.active {
+      background: #eff6ff;
+      color: var(--accent);
+      border-left-color: var(--accent);
+      font-weight: 600;
+    }
+    .sidenav .section-group { margin-top: 0.5rem; }
+    .sidenav .section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.5rem 1.25rem 0.25rem;
+      letter-spacing: 0.08em;
+    }
+
+    /* ── MAIN CONTENT ── */
+    .main { flex: 1; overflow: hidden; }
+    header {
+      background: linear-gradient(135deg, var(--primary) 0%, #2d3561 100%);
+      color: white;
+      padding: 2rem 3rem;
+      border-bottom: 4px solid var(--accent);
+    }
+    header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.25rem; }
+    header p { opacity: 0.8; font-size: 0.95rem; }
+    .badges { display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap; }
+    .badge {
+      background: rgba(79,142,247,0.2);
+      border: 1px solid rgba(79,142,247,0.4);
+      color: #93c5fd;
+      padding: 0.15rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 2rem 3rem; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    @media (max-width: 900px) {
+      .sidenav { display: none; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .container { padding: 1.5rem; }
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .card-header {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 2rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border);
+    }
+    h3 { font-size: 1rem; font-weight: 600; color: var(--text); margin: 1.25rem 0 0.5rem; }
+    p { color: var(--muted); margin-bottom: 0.75rem; }
+    .principle-list { list-style: none; }
+    .principle-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .principle-list li:last-child { border-bottom: none; }
+    .p-num {
+      background: var(--accent);
+      color: white;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 0.15rem;
+    }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.88rem; }
+    th {
+      background: var(--primary);
+      color: white;
+      padding: 0.55rem 1rem;
+      text-align: left;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    td { padding: 0.55rem 1rem; border-bottom: 1px solid var(--border); }
+    tr:hover td { background: #f1f5f9; }
+    .step {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      padding: 1rem;
+      background: var(--bg);
+      border-radius: 8px;
+      border-left: 4px solid var(--accent);
+    }
+    .step-num {
+      background: var(--accent);
+      color: white;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .step-content h4 { font-weight: 600; margin-bottom: 0.2rem; color: var(--text); }
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin: 0.75rem 0;
+      border-left: 4px solid;
+      font-size: 0.88rem;
+    }
+    .alert-info { background: #eff6ff; border-color: var(--accent); color: #1e40af; }
+    .alert-warning { background: #fffbeb; border-color: var(--warning); color: #92400e; }
+    .tag {
+      display: inline-block;
+      background: #f1f5f9;
+      color: var(--muted);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      margin: 0.15rem;
+      font-family: monospace;
+    }
+    code {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      font-family: monospace;
+    }
+    .framework-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; }
+    .fw-card {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem;
+      text-align: center;
+    }
+    .fw-card .fw-name { font-weight: 700; color: var(--primary); font-size: 0.9rem; }
+    .fw-card .fw-detail { font-size: 0.75rem; color: var(--muted); margin-top: 0.2rem; }
+
+    /* ── PREV/NEXT NAV ── */
+    .page-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      gap: 1rem;
+    }
+    .page-nav a {
+      display: flex;
+      flex-direction: column;
+      padding: 0.75rem 1.25rem;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-decoration: none;
+      max-width: 45%;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .page-nav a:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(79,142,247,0.15); }
+    .page-nav .nav-direction { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+    .page-nav .nav-title { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+    .page-nav a.next { text-align: right; margin-left: auto; }
+    .page-nav .spacer { flex: 1; }
+
+    /* ── SUBSECTION GRID (section index) ── */
+    .sub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .sub-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    }
+    .sub-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); border-color: var(--accent); }
+    .sub-card-path { font-family: monospace; font-size: 0.75rem; color: var(--accent); margin-bottom: 0.4rem; }
+    .sub-card-title { font-weight: 700; color: var(--primary); margin-bottom: 0.35rem; font-size: 1rem; }
+    .sub-card-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; margin-bottom: 0.75rem; }
+    .sub-card-files span {
+      background: #f1f5f9;
+      color: var(--muted);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      margin-right: 0.25rem;
+      font-family: monospace;
+    }
+
+    footer {
+      background: var(--primary);
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      padding: 1.25rem;
+      font-size: 0.8rem;
+    }
+
+body { font-family: 'Inter', system-ui, sans-serif; background: #f8fafc; color: #0f172a; line-height: 1.75; }
+code, pre.mermaid { font-family: 'JetBrains Mono', monospace; }
+
+/* ── PAGE HERO ── */
+.page-hero { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 65%, #312e81 100%); padding: 2.5rem 3rem 2rem; border-bottom: 4px solid #2563eb; }
+h1.page-title { font-family: 'Fraunces', Georgia, serif; font-size: 2.1rem; font-weight: 800; margin: 0 0 0.5rem; line-height: 1.15; color: #ffffff; }
+.page-subtitle { color: #94a3b8; font-size: 1rem; max-width: 780px; margin: 0 0 1rem; line-height: 1.65; }
+.page-path { font-size: 0.68rem; font-family: 'JetBrains Mono', monospace; color: rgba(255,255,255,0.4); margin-bottom: 0.5rem; letter-spacing: 0.05em; }
+.badge-row { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.badge { display: inline-block; padding: 0.18rem 0.65rem; background: rgba(37,99,235,0.3); border: 1px solid rgba(96,165,250,0.5); border-radius: 999px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #93c5fd; }
+
+h2.section-heading { font-size: 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #1e3a8a; margin: 2.75rem 0 1.25rem; padding: 0.6rem 0 0.6rem 1rem; border-left: 4px solid #2563eb; border-bottom: 1px solid #e2e8f0; background: #f8fafc; border-radius: 0 6px 6px 0; }
+
+/* ── AUDIENCE CARDS ── */
+.audience-card { display: flex; gap: 1rem; padding: 1.1rem 1.4rem; border-radius: 10px; margin-bottom: 0.85rem; border: 1px solid; }
+.audience-card.layman { background: #f0f9ff; border-color: #7dd3fc; }
+.audience-card.biz { background: #f0fdf4; border-color: #86efac; }
+.aud-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 0.1rem; }
+.aud-label { font-size: 0.67rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.3rem; }
+.audience-card.layman .aud-label { color: #0369a1; }
+.audience-card.biz .aud-label { color: #15803d; }
+.audience-card p { margin: 0; font-size: 0.93rem; color: #0f172a; line-height: 1.75; }
+
+/* ── DEEP DIVE — white background, dark readable text ── */
+.deep-dive-section { background: #ffffff; border: 1px solid #e2e8f0; border-top: 4px solid #2563eb; border-radius: 10px; padding: 2rem 2.25rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.dd-heading { color: #1e3a8a; font-size: 1.05rem; font-weight: 800; margin: 2rem 0 0.65rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; }
+.dd-heading:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+.dd-para { color: #1e293b; font-size: 0.93rem; line-height: 1.85; margin-bottom: 1rem; }
+.dd-para strong { color: #0f172a; font-weight: 700; }
+.dd-callout { background: #eff6ff; border-left: 4px solid #2563eb; padding: 0.85rem 1.1rem; border-radius: 0 8px 8px 0; margin: 1rem 0; }
+.dd-callout p { margin: 0; color: #1e40af; font-size: 0.9rem; line-height: 1.7; font-weight: 500; }
+.dd-list { padding-left: 1.5rem; margin: 0.5rem 0 1rem; }
+.dd-list li { color: #1e293b; font-size: 0.92rem; line-height: 1.8; margin-bottom: 0.35rem; }
+.dd-list li strong { color: #0f172a; font-weight: 700; }
+
+/* ── DIAGRAM — dark bg to match mermaid dark theme ── */
+.diagram-wrap { background: #0f172a; border: 1px solid #1e3a8a; border-radius: 10px; padding: 2rem; margin: 0.75rem 0 1.5rem; overflow-x: auto; box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+.diagram-wrap svg { min-width: 500px; height: auto !important; }
+.diagram-caption { font-size: 0.82rem; color: #94a3b8; margin: 1rem 0 0; font-style: italic; text-align: center; padding-top: 0.75rem; border-top: 1px solid #1e293b; }
+
+/* ── REAL-WORLD: 2-col grid ── */
+.rw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+@media (max-width: 820px) { .rw-grid { grid-template-columns: 1fr; } }
+.rw-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.25rem 1.4rem; border-top: 3px solid #2563eb; }
+.rw-company { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.09em; color: #1d4ed8; margin-bottom: 0.15rem; }
+.rw-context { font-size: 0.75rem; color: #64748b; margin-bottom: 0.65rem; font-style: italic; }
+.rw-card p { margin: 0 0 0; font-size: 0.9rem; color: #1e293b; line-height: 1.78; }
+.rw-outcome { margin-top: 0.75rem !important; font-size: 0.85rem !important; color: #15803d !important; font-weight: 700; padding-top: 0.6rem; border-top: 1px solid #e2e8f0; }
+
+/* ── PRINCIPLE CARDS ── */
+.principle-card { display: flex; gap: 1rem; align-items: flex-start; padding: 1.1rem 1.25rem; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 0.75rem; border-left: 4px solid #2563eb; }
+.p-num { flex-shrink: 0; width: 28px; height: 28px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; color: #fff; margin-top: 2px; }
+.principle-card strong { display: block; font-size: 0.93rem; font-weight: 700; color: #0f172a; margin-bottom: 0.35rem; }
+.principle-card p { margin: 0; font-size: 0.89rem; color: #1e293b; line-height: 1.72; }
+
+/* ── STEP CARDS ── */
+.step-card { display: flex; gap: 1rem; margin-bottom: 1rem; }
+.step-num { flex-shrink: 0; width: 34px; height: 34px; background: #1e3a8a; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; color: #fff; margin-top: 2px; }
+.step-body { flex: 1; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem 1.2rem; border-left: 3px solid #2563eb; }
+.step-body h4 { margin: 0 0 0.4rem; font-size: 0.93rem; font-weight: 700; color: #0f172a; }
+.step-body p { margin: 0; font-size: 0.9rem; color: #1e293b; line-height: 1.75; }
+
+/* ── GOVERNANCE TABLE: white bg, black text ── */
+.cp-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; background: #fff; border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+.cp-table thead tr { background: #1e3a8a; }
+.cp-table th { text-align: left; padding: 0.8rem 1rem; color: #e2e8f0; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 700; }
+.cp-table td { padding: 0.8rem 1rem; border-bottom: 1px solid #e2e8f0; color: #0f172a; vertical-align: middle; font-size: 0.9rem; }
+.cp-table tr:last-child td { border-bottom: none; }
+.cp-table tr:nth-child(even) td { background: #f8fafc; }
+.cp-table tr:hover td { background: #eff6ff; }
+.status-pill { display: inline-block; padding: 0.22rem 0.65rem; border-radius: 6px; font-size: 0.73rem; font-weight: 700; white-space: nowrap; }
+
+/* ── PATTERN CARDS — white, dark text, left accent ── */
+.pattern-card { background: #ffffff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 1.25rem 1.4rem; margin-bottom: 0.9rem; border-left: 4px solid #2563eb; }
+.pattern-card h4 { margin: 0 0 0.5rem; font-size: 0.97rem; font-weight: 700; color: #1e3a8a; }
+.pattern-card p { margin: 0 0 0.5rem; font-size: 0.9rem; color: #1e293b; line-height: 1.77; }
+.pattern-card p:last-child { margin-bottom: 0; }
+.pattern-when { font-size: 0.82rem; color: #1d4ed8; background: #eff6ff; border: 1px solid #bfdbfe; padding: 0.4rem 0.8rem; border-radius: 5px; display: block; margin-top: 0.5rem; }
+.pattern-example { font-size: 0.84rem; color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 0.4rem 0.8rem; border-radius: 5px; display: block; margin-top: 0.4rem; font-weight: 600; }
+
+/* ── ANTI-PATTERN CARDS — white bg, dark readable text ── */
+.ap-card { background: #ffffff; border: 1px solid #fecaca; border-radius: 10px; padding: 1.25rem 1.4rem; margin-bottom: 0.9rem; border-left: 4px solid #dc2626; }
+.ap-card h4 { margin: 0 0 0.5rem; font-size: 0.97rem; font-weight: 700; color: #991b1b; }
+.ap-card p { margin: 0 0 0.55rem; font-size: 0.9rem; color: #1e293b; line-height: 1.77; }
+.ap-card p:last-child { margin-bottom: 0; }
+.ap-symptom { font-size: 0.84rem; font-weight: 700; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; padding: 0.4rem 0.8rem; border-radius: 5px; display: block; margin-top: 0.5rem; }
+.ap-fix { font-size: 0.84rem; color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 0.4rem 0.8rem; border-radius: 5px; display: block; margin-top: 0.4rem; font-weight: 600; }
+
+/* ── AI CARDS ── */
+.ai-card { background: #faf5ff; border: 1px solid #ddd6fe; border-radius: 10px; padding: 1.25rem 1.4rem; margin-bottom: 0.9rem; border-left: 4px solid #7c3aed; }
+.ai-card-header { font-size: 0.97rem; font-weight: 700; color: #5b21b6; margin-bottom: 0.5rem; }
+.ai-card p { margin: 0 0 0.5rem; font-size: 0.9rem; color: #1e293b; line-height: 1.77; }
+.ai-card p:last-child { margin-bottom: 0; }
+.ai-note { font-size: 0.84rem; color: #5b21b6; background: #ede9fe; border: 1px solid #c4b5fd; border-radius: 5px; padding: 0.45rem 0.8rem; margin-top: 0.5rem; display: block; font-weight: 600; }
+
+/* ── RELATED CHIPS ── */
+.related-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.related-chip { display: inline-block; padding: 0.35rem 0.9rem; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 20px; font-size: 0.82rem; color: #1d4ed8; text-decoration: none; font-weight: 700; transition: all 0.15s; }
+.related-chip:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
+
+/* ── REFERENCES — clickable, opens new tab ── */
+.ref-list { list-style: none; padding: 0; margin: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; }
+.ref-item { display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1.1rem; border-bottom: 1px solid #e2e8f0; }
+.ref-item:last-child { border-bottom: none; }
+.ref-item:hover { background: #f0f9ff; }
+.ref-link { color: #1d4ed8; font-size: 0.9rem; font-weight: 600; text-decoration: none; flex: 1; }
+.ref-link:hover { text-decoration: underline; color: #1e40af; }
+.ref-source { flex-shrink: 0; font-size: 0.71rem; font-weight: 700; background: #eff6ff; color: #1d4ed8; padding: 0.18rem 0.55rem; border-radius: 4px; white-space: nowrap; border: 1px solid #bfdbfe; }
+
+/* ── PAGE NAV ── */
+.page-nav-bar { display: flex; gap: 1rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 2px solid #e2e8f0; }
+.pg-prev, .pg-next { flex: 1; display: flex; flex-direction: column; padding: 1rem 1.25rem; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; text-decoration: none; transition: all 0.18s; }
+.pg-prev:hover, .pg-next:hover { border-color: #2563eb; box-shadow: 0 4px 12px rgba(37,99,235,0.12); }
+.pg-next { align-items: flex-end; text-align: right; }
+.pg-prev span, .pg-next span { font-size: 0.72rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; }
+.pg-prev strong, .pg-next strong { font-size: 0.9rem; color: #0f172a; font-weight: 700; }
+.pn-space { flex: 0.3; }
+
+@media (max-width: 900px) {
+  .rw-grid { grid-template-columns: 1fr; }
+}
+  </style>
+</head>
+<body>
+
+<div class="topnav">
+  <a href="../../index.html">&#127963; Library</a>
+  <span class="sep">&#8250;</span>
+  <a href="../index.html">Security Architecture</a>
+  <span class="sep">&#8250;</span>
+  <span class="current">Authentication & Authorization</span>
+</div>
+
+<div class="layout">
+  <nav class="sidenav"><div class="sidenav-title">📚 Library</div><div class="section-group"><a href="../../principles/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Architecture Principles</a></div><div class="section-group"><a href="../../patterns/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Architecture & Design Patterns</a></div><div class="section-group"><a href="../../anti-patterns/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Anti-Patterns</a></div><div class="section-group"><a href="../../adrs/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Architecture Decision Records</a></div><div class="section-group"><a href="../../views/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Architecture Views</a></div><div class="section-group"><a href="../../design/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Detailed Design Practices</a></div><div class="section-group"><a href="../../system-design/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">System Design Reference Scenarios</a></div><div class="section-group"><a href="../../ddd/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Domain-Driven Design</a></div><div class="section-group"><a href="../../frameworks/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Industry Frameworks Mapping</a></div><div class="section-group"><a href="../../tech/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Technology Stack Best Practices</a></div><div class="section-group"><a href="../../infra/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Infrastructure Architecture</a></div><div class="section-group"><a href="../../cloud/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Cloud Architecture</a></div><div class="section-group"><a href="../../ai/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">AI-Native Architecture</a></div><div class="section-group"><a href="../../security/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--accent);letter-spacing:0.08em;text-decoration:none;">Security Architecture</a><a href="../authn-authz/index.html" class=" active" style="padding-left:1.75rem;font-size:0.82rem;">Authentication & Authorization</a><a href="../encryption/index.html" class="" style="padding-left:1.75rem;font-size:0.82rem;">Encryption</a><a href="../vulnerability/index.html" class="" style="padding-left:1.75rem;font-size:0.82rem;">Vulnerability Management</a><a href="../appsec/index.html" class="" style="padding-left:1.75rem;font-size:0.82rem;">Application Security</a><a href="../cloud/index.html" class="" style="padding-left:1.75rem;font-size:0.82rem;">Cloud Security</a></div><div class="section-group"><a href="../../compliance/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Compliance & Regulatory Frameworks</a></div><div class="section-group"><a href="../../governance/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Architecture Governance</a></div><div class="section-group"><a href="../../nfr/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Non-Functional Requirements</a></div><div class="section-group"><a href="../../data/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Data Architecture</a></div><div class="section-group"><a href="../../integration/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Integration Architecture</a></div><div class="section-group"><a href="../../observability/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Observability</a></div><div class="section-group"><a href="../../tools/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Architecture Tooling</a></div><div class="section-group"><a href="../../checklists/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Review Checklists</a></div><div class="section-group"><a href="../../runbooks/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Operational Runbooks</a></div><div class="section-group"><a href="../../scorecards/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Architecture Scorecards</a></div><div class="section-group"><a href="../../maturity/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Architecture Maturity Models</a></div><div class="section-group"><a href="../../playbooks/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Architecture Playbooks</a></div><div class="section-group"><a href="../../templates/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Document Templates</a></div><div class="section-group"><a href="../../roadmaps/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Architecture Roadmaps</a></div><div class="section-group"><a href="../../strategy/index.html" class="section-label" style="display:block;padding:0.4rem 1.25rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.08em;text-decoration:none;">Architecture Strategy</a></div></nav>
+  <main class="main">
+    <div class="page-hero">
+      <div class="page-path">security / authn-authz</div>
+      <h1 class="page-title">Authentication & Authorization</h1>
+      <p class="page-subtitle">Proving identity and enforcing access rights across every system interaction</p>
+      <div class="badge-row">
+        <span class="badge">TOGAF ADM</span>
+        <span class="badge">NIST CSF</span>
+        <span class="badge">ISO 27001</span>
+        <span class="badge">AWS Well-Arch</span>
+        <span class="badge">Google SRE</span>
+        <span class="badge">AI-Native</span>
+      </div>
+    </div>
+
+    <div class="container" style="padding:1.75rem 2.5rem 4rem; max-width:1080px;">
+
+      <div class="audience-card layman"><div class="aud-icon">&#128161;</div><div><div class="aud-label">In Plain English</div><p>Authentication is the lock on your front door — it checks if you are who you say you are. Authorization is the list of which rooms you're allowed to enter once you're inside. Getting either of these wrong is the most common cause of data breaches.</p></div></div>
+      <div class="audience-card biz"><div class="aud-icon">&#128200;</div><div><div class="aud-label">Business Value</div><p>Identity and access misconfigurations caused 15% of all reported breaches in 2024 (Verizon DBIR). OAuth 2.0 + OIDC is the standard adopted by Google, Microsoft, AWS, and every major bank. A properly designed identity architecture reduces breach blast radius, simplifies compliance evidence collection, and enables zero-trust enforcement.</p></div></div>
+
+      <h2 class="section-heading">&#128214; Detailed Explanation</h2>
+      <div class="deep-dive-section"><p class="dd-para">Authentication and authorization are the most security-critical components of any application architecture. They are also among the most commonly misimplemented — not because the concepts are obscure, but because the implementation requires navigating a complex landscape of protocols, token types, flow variations, and integration patterns.</p><p class="dd-para"><strong>OAuth 2.0 and OIDC</strong> are the industry-standard protocols for authentication and authorization in modern web and mobile applications. OAuth 2.0 is an authorization framework — it defines how an application can obtain limited access to a user's data on another service (e.g., a third-party app reading your Google Calendar). OpenID Connect (OIDC) is an identity layer built on top of OAuth 2.0 — it adds standardized ID tokens (JWTs) that assert the user's identity. Together, they handle both "what can this app do?" (OAuth 2.0) and "who is this user?" (OIDC).</p><p class="dd-para"><strong>OAuth 2.0 Flows</strong>: The right flow depends on the client type. <strong>Authorization Code + PKCE</strong> is for web SPAs and mobile apps — public clients that cannot keep a secret. PKCE (Proof Key for Code Exchange) prevents authorization code interception attacks by requiring the client to prove it initiated the request. <strong>Client Credentials</strong> is for machine-to-machine (M2M) communication — a service authenticating to another service without a human user in the flow. <strong>Device Code</strong> is for devices without browsers (IoT, CLI tools). The mistake most teams make: using Client Credentials for user-facing flows because it's simpler. This skips OIDC entirely and creates non-auditable user sessions.</p><p class="dd-para"><strong>JWT Token Anatomy</strong>: A JWT (JSON Web Token) consists of three base64-encoded parts: Header (algorithm, token type) + Payload (claims: sub, iss, aud, exp, iat, plus custom claims) + Signature (HMAC or RSA). The signature proves the token was issued by a trusted authority and hasn't been tampered with. Key security decisions: token lifetime (access tokens: 5–60 minutes; refresh tokens: days to weeks with rotation), signing algorithm (RS256/ES256 for asymmetric keys, enabling public key verification by any service without sharing the signing key), and audience validation (each service must validate that the `aud` claim includes its own identifier — otherwise a token for Service A can be reused for Service B).</p><p class="dd-para"><strong>Fine-Grained Authorization</strong>: RBAC (Role-Based Access Control) maps users to roles (admin, reader, editor) and roles to permissions. It's simple and widely supported but breaks down at scale — organizations with hundreds of roles, roles that are never reviewed, and "role explosion" where a new role is created for every edge case. ABAC (Attribute-Based Access Control) evaluates policies based on subject attributes (user.department = Finance), resource attributes (document.classification = Confidential), and environmental attributes (request.time, request.location). OPA (Open Policy Agent) implements ABAC as code — policies expressed in Rego, version-controlled, tested in CI, deployed as a sidecar to each service.</p><p class="dd-para"><strong>Session Management</strong>: Stateless sessions using JWTs are the modern standard — the token carries all claims, no server-side session store needed. But statelessness makes revocation hard: a revoked token remains valid until expiration. Solutions: short access token lifetimes (15 minutes) with refresh tokens that are revoked centrally; token introspection (service calls authorization server to validate token on each request); token binding (binding the token to a specific TLS session). For high-security contexts (banking, government), short lifetimes + introspection is the appropriate choice.</p><p class="dd-para"><strong>Zero Trust Authentication</strong>: In a Zero Trust model, network location provides no implicit trust. A request from inside the corporate network is as untrusted as one from the public internet. Every service-to-service call must authenticate via mTLS or a service identity token (SPIFFE/SPIRE). Every user request must authenticate via OIDC regardless of network origin. Ambient trust based on IP address is eliminated. This is the architectural model mandated by NIST SP 800-207 and aligned with Google's BeyondCorp implementation.</p></div>
+
+      <h2 class="section-heading">&#128200; Architecture Diagram</h2><div class="diagram-wrap">
+          <pre class="mermaid">sequenceDiagram
+    participant U as User (Browser)
+    participant App as Application
+(SPA / Mobile)
+    participant AS as Authorization Server
+(Keycloak / Cognito)
+    participant API as API Service
+    participant OPA as Policy Engine
+(OPA)
+
+    U->>App: Click Login
+    App->>App: Generate PKCE code_verifier + code_challenge
+    App->>AS: Authorization Request
+(response_type=code, code_challenge, scope)
+    AS->>U: Login Page
+    U->>AS: Enter Credentials + MFA
+    AS->>App: Authorization Code
+    App->>AS: Token Request
+(code + code_verifier)
+    AS->>App: Access Token (JWT, 15min)
++ Refresh Token (7 days)
+    App->>API: Request + Bearer Access Token
+    API->>API: Validate JWT signature + exp + aud
+    API->>OPA: Authorize? (user claims + resource + action)
+    OPA->>OPA: Evaluate ABAC Policy (Rego)
+    OPA->>API: Allow / Deny
+    API->>App: Response (if allowed)
+    App->>U: Display Result</pre>
+          <p class="diagram-caption">OAuth 2.0 Authorization Code + PKCE flow with OPA policy evaluation: user authenticates via the Authorization Server, receives short-lived JWT, and every API call is authorized against fine-grained ABAC policies.</p>
+        </div>
+
+      <h2 class="section-heading">&#127758; Real-World Examples</h2><div class="rw-grid"><div class="rw-card"><div class="rw-company">CrowdStrike — Zero Trust Implementation</div><div class="rw-context">Austin, USA · Cybersecurity · 23,000+ enterprise customers</div><p>CrowdStrike's Falcon platform enforces Zero Trust by treating every endpoint as potentially compromised regardless of network location. Device health score, user identity, behavioral signals, and real-time threat intelligence combine in every authorization decision. After analyzing the 2020 SolarWinds supply chain attack, CrowdStrike published a STRIDE threat model for supply chain attacks now used as a template by US CISA.</p><p class="rw-outcome">&#10003; Result: Detects 230,000+ attacks daily with < 0.01% false positive rate; median threat containment time: 1 minute from detection</p></div><div class="rw-card"><div class="rw-company">ING Bank — Defense in Depth</div><div class="rw-context">Amsterdam, Netherlands · Retail Banking · 38 countries</div><p>ING's post-GDPR security overhaul implemented all 6 layers of defense in depth across 53,000 employees. FIDO2 hardware keys replaced SMS OTP for all staff — eliminating SIM swap attacks. All customer PII is tokenized using format-preserving encryption. OPA policies govern all service-to-service API authorization. The Dutch Central Bank (DNB) cited ING as a benchmark for operational resilience.</p><p class="rw-outcome">&#10003; Result: Phishing-based account compromises dropped 99.7% post-FIDO2; zero regulatory security findings in 4 consecutive DNB examinations</p></div><div class="rw-card"><div class="rw-company">Stripe — API Security Reference</div><div class="rw-context">San Francisco, USA · Payments · 3M+ businesses</div><p>Stripe's API security architecture is an OWASP reference implementation. Every API key is scoped to specific permissions (RBAC), time-bounded, and geo-restricted. HMAC webhook signatures prevent request forgery. mTLS is required for all enterprise integrations. Their bug bounty program pays $30,000+ for critical API vulnerabilities — turning external researchers into a security layer.</p><p class="rw-outcome">&#10003; Result: Processes $817B annual payment volume with zero successful API key forgery attacks in production history</p></div><div class="rw-card"><div class="rw-company">Target — Post-Breach Transformation</div><div class="rw-context">Minneapolis, USA · Retail · 1,800+ stores</div><p>After the 2013 breach (40M credit cards via HVAC vendor credentials), Target rebuilt their entire security architecture. STRIDE threat modeling is now mandatory for every vendor integration. Micro-segmentation isolates payment systems. Zero Trust replaced flat network trust for all 1,800+ suppliers. This transformation is a Harvard Business School case study.</p><p class="rw-outcome">&#10003; Result: Zero PCI DSS findings in 9 consecutive post-transformation audits; vendor security incidents reduced 87%</p></div></div>
+
+      <h2 class="section-heading">&#127775; Core Principles</h2>
+      <div class="principle-card"><span class="p-num">1</span><div><strong>Authentication and Authorization are Separate Concerns</strong><p>Authentication establishes who you are. Authorization determines what you can do. Never conflate the two in code — authenticate at the API gateway, authorize within each service using a policy engine.</p></div></div><div class="principle-card"><span class="p-num">2</span><div><strong>Token Lifetimes Must Match Risk Level</strong><p>Access tokens for financial operations: 5 minutes. Standard API access tokens: 15–60 minutes. Refresh tokens: 7 days with single-use rotation. Longer lifetimes increase breach blast radius; shorter lifetimes increase token refresh overhead.</p></div></div><div class="principle-card"><span class="p-num">3</span><div><strong>Centralize Identity, Federate Authorization</strong><p>One Identity Provider for authentication. Per-service authorization policy enforcement. Never replicate user management logic across services — it diverges immediately.</p></div></div><div class="principle-card"><span class="p-num">4</span><div><strong>PKCE is Mandatory for Public Clients</strong><p>Any client that cannot securely store a client secret (SPAs, mobile apps) must use PKCE. Without PKCE, authorization codes can be intercepted and exchanged by an attacker.</p></div></div><div class="principle-card"><span class="p-num">5</span><div><strong>Never Implement Custom Authentication</strong><p>Use battle-tested libraries and standards. Custom JWT validation routines contain subtle vulnerabilities (algorithm confusion attacks, missing audience validation, improper expiry checking) that take years to surface and can be catastrophic.</p></div></div>
+
+      <h2 class="section-heading">&#9881;&#65039; Implementation Steps</h2>
+      <div class="step-card"><div class="step-num">1</div><div class="step-body"><h4>Select and Deploy an Identity Provider</h4><p>Choose an IdP appropriate to your context: Keycloak (self-hosted, open source, strong for regulated environments), AWS Cognito (managed, tight AWS integration), Azure AD B2C (enterprise identity federation), or Okta (enterprise SSO). Document the choice in an ADR with alternatives considered.</p></div></div><div class="step-card"><div class="step-num">2</div><div class="step-body"><h4>Design OAuth 2.0 Flows per Client Type</h4><p>Map each client type to its flow: SPA → Authorization Code + PKCE. Mobile → Authorization Code + PKCE. Server-side web → Authorization Code. Service-to-service → Client Credentials. CLI → Device Code. Document all flows with sequence diagrams.</p></div></div><div class="step-card"><div class="step-num">3</div><div class="step-body"><h4>Implement Fine-Grained Authorization with OPA</h4><p>Deploy OPA as a sidecar or centralized policy service. Write authorization policies in Rego. Express policies as: subject (who) + resource (what) + action (how) + context (when/where). Test policies with OPA's built-in test framework. Version-control policies alongside application code.</p></div></div><div class="step-card"><div class="step-num">4</div><div class="step-body"><h4>Configure Token Lifetimes and Rotation</h4><p>Access tokens: 15 minutes default (5 minutes for financial operations). Refresh tokens: 7 days with single-use rotation (old refresh token revoked when a new one is issued). Implement refresh token rotation to detect token theft.</p></div></div><div class="step-card"><div class="step-num">5</div><div class="step-body"><h4>Implement MFA for High-Value Operations</h4><p>MFA must be required for: all administrative access, financial transaction authorization, data export, and first login from a new device. Support authenticator apps (TOTP), WebAuthn/Passkeys (most phishing-resistant), and SMS OTP (last resort — vulnerable to SIM swap attacks).</p></div></div>
+
+      <h2 class="section-heading">&#9989; Governance Checkpoints</h2>
+      <div style="overflow-x:auto; border-radius:10px; box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+        <table class="cp-table">
+          <thead><tr><th>Checkpoint</th><th>Owner</th><th>Gate Criteria</th><th>Status</th></tr></thead>
+          <tbody><tr><td>IdP Selection ADR Completed</td><td>Security Architect</td><td>Identity provider selected, documented, and approved</td><td><span class="status-pill" style="background:#22c55e20;color:#22c55e;border:1px solid #22c55e40;">Required</span></td></tr><tr><td>OAuth 2.0 Flow Diagrams Reviewed</td><td>Security Architect</td><td>All client type flows documented and approved</td><td><span class="status-pill" style="background:#22c55e20;color:#22c55e;border:1px solid #22c55e40;">Required</span></td></tr><tr><td>PKCE Implemented for Public Clients</td><td>AppSec Engineer</td><td>PKCE enforced for all SPA and mobile clients verified</td><td><span class="status-pill" style="background:#22c55e20;color:#22c55e;border:1px solid #22c55e40;">Required</span></td></tr><tr><td>OPA Policies in Version Control</td><td>Security Engineer</td><td>All authorization policies in Git with test coverage</td><td><span class="status-pill" style="background:#22c55e20;color:#22c55e;border:1px solid #22c55e40;">Required</span></td></tr><tr><td>MFA Enforced for Admin Access</td><td>Security Engineer</td><td>MFA required for all administrative and privileged operations</td><td><span class="status-pill" style="background:#22c55e20;color:#22c55e;border:1px solid #22c55e40;">Required</span></td></tr></tbody>
+        </table>
+      </div>
+
+      <h2 class="section-heading">&#9672; Recommended Patterns</h2>
+      <div class="pattern-card"><h4>&#10022; OAuth 2.0 + OIDC with PKCE</h4><p>The industry standard for user authentication in web and mobile applications. Delegates identity management to a specialized IdP, supports MFA, enables single sign-on, and produces standardized JWT tokens consumable by any service.</p></div><div class="pattern-card"><h4>&#10022; Policy-as-Code with OPA</h4><p>Authorization policies expressed in Rego, stored in Git, tested in CI, deployed as a sidecar to each service. Enables consistent, auditable, version-controlled authorization logic across a polyglot microservices landscape.</p></div><div class="pattern-card"><h4>&#10022; Token Introspection for Revocation</h4><p>Instead of trusting JWT expiry alone, services call the authorization server's introspection endpoint to validate tokens in real time. Enables immediate revocation at the cost of per-request latency (mitigated with local caching of introspection results).</p></div><div class="pattern-card"><h4>&#10022; Just-In-Time (JIT) Privileged Access</h4><p>Administrative access is provisioned on-demand for a specific operation and time window (e.g., 2-hour production database access). Automated provisioning via PIM (Azure), IAM Access Analyzer, or CyberArk. Access is automatically revoked when the window expires.</p></div>
+
+      <h2 class="section-heading">&#9940; Anti-Patterns to Avoid</h2>
+      <div class="ap-card"><h4>&#9940; Long-Lived Static API Keys</h4><p>API keys that never expire, are shared across environments, and are stored in configuration files. A single key leak provides indefinite access. Replace with short-lived tokens issued by an IdP, or with workload identity (IAM roles, managed identities) for service-to-service authentication.</p></div><div class="ap-card"><h4>&#9940; Role Explosion</h4><p>Creating a new RBAC role for every combination of permissions requested by every team. Organizations with 500+ roles have no operational visibility into effective permissions. ABAC with OPA scales where RBAC cannot.</p></div><div class="ap-card"><h4>&#9940; Ambient Network Trust</h4><p>Trusting requests from internal networks without authentication. 'It's behind our firewall' is not an access control. Internal lateral movement in breaches exploits exactly this assumption. Implement Zero Trust: authenticate every request regardless of origin.</p></div>
+
+      <h2 class="section-heading">&#129302; AI Augmentation Extensions</h2>
+      <div class="ai-card">
+          <div class="ai-card-header">&#129302; Anomalous Access Detection</div>
+          <p>ML models trained on historical access logs learn normal patterns per user and service account. Deviations — unusual access times, unfamiliar resource types, high-volume access — trigger real-time security alerts.</p>
+          <div class="ai-note">&#9889; Tune anomaly detection with 90 days of baseline data before enabling automated account suspension. False positives from under-tuned models erode trust in the system.</div>
+        </div><div class="ai-card">
+          <div class="ai-card-header">&#129302; AI-Generated OPA Policy Drafts</div>
+          <p>LLM agents translate natural-language access control requirements ('Finance users can read but not export P&L reports outside business hours') into Rego policy drafts with test cases.</p>
+          <div class="ai-note">&#9889; All AI-generated Rego policies must be reviewed by a security engineer before deployment. LLMs can generate syntactically correct but semantically incorrect policies.</div>
+        </div>
+
+      <h2 class="section-heading">&#128279; Related Sections</h2>
+      <div class="related-chips"><a href="../../security/encryption/index.html" class="related-chip">Encryption</a><a href="../../security/cloud/index.html" class="related-chip">Cloud Security</a><a href="../../patterns/security/index.html" class="related-chip">Security Patterns</a><a href="../../compliance/pci-dss/index.html" class="related-chip">PCI-DSS</a><a href="../../compliance/bsp-afasa/index.html" class="related-chip">BSP Compliance</a></div>
+
+      <h2 class="section-heading">&#128218; References &amp; Further Reading</h2>
+      <ul class="ref-list"><li class="ref-item"><a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics" target="_blank" rel="noopener noreferrer" class="ref-link">OAuth 2.0 Security Best Current Practice — IETF</a><span class="ref-source">&#8599; datatracker.ietf.org</span></li><li class="ref-item"><a href="https://pages.nist.gov/800-63-3/sp800-63b.html" target="_blank" rel="noopener noreferrer" class="ref-link">NIST SP 800-63B — Digital Identity Guidelines</a><span class="ref-source">&#8599; pages.nist.gov</span></li><li class="ref-item"><a href="https://www.openpolicyagent.org/docs/latest/" target="_blank" rel="noopener noreferrer" class="ref-link">Open Policy Agent Documentation</a><span class="ref-source">&#8599; openpolicyagent.org</span></li><li class="ref-item"><a href="https://www.oreilly.com/library/view/zero-trust-networks/9781491962183/" target="_blank" rel="noopener noreferrer" class="ref-link">Zero Trust Networks — Gilman & Barth</a><span class="ref-source">&#8599; O'Reilly</span></li><li class="ref-item"><a href="https://csrc.nist.gov/publications/detail/sp/800-207/final" target="_blank" rel="noopener noreferrer" class="ref-link">NIST SP 800-207 — Zero Trust Architecture</a><span class="ref-source">&#8599; csrc.nist.gov</span></li></ul>
+
+      <div class="page-nav-bar"><div class="pn-space"></div><a href="../encryption/index.html" class="pg-next"><span>Next &#8594;</span><strong>Encryption</strong></a></div>
+
+    </div>
+  </main>
+</div>
+
+<footer style="text-align:center;padding:1.25rem;color:#334155;font-size:0.75rem;border-top:1px solid rgba(255,255,255,0.04);">
+  Authentication & Authorization &middot; Security Architecture &middot; Ascendion Architecture Best-Practice Library &middot;
+  <a href="../../index.html" style="color:#60a5fa;text-decoration:none;">&#127963; Back to Library</a>
+</footer>
+
+</body>
+</html>

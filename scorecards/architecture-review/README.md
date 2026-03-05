@@ -1,0 +1,144 @@
+# Architecture Review Scorecard
+
+> **Section:** `scorecards/` | **Subsection:** `architecture-review/`  
+> **Alignment:** TOGAF ADM | NIST CSF | ISO 27001 | AWS Well-Architected | AI-Native Extensions
+
+---
+
+## Overview
+
+Holistic architecture review score combining design quality, risk posture, and governance compliance.
+
+This document is part of the **Architecture Scorecards** body of knowledge within the Ascendion Architecture Best-Practice Library. It provides comprehensive, practitioner-grade guidance aligned to industry standards and extended for AI-augmented, agentic, and LLM-driven design contexts.
+
+---
+
+## Core Principles
+
+### 1. Intentional Design for Architecture Review Scorecard
+
+Every aspect of architecture review scorecard must be deliberately designed, not discovered after deployment. Document design decisions as ADRs with explicit rationale.
+
+### 2. Consistency Across the Portfolio
+
+Apply architecture review scorecard practices consistently across all systems. Inconsistent application creates governance blind spots and makes incident investigation unpredictable.
+
+### 3. Alignment to Business Outcomes
+
+Architecture Review Scorecard practices must demonstrably contribute to business outcomes: reduced downtime, faster delivery, lower operational cost, or improved compliance posture.
+
+### 4. Evidence-Based Quality Assessment
+
+Quality of architecture review scorecard implementation must be measurable. Define specific metrics and collect evidence continuously — not only at audit or review time.
+
+### 5. Continuous Evolution
+
+Standards for architecture review scorecard evolve as technology and threat landscapes change. Schedule quarterly reviews of applicable standards and update practices accordingly.
+
+
+---
+
+## Implementation Guide
+
+**Step 1: Current State Assessment**
+
+Document the current state of architecture review scorecard practice: what is implemented, what is missing, what is inconsistent across teams. Use the governance/scorecards section for a structured assessment framework.
+
+**Step 2: Gap Analysis Against Standards**
+
+Compare current state against the standards in this section and applicable frameworks (TOGAF Architecture Maturity Model, DORA Metrics — Google DevOps Research). Prioritize gaps by business impact and remediation effort.
+
+**Step 3: Design the Target State**
+
+Define the target architecture review scorecard state: which patterns will be adopted, which anti-patterns eliminated, which governance mechanisms introduced. Express as a time-bound roadmap.
+
+**Step 4: Incremental Implementation**
+
+Implement architecture review scorecard improvements incrementally: pilot with one team or system, measure outcomes, refine the approach, then expand. Avoid big-bang transformations.
+
+**Step 5: Validate and Iterate**
+
+Measure the impact of implemented changes against defined success criteria. Incorporate lessons learned into the practice standards. Contribute improvements back to this library.
+
+
+---
+
+## Governance Checkpoints
+
+| Checkpoint | Owner | Gate Criteria | Status |
+|---|---|---|---|
+| Current State Documented | Solution Architect | Architecture Review Scorecard current state assessment completed and reviewed | Required |
+| Gap Analysis Reviewed | Architecture Review Board | Gap analysis reviewed and prioritization approved | Required |
+| Implementation Plan Approved | Enterprise Architect | Target state and roadmap approved by ARB | Required |
+| Quality Metrics Defined | Solution Architect | Measurable success criteria defined for architecture review scorecard improvements | Required |
+
+
+---
+
+## Recommended Patterns
+
+### Reference Architecture Adoption
+
+Start from an established reference architecture for architecture review scorecard rather than designing from scratch. Adapt to organizational context rather than rebuilding proven foundations.
+
+### Pattern Library Contribution
+
+When your team solves a recurring architecture review scorecard problem with a novel approach, document it as a pattern for the library. This compounds organizational knowledge over time.
+
+### Fitness Function Testing
+
+Encode architecture review scorecard standards as automated architectural fitness functions — tests that run in CI/CD and fail builds when standards are violated. This makes governance continuous rather than periodic.
+
+
+---
+
+## Anti-Patterns to Avoid
+
+### ⚠️ Standards Theater
+
+Documenting architecture review scorecard standards in architecture policies that no one reads and no one enforces. Standards without automated validation or governance gates are not operational standards.
+
+### ⚠️ Copy-Paste Architecture
+
+Adopting another organization's architecture review scorecard patterns wholesale without adapting to organizational context, team capability, or regulatory environment. Always adapt; never just copy.
+
+
+---
+
+## AI Augmentation Extensions
+
+### AI-Assisted Standards Review
+
+LLM agents analyze design documents against architecture review scorecard standards, generating structured gap reports with cited evidence and suggested remediation approaches.
+
+> **Note:** AI review accelerates governance but does not replace expert architectural judgment. Use as a first-pass filter before human review.
+
+### RAG Integration for Architecture Review Scorecard
+
+This section is optimized for vector ingestion into an AI-powered architecture assistant. Semantic search enables architects to retrieve relevant architecture review scorecard guidance through natural language queries.
+
+> **Note:** Reindex the vector store whenever section content is updated to ensure retrieved guidance reflects current standards.
+
+
+---
+
+## Related Sections
+
+[`principles/foundational`](../principles/foundational) | [`patterns/structural`](../patterns/structural) | [`governance/review-templates`](../governance/review-templates) | [`adrs/platform`](../adrs/platform)
+
+---
+
+## References
+
+1. [TOGAF Architecture Maturity Model](https://pubs.opengroup.org/architecture/togaf9-doc/arch/) — *opengroup.org*
+2. [DORA Metrics — Google DevOps Research](https://dora.dev/) — *dora.dev*
+3. [Software Architecture Metrics — O'Reilly](https://www.oreilly.com/search/?q=Software+Architecture+Metrics+%E2%80%94+O%27Reilly) — *oreilly.com*
+4. [CMMI v2.0](https://ieeexplore.ieee.org/search/searchresult.jsp?queryText=CMMI+v2.0) — *IEEE Xplore*
+5. [Documenting Software Architectures — Bass, Clements, Kazman](https://www.amazon.com/Documenting-Software-Architectures-Views-Beyond/dp/0321552687) — *Amazon*
+6. [Building Evolutionary Architectures — Ford, Parsons, Kua](https://www.oreilly.com/library/view/building-evolutionary-architectures/9781491986356/) — *O'Reilly*
+
+
+---
+
+*Last updated: 2025 | Maintained by: Ascendion Solutions Architecture Practice*  
+*Section: `scorecards/architecture-review/` | Aligned to TOGAF · NIST · ISO 27001 · AWS Well-Architected*
