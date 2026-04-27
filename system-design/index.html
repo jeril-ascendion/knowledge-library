@@ -5,12 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>System Design Reference Scenarios — Ascendion Engineering</title>
   <link rel="stylesheet" href="../shared.css">
-
 </head>
 <body>
 
 <nav class="nav">
-  <a href="../index.html" class="nav-wordmark">Ascendion Engineering</a>
+  <a href="../index.html" class="nav-wordmark" id="nav-wm">Ascendion Engineering</a>
   <div class="nav-sep"></div>
   <div class="nav-links">
     <a href="../principles/index.html">Principles</a>
@@ -20,31 +19,52 @@
     <a href="../security/index.html">Security</a>
     <a href="../ai/index.html">AI-Native</a>
     <a href="../governance/index.html">Governance</a>
-    <a href="../observability/index.html">Observability</a>
   </div>
-  <a href="../index.html#all-topics" class="nav-cta">All Topics</a>
+  <a href="../index.html#topics" class="nav-cta">All Topics</a>
 </nav>
 
-<section class="hero">
-  <div class="hero-inner">
-    <div class="breadcrumb">
-      <a href="../index.html">Home</a>
-      <span class="sep">&#8250;</span>
-      <span class="curr">System Design Reference Scenarios</span>
-    </div>
-    <div class="hero-label">system-design/</div>
-    <h1><strong>System</strong><br>Design  Reference  Scenarios</h1>
-    <p class="hero-desc">End-to-end reference scenarios and trade-off analysis for scalable architectures.</p>
-    <div class="hero-meta">
-      <strong>4</strong> subsections &nbsp;·&nbsp;
-      <strong>12</strong> documents
+<section class="hero-section">
+  <div class="shell">
+    <div class="hero-section-inner">
+      <div class="hero-section-text">
+        <div class="breadcrumb"><a href="../index.html">Home</a><span class="sep">›</span><span class="curr">System Design Reference Scenarios</span></div>
+        <div class="hero-label">system-design/</div>
+        <h1><strong>System</strong><br>Design  Reference  Scenarios</h1>
+        <p class="hero-desc">End-to-end reference scenarios and trade-off analysis for scalable systems.</p>
+      </div>
+      <div class="hero-section-art"><svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes edge{from{stroke-dashoffset:50}to{stroke-dashoffset:0}}
+@keyframes pulse{0%,100%{r:5}50%{r:7}}
+@keyframes rep{0%,70%{opacity:1}80%,100%{opacity:0}}
+.rep{animation:rep 4s ease-in-out infinite}
+.e1{stroke-dasharray:50;stroke-dashoffset:50;animation:edge 0.7s 0.2s ease forwards}
+.e2{stroke-dasharray:50;stroke-dashoffset:50;animation:edge 0.7s 0.7s ease forwards}
+.e3{stroke-dasharray:50;stroke-dashoffset:50;animation:edge 0.7s 1.2s ease forwards}
+.e4{stroke-dasharray:50;stroke-dashoffset:50;animation:edge 0.7s 1.7s ease forwards}
+.n1{animation:pulse 2s 0.2s ease-in-out infinite}
+.n2{animation:pulse 2s 0.7s ease-in-out infinite}
+.n3{animation:pulse 2s 1.2s ease-in-out infinite}
+.n4{animation:pulse 2s 0s ease-in-out infinite}
+</style>
+<g class="rep">
+<line class="e1" x1="30" y1="35" x2="60" y2="18" stroke="#AAAAAA" stroke-width="1.2"/>
+<line class="e2" x1="60" y1="18" x2="90" y2="35" stroke="#AAAAAA" stroke-width="1.2"/>
+<line class="e3" x1="30" y1="35" x2="60" y2="72" stroke="#AAAAAA" stroke-width="1.2"/>
+<line class="e4" x1="90" y1="35" x2="60" y2="72" stroke="#AAAAAA" stroke-width="1.2"/>
+</g>
+<circle class="n4" cx="60" cy="18" r="5" fill="#C96330"/>
+<circle class="n1" cx="30" cy="35" r="5" fill="#C96330"/>
+<circle class="n2" cx="90" cy="35" r="5" fill="#C96330"/>
+<circle class="n3" cx="60" cy="72" r="5" fill="#C96330"/>
+</svg></div>
     </div>
   </div>
 </section>
 
-<div class="article-list">
-  <div class="article-list-label">4 topics in this section</div>
-
+<div class="shell">
+  <div class="article-list">
+    <div class="list-label">4 topics in this section</div>
   <a href="edge-ai/index.html" class="article-row">
     <div>
       <div class="ar-label">system-design/edge-ai/</div>
@@ -77,18 +97,29 @@
     </div>
     <div class="ar-arrow">&#8594;</div>
   </a>
+  </div>
 </div>
 
 <footer class="footer">
-  <div class="footer-inner">
+  <div class="shell">
     <div class="footer-brand">Ascendion Engineering</div>
-    <div class="footer-meta">
-      system-design/ &nbsp;·&nbsp; Last updated 2025 &nbsp;·&nbsp; Ascendion Solutions Architecture Practice<br>
-      Aligned to TOGAF &nbsp;·&nbsp; NIST CSF &nbsp;·&nbsp; ISO 27001 &nbsp;·&nbsp; AWS Well-Architected
-    </div>
+    <div class="footer-meta">system-design/ &nbsp;·&nbsp; 2025 &nbsp;·&nbsp; Solutions Architecture Practice<br>TOGAF &nbsp;·&nbsp; NIST CSF &nbsp;·&nbsp; ISO 27001 &nbsp;·&nbsp; AWS Well-Architected</div>
   </div>
 </footer>
 
-<script src="../wordmark.js"></script>
+<script>
+(function(){
+  var el=document.getElementById('nav-wm');
+  if(!el)return;
+  var html='';
+  var i=0;
+  el.textContent.split('').forEach(function(ch){
+    html+='<span class="wm-char" style="animation-delay:'+(i*26)+'ms">'+
+      ch.replace('&','&amp;').replace('<','&lt;')+'</span>';
+    i++;
+  });
+  el.innerHTML=html;
+})();
+</script>
 </body>
 </html>

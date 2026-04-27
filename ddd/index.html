@@ -5,12 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Domain-Driven Design — Ascendion Engineering</title>
   <link rel="stylesheet" href="../shared.css">
-
 </head>
 <body>
 
 <nav class="nav">
-  <a href="../index.html" class="nav-wordmark">Ascendion Engineering</a>
+  <a href="../index.html" class="nav-wordmark" id="nav-wm">Ascendion Engineering</a>
   <div class="nav-sep"></div>
   <div class="nav-links">
     <a href="../principles/index.html">Principles</a>
@@ -20,31 +19,38 @@
     <a href="../security/index.html">Security</a>
     <a href="../ai/index.html">AI-Native</a>
     <a href="../governance/index.html">Governance</a>
-    <a href="../observability/index.html">Observability</a>
   </div>
-  <a href="../index.html#all-topics" class="nav-cta">All Topics</a>
+  <a href="../index.html#topics" class="nav-cta">All Topics</a>
 </nav>
 
-<section class="hero">
-  <div class="hero-inner">
-    <div class="breadcrumb">
-      <a href="../index.html">Home</a>
-      <span class="sep">&#8250;</span>
-      <span class="curr">Domain-Driven Design</span>
-    </div>
-    <div class="hero-label">ddd/</div>
-    <h1><strong>Domain-Driven</strong><br>Design</h1>
-    <p class="hero-desc">DDD guidance, context mapping, bounded-context patterns, and aggregate design.</p>
-    <div class="hero-meta">
-      <strong>4</strong> subsections &nbsp;·&nbsp;
-      <strong>12</strong> documents
+<section class="hero-section">
+  <div class="shell">
+    <div class="hero-section-inner">
+      <div class="hero-section-text">
+        <div class="breadcrumb"><a href="../index.html">Home</a><span class="sep">›</span><span class="curr">Domain-Driven Design</span></div>
+        <div class="hero-label">ddd/</div>
+        <h1><strong>Domain-Driven</strong><br>Design</h1>
+        <p class="hero-desc">Context mapping, bounded-context patterns, and aggregate design.</p>
+      </div>
+      <div class="hero-section-art"><svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes bc{0%,100%{stroke-dashoffset:160}50%{stroke-dashoffset:0}}
+.bc1{stroke-dasharray:160;animation:bc 3.5s ease-in-out infinite}
+.bc2{stroke-dasharray:160;animation:bc 3.5s 1.75s ease-in-out infinite}
+</style>
+<rect class="bc1" x="8" y="16" width="54" height="38" rx="4" stroke="#C96330" stroke-width="1.8" fill="none"/>
+<text x="35" y="38" text-anchor="middle" font-size="9" fill="#AAAAAA" font-family="IBM Plex Mono">Domain A</text>
+<rect class="bc2" x="58" y="36" width="54" height="38" rx="4" stroke="#AAAAAA" stroke-width="1.4" fill="none"/>
+<text x="85" y="58" text-anchor="middle" font-size="9" fill="#BBBBBB" font-family="IBM Plex Mono">Domain B</text>
+<line x1="62" y1="37" x2="62" y2="54" stroke="#C96330" stroke-width="1" stroke-dasharray="3,3"/>
+</svg></div>
     </div>
   </div>
 </section>
 
-<div class="article-list">
-  <div class="article-list-label">4 topics in this section</div>
-
+<div class="shell">
+  <div class="article-list">
+    <div class="list-label">4 topics in this section</div>
   <a href="aggregates/index.html" class="article-row">
     <div>
       <div class="ar-label">ddd/aggregates/</div>
@@ -77,18 +83,29 @@
     </div>
     <div class="ar-arrow">&#8594;</div>
   </a>
+  </div>
 </div>
 
 <footer class="footer">
-  <div class="footer-inner">
+  <div class="shell">
     <div class="footer-brand">Ascendion Engineering</div>
-    <div class="footer-meta">
-      ddd/ &nbsp;·&nbsp; Last updated 2025 &nbsp;·&nbsp; Ascendion Solutions Architecture Practice<br>
-      Aligned to TOGAF &nbsp;·&nbsp; NIST CSF &nbsp;·&nbsp; ISO 27001 &nbsp;·&nbsp; AWS Well-Architected
-    </div>
+    <div class="footer-meta">ddd/ &nbsp;·&nbsp; 2025 &nbsp;·&nbsp; Solutions Architecture Practice<br>TOGAF &nbsp;·&nbsp; NIST CSF &nbsp;·&nbsp; ISO 27001 &nbsp;·&nbsp; AWS Well-Architected</div>
   </div>
 </footer>
 
-<script src="../wordmark.js"></script>
+<script>
+(function(){
+  var el=document.getElementById('nav-wm');
+  if(!el)return;
+  var html='';
+  var i=0;
+  el.textContent.split('').forEach(function(ch){
+    html+='<span class="wm-char" style="animation-delay:'+(i*26)+'ms">'+
+      ch.replace('&','&amp;').replace('<','&lt;')+'</span>';
+    i++;
+  });
+  el.innerHTML=html;
+})();
+</script>
 </body>
 </html>

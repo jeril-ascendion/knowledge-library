@@ -5,12 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cloud Architecture — Ascendion Engineering</title>
   <link rel="stylesheet" href="../shared.css">
-
 </head>
 <body>
 
 <nav class="nav">
-  <a href="../index.html" class="nav-wordmark">Ascendion Engineering</a>
+  <a href="../index.html" class="nav-wordmark" id="nav-wm">Ascendion Engineering</a>
   <div class="nav-sep"></div>
   <div class="nav-links">
     <a href="../principles/index.html">Principles</a>
@@ -20,31 +19,42 @@
     <a href="../security/index.html">Security</a>
     <a href="../ai/index.html">AI-Native</a>
     <a href="../governance/index.html">Governance</a>
-    <a href="../observability/index.html">Observability</a>
   </div>
-  <a href="../index.html#all-topics" class="nav-cta">All Topics</a>
+  <a href="../index.html#topics" class="nav-cta">All Topics</a>
 </nav>
 
-<section class="hero">
-  <div class="hero-inner">
-    <div class="breadcrumb">
-      <a href="../index.html">Home</a>
-      <span class="sep">&#8250;</span>
-      <span class="curr">Cloud Architecture</span>
-    </div>
-    <div class="hero-label">cloud/</div>
-    <h1><strong>Cloud</strong><br>Architecture</h1>
-    <p class="hero-desc">Cloud architecture reference and multi-cloud deployment practices across AWS, Azure, and GCP.</p>
-    <div class="hero-meta">
-      <strong>7</strong> subsections &nbsp;·&nbsp;
-      <strong>21</strong> documents
+<section class="hero-section">
+  <div class="shell">
+    <div class="hero-section-inner">
+      <div class="hero-section-text">
+        <div class="breadcrumb"><a href="../index.html">Home</a><span class="sep">›</span><span class="curr">Cloud Architecture</span></div>
+        <div class="hero-label">cloud/</div>
+        <h1><strong>Cloud</strong><br>Architecture</h1>
+        <p class="hero-desc">Multi-cloud reference architectures across AWS, Azure, and GCP.</p>
+      </div>
+      <div class="hero-section-art"><svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes float{0%{transform:translateY(0);opacity:0}50%{opacity:0.7}100%{transform:translateY(-20px);opacity:0}}
+.d1{animation:float 2.4s 0s ease-in-out infinite}
+.d2{animation:float 2.4s 0.6s ease-in-out infinite}
+.d3{animation:float 2.4s 1.2s ease-in-out infinite}
+.d4{animation:float 2.4s 1.8s ease-in-out infinite}
+</style>
+<circle class="d1" cx="32" cy="62" r="3.5" fill="#CCCCCC"/>
+<circle class="d2" cx="52" cy="68" r="3.5" fill="#CCCCCC"/>
+<circle class="d3" cx="72" cy="62" r="3.5" fill="#CCCCCC"/>
+<circle class="d4" cx="90" cy="66" r="3" fill="#AAAAAA"/>
+<ellipse cx="50" cy="38" rx="26" ry="14" stroke="#C96330" stroke-width="1.8" fill="none"/>
+<ellipse cx="76" cy="43" rx="18" ry="12" stroke="#AAAAAA" stroke-width="1.4" fill="none"/>
+<ellipse cx="30" cy="44" rx="16" ry="11" stroke="#BBBBBB" stroke-width="1.2" fill="none"/>
+</svg></div>
     </div>
   </div>
 </section>
 
-<div class="article-list">
-  <div class="article-list-label">7 topics in this section</div>
-
+<div class="shell">
+  <div class="article-list">
+    <div class="list-label">7 topics in this section</div>
   <a href="architecture/index.html" class="article-row">
     <div>
       <div class="ar-label">cloud/architecture/</div>
@@ -101,18 +111,29 @@
     </div>
     <div class="ar-arrow">&#8594;</div>
   </a>
+  </div>
 </div>
 
 <footer class="footer">
-  <div class="footer-inner">
+  <div class="shell">
     <div class="footer-brand">Ascendion Engineering</div>
-    <div class="footer-meta">
-      cloud/ &nbsp;·&nbsp; Last updated 2025 &nbsp;·&nbsp; Ascendion Solutions Architecture Practice<br>
-      Aligned to TOGAF &nbsp;·&nbsp; NIST CSF &nbsp;·&nbsp; ISO 27001 &nbsp;·&nbsp; AWS Well-Architected
-    </div>
+    <div class="footer-meta">cloud/ &nbsp;·&nbsp; 2025 &nbsp;·&nbsp; Solutions Architecture Practice<br>TOGAF &nbsp;·&nbsp; NIST CSF &nbsp;·&nbsp; ISO 27001 &nbsp;·&nbsp; AWS Well-Architected</div>
   </div>
 </footer>
 
-<script src="../wordmark.js"></script>
+<script>
+(function(){
+  var el=document.getElementById('nav-wm');
+  if(!el)return;
+  var html='';
+  var i=0;
+  el.textContent.split('').forEach(function(ch){
+    html+='<span class="wm-char" style="animation-delay:'+(i*26)+'ms">'+
+      ch.replace('&','&amp;').replace('<','&lt;')+'</span>';
+    i++;
+  });
+  el.innerHTML=html;
+})();
+</script>
 </body>
 </html>

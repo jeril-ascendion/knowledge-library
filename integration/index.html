@@ -5,12 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Integration Architecture — Ascendion Engineering</title>
   <link rel="stylesheet" href="../shared.css">
-
 </head>
 <body>
 
 <nav class="nav">
-  <a href="../index.html" class="nav-wordmark">Ascendion Engineering</a>
+  <a href="../index.html" class="nav-wordmark" id="nav-wm">Ascendion Engineering</a>
   <div class="nav-sep"></div>
   <div class="nav-links">
     <a href="../principles/index.html">Principles</a>
@@ -20,31 +19,39 @@
     <a href="../security/index.html">Security</a>
     <a href="../ai/index.html">AI-Native</a>
     <a href="../governance/index.html">Governance</a>
-    <a href="../observability/index.html">Observability</a>
   </div>
-  <a href="../index.html#all-topics" class="nav-cta">All Topics</a>
+  <a href="../index.html#topics" class="nav-cta">All Topics</a>
 </nav>
 
-<section class="hero">
-  <div class="hero-inner">
-    <div class="breadcrumb">
-      <a href="../index.html">Home</a>
-      <span class="sep">&#8250;</span>
-      <span class="curr">Integration Architecture</span>
-    </div>
-    <div class="hero-label">integration/</div>
-    <h1><strong>Integration</strong><br>Architecture</h1>
-    <p class="hero-desc">API, event, messaging, workflow, and partner integration architecture patterns.</p>
-    <div class="hero-meta">
-      <strong>5</strong> subsections &nbsp;·&nbsp;
-      <strong>15</strong> documents
+<section class="hero-section">
+  <div class="shell">
+    <div class="hero-section-inner">
+      <div class="hero-section-text">
+        <div class="breadcrumb"><a href="../index.html">Home</a><span class="sep">›</span><span class="curr">Integration Architecture</span></div>
+        <div class="hero-label">integration/</div>
+        <h1><strong>Integration</strong><br>Architecture</h1>
+        <p class="hero-desc">API, event, messaging, workflow, and partner integration patterns.</p>
+      </div>
+      <div class="hero-section-art"><svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes pulse{0%,100%{opacity:0.2}50%{opacity:1}}
+.p1{animation:pulse 2s 0s ease-in-out infinite}
+.p2{animation:pulse 2s 0.5s ease-in-out infinite}
+.p3{animation:pulse 2s 1s ease-in-out infinite}
+</style>
+<circle cx="28" cy="45" r="22" stroke="#CCCCCC" stroke-width="1.4" fill="none"/>
+<circle cx="92" cy="45" r="22" stroke="#C96330" stroke-width="1.4" fill="none"/>
+<line class="p1" x1="50" y1="30" x2="70" y2="30" stroke="#C96330" stroke-width="2" stroke-linecap="round"/>
+<line class="p2" x1="50" y1="45" x2="70" y2="45" stroke="#C96330" stroke-width="2" stroke-linecap="round"/>
+<line class="p3" x1="50" y1="60" x2="70" y2="60" stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round"/>
+</svg></div>
     </div>
   </div>
 </section>
 
-<div class="article-list">
-  <div class="article-list-label">5 topics in this section</div>
-
+<div class="shell">
+  <div class="article-list">
+    <div class="list-label">5 topics in this section</div>
   <a href="api/index.html" class="article-row">
     <div>
       <div class="ar-label">integration/api/</div>
@@ -85,18 +92,29 @@
     </div>
     <div class="ar-arrow">&#8594;</div>
   </a>
+  </div>
 </div>
 
 <footer class="footer">
-  <div class="footer-inner">
+  <div class="shell">
     <div class="footer-brand">Ascendion Engineering</div>
-    <div class="footer-meta">
-      integration/ &nbsp;·&nbsp; Last updated 2025 &nbsp;·&nbsp; Ascendion Solutions Architecture Practice<br>
-      Aligned to TOGAF &nbsp;·&nbsp; NIST CSF &nbsp;·&nbsp; ISO 27001 &nbsp;·&nbsp; AWS Well-Architected
-    </div>
+    <div class="footer-meta">integration/ &nbsp;·&nbsp; 2025 &nbsp;·&nbsp; Solutions Architecture Practice<br>TOGAF &nbsp;·&nbsp; NIST CSF &nbsp;·&nbsp; ISO 27001 &nbsp;·&nbsp; AWS Well-Architected</div>
   </div>
 </footer>
 
-<script src="../wordmark.js"></script>
+<script>
+(function(){
+  var el=document.getElementById('nav-wm');
+  if(!el)return;
+  var html='';
+  var i=0;
+  el.textContent.split('').forEach(function(ch){
+    html+='<span class="wm-char" style="animation-delay:'+(i*26)+'ms">'+
+      ch.replace('&','&amp;').replace('<','&lt;')+'</span>';
+    i++;
+  });
+  el.innerHTML=html;
+})();
+</script>
 </body>
 </html>
