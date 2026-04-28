@@ -1,0 +1,91 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+<!--
+  Event-Driven Systems emblem.
+
+  Visual metaphor: an event fires from a source and propagates outward
+  as a wave. Subscribers at staggered distances each flash terracotta
+  as the wavefront reaches them. The producer never knows about the
+  subscribers; the subscribers never know about each other; the wave
+  carries the fact outward and each receiver decides what to do with it.
+
+  Animation: a single circle's radius animates from 0 to 50 over 3 seconds
+  while its opacity fades from 0.7 to 0 — the wave expanding and dissipating.
+  The cycle then resets (wave invisible at radius 50, snaps back to 0) and
+  repeats. Three subscriber dots at distances ~12, ~24, and ~35 from the
+  source flash terracotta when the wavefront passes them — at t≈0.72s,
+  t≈1.44s, and t≈2.10s respectively (in a 4s cycle, with 1s rest).
+
+  Motion mechanic: WAVE PROPAGATION (the twelfth mechanic in the
+  catalogue). Distinct from #9 (concentric perimeter tracing — fixed-
+  radius rings being drawn via stroke-dashoffset), which animates the
+  PATH along the ring; here the RADIUS itself grows. Distinct from
+  #1 (particle flow), which has discrete particles travelling along
+  paths; here a continuous boundary expands.
+
+  Two colours only: warm neutral (#D6D2C8) for subscribers at rest,
+  terracotta (#C96330) for the source, the expanding wave, and
+  subscribers when the wave reaches them.
+-->
+
+<!-- ─── Source: the event producer (always visible, terracotta) ─── -->
+<circle cx="60" cy="45" r="2.5" fill="#C96330"/>
+
+<!-- ─── The expanding wave ─── -->
+<!--
+  4s cycle: wave grows 0→50 over 3s while fading; rests 3-4s
+-->
+<circle cx="60" cy="45" r="0" fill="none" stroke="#C96330" stroke-width="1.5">
+  <animate attributeName="r"
+           values="0; 50; 0"
+           keyTimes="0; 0.75; 1"
+           dur="4s" repeatCount="indefinite"/>
+  <animate attributeName="opacity"
+           values="0.75; 0; 0"
+           keyTimes="0; 0.75; 1"
+           dur="4s" repeatCount="indefinite"/>
+</circle>
+
+<!-- ─── Subscriber 1: distance ~12, NE direction ─── -->
+<!-- Position: 60 + 12*cos(-45°), 45 + 12*sin(-45°) ≈ (68.5, 36.5)
+     Wave reaches it at t = 4 * 12/50 = 0.96s ≈ keyTime 0.24
+     Flash window: 0.22 to 0.26 -->
+<circle cx="68.5" cy="36.5" r="2" fill="#D6D2C8">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.20; 0.24; 0.28; 1"
+           dur="4s" repeatCount="indefinite"/>
+  <animate attributeName="r"
+           values="2; 2; 3; 2; 2"
+           keyTimes="0; 0.20; 0.24; 0.28; 1"
+           dur="4s" repeatCount="indefinite"/>
+</circle>
+
+<!-- ─── Subscriber 2: distance ~24, S direction ─── -->
+<!-- Position: 60, 69 (directly south, distance 24)
+     Wave reaches at t = 4 * 24/50 = 1.92s ≈ keyTime 0.48 -->
+<circle cx="60" cy="69" r="2" fill="#D6D2C8">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.44; 0.48; 0.52; 1"
+           dur="4s" repeatCount="indefinite"/>
+  <animate attributeName="r"
+           values="2; 2; 3; 2; 2"
+           keyTimes="0; 0.44; 0.48; 0.52; 1"
+           dur="4s" repeatCount="indefinite"/>
+</circle>
+
+<!-- ─── Subscriber 3: distance ~35, NW direction ─── -->
+<!-- Position: 60 + 35*cos(135°), 45 + 35*sin(135°) ≈ (35.3, 69.7)... that's too low.
+     Let me put NW: 60 + 35*cos(-135°), 45 + 35*sin(-135°) ≈ (35.3, 20.3)
+     Wave reaches at t = 4 * 35/50 = 2.80s ≈ keyTime 0.70 -->
+<circle cx="35.3" cy="20.3" r="2" fill="#D6D2C8">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.66; 0.70; 0.74; 1"
+           dur="4s" repeatCount="indefinite"/>
+  <animate attributeName="r"
+           values="2; 2; 3; 2; 2"
+           keyTimes="0; 0.66; 0.70; 0.74; 1"
+           dur="4s" repeatCount="indefinite"/>
+</circle>
+</svg>

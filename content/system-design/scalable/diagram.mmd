@@ -1,49 +1,106 @@
-flowchart TD
-    A([🚀 Start: Scalable Systems]) --> B[Assessment & Discovery]
+flowchart LR
 
-    B --> C{Current State\nDocumented?}
-    C -->|No| B
-    C -->|Yes| D[Apply Architecture Principles]
+    %% ─── Edge ───
+    USERS([Users / Clients])
+    EDGE[Edge<br/>rate-limit &middot; CDN]
 
-    D --> D1[Design for Change]
-    D --> D2[Least Privilege]
-    D --> D3[Observability First]
-    D --> D4[AI Augmentation Readiness]
+    %% ─── Stateless app tier (horizontal scale) ───
+    LB[Load Balancer]
+    subgraph APP [App Tier &mdash; stateless, autoscaled]
+        direction TB
+        A1[Instance 1]
+        A2[Instance 2]
+        A3[Instance N&hellip;]
+    end
 
-    D1 & D2 & D3 & D4 --> E[Select Design Patterns]
+    %% ─── Cache layer ───
+    CACHE[(Cache<br/>staleness contract &middot; stampede protection)]
 
-    E --> F{NFR Targets\nDefined?}
-    F -->|No| F1[Define NFRs in nfr/]
-    F1 --> F
-    F -->|Yes| G[Document ADRs]
+    %% ─── Async path with bounded queue ───
+    Q[/Bounded Queue<br/>backpressure to producers/]
+    subgraph WORKERS [Workers &mdash; async, scaled per-queue]
+        direction TB
+        W1[Worker 1]
+        W2[Worker 2]
+        W3[Worker N&hellip;]
+    end
 
-    G --> H[Architecture Review Board]
+    %% ─── Partitioned data tier ───
+    subgraph DATA [Data Tier &mdash; partitioned + replicated]
+        direction TB
+        DB_W[(Primary Shard&nbsp;A<br/>writes)]
+        DB_R1[(Read Replica)]
+        DB_W2[(Primary Shard&nbsp;B<br/>writes)]
+        DB_R2[(Read Replica)]
+    end
 
-    H --> I{Security\nReview Passed?}
-    I -->|No| I1[Revise Design]
-    I1 --> H
-    I -->|Yes| J{ARB\nApproval?}
+    %% ─── Capacity / observability ───
+    CAP[/Capacity Planning<br/>forecast &middot; alerts at 70%/]
 
-    J -->|Rejected| J1[Address Feedback]
-    J1 --> H
-    J -->|Approved| K[Implementation]
+    %% ─── Flow ───
+    USERS --> EDGE
+    EDGE --> LB
+    LB --> A1
+    LB --> A2
+    LB --> A3
 
-    K --> L[CI/CD Pipeline]
-    L --> L1[SAST / DAST Scan]
-    L --> L2[Architecture Lint]
-    L --> L3[NFR Validation]
+    A1 -. read.-> CACHE
+    A2 -. read.-> CACHE
+    A3 -. read.-> CACHE
+    CACHE -. miss.-> DB_R1
+    CACHE -. miss.-> DB_R2
 
-    L1 & L2 & L3 --> M{All Gates\nPassed?}
-    M -->|No| M1[Fix & Rerun]
-    M1 --> L
-    M -->|Yes| N[Deploy to Production]
+    A1 -. async work.-> Q
+    A2 -. async work.-> Q
+    A3 -. async work.-> Q
 
-    N --> O[Observability Validation]
-    O --> P[Post-Deployment Review]
-    P --> Q([✅ Governance Record Closed])
+    Q --> W1
+    Q --> W2
+    Q --> W3
 
-    style A fill:#4f8ef7,color:#fff
-    style Q fill:#10b981,color:#fff
-    style I1 fill:#fef3c7
-    style J1 fill:#fef3c7
-    style M1 fill:#fef3c7
+    A1 -.write.-> DB_W
+    A2 -.write.-> DB_W2
+    W1 -.write.-> DB_W
+    W2 -.write.-> DB_W2
+
+    DB_W  -.replication.-> DB_R1
+    DB_W2 -.replication.-> DB_R2
+
+    CAP -.monitors.-> APP
+    CAP -.monitors.-> WORKERS
+    CAP -.monitors.-> DATA
+
+    %% ─── NODE STYLES ───
+    style USERS fill:#4A90E2,stroke:#2C5F9E,stroke-width:2px,color:#FFFFFF
+    style EDGE  fill:#FBEDE0,stroke:#C96330,stroke-width:1.8px,color:#3A2410
+    style LB    fill:#FBEDE0,stroke:#A07A4A,stroke-width:1.5px,color:#3A2410
+
+    %% App tier: emphasised blue (the hot path)
+    style A1 fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+    style A2 fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+    style A3 fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+
+    %% Cache: amber
+    style CACHE fill:#FEF3C7,stroke:#C96330,stroke-width:2px,color:#5C4316
+
+    %% Queue: distinct cream
+    style Q fill:#FBEDE0,stroke:#C96330,stroke-width:2px,color:#3A2410
+
+    %% Workers: lighter blue
+    style W1 fill:#E5ECF3,stroke:#5A7A9A,stroke-width:1.5px,color:#2C4258
+    style W2 fill:#E5ECF3,stroke:#5A7A9A,stroke-width:1.5px,color:#2C4258
+    style W3 fill:#E5ECF3,stroke:#5A7A9A,stroke-width:1.5px,color:#2C4258
+
+    %% Data tier: amber
+    style DB_W  fill:#FEF3C7,stroke:#92722C,stroke-width:1.8px,color:#5C4316
+    style DB_R1 fill:#FEF8E5,stroke:#A8956A,stroke-width:1.5px,color:#5C4316
+    style DB_W2 fill:#FEF3C7,stroke:#92722C,stroke-width:1.8px,color:#5C4316
+    style DB_R2 fill:#FEF8E5,stroke:#A8956A,stroke-width:1.5px,color:#5C4316
+
+    %% Capacity planning: distinct grey
+    style CAP fill:#E8E8E2,stroke:#5C5C5C,stroke-width:1.5px,color:#2C2C2C
+
+    %% ─── CLUSTER STYLES ───
+    style APP     fill:#EDF4FC,stroke:#A8C0DD,stroke-width:1.2px,color:#1A2840
+    style WORKERS fill:#F2F4F7,stroke:#9CB0C4,stroke-width:1.2px,color:#2C4258
+    style DATA    fill:#FEF8E5,stroke:#D4C599,stroke-width:1.2px,color:#5C4316

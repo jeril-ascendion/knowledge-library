@@ -66,6 +66,33 @@ EMBLEM MOTION MECHANICS (each page must use a DISTINCT mechanic):
                            by unison reset, distinct from elastic replication's
                            oscillating waves and from sequential frame
                            illumination's pre-existing-frame highlighting)
+    system-design/edge-ai → peripheral asynchronous pulse (six edge nodes
+                           around a faint distant centre, each pulses (radius +
+                           fill) on independent staggered phases sharing the
+                           same period; parallel-independent rather than the
+                           sequential alternation of bidirectional pulsation)
+    system-design/event-driven → wave propagation (a single ring expands from
+                           a source point — radius animates 0→50 — while three
+                           subscriber dots at staggered distances flash
+                           terracotta as the wavefront reaches them; distinct
+                           from concentric perimeter tracing because the radius
+                           itself grows rather than the path being drawn along
+                           a fixed-radius circle)
+    system-design/ha-dr  → primary-standby handoff (two persistent identical
+                           rectangles; the active role's terracotta fill swaps
+                           between them periodically with two role-swap events
+                           per cycle; both shapes remain identical in geometry,
+                           only colour/role swaps; distinct from cross-fade
+                           metamorphosis where the two forms differ
+                           geometrically)
+    system-design/scalable → scaling envelope (five rectangles in a row; count
+                           of active terracotta rectangles rises 1→2→3→4→5
+                           and falls 5→4→3→2→1 across nested time intervals
+                           centred at the cycle midpoint; distinct from
+                           sequential frame illumination because multiple are
+                           active simultaneously, and from accretive
+                           composition because the envelope rises AND falls
+                           rather than monotonic-buildup-then-bulk-fade)
   Future pages must invent a new mechanic, not reuse one.
   Two colours only: warm neutral (#D6D2C8) + terracotta (#C96330).
   Basic SMIL primitives only (animate, animateTransform with type=rotate).
@@ -1127,6 +1154,16 @@ TAG_LINKS = {
     "Zero Trust Architecture": "https://csrc.nist.gov/publications/detail/sp/800-207/final",
     "GoF Design Patterns": "https://en.wikipedia.org/wiki/Design_Patterns",
     "Pattern-Oriented Software Architecture": "https://en.wikipedia.org/wiki/Pattern-Oriented_Software_Architecture",
+    "ONNX": "https://onnx.ai/",
+    "TensorFlow Lite": "https://www.tensorflow.org/lite",
+    "Federated Learning": "https://en.wikipedia.org/wiki/Federated_learning",
+    "Edge Computing": "https://en.wikipedia.org/wiki/Edge_computing",
+    "Apache Kafka": "https://kafka.apache.org/",
+    "ISO 22301": "https://en.wikipedia.org/wiki/ISO_22301",
+    "Chaos Engineering": "https://principlesofchaos.org/",
+    "AWS Well-Architected Reliability Pillar": "https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html",
+    "CAP Theorem": "https://en.wikipedia.org/wiki/CAP_theorem",
+    "Reactive Manifesto": "https://www.reactivemanifesto.org/",
 }
 
 

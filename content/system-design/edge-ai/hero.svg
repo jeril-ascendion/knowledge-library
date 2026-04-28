@@ -1,0 +1,112 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+<!--
+  Edge AI Systems emblem.
+
+  Visual metaphor: distributed inference at the periphery, with the
+  cloud as a faint, distant centre. Six edge nodes around the circumference
+  pulse INDEPENDENTLY at staggered phases — the rhythm of asynchronous
+  on-device inference, each device working on its own clock with no
+  central coordinator.
+
+  Animation: each peripheral dot's radius and fill colour pulse from
+  baseline to peak and back. All six share the same period (4s) but
+  start at different times, so the visual never settles into a single
+  beat — it always has activity somewhere on the periphery.
+
+  Motion mechanic: PERIPHERAL ASYNCHRONOUS PULSE (the eleventh mechanic
+  in the catalogue). Distinct from #8 (bidirectional pulsation between
+  two synchronised nodes with a signalling channel between them) by
+  being parallel-independent across many nodes with no channel.
+
+  Two colours only: warm neutral (#D6D2C8) at rest, terracotta (#C96330)
+  at peak. The faint centre stays warm neutral throughout — the cloud
+  is present but not active in this view.
+-->
+
+<!-- ─── Faint central cloud (the distant aggregator) ─── -->
+<circle cx="60" cy="45" r="9" fill="none" stroke="#D6D2C8" stroke-width="1" opacity="0.4"/>
+<circle cx="60" cy="45" r="1.5" fill="#D6D2C8" opacity="0.5"/>
+
+<!-- ─── 6 peripheral edge nodes at radius 28 ─── -->
+<!-- Positions at angles 0°, 60°, 120°, 180°, 240°, 300° from centre (60, 45)
+     using x = 60 + 28*cos(angle), y = 45 + 28*sin(angle) (SVG y inverted)
+     Top      (90°):  x=60,    y=17
+     Top-R    (30°):  x=84.2,  y=31
+     Bot-R    (-30°): x=84.2,  y=59
+     Bottom   (-90°): x=60,    y=73
+     Bot-L    (-150°):x=35.8,  y=59
+     Top-L    (150°): x=35.8,  y=31
+-->
+
+<!-- Node 1: Top — pulses starting at t=0s -->
+<circle cx="60" cy="17" r="3" fill="#D6D2C8">
+  <animate attributeName="r"
+           values="3; 5; 3; 3"
+           keyTimes="0; 0.05; 0.10; 1"
+           dur="4s" begin="0s" repeatCount="indefinite"/>
+  <animate attributeName="fill"
+           values="#D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.05; 0.10; 1"
+           dur="4s" begin="0s" repeatCount="indefinite"/>
+</circle>
+
+<!-- Node 2: Top-Right — pulses starting at t=0.7s -->
+<circle cx="84.2" cy="31" r="3" fill="#D6D2C8">
+  <animate attributeName="r"
+           values="3; 5; 3; 3"
+           keyTimes="0; 0.05; 0.10; 1"
+           dur="4s" begin="0.7s" repeatCount="indefinite"/>
+  <animate attributeName="fill"
+           values="#D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.05; 0.10; 1"
+           dur="4s" begin="0.7s" repeatCount="indefinite"/>
+</circle>
+
+<!-- Node 3: Bottom-Right — pulses starting at t=1.3s -->
+<circle cx="84.2" cy="59" r="3" fill="#D6D2C8">
+  <animate attributeName="r"
+           values="3; 5; 3; 3"
+           keyTimes="0; 0.05; 0.10; 1"
+           dur="4s" begin="1.3s" repeatCount="indefinite"/>
+  <animate attributeName="fill"
+           values="#D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.05; 0.10; 1"
+           dur="4s" begin="1.3s" repeatCount="indefinite"/>
+</circle>
+
+<!-- Node 4: Bottom — pulses starting at t=2.0s -->
+<circle cx="60" cy="73" r="3" fill="#D6D2C8">
+  <animate attributeName="r"
+           values="3; 5; 3; 3"
+           keyTimes="0; 0.05; 0.10; 1"
+           dur="4s" begin="2.0s" repeatCount="indefinite"/>
+  <animate attributeName="fill"
+           values="#D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.05; 0.10; 1"
+           dur="4s" begin="2.0s" repeatCount="indefinite"/>
+</circle>
+
+<!-- Node 5: Bottom-Left — pulses starting at t=2.6s -->
+<circle cx="35.8" cy="59" r="3" fill="#D6D2C8">
+  <animate attributeName="r"
+           values="3; 5; 3; 3"
+           keyTimes="0; 0.05; 0.10; 1"
+           dur="4s" begin="2.6s" repeatCount="indefinite"/>
+  <animate attributeName="fill"
+           values="#D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.05; 0.10; 1"
+           dur="4s" begin="2.6s" repeatCount="indefinite"/>
+</circle>
+
+<!-- Node 6: Top-Left — pulses starting at t=3.3s -->
+<circle cx="35.8" cy="31" r="3" fill="#D6D2C8">
+  <animate attributeName="r"
+           values="3; 5; 3; 3"
+           keyTimes="0; 0.05; 0.10; 1"
+           dur="4s" begin="3.3s" repeatCount="indefinite"/>
+  <animate attributeName="fill"
+           values="#D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.05; 0.10; 1"
+           dur="4s" begin="3.3s" repeatCount="indefinite"/>
+</circle>
+</svg>

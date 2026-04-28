@@ -1,0 +1,73 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+<!--
+  HA & DR Systems emblem.
+
+  Visual metaphor: two identical replicas, side by side. The "active"
+  role (terracotta) hands off between them periodically. Both rectangles
+  remain visible and identical in shape throughout — only the active-role
+  indicator (their fill and stroke colour) swaps. A small status dot
+  above the active replica indicates which one is currently primary.
+
+  Animation: 6-second cycle with two failover events.
+    0.0–2.5s : LEFT active (terracotta), RIGHT standby (warm neutral)
+    2.5–3.0s : LEFT fades to standby, RIGHT becomes active (failover)
+    3.0–5.5s : RIGHT active, LEFT standby
+    5.5–6.0s : RIGHT fades to standby, LEFT becomes active (failback)
+    cycle repeats
+
+  Motion mechanic: PRIMARY-STANDBY HANDOFF (the thirteenth mechanic
+  in the catalogue). Distinct from #4 (cross-fade metamorphosis)
+  because in #4 the two forms are GEOMETRICALLY DIFFERENT (monolith
+  vs grid) — here both shapes are identical in geometry and only
+  the COLOUR/ROLE swaps. Distinct from #5 (elastic replication)
+  because nothing appears or disappears; both shapes are persistent
+  throughout.
+
+  Two colours only: warm neutral (#D6D2C8) for standby, terracotta
+  (#C96330) for active.
+-->
+
+<!-- ─── LEFT replica ─── -->
+<rect x="20" y="32" width="32" height="26" rx="3" fill="#C96330" stroke="#C96330" stroke-width="1.5">
+  <animate attributeName="fill"
+           values="#C96330; #C96330; #D6D2C8; #D6D2C8; #C96330"
+           keyTimes="0; 0.42; 0.50; 0.92; 1"
+           dur="6s" repeatCount="indefinite"/>
+  <animate attributeName="stroke"
+           values="#C96330; #C96330; #B0AC9F; #B0AC9F; #C96330"
+           keyTimes="0; 0.42; 0.50; 0.92; 1"
+           dur="6s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── RIGHT replica ─── -->
+<rect x="68" y="32" width="32" height="26" rx="3" fill="#D6D2C8" stroke="#B0AC9F" stroke-width="1.5">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #C96330; #D6D2C8"
+           keyTimes="0; 0.42; 0.50; 0.92; 1"
+           dur="6s" repeatCount="indefinite"/>
+  <animate attributeName="stroke"
+           values="#B0AC9F; #B0AC9F; #C96330; #C96330; #B0AC9F"
+           keyTimes="0; 0.42; 0.50; 0.92; 1"
+           dur="6s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── Replication channel: dashed static line between the two ─── -->
+<line x1="52" y1="45" x2="68" y2="45" stroke="#A0A099" stroke-width="1" stroke-dasharray="2,2" opacity="0.5"/>
+
+<!-- ─── Active-role indicators: one dot above each replica, opacity swaps ─── -->
+<!-- Above-LEFT dot: visible while LEFT is active; fades during failover -->
+<circle cx="36" cy="22" r="2" fill="#C96330">
+  <animate attributeName="opacity"
+           values="1; 1; 0; 0; 1"
+           keyTimes="0; 0.42; 0.50; 0.92; 1"
+           dur="6s" repeatCount="indefinite"/>
+</circle>
+
+<!-- Above-RIGHT dot: visible while RIGHT is active; fades during failback -->
+<circle cx="84" cy="22" r="2" fill="#C96330">
+  <animate attributeName="opacity"
+           values="0; 0; 1; 1; 0"
+           keyTimes="0; 0.42; 0.50; 0.92; 1"
+           dur="6s" repeatCount="indefinite"/>
+</circle>
+</svg>

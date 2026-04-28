@@ -1,49 +1,60 @@
-flowchart TD
-    A([🚀 Start: Event-Driven Systems]) --> B[Assessment & Discovery]
+flowchart LR
 
-    B --> C{Current State\nDocumented?}
-    C -->|No| B
-    C -->|Yes| D[Apply Architecture Principles]
+    %% ─── Producers (don't know consumers) ───
+    subgraph PRODS [Producers &mdash; emit immutable facts]
+        direction TB
+        SVC_A[Service A]
+        SVC_B[Service B]
+        SVC_C[Service C]
+    end
 
-    D --> D1[Design for Change]
-    D --> D2[Least Privilege]
-    D --> D3[Observability First]
-    D --> D4[AI Augmentation Readiness]
+    %% ─── Event log (source of truth) ───
+    LOG[(Event Log<br/>append-only &middot; partitioned &middot; durable)]
 
-    D1 & D2 & D3 & D4 --> E[Select Design Patterns]
+    %% ─── Consumers (don't know each other) ───
+    subgraph CONS [Consumers &mdash; independent, idempotent]
+        direction TB
+        PROJ[Projection<br/>read model]
+        SEARCH[Search Indexer]
+        ANALYTICS[Analytics<br/>stream processor]
+        ALERTS[Alerting<br/>watcher]
+    end
 
-    E --> F{NFR Targets\nDefined?}
-    F -->|No| F1[Define NFRs in nfr/]
-    F1 --> F
-    F -->|Yes| G[Document ADRs]
+    %% ─── Replay (capability, not emergency) ───
+    REPLAY[/Replay Tool<br/>any offset<br/>any consumer/]
 
-    G --> H[Architecture Review Board]
+    %% ─── Producer flow ───
+    SVC_A -.OrderPlaced.-> LOG
+    SVC_B -.PaymentReceived.-> LOG
+    SVC_C -.InventoryReserved.-> LOG
 
-    H --> I{Security\nReview Passed?}
-    I -->|No| I1[Revise Design]
-    I1 --> H
-    I -->|Yes| J{ARB\nApproval?}
+    %% ─── Consumer flow ───
+    LOG --> PROJ
+    LOG --> SEARCH
+    LOG --> ANALYTICS
+    LOG --> ALERTS
 
-    J -->|Rejected| J1[Address Feedback]
-    J1 --> H
-    J -->|Approved| K[Implementation]
+    %% ─── Replay path ───
+    REPLAY -.starts at offset.-> LOG
 
-    K --> L[CI/CD Pipeline]
-    L --> L1[SAST / DAST Scan]
-    L --> L2[Architecture Lint]
-    L --> L3[NFR Validation]
+    %% ─── NODE STYLES ───
+    %% Producers: blue (the source of facts)
+    style SVC_A fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+    style SVC_B fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+    style SVC_C fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
 
-    L1 & L2 & L3 --> M{All Gates\nPassed?}
-    M -->|No| M1[Fix & Rerun]
-    M1 --> L
-    M -->|Yes| N[Deploy to Production]
+    %% Event log: emphasised cream (the source of truth)
+    style LOG fill:#FBEDE0,stroke:#C96330,stroke-width:2.5px,color:#3A2410
 
-    N --> O[Observability Validation]
-    O --> P[Post-Deployment Review]
-    P --> Q([✅ Governance Record Closed])
+    %% Consumers: amber (derived views)
+    style PROJ      fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+    style SEARCH    fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+    style ANALYTICS fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+    style ALERTS    fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
 
-    style A fill:#4f8ef7,color:#fff
-    style Q fill:#10b981,color:#fff
-    style I1 fill:#fef3c7
-    style J1 fill:#fef3c7
-    style M1 fill:#fef3c7
+    %% Replay: distinctive grey (operator capability)
+    style REPLAY fill:#E8E8E2,stroke:#5C5C5C,stroke-width:1.5px,color:#2C2C2C
+
+    %% ─── CLUSTER STYLES ───
+    style PRODS fill:#EDF4FC,stroke:#A8C0DD,stroke-width:1.2px,color:#1A2840
+    style CONS  fill:#FEF8E5,stroke:#D4C599,stroke-width:1.2px,color:#5C4316

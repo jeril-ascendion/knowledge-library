@@ -1,49 +1,73 @@
-flowchart TD
-    A([🚀 Start: HA & DR Systems]) --> B[Assessment & Discovery]
+flowchart LR
 
-    B --> C{Current State\nDocumented?}
-    C -->|No| B
-    C -->|Yes| D[Apply Architecture Principles]
+    %% ─── Users / traffic ───
+    USERS([Users / traffic])
 
-    D --> D1[Design for Change]
-    D --> D2[Least Privilege]
-    D --> D3[Observability First]
-    D --> D4[AI Augmentation Readiness]
+    %% ─── Routing layer ───
+    DNS[DNS / Global LB<br/>health-aware routing]
 
-    D1 & D2 & D3 & D4 --> E[Select Design Patterns]
+    %% ─── Primary region (HA within) ───
+    subgraph PRIMARY [Primary Region &mdash; HA: multi-AZ, automatic failover]
+        direction TB
+        LB1[Regional LB<br/>health checks]
+        APP1[App tier<br/>multi-AZ]
+        DB_PRI[(Primary DB<br/>quorum write)]
+        APP1 --> DB_PRI
+        LB1 --> APP1
+    end
 
-    E --> F{NFR Targets\nDefined?}
-    F -->|No| F1[Define NFRs in nfr/]
-    F1 --> F
-    F -->|Yes| G[Document ADRs]
+    %% ─── Secondary region (DR target) ───
+    subgraph SECONDARY [Secondary Region &mdash; DR: async replicated, runbook failover]
+        direction TB
+        LB2[Regional LB<br/>warm standby]
+        APP2[App tier<br/>warm standby]
+        DB_SEC[(DR Replica<br/>async, RPO bounded)]
+        APP2 --> DB_SEC
+        LB2 --> APP2
+    end
 
-    G --> H[Architecture Review Board]
+    %% ─── Immutable backups (separate from replication) ───
+    BACKUP[(Immutable Backup<br/>cross-region, retention enforced)]
 
-    H --> I{Security\nReview Passed?}
-    I -->|No| I1[Revise Design]
-    I1 --> H
-    I -->|Yes| J{ARB\nApproval?}
+    %% ─── Runbook layer ───
+    RUNBOOK[/Runbooks &middot; Game Days<br/>rehearsed recovery/]
 
-    J -->|Rejected| J1[Address Feedback]
-    J1 --> H
-    J -->|Approved| K[Implementation]
+    %% ─── Traffic flow ───
+    USERS --> DNS
+    DNS --> LB1
+    DNS -.DR cutover.-> LB2
 
-    K --> L[CI/CD Pipeline]
-    L --> L1[SAST / DAST Scan]
-    L --> L2[Architecture Lint]
-    L --> L3[NFR Validation]
+    %% ─── Replication ───
+    DB_PRI -.async replication<br/>RPO &lt; 5min.-> DB_SEC
 
-    L1 & L2 & L3 --> M{All Gates\nPassed?}
-    M -->|No| M1[Fix & Rerun]
-    M1 --> L
-    M -->|Yes| N[Deploy to Production]
+    %% ─── Backup ───
+    DB_PRI --> BACKUP
+    BACKUP -.restore on disaster.-> DB_SEC
 
-    N --> O[Observability Validation]
-    O --> P[Post-Deployment Review]
-    P --> Q([✅ Governance Record Closed])
+    %% ─── Runbook drives DR ───
+    RUNBOOK -.triggers / verifies.-> DNS
+    RUNBOOK -.triggers / verifies.-> LB2
 
-    style A fill:#4f8ef7,color:#fff
-    style Q fill:#10b981,color:#fff
-    style I1 fill:#fef3c7
-    style J1 fill:#fef3c7
-    style M1 fill:#fef3c7
+    %% ─── NODE STYLES ───
+    style USERS fill:#4A90E2,stroke:#2C5F9E,stroke-width:2px,color:#FFFFFF
+    style DNS   fill:#FBEDE0,stroke:#C96330,stroke-width:2px,color:#3A2410
+
+    %% Primary: emphasised blue (active production)
+    style LB1    fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+    style APP1   fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+    style DB_PRI fill:#DCEAFC,stroke:#2C5F9E,stroke-width:2.2px,color:#1A2840
+
+    %% Secondary: cooler grey-blue (warm but inactive)
+    style LB2    fill:#E5ECF3,stroke:#5A7A9A,stroke-width:1.5px,color:#2C4258
+    style APP2   fill:#E5ECF3,stroke:#5A7A9A,stroke-width:1.5px,color:#2C4258
+    style DB_SEC fill:#E5ECF3,stroke:#5A7A9A,stroke-width:1.8px,color:#2C4258
+
+    %% Backup: amber (durable archive)
+    style BACKUP fill:#FEF3C7,stroke:#92722C,stroke-width:1.8px,color:#5C4316
+
+    %% Runbook: distinct grey (operator capability)
+    style RUNBOOK fill:#E8E8E2,stroke:#5C5C5C,stroke-width:1.5px,color:#2C2C2C
+
+    %% ─── CLUSTER STYLES ───
+    style PRIMARY   fill:#EDF4FC,stroke:#A8C0DD,stroke-width:1.4px,color:#1A2840
+    style SECONDARY fill:#F2F4F7,stroke:#9CB0C4,stroke-width:1.2px,color:#2C4258

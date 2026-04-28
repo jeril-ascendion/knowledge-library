@@ -1,0 +1,94 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+<!--
+  Scalable Systems emblem.
+
+  Visual metaphor: capacity rising and falling with load. Five rectangles
+  in a horizontal row, all persistent. The count of "active" (terracotta)
+  rectangles grows from 1 to 5 as load builds, then falls back from 5
+  to 1 as load drains. The total active count traces a triangular
+  envelope across the 8-second cycle.
+
+  Animation per rectangle: fill colour swaps between warm neutral
+  (standby) and terracotta (active) within nested time windows centred
+  at t=4s (peak). Rect 1 (leftmost) is always active, anchoring the
+  baseline. Rect 5 (rightmost) is active only during the brief peak.
+
+    Rect 1: active 0.0 → 8.0s  (always)
+    Rect 2: active 0.8 → 7.2s
+    Rect 3: active 1.6 → 6.4s
+    Rect 4: active 2.4 → 5.6s
+    Rect 5: active 3.2 → 4.8s
+
+  The pattern is nested intervals around t=4s: outer rects span more
+  of the cycle, inner rects span less. The visual: load rises, more
+  capacity activates; load falls, capacity deactivates in reverse
+  order. The count of active rectangles is at all times a triangular
+  function of t.
+
+  Motion mechanic: SCALING ENVELOPE (the fourteenth mechanic in the
+  catalogue). Distinct from #6 (sequential single-frame highlight)
+  because here multiple rects are highlighted simultaneously, with
+  the count rising and falling across the cycle. Distinct from #10
+  (accretive composition with monotonic buildup + bulk fade) because
+  this rises AND falls — and rectangles deactivate one at a time
+  in reverse order, not all at once.
+
+  Two colours only: warm neutral (#D6D2C8) for standby, terracotta
+  (#C96330) for active.
+-->
+
+<!-- ─── Layout: 5 rectangles in a horizontal row ─── -->
+<!-- Each rect: 14 wide, 26 tall. Gap: 4. Total row width: 5*14 + 4*4 = 86.
+     Centred at x=60: row spans x=17 to x=103. -->
+
+<!-- ─── Rect 1 (always active) ─── -->
+<rect x="17" y="32" width="14" height="26" rx="2" fill="#C96330" stroke="#C96330" stroke-width="1"/>
+
+<!-- ─── Rect 2 (active 0.8 → 7.2s; keyTimes 0.10 → 0.90) ─── -->
+<rect x="35" y="32" width="14" height="26" rx="2" fill="#D6D2C8" stroke="#B0AC9F" stroke-width="1">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.10; 0.12; 0.88; 0.90; 1"
+           dur="8s" repeatCount="indefinite"/>
+  <animate attributeName="stroke"
+           values="#B0AC9F; #B0AC9F; #C96330; #C96330; #B0AC9F; #B0AC9F"
+           keyTimes="0; 0.10; 0.12; 0.88; 0.90; 1"
+           dur="8s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── Rect 3 (active 1.6 → 6.4s; keyTimes 0.20 → 0.80) ─── -->
+<rect x="53" y="32" width="14" height="26" rx="2" fill="#D6D2C8" stroke="#B0AC9F" stroke-width="1">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.20; 0.22; 0.78; 0.80; 1"
+           dur="8s" repeatCount="indefinite"/>
+  <animate attributeName="stroke"
+           values="#B0AC9F; #B0AC9F; #C96330; #C96330; #B0AC9F; #B0AC9F"
+           keyTimes="0; 0.20; 0.22; 0.78; 0.80; 1"
+           dur="8s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── Rect 4 (active 2.4 → 5.6s; keyTimes 0.30 → 0.70) ─── -->
+<rect x="71" y="32" width="14" height="26" rx="2" fill="#D6D2C8" stroke="#B0AC9F" stroke-width="1">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.30; 0.32; 0.68; 0.70; 1"
+           dur="8s" repeatCount="indefinite"/>
+  <animate attributeName="stroke"
+           values="#B0AC9F; #B0AC9F; #C96330; #C96330; #B0AC9F; #B0AC9F"
+           keyTimes="0; 0.30; 0.32; 0.68; 0.70; 1"
+           dur="8s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── Rect 5 (active 3.2 → 4.8s; keyTimes 0.40 → 0.60) ─── -->
+<rect x="89" y="32" width="14" height="26" rx="2" fill="#D6D2C8" stroke="#B0AC9F" stroke-width="1">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.40; 0.42; 0.58; 0.60; 1"
+           dur="8s" repeatCount="indefinite"/>
+  <animate attributeName="stroke"
+           values="#B0AC9F; #B0AC9F; #C96330; #C96330; #B0AC9F; #B0AC9F"
+           keyTimes="0; 0.40; 0.42; 0.58; 0.60; 1"
+           dur="8s" repeatCount="indefinite"/>
+</rect>
+</svg>

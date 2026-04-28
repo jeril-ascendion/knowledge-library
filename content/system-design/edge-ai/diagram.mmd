@@ -1,49 +1,63 @@
-flowchart TD
-    A([🚀 Start: Edge AI Systems]) --> B[Assessment & Discovery]
+flowchart LR
 
-    B --> C{Current State\nDocumented?}
-    C -->|No| B
-    C -->|Yes| D[Apply Architecture Principles]
+    %% ─── Edge devices (where data and inference live) ───
+    subgraph EDGE [Edge &mdash; devices, local inference]
+        direction TB
+        DEV1[Device A<br/>compressed model]
+        DEV2[Device B<br/>compressed model]
+        DEV3[Device C<br/>compressed model]
+    end
 
-    D --> D1[Design for Change]
-    D --> D2[Least Privilege]
-    D --> D3[Observability First]
-    D --> D4[AI Augmentation Readiness]
+    %% ─── Sync channel (carrying minimum necessary upstream) ───
+    SYNC[Sync Channel<br/>telemetry &middot; anomalies &middot; gradients]
 
-    D1 & D2 & D3 & D4 --> E[Select Design Patterns]
+    %% ─── Cloud side (training and orchestration) ───
+    subgraph CLOUD [Cloud &mdash; training, orchestration, OTA]
+        direction TB
+        AGG[Aggregator<br/>federated training &middot; drift detection]
+        TRAIN[Training Pipeline<br/>next-gen model]
+        OTA[OTA Distribution<br/>staged rollout]
+    end
 
-    E --> F{NFR Targets\nDefined?}
-    F -->|No| F1[Define NFRs in nfr/]
-    F1 --> F
-    F -->|Yes| G[Document ADRs]
+    %% ─── User-facing data (stays at edge) ───
+    DATA([User Data<br/>stays on device])
 
-    G --> H[Architecture Review Board]
+    %% ─── Local inference flow ───
+    DATA --> DEV1
+    DATA --> DEV2
+    DATA --> DEV3
 
-    H --> I{Security\nReview Passed?}
-    I -->|No| I1[Revise Design]
-    I1 --> H
-    I -->|Yes| J{ARB\nApproval?}
+    %% ─── Upstream: minimum necessary ───
+    DEV1 -.telemetry.-> SYNC
+    DEV2 -.telemetry.-> SYNC
+    DEV3 -.telemetry.-> SYNC
+    SYNC --> AGG
 
-    J -->|Rejected| J1[Address Feedback]
-    J1 --> H
-    J -->|Approved| K[Implementation]
+    %% ─── Cloud-side processing ───
+    AGG --> TRAIN
+    TRAIN --> OTA
 
-    K --> L[CI/CD Pipeline]
-    L --> L1[SAST / DAST Scan]
-    L --> L2[Architecture Lint]
-    L --> L3[NFR Validation]
+    %% ─── Downstream: model updates ───
+    OTA -.compressed model.-> DEV1
+    OTA -.compressed model.-> DEV2
+    OTA -.compressed model.-> DEV3
 
-    L1 & L2 & L3 --> M{All Gates\nPassed?}
-    M -->|No| M1[Fix & Rerun]
-    M1 --> L
-    M -->|Yes| N[Deploy to Production]
+    %% ─── NODE STYLES ───
+    style DATA fill:#4A90E2,stroke:#2C5F9E,stroke-width:2px,color:#FFFFFF
 
-    N --> O[Observability Validation]
-    O --> P[Post-Deployment Review]
-    P --> Q([✅ Governance Record Closed])
+    %% Edge devices: emphasised blue (the inference site)
+    style DEV1 fill:#DCEAFC,stroke:#2C5F9E,stroke-width:2.2px,color:#1A2840
+    style DEV2 fill:#DCEAFC,stroke:#2C5F9E,stroke-width:2.2px,color:#1A2840
+    style DEV3 fill:#DCEAFC,stroke:#2C5F9E,stroke-width:2.2px,color:#1A2840
 
-    style A fill:#4f8ef7,color:#fff
-    style Q fill:#10b981,color:#fff
-    style I1 fill:#fef3c7
-    style J1 fill:#fef3c7
-    style M1 fill:#fef3c7
+    %% Sync channel: cream (the constrained pipe)
+    style SYNC fill:#FBEDE0,stroke:#C96330,stroke-width:2px,color:#3A2410
+
+    %% Cloud-side: amber (training and orchestration)
+    style AGG   fill:#FEF3C7,stroke:#92722C,stroke-width:1.8px,color:#5C4316
+    style TRAIN fill:#FEF3C7,stroke:#92722C,stroke-width:1.8px,color:#5C4316
+    style OTA   fill:#FEF3C7,stroke:#C96330,stroke-width:2px,color:#5C4316
+
+    %% ─── CLUSTER STYLES ───
+    style EDGE  fill:#EDF4FC,stroke:#A8C0DD,stroke-width:1.2px,color:#1A2840
+    style CLOUD fill:#FEF8E5,stroke:#D4C599,stroke-width:1.2px,color:#5C4316
