@@ -620,6 +620,12 @@ SHORT_DESC = {
     ("ai-native", "rag"):          "Retrieval-Augmented Generation as architecture: chunking, hybrid retrieval, embedding choice, citation provenance, and multi-axis evaluation.",
     ("ai-native", "security"):     "AI threat surface: prompt injection, training-data poisoning, model extraction, jailbreaks, and agent capability boundaries.",
 
+    ("observability", "incident-response"): "Incident command, severity classification, mitigation-before-root-cause, communication patterns, and the blameless post-incident learning loop.",
+    ("observability", "logs"):              "Structured logging as architectural primitive: log levels as interface contract, sampling at scale, PII redaction at source, correlation propagation, retention as economic choice.",
+    ("observability", "metrics"):           "Aggregation-based observability: cardinality cost, RED/USE methods, counter/gauge/histogram type selection, percentile computation, alert design.",
+    ("observability", "sli-slo"):           "Service Level Indicators as ratios of good-to-valid events, SLO calibration, error budget policy, multi-window multi-burn-rate alerting, the SLI-SLO-SLA chain.",
+    ("observability", "traces"):            "Cross-service causality: context propagation, head-vs-tail sampling, span attribute design, service maps as architectural deliverables, the metrics-logs-traces correlation.",
+
     ("technology", "ui-ux-cx"):          "Frontend frameworks (React, Angular, Vue), UX laws, and customer-experience architecture.",
     ("technology", "api-backend"):       "Backend stacks (Java/Spring, Node.js, Python) and API design and delivery patterns.",
     ("technology", "databases"):         "Database choices across SQL, NoSQL, document, key-value, graph, time-series, and vector.",

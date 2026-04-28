@@ -1,49 +1,83 @@
-flowchart TD
-    A([🚀 Start: SLIs & SLOs]) --> B[Assessment & Discovery]
+flowchart LR
 
-    B --> C{Current State\nDocumented?}
-    C -->|No| B
-    C -->|Yes| D[Apply Architecture Principles]
+    %% ─── Telemetry ───
+    USERS([User Requests])
+    TELEMETRY[(Production Telemetry<br/>request outcomes<br/>latency distribution)]
 
-    D --> D1[Design for Change]
-    D --> D2[Least Privilege]
-    D --> D3[Observability First]
-    D --> D4[AI Augmentation Readiness]
+    %% ─── SLI / SLO core ───
+    subgraph CORE [Reliability Engineering Core]
+        direction TB
+        SLI[SLI<br/>good events / valid events<br/>over window W]
+        SLO[SLO Target<br/>e.g. 99.9% over 28d<br/>documented commitment]
+        BUDGET[Error Budget<br/>1 - SLO times window<br/>- consumed]
+    end
 
-    D1 & D2 & D3 & D4 --> E[Select Design Patterns]
+    %% ─── Burn-rate alerting ───
+    subgraph ALERTS [Multi-Window Multi-Burn-Rate Alerts]
+        direction TB
+        FAST[Fast Burn<br/>14.4x over 1h<br/>page on-call]
+        MEDIUM[Medium Burn<br/>6x over 6h<br/>ticket]
+        SLOW[Slow Burn<br/>3x over 24h<br/>monitor]
+    end
 
-    E --> F{NFR Targets\nDefined?}
-    F -->|No| F1[Define NFRs in nfr/]
-    F1 --> F
-    F -->|Yes| G[Document ADRs]
+    %% ─── Policy ───
+    POLICY{Error Budget Policy<br/>enforceable rules}
 
-    G --> H[Architecture Review Board]
+    %% ─── Engineering decisions ───
+    subgraph DECISIONS [Engineering Decisions]
+        direction TB
+        SHIP[Feature Velocity<br/>budget intact &rArr; ship]
+        DEFER[Feature Defer<br/>budget burning &rArr; reliability work]
+        FREEZE[Feature Freeze<br/>budget exhausted &rArr; reliability only]
+    end
 
-    H --> I{Security\nReview Passed?}
-    I -->|No| I1[Revise Design]
-    I1 --> H
-    I -->|Yes| J{ARB\nApproval?}
+    %% ─── Calibration loop ───
+    CALIBRATE{Quarterly Review<br/>tighten / loosen<br/>per observed performance}
 
-    J -->|Rejected| J1[Address Feedback]
-    J1 --> H
-    J -->|Approved| K[Implementation]
+    %% ─── Flow ───
+    USERS --> TELEMETRY
+    TELEMETRY --> SLI
+    SLI -.compared to.-> SLO
+    SLO --> BUDGET
+    SLI --> BUDGET
+    BUDGET --> ALERTS
+    BUDGET --> POLICY
 
-    K --> L[CI/CD Pipeline]
-    L --> L1[SAST / DAST Scan]
-    L --> L2[Architecture Lint]
-    L --> L3[NFR Validation]
+    POLICY -->|budget intact| SHIP
+    POLICY -->|burning| DEFER
+    POLICY -->|exhausted| FREEZE
 
-    L1 & L2 & L3 --> M{All Gates\nPassed?}
-    M -->|No| M1[Fix & Rerun]
-    M1 --> L
-    M -->|Yes| N[Deploy to Production]
+    %% Calibration feedback
+    SLI -.signal.-> CALIBRATE
+    POLICY -.invocation history.-> CALIBRATE
+    CALIBRATE -.adjusts.-> SLO
 
-    N --> O[Observability Validation]
-    O --> P[Post-Deployment Review]
-    P --> Q([✅ Governance Record Closed])
+    %% ─── NODE STYLES ───
+    style USERS     fill:#4A90E2,stroke:#2C5F9E,stroke-width:2px,color:#FFFFFF
+    style TELEMETRY fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
 
-    style A fill:#4f8ef7,color:#fff
-    style Q fill:#10b981,color:#fff
-    style I1 fill:#fef3c7
-    style J1 fill:#fef3c7
-    style M1 fill:#fef3c7
+    %% Core constructs: emphasised cream
+    style SLI    fill:#FBEDE0,stroke:#C96330,stroke-width:1.8px,color:#3A2410
+    style SLO    fill:#FBEDE0,stroke:#C96330,stroke-width:2.2px,color:#3A2410
+    style BUDGET fill:#FBEDE0,stroke:#C96330,stroke-width:2.5px,color:#3A2410
+
+    %% Alerts: amber gradient (urgency)
+    style FAST   fill:#FBEDE0,stroke:#C96330,stroke-width:2px,color:#3A2410
+    style MEDIUM fill:#FEF3C7,stroke:#92722C,stroke-width:1.8px,color:#5C4316
+    style SLOW   fill:#FEF8E5,stroke:#A8956A,stroke-width:1.5px,color:#5C4316
+
+    %% Policy: emphasised (the architectural rule)
+    style POLICY fill:#FBEDE0,stroke:#C96330,stroke-width:2.5px,color:#3A2410
+
+    %% Decisions: gradient by urgency
+    style SHIP   fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.5px,color:#1A2840
+    style DEFER  fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+    style FREEZE fill:#F4E5DD,stroke:#A37050,stroke-width:1.8px,color:#3A2410
+
+    %% Calibration: cooler tone (the meta-loop)
+    style CALIBRATE fill:#E5ECF3,stroke:#5A7A9A,stroke-width:1.8px,color:#2C4258
+
+    %% ─── CLUSTER STYLES ───
+    style CORE      fill:#FEF1E6,stroke:#D4A87A,stroke-width:1.4px,color:#3A2410
+    style ALERTS    fill:#FEF8E5,stroke:#D4C599,stroke-width:1.2px,color:#5C4316
+    style DECISIONS fill:#EDF4FC,stroke:#A8C0DD,stroke-width:1.2px,color:#1A2840

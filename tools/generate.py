@@ -379,6 +379,133 @@ EMBLEM MOTION MECHANICS (each page must use a DISTINCT mechanic):
                            variation; distinct from progressive
                            threshold fill which is a single growing
                            region — here five independent oscillators)
+    observability/incident-response → incident spike pattern (five
+                           horizontal service lanes drawn in warm neutral
+                           are always visible, representing services in
+                           steady-state; over an 8-second cycle the canvas
+                           is mostly QUIET, then the MIDDLE lane spikes
+                           to BRIGHT terracotta from t=1.5s, the
+                           ADJACENT lanes (above and below) light to
+                           DIMMER terracotta from t=2.0s representing
+                           impact spread, the middle lane oscillates
+                           briefly between bright and dim terracotta
+                           from t=3.0s representing active response work,
+                           all lanes return to warm neutral at t=5.0s,
+                           and the cycle holds quiet through t=8.0s
+                           before restarting; punctuated multi-lane
+                           spike pattern with a mostly-quiet duty cycle;
+                           distinct from #6 sequential frame illumination
+                           which has a SINGLE row with frames taking
+                           TURNS one at a time — here MULTIPLE lanes
+                           with PUNCTUATED single-lane spike PLUS
+                           ADJACENT IMPACT SPREAD, mostly quiet duty
+                           cycle; distinct from #34 tiered escalation
+                           cascade which has VARIABLE upward cascade
+                           depth across tiers — here HORIZONTAL multi-
+                           lane PUNCTUATED disturbance with adjacency
+                           spread, NOT cascade-up tiers)
+    observability/logs   → log tail scroll (six horizontal log-line
+                           rectangles of slightly varied widths at six
+                           vertical slot positions y=22/32/42/52/62/72;
+                           over a 6-second cycle, all lines shift UPWARD
+                           by one slot per second, with the line at
+                           bottom slot (y=72) being freshly bright
+                           terracotta and the line at top slot (y=22)
+                           being faded warm neutral about to exit;
+                           continuous bottom-to-top scroll like tail -f
+                           on a log file, with new lines appearing at
+                           the bottom and oldest exiting through the
+                           top; distinct from #29 rolling time-series
+                           window which has a SINGLE HORIZONTAL flow
+                           with FIFO replacement, dots TRAVELING RIGHT
+                           TO LEFT — here VERTICAL bottom-to-top scroll
+                           of discrete log-line shapes at SIX simultaneous
+                           slot positions; distinct from #23 sedimentation
+                           stacking which has items FALL VERTICALLY from
+                           top and ACCUMULATE PERMANENTLY at floor —
+                           here CONTINUOUS scroll where items appear at
+                           BOTTOM, exit at TOP, and never accumulate)
+    observability/metrics → sweeping gauge needle (a 180-degree dial arc
+                           drawn in warm neutral spans the upper half
+                           of the canvas with centre pivot at (60, 65)
+                           and radius 35, with five tick marks at 0°,
+                           45°, 90°, 135°, 180°; a terracotta needle
+                           rotates around the pivot using
+                           animateTransform type=rotate over a 4-second
+                           cycle, oscillating across rotation values
+                           "-70; -30; 20; 60; 20; -30; -70" — sweeping
+                           from low position (left) through medium (top)
+                           to high (right) and back, like a metric
+                           gauge showing values changing over time;
+                           FIRST ROTATIONAL mechanic in the catalogue —
+                           uses animateTransform type=rotate, distinct
+                           from all 37 prior mechanics that use
+                           translation, scale, or opacity changes;
+                           distinct from #21 reciprocating arc which
+                           uses ARCS as visual elements with
+                           ZONE-CYCLING perimeter highlighting (the
+                           arcs themselves don't rotate; the highlight
+                           cycles through perimeter zones) — here a
+                           SINGLE NEEDLE element ROTATES inside a
+                           STATIC arc backdrop)
+    observability/sli-slo → SLO compliance scatter (a horizontal
+                           threshold line in warm neutral spans the
+                           middle of the canvas at y=45 with dashed
+                           stroke; eight discrete dots are placed at
+                           fixed (x, y) positions across the canvas,
+                           four BELOW the threshold (compliant —
+                           coloured warm neutral) and four ABOVE the
+                           threshold (SLO violations — coloured
+                           terracotta); each dot has its own 8-second
+                           lifetime cycle with staggered phase offsets,
+                           appearing for ~4 seconds then fading,
+                           producing continuous turnover with several
+                           dots visible at any moment; the spatial
+                           pattern reveals compliance at a glance —
+                           which side of the threshold each dot sits
+                           on; distinct from #29 rolling time-series
+                           window which has CONTINUOUS HORIZONTAL flow
+                           with FIFO replacement, dots TRAVELING RIGHT
+                           TO LEFT — here STATIC threshold line as
+                           architectural element + STATIONARY discrete
+                           plots at fixed positions + COLOUR CODED by
+                           which side of threshold; distinct from #1
+                           particle flow which has RADIAL CENTRIPETAL
+                           convergence to a centre — here scattered
+                           DISCRETE plots in 2D space without
+                           convergence motion, position relative to
+                           threshold being the architectural reading)
+    observability/traces → waterfall trace (five horizontal terracotta
+                           bars at five different vertical positions
+                           y=20/32/44/56/68, each bar at a different
+                           x-offset and length representing a parent-
+                           child span hierarchy: root span at top
+                           spans full width x=15-95 (length 80), child
+                           span offset right and shorter x=22-80
+                           (length 58), grandchild deeper x=28-65
+                           (length 37), sibling parallel branch x=70-88
+                           (length 18), leaf span deepest x=32-52
+                           (length 20); over a 5-second cycle, bars
+                           appear in waterfall cascade order — root at
+                           t=0.2s, child at t=0.5s, grandchild at
+                           t=0.8s, sibling at t=0.9s, leaf at t=1.1s —
+                           all hold visible for ~3 seconds, then fade
+                           together at t=4.5s, brief pause, restart;
+                           the visual is a true hierarchical span
+                           tree captured as a waterfall view; distinct
+                           from #34 tiered escalation cascade which
+                           has THREE TIERS each with THREE ALIGNED
+                           DOTS where dots within a tier light TOGETHER
+                           with variable cascade depth — here FIVE
+                           ROWS each a DIFFERENT-LENGTH BAR at
+                           DIFFERENT X-OFFSET, true hierarchical span
+                           visualisation; distinct from #28 disparate-
+                           rate progression which has TWO HORIZONTAL
+                           bars FILLING LEFT-TO-RIGHT MONOTONICALLY at
+                           different rates and resetting — here
+                           multiple bars APPEARING WHOLE in cascade
+                           order, no fill animation, hierarchical
+                           position not sequential rate)
   Future pages must invent a new mechanic, not reuse one.
   Two colours only: warm neutral (#D6D2C8) + terracotta (#C96330).
   Basic SMIL primitives only (animate, animateTransform with type=rotate).
@@ -464,7 +591,7 @@ SECTIONS = {
     "nfr":           ("Non-Functional Requirements",          "Performance, availability, scalability, and security NFR evaluation."),
     "data":          ("Data Architecture",                    "Data modeling, governance, lineage, mesh patterns, and analytics."),
     "integration":   ("Integration Architecture",             "API, event, messaging, workflow, and partner integration patterns."),
-    "observability": ("Observability",                        "Metrics, traces, logging, SLIs/SLOs, and SRE operational practices."),
+    "observability": ("Observability",                        "The foundational observability primitives — incident response, structured logging, metrics, SLIs/SLOs, and distributed tracing — that any production system depends on, separate from AI-specific monitoring."),
     "tools":         ("Architecture Tooling",                 "Automation, validation, and architecture-as-code tooling."),
     "checklists":    ("Review Checklists",                    "Architecture, security, and deployment readiness checklists."),
     "runbooks":      ("Operational Runbooks",                 "Incident response, rollback, and migration runbooks."),
@@ -1630,6 +1757,37 @@ TAG_LINKS = {
     "Apache Project Governance": "https://www.apache.org/foundation/how-it-works.html",
     "Kubernetes Governance": "https://kubernetes.io/community/",
     "RACI Matrix (Wikipedia)": "https://en.wikipedia.org/wiki/Responsibility_assignment_matrix",
+    # Observability — SRE foundations
+    "Google SRE Book": "https://sre.google/sre-book/table-of-contents/",
+    "Google SRE Workbook": "https://sre.google/workbook/table-of-contents/",
+    "Prometheus": "https://prometheus.io/",
+    "Grafana": "https://grafana.com/",
+    "OpenTelemetry": "https://opentelemetry.io/",
+    "Jaeger": "https://www.jaegertracing.io/",
+    "Zipkin": "https://zipkin.io/",
+    "Honeycomb": "https://www.honeycomb.io/",
+    "ELK Stack (Elastic)": "https://www.elastic.co/elastic-stack/",
+    "Datadog": "https://www.datadoghq.com/",
+    # Observability — methods
+    "RED Method (Tom Wilkie)": "https://www.weave.works/blog/the-red-method-key-metrics-for-microservices-architecture/",
+    "USE Method (Brendan Gregg)": "https://www.brendangregg.com/usemethod.html",
+    "The Four Golden Signals (Google SRE)": "https://sre.google/sre-book/monitoring-distributed-systems/",
+    "Multi-Window Multi-Burn-Rate Alerts (Google SRE)": "https://sre.google/workbook/alerting-on-slos/",
+    "Service Level Objectives (Alex Hidalgo)": "https://www.oreilly.com/library/view/implementing-service-level/9781492076803/",
+    "Charity Majors on Observability": "https://charity.wtf/",
+    "PagerDuty Incident Response": "https://response.pagerduty.com/",
+    "Atlassian Incident Handbook": "https://www.atlassian.com/incident-management/handbook",
+    "Postmortem (Wikipedia)": "https://en.wikipedia.org/wiki/Postmortem_documentation",
+    "HDR Histogram": "https://github.com/HdrHistogram/HdrHistogram",
+    "T-Digest (Dunning)": "https://github.com/tdunning/t-digest",
+    "OpenTelemetry Sampling": "https://opentelemetry.io/docs/concepts/sampling/",
+    "Distributed Tracing in Practice (Parker et al.)": "https://www.oreilly.com/library/view/distributed-tracing-in/9781492056621/",
+    "Brendan Gregg Performance Tools": "https://www.brendangregg.com/perf.html",
+    "W3C Trace Context": "https://www.w3.org/TR/trace-context/",
+    "Allspaw — Blameless Postmortems": "https://www.etsy.com/codeascraft/blameless-postmortems",
+    "Distributed Systems Observability (Cindy Sridharan)": "https://www.oreilly.com/library/view/distributed-systems-observability/9781492033431/",
+    "Error Budget Policy (Google SRE)": "https://sre.google/workbook/error-budget-policy/",
+    "ITIL Incident Management": "https://www.axelos.com/certifications/propath/itil-4",
 }
 
 

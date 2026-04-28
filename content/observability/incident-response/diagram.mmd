@@ -1,49 +1,104 @@
-flowchart TD
-    A([🚀 Start: Incident Response]) --> B[Assessment & Discovery]
+flowchart TB
 
-    B --> C{Current State\nDocumented?}
-    C -->|No| B
-    C -->|Yes| D[Apply Architecture Principles]
+    %% ─── Detection layer ───
+    subgraph DETECT [Detection Layer]
+        direction TB
+        SIGNALS[(Detection Signals<br/>metrics &middot; logs &middot; traces<br/>synthetic &middot; user reports)]
+        ALERT_RT[Alerting Router<br/>dedup &middot; correlation<br/>consolidation]
+    end
 
-    D --> D1[Design for Change]
-    D --> D2[Least Privilege]
-    D --> D3[Observability First]
-    D --> D4[AI Augmentation Readiness]
+    %% ─── Severity classification ───
+    SEV{Severity<br/>Classification}
 
-    D1 & D2 & D3 & D4 --> E[Select Design Patterns]
+    %% ─── Differentiated response ───
+    subgraph RESPONSES [Differentiated Response Patterns]
+        direction TB
+        SEV1[Sev1 / Critical<br/>page on-call<br/>incident commander<br/>customer status]
+        SEV2[Sev2 / High<br/>paged within SLA<br/>internal coordination]
+        SEV3[Sev3 / Medium<br/>ticketed<br/>business-hours]
+    end
 
-    E --> F{NFR Targets\nDefined?}
-    F -->|No| F1[Define NFRs in nfr/]
-    F1 --> F
-    F -->|Yes| G[Document ADRs]
+    %% ─── Coordination roles ───
+    subgraph ROLES [Coordination Roles]
+        direction LR
+        IC[Incident Commander<br/>decides priorities]
+        OPS[Operations Lead<br/>investigates]
+        COMMS[Communications Lead<br/>handles updates]
+        SCRIBE[Scribe<br/>maintains timeline]
+    end
 
-    G --> H[Architecture Review Board]
+    %% ─── Resolution ───
+    AUTO[Automated Recovery<br/>frequent deterministic actions]
+    RUNBOOK[Prose Runbook<br/>judgment-requiring actions]
+    RESOLVE([Incident Resolved])
 
-    H --> I{Security\nReview Passed?}
-    I -->|No| I1[Revise Design]
-    I1 --> H
-    I -->|Yes| J{ARB\nApproval?}
+    %% ─── Post-incident ───
+    subgraph LEARN [Learning Loop]
+        direction TB
+        POSTMORTEM[Blameless Post-Mortem<br/>timeline &middot; analysis &middot; actions]
+        ACTIONS[(Action Items<br/>tracked in eng system<br/>through completion)]
+    end
 
-    J -->|Rejected| J1[Address Feedback]
-    J1 --> H
-    J -->|Approved| K[Implementation]
+    %% ─── Metrics ───
+    METRICS[/MTTD &middot; MTTR<br/>frequency by severity<br/>repeat-class rate/]
 
-    K --> L[CI/CD Pipeline]
-    L --> L1[SAST / DAST Scan]
-    L --> L2[Architecture Lint]
-    L --> L3[NFR Validation]
+    %% ─── Flow ───
+    SIGNALS --> ALERT_RT
+    ALERT_RT --> SEV
+    SEV -->|sev1| SEV1
+    SEV -->|sev2| SEV2
+    SEV -->|sev3| SEV3
+    SEV1 --> ROLES
+    SEV2 --> ROLES
+    ROLES --> AUTO
+    ROLES --> RUNBOOK
+    AUTO --> RESOLVE
+    RUNBOOK --> RESOLVE
+    SEV3 --> RUNBOOK
+    RESOLVE --> POSTMORTEM
+    POSTMORTEM --> ACTIONS
+    ACTIONS -.improvements.-> ALERT_RT
+    ACTIONS -.improvements.-> AUTO
 
-    L1 & L2 & L3 --> M{All Gates\nPassed?}
-    M -->|No| M1[Fix & Rerun]
-    M1 --> L
-    M -->|Yes| N[Deploy to Production]
+    %% ─── Metrics flow ───
+    DETECT -.MTTD.-> METRICS
+    RESPONSES -.MTTR.-> METRICS
+    ACTIONS -.repeat-class.-> METRICS
+    METRICS -.engineering investment.-> ACTIONS
 
-    N --> O[Observability Validation]
-    O --> P[Post-Deployment Review]
-    P --> Q([✅ Governance Record Closed])
+    %% ─── NODE STYLES ───
+    %% Detection: blue (operational data)
+    style SIGNALS  fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.5px,color:#1A2840
+    style ALERT_RT fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
 
-    style A fill:#4f8ef7,color:#fff
-    style Q fill:#10b981,color:#fff
-    style I1 fill:#fef3c7
-    style J1 fill:#fef3c7
-    style M1 fill:#fef3c7
+    %% Severity: emphasised cream (routing decision)
+    style SEV fill:#FBEDE0,stroke:#C96330,stroke-width:2.5px,color:#3A2410
+
+    %% Response patterns: amber gradient (escalating intensity)
+    style SEV1 fill:#FBEDE0,stroke:#C96330,stroke-width:2px,color:#3A2410
+    style SEV2 fill:#FEF3C7,stroke:#92722C,stroke-width:1.8px,color:#5C4316
+    style SEV3 fill:#FEF8E5,stroke:#A8956A,stroke-width:1.5px,color:#5C4316
+
+    %% Roles: cooler tone (the coordination structure)
+    style IC     fill:#F4E5DD,stroke:#A37050,stroke-width:1.8px,color:#3A2410
+    style OPS    fill:#F4E5DD,stroke:#A37050,stroke-width:1.5px,color:#3A2410
+    style COMMS  fill:#F4E5DD,stroke:#A37050,stroke-width:1.5px,color:#3A2410
+    style SCRIBE fill:#F4E5DD,stroke:#A37050,stroke-width:1.5px,color:#3A2410
+
+    %% Recovery actions
+    style AUTO    fill:#FEF8E5,stroke:#A8956A,stroke-width:1.5px,color:#5C4316
+    style RUNBOOK fill:#FEF8E5,stroke:#A8956A,stroke-width:1.5px,color:#5C4316
+    style RESOLVE fill:#4A90E2,stroke:#2C5F9E,stroke-width:2px,color:#FFFFFF
+
+    %% Learning loop: blue (the institutional memory)
+    style POSTMORTEM fill:#DCEAFC,stroke:#2C5F9E,stroke-width:2px,color:#1A2840
+    style ACTIONS    fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+
+    %% Metrics
+    style METRICS fill:#E8E8E2,stroke:#5C5C5C,stroke-width:1.5px,color:#2C2C2C
+
+    %% ─── CLUSTER STYLES ───
+    style DETECT    fill:#EDF4FC,stroke:#A8C0DD,stroke-width:1.2px,color:#1A2840
+    style RESPONSES fill:#FEF1E6,stroke:#D4A87A,stroke-width:1.4px,color:#3A2410
+    style ROLES     fill:#FEF8E5,stroke:#D4C599,stroke-width:1.2px,color:#5C4316
+    style LEARN     fill:#EDF4FC,stroke:#A8C0DD,stroke-width:1.2px,color:#1A2840

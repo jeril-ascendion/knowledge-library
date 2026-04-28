@@ -1,0 +1,152 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+<!--
+  Logging emblem.
+
+  Visual metaphor: continuous tail scroll, like tail -f on a log file.
+  Horizontal log-line shapes (small horizontal rectangles representing
+  individual log entries) appear at the BOTTOM of the canvas. As new
+  entries arrive, all existing entries shift UPWARD by one line
+  position; the oldest entry exits the TOP of the canvas and fades.
+  Continuous vertical scroll bottom-to-top.
+
+  Six log-line slots are visible at any time, at y-positions:
+    Slot 1 (bottom):  y=72
+    Slot 2:           y=62
+    Slot 3:           y=52
+    Slot 4:           y=42
+    Slot 5:           y=32
+    Slot 6 (top):     y=22
+    Each line is 4 units tall.
+
+  Each log line has slightly varied width (most are short, suggesting
+  short message strings; a couple are longer, suggesting verbose
+  entries). All lines are anchored at left edge (x=24).
+
+  Animation: the visual cycle is 6 seconds, with one full slot-shift
+  per 1 second. Each individual log line travels from bottom slot
+  (y=72) to top slot (y=22) and then exits — a journey of 6 slot
+  positions over 6 seconds.
+
+  Implementation: 6 log lines, each animating its y-position from 72
+  → 62 → 52 → 42 → 32 → 22 → exit. Each line is at a different phase
+  in its journey (offset by 1s of the 6s cycle), so the visual shows
+  6 lines simultaneously visible at different y-positions, all
+  shifting upward together over each second.
+
+  Motion mechanic: LOG TAIL SCROLL (the thirty-seventh mechanic in
+  the catalogue). Distinct from #29 rolling time-series window
+  (single horizontal flow with FIFO replacement, dots travel RIGHT
+  TO LEFT) by being VERTICAL bottom-to-top scroll instead of
+  horizontal. Distinct from #23 sedimentation stacking (items fall
+  vertically from TOP and ACCUMULATE PERMANENTLY at a floor line)
+  by being CONTINUOUS scroll where items appear at BOTTOM, exit at
+  TOP, and never accumulate. Distinct from #28 disparate-rate
+  progression (two horizontal bars filling left-to-right) by being
+  vertical scroll of discrete log-line shapes.
+
+  Two colours only: warm neutral (#D6D2C8) for older entries (top
+  slots, fading), terracotta (#C96330) for newer entries (bottom
+  slots, fresh).
+-->
+
+<!-- ─── Subtle vertical guide line on left (suggesting terminal cursor) ─── -->
+<line x1="20" y1="18" x2="20" y2="78" stroke="#D6D2C8" stroke-width="0.8" opacity="0.5"/>
+
+<!-- ─── Six log lines, each at different phase of 6-second scroll cycle ─── -->
+
+<!-- Line A: starts at slot 6 (top, y=22), exits at top -->
+<rect x="24" y="22" width="58" height="3" rx="1" fill="#D6D2C8" opacity="0.35">
+  <animate attributeName="y"
+           values="22; 12; 12; 72; 62; 52; 42; 32; 22"
+           keyTimes="0; 0.083; 0.166; 0.167; 0.333; 0.500; 0.666; 0.833; 1"
+           dur="6s" repeatCount="indefinite"/>
+  <animate attributeName="opacity"
+           values="0.35; 0; 0; 0; 1; 0.85; 0.7; 0.55; 0.35"
+           keyTimes="0; 0.083; 0.166; 0.167; 0.333; 0.500; 0.666; 0.833; 1"
+           dur="6s" repeatCount="indefinite"/>
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #D6D2C8; #C96330; #C96330; #C96330; #D6D2C8; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.083; 0.166; 0.167; 0.333; 0.500; 0.666; 0.833; 1"
+           dur="6s" repeatCount="indefinite"/>
+</rect>
+
+<!-- Line B: starts at slot 5 (y=32) -->
+<rect x="24" y="32" width="46" height="3" rx="1" fill="#D6D2C8" opacity="0.55">
+  <animate attributeName="y"
+           values="32; 22; 12; 12; 72; 62; 52; 42; 32"
+           keyTimes="0; 0.166; 0.249; 0.333; 0.334; 0.500; 0.666; 0.833; 1"
+           dur="6s" repeatCount="indefinite"/>
+  <animate attributeName="opacity"
+           values="0.55; 0.35; 0; 0; 0; 1; 0.85; 0.7; 0.55"
+           keyTimes="0; 0.166; 0.249; 0.333; 0.334; 0.500; 0.666; 0.833; 1"
+           dur="6s" repeatCount="indefinite"/>
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #D6D2C8; #D6D2C8; #C96330; #C96330; #D6D2C8; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.166; 0.249; 0.333; 0.334; 0.500; 0.666; 0.833; 1"
+           dur="6s" repeatCount="indefinite"/>
+</rect>
+
+<!-- Line C: starts at slot 4 (y=42) -->
+<rect x="24" y="42" width="64" height="3" rx="1" fill="#D6D2C8" opacity="0.7">
+  <animate attributeName="y"
+           values="42; 32; 22; 12; 12; 72; 62; 52; 42"
+           keyTimes="0; 0.166; 0.333; 0.416; 0.500; 0.501; 0.666; 0.833; 1"
+           dur="6s" repeatCount="indefinite"/>
+  <animate attributeName="opacity"
+           values="0.7; 0.55; 0.35; 0; 0; 0; 1; 0.85; 0.7"
+           keyTimes="0; 0.166; 0.333; 0.416; 0.500; 0.501; 0.666; 0.833; 1"
+           dur="6s" repeatCount="indefinite"/>
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #D6D2C8; #D6D2C8; #D6D2C8; #C96330; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.166; 0.333; 0.416; 0.500; 0.501; 0.666; 0.833; 1"
+           dur="6s" repeatCount="indefinite"/>
+</rect>
+
+<!-- Line D: starts at slot 3 (y=52) -->
+<rect x="24" y="52" width="52" height="3" rx="1" fill="#D6D2C8" opacity="0.85">
+  <animate attributeName="y"
+           values="52; 42; 32; 22; 12; 12; 72; 62; 52"
+           keyTimes="0; 0.166; 0.333; 0.500; 0.583; 0.666; 0.667; 0.833; 1"
+           dur="6s" repeatCount="indefinite"/>
+  <animate attributeName="opacity"
+           values="0.85; 0.7; 0.55; 0.35; 0; 0; 0; 1; 0.85"
+           keyTimes="0; 0.166; 0.333; 0.500; 0.583; 0.666; 0.667; 0.833; 1"
+           dur="6s" repeatCount="indefinite"/>
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #D6D2C8; #D6D2C8; #D6D2C8; #D6D2C8; #C96330; #C96330; #D6D2C8"
+           keyTimes="0; 0.166; 0.333; 0.500; 0.583; 0.666; 0.667; 0.833; 1"
+           dur="6s" repeatCount="indefinite"/>
+</rect>
+
+<!-- Line E: starts at slot 2 (y=62) -->
+<rect x="24" y="62" width="40" height="3" rx="1" fill="#C96330">
+  <animate attributeName="y"
+           values="62; 52; 42; 32; 22; 12; 12; 72; 62"
+           keyTimes="0; 0.166; 0.333; 0.500; 0.666; 0.749; 0.833; 0.834; 1"
+           dur="6s" repeatCount="indefinite"/>
+  <animate attributeName="opacity"
+           values="1; 0.85; 0.7; 0.55; 0.35; 0; 0; 0; 1"
+           keyTimes="0; 0.166; 0.333; 0.500; 0.666; 0.749; 0.833; 0.834; 1"
+           dur="6s" repeatCount="indefinite"/>
+  <animate attributeName="fill"
+           values="#C96330; #D6D2C8; #D6D2C8; #D6D2C8; #D6D2C8; #D6D2C8; #D6D2C8; #C96330; #C96330"
+           keyTimes="0; 0.166; 0.333; 0.500; 0.666; 0.749; 0.833; 0.834; 1"
+           dur="6s" repeatCount="indefinite"/>
+</rect>
+
+<!-- Line F: starts at slot 1 (bottom, y=72) -->
+<rect x="24" y="72" width="56" height="3" rx="1" fill="#C96330">
+  <animate attributeName="y"
+           values="72; 62; 52; 42; 32; 22; 12; 12; 72"
+           keyTimes="0; 0.166; 0.333; 0.500; 0.666; 0.833; 0.916; 0.999; 1"
+           dur="6s" repeatCount="indefinite"/>
+  <animate attributeName="opacity"
+           values="1; 0.85; 0.7; 0.55; 0.35; 0.2; 0; 0; 1"
+           keyTimes="0; 0.166; 0.333; 0.500; 0.666; 0.833; 0.916; 0.999; 1"
+           dur="6s" repeatCount="indefinite"/>
+  <animate attributeName="fill"
+           values="#C96330; #D6D2C8; #D6D2C8; #D6D2C8; #D6D2C8; #D6D2C8; #D6D2C8; #D6D2C8; #C96330"
+           keyTimes="0; 0.166; 0.333; 0.500; 0.666; 0.833; 0.916; 0.999; 1"
+           dur="6s" repeatCount="indefinite"/>
+</rect>
+</svg>

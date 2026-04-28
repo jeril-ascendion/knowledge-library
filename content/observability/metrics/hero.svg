@@ -1,0 +1,107 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+<!--
+  Metrics emblem.
+
+  Visual metaphor: a metric gauge with a sweeping needle. A 240-degree
+  dial arc spans the canvas, with scale marks at regular intervals.
+  A terracotta needle rotates across the arc, oscillating between
+  "low" (left side of arc) and "high" (right side of arc) to
+  represent a metric value changing over time.
+
+  Geometry:
+    Dial centre: (60, 65)
+    Dial radius: 35
+    Arc span: 240 degrees, from 210° (lower-left) through 270° (top)
+              to 330° (lower-right) — i.e., the dial opens DOWNWARD
+    
+    Wait, let me reconsider the orientation. SVG coordinate system has
+    Y pointing DOWN, so angle 0° is pointing RIGHT, 90° pointing DOWN,
+    180° pointing LEFT, 270° pointing UP.
+    
+    For a typical gauge that opens upward (like a speedometer), the
+    arc spans from 180° (left) through 270° (up) to 360°/0° (right).
+    Actually that's 180° span; for 240° span we'd go from 150° through
+    270° to 30°.
+
+    Let me simplify: the arc is the upper portion of a circle, from
+    angle 200° (lower-left) through 270° (top) to 340° (lower-right).
+    That's 140° span, which is fine for a gauge.
+    
+    Actually for clarity let me use 180° span — bottom half of a circle
+    rotated... no wait. Standard gauge: span 180°, from west (180°)
+    counterclockwise through north (90°) to east (0°). That's the upper
+    half-circle. Arc parameters in SVG path:
+      M (start) A radius radius 0 0 1 (end)
+      Start: (60-35, 65) = (25, 65)
+      End:   (60+35, 65) = (95, 65)
+      Sweep direction: 1 (clockwise via top of circle)
+    
+    Center is at (60, 65). The arc is the upper half (the part above
+    y=65), spanning 180 degrees from (25, 65) to (95, 65).
+    
+    Wait, if the center is at (60, 65), the arc runs through (60, 30)
+    at the top. The needle pivots from (60, 65) outward.
+
+    Needle: line from (60, 65) extending outward by ~30 units, with
+    rotation animation. Default rotation pointing up = -90° (in SVG
+    rotation, where 0° is right). Sweeping from -180° (pointing left)
+    to 0° (pointing right) would sweep the upper half-arc.
+    
+    Animation: the needle rotates from -180° (low) to 0° (high) and
+    back, oscillating with sinusoidal feel.
+
+  Animation: 4-second cycle.
+    0.0s: needle at -160° (low end of scale)
+    1.0s: needle at -100° (medium)
+    2.0s: needle at -50° (high end)
+    3.0s: needle at -100° (back to medium)
+    4.0s: needle at -160° (back to low)
+
+  Motion mechanic: SWEEPING GAUGE NEEDLE (the thirty-eighth mechanic
+  in the catalogue). First mechanic in the catalogue using
+  animateTransform with type="rotate" — distinct from all 37 prior
+  by being a ROTATIONAL motion of a single needle element across a
+  fixed arc rather than translation, scale, or opacity changes.
+  Distinct from #21 reciprocating arc (which uses ARCS as visual
+  elements with zone-cycling perimeter highlighting) by having a
+  ROTATING NEEDLE inside a STATIC arc backdrop.
+
+  Two colours only: warm neutral (#D6D2C8) for the dial arc and
+  scale marks, terracotta (#C96330) for the needle.
+-->
+
+<!-- ─── Dial arc (warm neutral, always visible — upper half-circle) ─── -->
+<path d="M 25 65 A 35 35 0 0 1 95 65" fill="none" stroke="#D6D2C8" stroke-width="1.6"/>
+
+<!-- ─── Scale marks along the arc (5 ticks at 0°, 45°, 90°, 135°, 180° from center) ─── -->
+<!-- Tick at left (180°): from (25, 65) inward to (29, 65) -->
+<line x1="25" y1="65" x2="30" y2="65" stroke="#D6D2C8" stroke-width="1.2"/>
+<!-- Tick at upper-left (135°): from (35.25, 40.25) to (38.79, 43.79) -->
+<line x1="35.25" y1="40.25" x2="38.79" y2="43.79" stroke="#D6D2C8" stroke-width="1.2"/>
+<!-- Tick at top (90°): from (60, 30) to (60, 35) -->
+<line x1="60" y1="30" x2="60" y2="35" stroke="#D6D2C8" stroke-width="1.2"/>
+<!-- Tick at upper-right (45°): from (84.75, 40.25) to (81.21, 43.79) -->
+<line x1="84.75" y1="40.25" x2="81.21" y2="43.79" stroke="#D6D2C8" stroke-width="1.2"/>
+<!-- Tick at right (0°): from (95, 65) to (90, 65) -->
+<line x1="95" y1="65" x2="90" y2="65" stroke="#D6D2C8" stroke-width="1.2"/>
+
+<!-- ─── Centre pivot (small filled dot) ─── -->
+<circle cx="60" cy="65" r="3" fill="#D6D2C8"/>
+
+<!-- ─── Needle: terracotta, rotates around (60, 65) ─── -->
+<!-- Needle is drawn pointing UP (line from pivot to top, length 30) -->
+<!-- Rotation 0° = pointing UP; we rotate around (60, 65) -->
+<!-- 0° = up (mid-scale = medium); negative = left (low); positive = right (high) -->
+<g transform="translate(60, 65)">
+  <line x1="0" y1="0" x2="0" y2="-28" stroke="#C96330" stroke-width="2.4" stroke-linecap="round">
+    <animateTransform attributeName="transform"
+                      type="rotate"
+                      values="-70; -30; 20; 60; 20; -30; -70"
+                      keyTimes="0; 0.167; 0.333; 0.500; 0.667; 0.833; 1"
+                      dur="4s" repeatCount="indefinite"/>
+  </line>
+</g>
+
+<!-- ─── Centre pivot dot (terracotta, slightly smaller, on top of warm neutral pivot) ─── -->
+<circle cx="60" cy="65" r="2" fill="#C96330"/>
+</svg>

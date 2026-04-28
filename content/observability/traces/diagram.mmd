@@ -1,49 +1,98 @@
-flowchart TD
-    A([🚀 Start: Distributed Tracing]) --> B[Assessment & Discovery]
+flowchart TB
 
-    B --> C{Current State\nDocumented?}
-    C -->|No| B
-    C -->|Yes| D[Apply Architecture Principles]
+    %% ─── Request entry ───
+    CLIENT([Client Request])
 
-    D --> D1[Design for Change]
-    D --> D2[Least Privilege]
-    D --> D3[Observability First]
-    D --> D4[AI Augmentation Readiness]
+    %% ─── Service flow with context propagation ───
+    subgraph SERVICES [Services with Trace Context Propagation]
+        direction TB
+        A[Service A<br/>creates root span<br/>trace_id &middot; span_id_a]
+        B[Service B<br/>creates child span<br/>parent: span_id_a]
+        C[Service C<br/>creates grandchild span<br/>parent: span_id_b]
+    end
 
-    D1 & D2 & D3 & D4 --> E[Select Design Patterns]
+    %% ─── Propagation primitive ───
+    PROP[(W3C Trace Context<br/>traceparent header<br/>tracestate)]
 
-    E --> F{NFR Targets\nDefined?}
-    F -->|No| F1[Define NFRs in nfr/]
-    F1 --> F
-    F -->|Yes| G[Document ADRs]
+    %% ─── Span export ───
+    SPANS[(Spans Exported<br/>via OTel Collector)]
 
-    G --> H[Architecture Review Board]
+    %% ─── Sampling ───
+    subgraph SAMPLE [Sampling Strategy]
+        direction TB
+        HEAD{Head Sampling<br/>at trace start<br/>1% routine}
+        TAIL{Tail Sampling<br/>at completion<br/>keep errors / slow tails}
+    end
 
-    H --> I{Security\nReview Passed?}
-    I -->|No| I1[Revise Design]
-    I1 --> H
-    I -->|Yes| J{ARB\nApproval?}
+    %% ─── Storage ───
+    subgraph STORAGE [Tiered Trace Storage]
+        direction TB
+        HOT[(Hot<br/>0-72h<br/>fast query)]
+        WARM[(Warm<br/>1-30d<br/>investigation)]
+        ARCHIVE[(Archive<br/>compliance only)]
+    end
 
-    J -->|Rejected| J1[Address Feedback]
-    J1 --> H
-    J -->|Approved| K[Implementation]
+    %% ─── Query / UI ───
+    UI[Trace UI<br/>waterfall view<br/>critical-path highlight]
 
-    K --> L[CI/CD Pipeline]
-    L --> L1[SAST / DAST Scan]
-    L --> L2[Architecture Lint]
-    L --> L3[NFR Validation]
+    %% ─── Correlation primitives ───
+    LOGS_SYS[(Logs System<br/>filtered by trace_id)]
+    METRICS_SYS[(Metrics System<br/>via exemplars)]
 
-    L1 & L2 & L3 --> M{All Gates\nPassed?}
-    M -->|No| M1[Fix & Rerun]
-    M1 --> L
-    M -->|Yes| N[Deploy to Production]
+    %% ─── Flow ───
+    CLIENT --> A
+    A --> PROP
+    PROP -->|traceparent| B
+    B --> PROP
+    PROP -->|traceparent| C
 
-    N --> O[Observability Validation]
-    O --> P[Post-Deployment Review]
-    P --> Q([✅ Governance Record Closed])
+    A --> SPANS
+    B --> SPANS
+    C --> SPANS
 
-    style A fill:#4f8ef7,color:#fff
-    style Q fill:#10b981,color:#fff
-    style I1 fill:#fef3c7
-    style J1 fill:#fef3c7
-    style M1 fill:#fef3c7
+    SPANS --> HEAD
+    HEAD -->|kept| TAIL
+    TAIL -->|kept| HOT
+    HOT -.movement.-> WARM
+    WARM -.compliance.-> ARCHIVE
+
+    HOT --> UI
+    WARM --> UI
+
+    %% ─── Correlation ───
+    UI -.click-through<br/>by trace_id.-> LOGS_SYS
+    UI -.click-through<br/>by service+window.-> METRICS_SYS
+    METRICS_SYS -.exemplars.-> UI
+
+    %% ─── NODE STYLES ───
+    style CLIENT fill:#4A90E2,stroke:#2C5F9E,stroke-width:2px,color:#FFFFFF
+
+    %% Services: cream (the architectural participants)
+    style A fill:#FBEDE0,stroke:#C96330,stroke-width:1.8px,color:#3A2410
+    style B fill:#FBEDE0,stroke:#C96330,stroke-width:1.8px,color:#3A2410
+    style C fill:#FBEDE0,stroke:#C96330,stroke-width:1.8px,color:#3A2410
+
+    %% Propagation: emphasised (the cross-cutting primitive)
+    style PROP fill:#FBEDE0,stroke:#C96330,stroke-width:2.5px,color:#3A2410
+
+    %% Spans / sampling: amber
+    style SPANS fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+    style HEAD  fill:#FEF3C7,stroke:#92722C,stroke-width:1.8px,color:#5C4316
+    style TAIL  fill:#FEF3C7,stroke:#92722C,stroke-width:1.8px,color:#5C4316
+
+    %% Storage tiers: gradient
+    style HOT     fill:#FBEDE0,stroke:#C96330,stroke-width:1.8px,color:#3A2410
+    style WARM    fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+    style ARCHIVE fill:#F2F4F7,stroke:#9CB0C4,stroke-width:1.4px,color:#2C4258
+
+    %% UI: blue (operational interface)
+    style UI fill:#DCEAFC,stroke:#2C5F9E,stroke-width:2px,color:#1A2840
+
+    %% Correlation systems: cooler tone
+    style LOGS_SYS    fill:#E5ECF3,stroke:#5A7A9A,stroke-width:1.6px,color:#2C4258
+    style METRICS_SYS fill:#E5ECF3,stroke:#5A7A9A,stroke-width:1.6px,color:#2C4258
+
+    %% ─── CLUSTER STYLES ───
+    style SERVICES fill:#FEF1E6,stroke:#D4A87A,stroke-width:1.4px,color:#3A2410
+    style SAMPLE   fill:#FEF8E5,stroke:#D4C599,stroke-width:1.2px,color:#5C4316
+    style STORAGE  fill:#EDF4FC,stroke:#A8C0DD,stroke-width:1.2px,color:#1A2840

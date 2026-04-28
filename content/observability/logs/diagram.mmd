@@ -1,49 +1,98 @@
-flowchart TD
-    A([🚀 Start: Logging]) --> B[Assessment & Discovery]
+flowchart LR
 
-    B --> C{Current State\nDocumented?}
-    C -->|No| B
-    C -->|Yes| D[Apply Architecture Principles]
+    %% ─── Application layer ───
+    subgraph APPS [Applications]
+        direction TB
+        APP[Application Code]
+        LIB[Logging Library<br/>structured emit<br/>field validation]
+        REDACT{Redaction<br/>at source<br/>credentials &middot; PII}
+    end
 
-    D --> D1[Design for Change]
-    D --> D2[Least Privilege]
-    D --> D3[Observability First]
-    D --> D4[AI Augmentation Readiness]
+    %% ─── Transport ───
+    TRANSPORT[/Encrypted Transport<br/>TLS &middot; authenticated/]
 
-    D1 & D2 & D3 & D4 --> E[Select Design Patterns]
+    %% ─── Ingestion ───
+    subgraph INGEST [Ingestion]
+        direction TB
+        VALIDATE[Cardinality Check<br/>monitor drift]
+        SAMPLE{Sampling Strategy<br/>per category}
+    end
 
-    E --> F{NFR Targets\nDefined?}
-    F -->|No| F1[Define NFRs in nfr/]
-    F1 --> F
-    F -->|Yes| G[Document ADRs]
+    %% ─── Storage tiers ───
+    subgraph TIERS [Retention Tiers]
+        direction TB
+        HOT[(Hot &mdash; 0-7d<br/>fast query<br/>operational)]
+        WARM[(Warm &mdash; 7-30d<br/>investigation)]
+        COLD[(Cold &mdash; 30-365d<br/>retrospective)]
+        ARCHIVE[(Archive<br/>compliance retention)]
+    end
 
-    G --> H[Architecture Review Board]
+    %% ─── Query layer ───
+    QUERY[Query Layer<br/>tier-aware]
+    ACCESS{Access Control<br/>audited &middot; least-privilege}
 
-    H --> I{Security\nReview Passed?}
-    I -->|No| I1[Revise Design]
-    I1 --> H
-    I -->|Yes| J{ARB\nApproval?}
+    %% ─── Correlation ───
+    CORR[(Correlation IDs<br/>trace_id &middot; span_id<br/>request_id)]
 
-    J -->|Rejected| J1[Address Feedback]
-    J1 --> H
-    J -->|Approved| K[Implementation]
+    %% ─── External signals ───
+    METRICS_SYS[(Metrics System)]
+    TRACES_SYS[(Traces System)]
 
-    K --> L[CI/CD Pipeline]
-    L --> L1[SAST / DAST Scan]
-    L --> L2[Architecture Lint]
-    L --> L3[NFR Validation]
+    %% ─── Flow ───
+    APP --> LIB
+    LIB --> REDACT
+    REDACT --> TRANSPORT
+    TRANSPORT --> VALIDATE
+    VALIDATE --> SAMPLE
+    SAMPLE -->|errors / tails 100%| HOT
+    SAMPLE -->|routine sampled| HOT
 
-    L1 & L2 & L3 --> M{All Gates\nPassed?}
-    M -->|No| M1[Fix & Rerun]
-    M1 --> L
-    M -->|Yes| N[Deploy to Production]
+    HOT -.movement.-> WARM
+    WARM -.movement.-> COLD
+    COLD -.compliance.-> ARCHIVE
 
-    N --> O[Observability Validation]
-    O --> P[Post-Deployment Review]
-    P --> Q([✅ Governance Record Closed])
+    HOT --> QUERY
+    WARM --> QUERY
+    COLD --> QUERY
+    QUERY --> ACCESS
 
-    style A fill:#4f8ef7,color:#fff
-    style Q fill:#10b981,color:#fff
-    style I1 fill:#fef3c7
-    style J1 fill:#fef3c7
-    style M1 fill:#fef3c7
+    %% ─── Cross-cutting correlation ───
+    CORR -.tags every record.-> LIB
+    CORR -.links to.-> METRICS_SYS
+    CORR -.links to.-> TRACES_SYS
+
+    %% ─── NODE STYLES ───
+    style APP fill:#4A90E2,stroke:#2C5F9E,stroke-width:2px,color:#FFFFFF
+
+    %% Library / redaction: emphasised cream (the architectural discipline)
+    style LIB    fill:#FBEDE0,stroke:#C96330,stroke-width:1.8px,color:#3A2410
+    style REDACT fill:#FBEDE0,stroke:#C96330,stroke-width:2.2px,color:#3A2410
+
+    %% Transport: blue (security primitive)
+    style TRANSPORT fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+
+    %% Ingestion: amber (the routing layer)
+    style VALIDATE fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+    style SAMPLE   fill:#FEF3C7,stroke:#C96330,stroke-width:1.8px,color:#5C4316
+
+    %% Storage tiers: gradient from emphasised (recent) to subtle (old)
+    style HOT     fill:#FBEDE0,stroke:#C96330,stroke-width:1.8px,color:#3A2410
+    style WARM    fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+    style COLD    fill:#FEF8E5,stroke:#A8956A,stroke-width:1.5px,color:#5C4316
+    style ARCHIVE fill:#F2F4F7,stroke:#9CB0C4,stroke-width:1.4px,color:#2C4258
+
+    %% Query / access: blue (operational interface)
+    style QUERY  fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+    style ACCESS fill:#DCEAFC,stroke:#2C5F9E,stroke-width:2px,color:#1A2840
+
+    %% Correlation: cooler tone (the cross-cutting primitive)
+    style CORR fill:#E5ECF3,stroke:#5A7A9A,stroke-width:1.6px,color:#2C4258
+
+    %% External systems
+    style METRICS_SYS fill:#E8E8E2,stroke:#5C5C5C,stroke-width:1.5px,color:#2C2C2C
+    style TRACES_SYS  fill:#E8E8E2,stroke:#5C5C5C,stroke-width:1.5px,color:#2C2C2C
+
+    %% ─── CLUSTER STYLES ───
+    style APPS   fill:#EDF4FC,stroke:#A8C0DD,stroke-width:1.2px,color:#1A2840
+    style INGEST fill:#FEF8E5,stroke:#D4C599,stroke-width:1.2px,color:#5C4316
+    style TIERS  fill:#FEF1E6,stroke:#D4A87A,stroke-width:1.4px,color:#3A2410

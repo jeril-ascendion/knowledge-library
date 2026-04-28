@@ -1,0 +1,108 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+<!--
+  Distributed Tracing emblem.
+
+  Visual metaphor: a waterfall trace view. Five horizontal bars at
+  different vertical positions (different services or operations),
+  each at a different x-offset and length, representing the
+  parent-child span hierarchy of a request that traverses multiple
+  services.
+
+  Span structure:
+    Root span (Service A, top, y=20): x=15-95 (full width, longest)
+    Child span (Service B, y=32): x=22-80 (offset right, shorter)
+    Grandchild span (Service C, y=44): x=28-65 (deeper, shorter)
+    Sibling span (Service D, y=56): x=70-88 (parallel branch)
+    Leaf span (Service E, y=68): x=32-52 (deepest, shortest)
+
+  Bars appear in waterfall cascade order:
+    Root first (t=0.2s)
+    Child after (t=0.5s)
+    Grandchild after (t=0.8s)
+    Sibling concurrent with grandchild (t=0.9s)
+    Leaf last (t=1.1s)
+    All hold visible for ~3 seconds
+    All clear at t=4.5s
+    Restart at t=5.0s with same pattern
+
+  Animation: 5-second cycle.
+    0.0–0.2s : empty
+    0.2s : root appears
+    0.5s : child appears
+    0.8s : grandchild appears
+    0.9s : sibling appears
+    1.1s : leaf appears
+    1.1–4.5s : all visible (waterfall complete, the trace is shown)
+    4.5–4.8s : all fade out
+    4.8–5.0s : empty pause before restart
+
+  Motion mechanic: WATERFALL TRACE (the fortieth mechanic in the
+  catalogue). Distinct from #34 tiered escalation cascade (three
+  horizontal tiers each with three ALIGNED dots, all dots within a
+  tier light TOGETHER, variable cascade depth) by being WATERFALL
+  pattern with each row a DIFFERENT LENGTH bar at DIFFERENT
+  X-OFFSET — true hierarchical span visualisation. Distinct from
+  #28 disparate-rate progression (two horizontal bars filling
+  LEFT-TO-RIGHT MONOTONICALLY at different rates and resetting) by
+  being multiple bars APPEARING WHOLE in cascade order, not
+  filling progressively. Distinct from #6 sequential frame
+  illumination (single row of frames lighting one at a time) by
+  being multiple ROWS at DIFFERENT positions and lengths.
+
+  Two colours only: warm neutral (#D6D2C8) for the timeline grid
+  hint, terracotta (#C96330) for the span bars (with slight opacity
+  variation for visual depth — root brightest, leaves slightly
+  lighter to suggest depth in the call stack).
+-->
+
+<!-- ─── Subtle vertical timeline reference (warm neutral, decorative) ─── -->
+<line x1="15" y1="14" x2="15" y2="76" stroke="#D6D2C8" stroke-width="0.8" opacity="0.4"/>
+<line x1="95" y1="14" x2="95" y2="76" stroke="#D6D2C8" stroke-width="0.8" opacity="0.4"/>
+
+<!-- ─── Subtle indent indicators on left (small dots showing tree depth) ─── -->
+<circle cx="11" cy="22" r="1.2" fill="#D6D2C8" opacity="0.6"/>
+<circle cx="11" cy="34" r="1.2" fill="#D6D2C8" opacity="0.5"/>
+<circle cx="11" cy="46" r="1.2" fill="#D6D2C8" opacity="0.45"/>
+<circle cx="11" cy="58" r="1.2" fill="#D6D2C8" opacity="0.5"/>
+<circle cx="11" cy="70" r="1.2" fill="#D6D2C8" opacity="0.4"/>
+
+<!-- ─── Root span (Service A, top): x=15-95, y=20, longest ─── -->
+<rect x="15" y="20" width="80" height="4" rx="1" fill="#C96330" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 1; 1; 0; 0"
+           keyTimes="0; 0.04; 0.05; 0.90; 0.96; 1"
+           dur="5s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── Child span (Service B): x=22-80, y=32 ─── -->
+<rect x="22" y="32" width="58" height="4" rx="1" fill="#C96330" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 0.92; 0.92; 0; 0"
+           keyTimes="0; 0.10; 0.11; 0.90; 0.96; 1"
+           dur="5s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── Grandchild span (Service C): x=28-65, y=44 ─── -->
+<rect x="28" y="44" width="37" height="4" rx="1" fill="#C96330" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 0.85; 0.85; 0; 0"
+           keyTimes="0; 0.16; 0.17; 0.90; 0.96; 1"
+           dur="5s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── Sibling span (Service D, parallel branch): x=70-88, y=56 ─── -->
+<rect x="70" y="56" width="18" height="4" rx="1" fill="#C96330" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 0.85; 0.85; 0; 0"
+           keyTimes="0; 0.18; 0.19; 0.90; 0.96; 1"
+           dur="5s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── Leaf span (Service E, deepest): x=32-52, y=68 ─── -->
+<rect x="32" y="68" width="20" height="4" rx="1" fill="#C96330" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 0.78; 0.78; 0; 0"
+           keyTimes="0; 0.22; 0.23; 0.90; 0.96; 1"
+           dur="5s" repeatCount="indefinite"/>
+</rect>
+</svg>

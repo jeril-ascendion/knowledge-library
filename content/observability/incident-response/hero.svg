@@ -1,0 +1,97 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+<!--
+  Incident Response emblem.
+
+  Visual metaphor: an incident propagating across services and being
+  resolved. Five horizontal "lanes" represent five services in a
+  system; each lane is a thin horizontal bar in warm neutral by
+  default. The cycle:
+    - 0.0–1.5s : all lanes quiet (steady-state operation)
+    - 1.5–2.5s : the middle lane spikes to terracotta SOLID (incident
+                 detected in that service)
+    - 2.0–3.5s : the lanes adjacent to the spiked lane flicker terracotta
+                 dimmer (impact spreading)
+    - 3.0–5.0s : the affected (middle) lane oscillates between terracotta
+                 and a slightly dimmer terracotta (active response /
+                 mitigation work in progress)
+    - 5.0–6.0s : all lanes return to warm neutral (recovery)
+    - 6.0–8.0s : steady-state quiet again before next cycle starts
+                 (the duty cycle of an incident response system —
+                 mostly quiet, punctuated by spikes)
+
+  Lane geometry (horizontal bars):
+    Lane width: 84 (x=18 to x=102)
+    Lane height: 4
+    Vertical spacing: 12
+    Lane y-positions:
+      Lane 1: y=20
+      Lane 2: y=32
+      Lane 3: y=44 (middle - the lane that spikes)
+      Lane 4: y=56
+      Lane 5: y=68
+
+  Animation: 8-second cycle.
+    - All lanes start warm neutral.
+    - At t=1.5s, the middle lane (lane 3) jumps to bright terracotta.
+    - At t=2.0s, adjacent lanes (2 and 4) flicker to a dim terracotta.
+    - At t=3.0s, the middle lane begins oscillating (alternating between
+      bright and dim terracotta).
+    - At t=5.0s, all lanes simultaneously return to warm neutral.
+    - At t=6.0s, the cycle holds quiet until t=8.0s, then restarts.
+
+  Motion mechanic: INCIDENT SPIKE PATTERN (the thirty-sixth mechanic
+  in the catalogue). Distinct from #6 sequential frame illumination
+  (single row, frames take TURNS being lit one at a time) by being
+  PUNCTUATED multi-lane spike with mostly-quiet duty cycle, with
+  SPREAD to adjacent lanes. Distinct from #34 tiered escalation
+  cascade (three tiers with VARIABLE upward cascade depth) by being
+  HORIZONTAL multi-lane with PUNCTUATED single-lane spike + adjacent
+  spread, NOT cascade up tiers. The signature is mostly-quiet steady
+  state interrupted by a rare punctuated multi-lane disturbance with
+  centred spike + dimmer adjacency.
+
+  Two colours only: warm neutral (#D6D2C8) for quiet lanes and steady
+  state, terracotta (#C96330) for the spiking lane and adjacent
+  impact (varied opacity for impact intensity).
+-->
+
+<!-- ─── Five lane baselines (warm neutral, always visible) ─── -->
+<rect x="18" y="20" width="84" height="4" rx="1" fill="#D6D2C8" opacity="0.7"/>
+<rect x="18" y="32" width="84" height="4" rx="1" fill="#D6D2C8" opacity="0.7"/>
+<rect x="18" y="44" width="84" height="4" rx="1" fill="#D6D2C8" opacity="0.7"/>
+<rect x="18" y="56" width="84" height="4" rx="1" fill="#D6D2C8" opacity="0.7"/>
+<rect x="18" y="68" width="84" height="4" rx="1" fill="#D6D2C8" opacity="0.7"/>
+
+<!-- ─── Lane labels (small dots on the left side, decorative) ─── -->
+<circle cx="12" cy="22" r="1.5" fill="#D6D2C8"/>
+<circle cx="12" cy="34" r="1.5" fill="#D6D2C8"/>
+<circle cx="12" cy="46" r="1.5" fill="#D6D2C8"/>
+<circle cx="12" cy="58" r="1.5" fill="#D6D2C8"/>
+<circle cx="12" cy="70" r="1.5" fill="#D6D2C8"/>
+
+<!-- ─── Middle lane (lane 3) — the incident spike ─── -->
+<!-- 8s cycle. Bright terracotta from 1.5s to 5s, with oscillation 3s-5s. -->
+<rect x="18" y="44" width="84" height="4" rx="1" fill="#C96330" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 1; 1; 0.6; 1; 0.6; 1; 0; 0"
+           keyTimes="0; 0.187; 0.188; 0.375; 0.437; 0.500; 0.562; 0.625; 0.626; 1"
+           dur="8s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── Lane 2 (above middle) — impact spread (dimmer terracotta) ─── -->
+<!-- 8s cycle. Dim terracotta from 2.0s to 4.5s. -->
+<rect x="18" y="32" width="84" height="4" rx="1" fill="#C96330" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 0.45; 0.45; 0; 0"
+           keyTimes="0; 0.250; 0.260; 0.562; 0.572; 1"
+           dur="8s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── Lane 4 (below middle) — impact spread (dimmer terracotta) ─── -->
+<rect x="18" y="56" width="84" height="4" rx="1" fill="#C96330" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 0.45; 0.45; 0; 0"
+           keyTimes="0; 0.250; 0.260; 0.562; 0.572; 1"
+           dur="8s" repeatCount="indefinite"/>
+</rect>
+</svg>

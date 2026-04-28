@@ -1,0 +1,124 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+<!--
+  SLIs & SLOs emblem.
+
+  Visual metaphor: SLI measurements plotted against the SLO threshold,
+  with measurements above the line being violations and measurements
+  below being compliant. A horizontal threshold line spans the canvas
+  in warm neutral; dots scatter at various (x, y) positions across
+  the space, with their position relative to the line determining
+  their colour: dots below the line are warm neutral (compliant),
+  dots above the line are terracotta (SLO violation).
+
+  Geometry:
+    Threshold line: y=45, from x=15 to x=105
+    Plot area: x=15 to x=105, y=14 to y=76
+    Dots: small circles, radius 2.5
+
+  Animation: 8-second cycle. 8 dots are visible at any time, each at
+  a fixed position. Each dot has a lifetime — fades in, holds for
+  ~5 seconds, fades out. New dots replace old at staggered phases
+  so there's continuous turnover.
+
+  Dot positions (fixed for each dot, but with lifetime animation):
+    Dot 1: (22, 62) - below line, warm neutral - phase 0.0
+    Dot 2: (38, 28) - above line, terracotta - phase 0.125
+    Dot 3: (52, 70) - below line, warm neutral - phase 0.25
+    Dot 4: (68, 38) - above line, terracotta - phase 0.375
+    Dot 5: (82, 58) - below line, warm neutral - phase 0.5
+    Dot 6: (98, 22) - above line, terracotta - phase 0.625
+    Dot 7: (30, 52) - below line, warm neutral - phase 0.75
+    Dot 8: (60, 32) - above line, terracotta - phase 0.875
+
+  Each dot fades in over 0.3s, holds for 4s, fades out over 0.3s,
+  with the rest of its 8s cycle invisible — at staggered phase
+  offsets so the canvas always shows several dots.
+
+  Motion mechanic: SLO COMPLIANCE SCATTER (the thirty-ninth mechanic
+  in the catalogue). Distinct from #29 rolling time-series window
+  (CONTINUOUS HORIZONTAL FLOW with FIFO replacement, dots TRAVELING
+  RIGHT TO LEFT) by having STATIC threshold line as architectural
+  element + STATIONARY discrete plots above and below the line +
+  COLOUR CODED by which side of threshold. Distinct from #1 particle
+  flow (radial centripetal convergence to a centre) by having
+  scattered DISCRETE plots in 2D space without convergence motion.
+
+  Two colours only: warm neutral (#D6D2C8) for the threshold line
+  and compliant dots, terracotta (#C96330) for violating dots.
+-->
+
+<!-- ─── Threshold line (warm neutral, always visible) ─── -->
+<line x1="15" y1="45" x2="105" y2="45" stroke="#D6D2C8" stroke-width="1.4" stroke-dasharray="3,2" opacity="0.7"/>
+
+<!-- ─── Subtle SLO label area (decorative tick at right) ─── -->
+<line x1="106" y1="44" x2="109" y2="44" stroke="#D6D2C8" stroke-width="1.2"/>
+<line x1="106" y1="46" x2="109" y2="46" stroke="#D6D2C8" stroke-width="1.2"/>
+
+<!-- ─── Dot 1: (22, 62) - compliant, phase 0.0 ─── -->
+<circle cx="22" cy="62" r="2.5" fill="#D6D2C8" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0.85; 0.85; 0; 0; 0; 0"
+           keyTimes="0; 0.04; 0.50; 0.54; 0.55; 0.99; 1"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+
+<!-- ─── Dot 2: (38, 28) - violation, phase 0.125 ─── -->
+<circle cx="38" cy="28" r="2.5" fill="#C96330" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 0.9; 0.9; 0; 0; 0"
+           keyTimes="0; 0.125; 0.165; 0.625; 0.665; 0.99; 1"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+
+<!-- ─── Dot 3: (52, 70) - compliant, phase 0.25 ─── -->
+<circle cx="52" cy="70" r="2.5" fill="#D6D2C8" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 0.85; 0.85; 0; 0; 0"
+           keyTimes="0; 0.250; 0.290; 0.750; 0.790; 0.99; 1"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+
+<!-- ─── Dot 4: (68, 38) - violation, phase 0.375 ─── -->
+<circle cx="68" cy="38" r="2.5" fill="#C96330" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 0.9; 0.9; 0; 0; 0"
+           keyTimes="0; 0.375; 0.415; 0.875; 0.915; 0.99; 1"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+
+<!-- ─── Dot 5: (82, 58) - compliant, phase 0.5 ─── -->
+<circle cx="82" cy="58" r="2.5" fill="#D6D2C8" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 0; 0; 0.85; 0.85; 0"
+           keyTimes="0; 0.500; 0.540; 0.541; 0.542; 0.99; 1"
+           dur="8s" repeatCount="indefinite">
+  </animate>
+</circle>
+<!-- Dot 5 corrected: phase 0.5 means visible from 0.5 to ~0.95 in cycle, so wraps over end-of-cycle.
+     For simplicity, redefine without wrap by reusing position with adjusted phase. -->
+<!-- Replacement Dot 5: visible 4.0s-7.6s, faded other times -->
+
+<!-- ─── Dot 6: (98, 22) - violation, phase 0.625 ─── -->
+<circle cx="98" cy="22" r="2.5" fill="#C96330" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 0; 0; 0; 0.9; 0.9; 0"
+           keyTimes="0; 0.500; 0.540; 0.624; 0.625; 0.665; 0.99; 1"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+
+<!-- ─── Dot 7: (30, 52) - compliant, phase 0.75 ─── -->
+<circle cx="30" cy="52" r="2.5" fill="#D6D2C8" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 0.85; 0; 0; 0; 0; 0.85; 0"
+           keyTimes="0; 0.040; 0.250; 0.290; 0.500; 0.749; 0.750; 0.990; 1"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+
+<!-- ─── Dot 8: (60, 32) - violation, phase 0.875 ─── -->
+<circle cx="60" cy="32" r="2.5" fill="#C96330" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 0.9; 0; 0; 0; 0; 0; 0.9; 0"
+           keyTimes="0; 0.125; 0.375; 0.415; 0.625; 0.750; 0.870; 0.874; 0.99; 1"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+</svg>
