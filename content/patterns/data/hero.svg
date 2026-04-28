@@ -1,0 +1,104 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+<!--
+  Data Patterns emblem.
+
+  Visual metaphor: four temporal SNAPSHOTS arranged horizontally, like
+  frames on a filmstrip. Each frame holds three small data records;
+  the records' arrangement differs frame-to-frame, suggesting state
+  evolution over time. Thin connecting lines between adjacent frames
+  signal timeline continuity. The frames themselves never move.
+
+  Animation: sequential illumination. Each frame's outline transitions
+  from warm neutral to terracotta and back over 0.6s, with frames
+  activating one after another in a 5-second cycle. After the fourth
+  frame fades, a brief quiet period precedes the next cycle. Nothing
+  else moves: no particles travel, no shapes oscillate, no rotation,
+  no cross-fade between forms, no replication. Only the highlight
+  shifts position over time.
+
+  Motion mechanic: SEQUENTIAL FRAME ILLUMINATION (the sixth mechanic
+  in the catalogue, alongside particle flow, shape oscillation,
+  rigid-body rotation, cross-fade metamorphosis, and elastic
+  replication). The motion IS time passing — the very property
+  data architecture must accommodate.
+
+  Two colours only: warm neutral (#D6D2C8) for the resting state,
+  terracotta (#C96330) for the active highlight.
+-->
+
+<!-- ─── Connecting lines between frames (timeline continuity) ─── -->
+<line x1="32" y1="45" x2="38" y2="45"
+      stroke="#D6D2C8" stroke-width="1" opacity="0.55"/>
+<line x1="58" y1="45" x2="64" y2="45"
+      stroke="#D6D2C8" stroke-width="1" opacity="0.55"/>
+<line x1="84" y1="45" x2="90" y2="45"
+      stroke="#D6D2C8" stroke-width="1" opacity="0.55"/>
+
+<!-- ═══ FRAME 1 — illuminates 0–0.6s of 5s cycle (active 0–12%) ═══ -->
+<rect x="12" y="33" width="20" height="24" rx="2"
+      fill="none" stroke="#D6D2C8" stroke-width="1.5">
+  <animate attributeName="stroke"
+           values="#D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.06; 0.12; 1"
+           dur="5s" repeatCount="indefinite"/>
+  <animate attributeName="stroke-width"
+           values="1.5; 2.6; 1.5; 1.5"
+           keyTimes="0; 0.06; 0.12; 1"
+           dur="5s" repeatCount="indefinite"/>
+</rect>
+<!-- Internal data records at state-1 arrangement -->
+<circle cx="18" cy="40" r="1.6" fill="#D6D2C8"/>
+<circle cx="26" cy="40" r="1.6" fill="#D6D2C8"/>
+<circle cx="18" cy="50" r="1.6" fill="#D6D2C8"/>
+
+<!-- ═══ FRAME 2 — illuminates 1–1.6s (active 20–32%) ═══ -->
+<rect x="38" y="33" width="20" height="24" rx="2"
+      fill="none" stroke="#D6D2C8" stroke-width="1.5">
+  <animate attributeName="stroke"
+           values="#D6D2C8; #D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.20; 0.26; 0.32; 1"
+           dur="5s" repeatCount="indefinite"/>
+  <animate attributeName="stroke-width"
+           values="1.5; 1.5; 2.6; 1.5; 1.5"
+           keyTimes="0; 0.20; 0.26; 0.32; 1"
+           dur="5s" repeatCount="indefinite"/>
+</rect>
+<!-- Internal records at state-2 arrangement -->
+<circle cx="44" cy="40" r="1.6" fill="#D6D2C8"/>
+<circle cx="52" cy="40" r="1.6" fill="#D6D2C8"/>
+<circle cx="52" cy="50" r="1.6" fill="#D6D2C8"/>
+
+<!-- ═══ FRAME 3 — illuminates 2–2.6s (active 40–52%) ═══ -->
+<rect x="64" y="33" width="20" height="24" rx="2"
+      fill="none" stroke="#D6D2C8" stroke-width="1.5">
+  <animate attributeName="stroke"
+           values="#D6D2C8; #D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.40; 0.46; 0.52; 1"
+           dur="5s" repeatCount="indefinite"/>
+  <animate attributeName="stroke-width"
+           values="1.5; 1.5; 2.6; 1.5; 1.5"
+           keyTimes="0; 0.40; 0.46; 0.52; 1"
+           dur="5s" repeatCount="indefinite"/>
+</rect>
+<!-- Internal records at state-3 arrangement -->
+<circle cx="70" cy="40" r="1.6" fill="#D6D2C8"/>
+<circle cx="70" cy="50" r="1.6" fill="#D6D2C8"/>
+<circle cx="78" cy="50" r="1.6" fill="#D6D2C8"/>
+
+<!-- ═══ FRAME 4 — illuminates 3–3.6s (active 60–72%) ═══ -->
+<rect x="90" y="33" width="20" height="24" rx="2"
+      fill="none" stroke="#D6D2C8" stroke-width="1.5">
+  <animate attributeName="stroke"
+           values="#D6D2C8; #D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.60; 0.66; 0.72; 1"
+           dur="5s" repeatCount="indefinite"/>
+  <animate attributeName="stroke-width"
+           values="1.5; 1.5; 2.6; 1.5; 1.5"
+           keyTimes="0; 0.60; 0.66; 0.72; 1"
+           dur="5s" repeatCount="indefinite"/>
+</rect>
+<!-- Internal records at state-4 arrangement -->
+<circle cx="96" cy="40" r="1.6" fill="#D6D2C8"/>
+<circle cx="104" cy="44" r="1.6" fill="#D6D2C8"/>
+<circle cx="100" cy="50" r="1.6" fill="#D6D2C8"/>
+</svg>

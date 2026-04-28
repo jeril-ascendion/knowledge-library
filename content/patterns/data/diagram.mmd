@@ -1,0 +1,87 @@
+flowchart TB
+
+    %% ─── Entry: a user action ───
+    USER([User Action])
+
+    %% ─── Command path (write side) ───
+    CMD[Command]
+
+    subgraph WRITE [Write Side &mdash; source of truth]
+        direction TB
+        AGG[Aggregate Root<br/>Invariants Enforced]
+        OLTP[(Transactional Store)]
+    end
+
+    %% ─── Event propagation ───
+    EVENTS[Event Stream<br/>Domain Events &middot; CDC]
+
+    %% ─── Read side (multiple stores for multiple patterns) ───
+    subgraph READ [Read Side &mdash; projections]
+        direction LR
+        SEARCH[(Search Index)]
+        OLAP[(Analytical Store)]
+        CACHE[(Cache / KV)]
+    end
+
+    %% ─── Cross-cutting: lineage and audit ───
+    LINEAGE[Lineage &amp; Audit Trail]
+
+    %% ─── Query path (read side) ───
+    QUERY[Query]
+
+    %% ─── Outcome ───
+    OUT([Customer Outcome])
+
+    %% ─── Write flow ───
+    USER --> CMD
+    CMD --> AGG
+    AGG --> OLTP
+    OLTP --> EVENTS
+    EVENTS --> SEARCH
+    EVENTS --> OLAP
+    EVENTS --> CACHE
+
+    %% ─── Lineage capture (cross-cutting) ───
+    AGG -.records.-> LINEAGE
+    EVENTS -.records.-> LINEAGE
+
+    %% ─── Read flow ───
+    USER --> QUERY
+    QUERY --> SEARCH
+    QUERY --> OLAP
+    QUERY --> CACHE
+
+    %% ─── Outcome ───
+    SEARCH --> OUT
+    OLAP --> OUT
+    CACHE --> OUT
+
+    %% ─── NODE STYLES ───
+    %% Entry: bright blue
+    style USER fill:#4A90E2,stroke:#2C5F9E,stroke-width:2px,color:#FFFFFF
+
+    %% Control nodes (command, query)
+    style CMD   fill:#FBEDE0,stroke:#A07A4A,stroke-width:1.5px,color:#3A2410
+    style QUERY fill:#FBEDE0,stroke:#A07A4A,stroke-width:1.5px,color:#3A2410
+
+    %% Write side: emphasised blue (the source of truth)
+    style AGG  fill:#DCEAFC,stroke:#2C5F9E,stroke-width:2.5px,color:#1A2840
+    style OLTP fill:#DCEAFC,stroke:#2C5F9E,stroke-width:2px,color:#1A2840
+
+    %% Event stream: cream (the propagation backbone)
+    style EVENTS fill:#FBEDE0,stroke:#A07A4A,stroke-width:1.8px,color:#3A2410
+
+    %% Read side: amber (projections, eventually consistent)
+    style SEARCH fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+    style OLAP   fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+    style CACHE  fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+
+    %% Cross-cutting: distinctive grey
+    style LINEAGE fill:#E8E8E2,stroke:#5C5C5C,stroke-width:1.5px,color:#2C2C2C
+
+    %% Outcome: vivid green
+    style OUT fill:#1ABC9C,stroke:#138D75,stroke-width:2px,color:#FFFFFF
+
+    %% ─── CLUSTER STYLES ───
+    style WRITE fill:#EDF4FC,stroke:#A8C0DD,stroke-width:1.2px,color:#1A2840
+    style READ  fill:#FEF8E5,stroke:#D4C599,stroke-width:1.2px,color:#5C4316

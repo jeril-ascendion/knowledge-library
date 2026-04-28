@@ -47,6 +47,8 @@ EMBLEM MOTION MECHANICS (each page must use a DISTINCT mechanic):
     foundational     → rigid-body rotation (pendulum)
     modernization    → cross-fade metamorphosis (two forms trade visibility)
     cloud-native     → elastic replication (pods appear/disappear in waves)
+    patterns/data    → sequential frame illumination (fixed frames take turns
+                       being highlighted; motion is time, not movement)
   Future pages must invent a new mechanic, not reuse one.
   Two colours only: warm neutral (#D6D2C8) + terracotta (#C96330).
   Basic SMIL primitives only (animate, animateTransform with type=rotate).
@@ -1094,6 +1096,9 @@ TAG_LINKS = {
     "CNCF Cloud Native": "https://github.com/cncf/toc/blob/main/DEFINITION.md",
     "Site Reliability Engineering": "https://sre.google/sre-book/table-of-contents/",
     "SLSA": "https://slsa.dev/",
+    "CQRS Pattern": "https://martinfowler.com/bliki/CQRS.html",
+    "Event Sourcing": "https://martinfowler.com/eaaDev/EventSourcing.html",
+    "Polyglot Persistence": "https://martinfowler.com/bliki/PolyglotPersistence.html",
 }
 
 
