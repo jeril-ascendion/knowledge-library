@@ -141,6 +141,7 @@ TAXONOMY = {
     },
     "principles": {
         "ai-native":       "AI-Native Principles",
+        "cloud-native":    "Cloud-Native Principles",
         "domain-specific": "Domain-Specific Principles",
         "foundational":    "Foundational Principles",
         "modernization":   "Modernization Principles",
@@ -177,6 +178,21 @@ TAXONOMY = {
         "event-driven":  "Event-Driven Systems",
         "ha-dr":         "HA & DR Systems",
         "scalable":      "Scalable Systems",
+    },
+    "tech": {
+        # Legacy group — pre-v27 technology stubs. The substantive replacements
+        # live under `technology/`. These entries exist so the legacy URLs that
+        # were rendered by the old permissive build continue to resolve under
+        # the strict build introduced in v29. Retire by removing the entries
+        # here AND deleting the corresponding content/tech/<slug>/ directories.
+        "ai-ml":       "AI/ML Stack",
+        "angular":     "Angular Stack",
+        "aws":         "AWS Stack",
+        "azure":       "Azure Stack",
+        "databases":   "Databases Stack",
+        "devops":      "DevOps Stack",
+        "gcp":         "GCP Stack",
+        "java-spring": "Java/Spring Stack",
     },
     "security": {
         "application-security":         "Application Security",

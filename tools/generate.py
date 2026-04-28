@@ -236,6 +236,17 @@ NO REPETITION ACROSS PAGES:
 import re, sys, shutil, argparse, json
 from pathlib import Path
 
+# Import the canonical TAXONOMY from seed_content so we can render only
+# subsections that are actually registered. Walking the filesystem alone
+# would render any orphan stub directory left behind from a prior seed —
+# producing the v28 ascendion.engineering/security/index.html bug where
+# obsolete `appsec/`, `cloud/`, `vulnerability/` directories appeared
+# alongside the current `application-security/`, `cloud-security/`,
+# `vulnerability-management/`. Strictness here makes the TAXONOMY the
+# single source of truth.
+sys.path.insert(0, str(Path(__file__).parent))
+from seed_content import TAXONOMY
+
 try:
     import markdown
     from markdown.extensions.tables import TableExtension
@@ -1641,9 +1652,12 @@ def collect_site_metadata(content_root):
         if not section_dir.is_dir():
             continue
         section_slug = section_dir.name
+        registered_subs = TAXONOMY.get(section_slug, {})
         for sub_dir in sorted(section_dir.iterdir()):
             if not sub_dir.is_dir():
                 continue
+            if sub_dir.name not in registered_subs:
+                continue  # orphan — skip
             readme = sub_dir / "README.md"
             if not readme.exists():
                 continue
@@ -1778,7 +1792,12 @@ def head(title, css, has_mermaid=False):
 def gen_root(src, out):
     total_s = len([s for s in SECTIONS if (src / s).exists()])
     total_sub = sum(
-        sum(1 for d in (src / s).iterdir() if d.is_dir() and (d / "README.md").exists())
+        sum(
+            1 for d in (src / s).iterdir()
+            if d.is_dir()
+            and d.name in TAXONOMY.get(s, {})
+            and (d / "README.md").exists()
+        )
         for s in SECTIONS if (src / s).exists()
     )
 
@@ -1842,11 +1861,27 @@ def gen_root(src, out):
 
 def gen_section(slug, src_dir, out_dir):
     title, desc = SECTIONS.get(slug, (slug.title(), ""))
+
+    # STRICT: only render subsections registered in TAXONOMY. Orphan
+    # directories left behind from prior seeds are skipped with a warning,
+    # not silently rendered. The TAXONOMY is the single source of truth.
+    registered = TAXONOMY.get(slug, {})
     subs = []
+    found_dirs = sorted(d.name for d in src_dir.iterdir() if d.is_dir())
+    orphans = [name for name in found_dirs if name not in registered]
+    if orphans:
+        for name in orphans:
+            print(f"  ⚠ orphan directory skipped: content/{slug}/{name}/ (not in TAXONOMY) — delete this directory to clean up the repo")
+
     for d in sorted(src_dir.iterdir()):
-        if d.is_dir() and (d / "README.md").exists():
-            t, de = extract_title_desc((d / "README.md").read_text(encoding="utf-8"))
-            subs.append((d.name, t, de))
+        if not d.is_dir():
+            continue
+        if d.name not in registered:
+            continue  # orphan — skip
+        if not (d / "README.md").exists():
+            continue
+        t, de = extract_title_desc((d / "README.md").read_text(encoding="utf-8"))
+        subs.append((d.name, t, de))
 
     rows = ""
     for sub_slug, sub_title, sub_desc in subs:
@@ -2308,16 +2343,22 @@ def main():
         sd = src / slug
         if not sd.exists(): continue
         out_sec = out / slug
+        registered_subs = TAXONOMY.get(slug, {})
         print(f"\n[{slug}/]")
         gen_section(slug, sd, out_sec)
         for sub in sorted(sd.iterdir()):
-            if sub.is_dir() and (sub / "README.md").exists():
-                page_id = f"{slug}/{sub.name}"
-                gen_article(
-                    slug, sub.name, sub, out_sec / sub.name,
-                    referenced_by=referenced_by.get(page_id, []),
-                    metadata=site_metadata,
-                )
+            if not sub.is_dir():
+                continue
+            if sub.name not in registered_subs:
+                continue  # orphan — skip
+            if not (sub / "README.md").exists():
+                continue
+            page_id = f"{slug}/{sub.name}"
+            gen_article(
+                slug, sub.name, sub, out_sec / sub.name,
+                referenced_by=referenced_by.get(page_id, []),
+                metadata=site_metadata,
+            )
 
     # Phase 2: Generate the Knowledge Graph page from collected metadata.
     print(f"\n[knowledge-graph/]")
