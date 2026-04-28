@@ -1,0 +1,150 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+<!--
+  Practice Circles emblem.
+
+  Visual metaphor: four communities of practice arranged in cardinal
+  positions around a shared centre. Each community is a small cluster
+  of three dots (the practitioners). Each cluster lights up in turn
+  — Platform, Enterprise, COTS, Legacy — and then the centre brightens
+  to indicate cross-pollination across circles. Cycle repeats.
+
+  Layout: centre at (60, 45). Four cluster positions:
+    North: cluster centred at (60, 22) — Platform Circle
+    East:  cluster centred at (90, 45) — Enterprise Circle
+    South: cluster centred at (60, 68) — COTS Circle
+    West:  cluster centred at (30, 45) — Legacy Modernization
+
+  Each cluster is 3 dots arranged in a small triangle within ~6 unit radius.
+  
+  Cluster layouts (relative to cluster centre):
+    Dot positions (relative): (0, -3), (-3, 2), (3, 2)
+  
+  At cluster centre (cx, cy):
+    Dot1: (cx, cy-3)
+    Dot2: (cx-3, cy+2)
+    Dot3: (cx+3, cy+2)
+
+  Animation cycle: 8 seconds total.
+    0.0–1.5s: Platform (North) cluster active (terracotta)
+    1.5–3.0s: Enterprise (East) cluster active
+    3.0–4.5s: COTS (South) cluster active
+    4.5–6.0s: Legacy (West) cluster active
+    6.0–7.0s: Centre brightens (cross-pollination phase)
+    7.0–8.0s: All return to neutral; cycle restarts
+
+  Each cluster's 3 dots animate fill in unison from warm neutral to
+  terracotta during their phase.
+
+  Motion mechanic: CARDINAL CLUSTER CYCLE (the twentieth in the
+  catalogue). Distinct from #6 (sequential frame illumination —
+  individual frames take turns highlighted) by having CLUSTERS of
+  multiple dots as the unit being highlighted, AND an explicit
+  cross-pollination phase in the centre that breaks the strict
+  sequence. Distinct from #11 (peripheral asynchronous pulse —
+  6 dots pulsing on independent staggered phases) by being
+  synchronised within clusters and sequential between clusters,
+  with a distinct centre-brightening event.
+
+  Two colours only: warm neutral (#D6D2C8) for clusters at rest,
+  terracotta (#C96330) for active cluster and active centre.
+-->
+
+<!-- ─── Faint connecting lines between centre and each cluster ─── -->
+<line x1="60" y1="45" x2="60" y2="22" stroke="#D6D2C8" stroke-width="0.5" stroke-dasharray="1.5,2" opacity="0.45"/>
+<line x1="60" y1="45" x2="90" y2="45" stroke="#D6D2C8" stroke-width="0.5" stroke-dasharray="1.5,2" opacity="0.45"/>
+<line x1="60" y1="45" x2="60" y2="68" stroke="#D6D2C8" stroke-width="0.5" stroke-dasharray="1.5,2" opacity="0.45"/>
+<line x1="60" y1="45" x2="30" y2="45" stroke="#D6D2C8" stroke-width="0.5" stroke-dasharray="1.5,2" opacity="0.45"/>
+
+<!-- ─── Centre dot (cross-pollination indicator) ─── -->
+<circle cx="60" cy="45" r="3" fill="#D6D2C8">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #C96330; #D6D2C8"
+           keyTimes="0; 0.75; 0.78; 0.875; 0.90"
+           dur="8s" repeatCount="indefinite"/>
+  <animate attributeName="r"
+           values="3; 3; 4.5; 4.5; 3"
+           keyTimes="0; 0.75; 0.78; 0.875; 0.90"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+
+<!-- ─── PLATFORM cluster (North, active 0.0–1.5s = keyTimes 0.0–0.1875) ─── -->
+<!-- Each dot fills terracotta during 0.0–0.1875, warm neutral otherwise -->
+<circle cx="60" cy="19" r="1.8" fill="#C96330">
+  <animate attributeName="fill"
+           values="#C96330; #C96330; #D6D2C8; #D6D2C8; #C96330"
+           keyTimes="0; 0.1875; 0.20; 0.99; 1"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+<circle cx="57" cy="24" r="1.8" fill="#C96330">
+  <animate attributeName="fill"
+           values="#C96330; #C96330; #D6D2C8; #D6D2C8; #C96330"
+           keyTimes="0; 0.1875; 0.20; 0.99; 1"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+<circle cx="63" cy="24" r="1.8" fill="#C96330">
+  <animate attributeName="fill"
+           values="#C96330; #C96330; #D6D2C8; #D6D2C8; #C96330"
+           keyTimes="0; 0.1875; 0.20; 0.99; 1"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+
+<!-- ─── ENTERPRISE cluster (East, active 1.5–3.0s = keyTimes 0.1875–0.375) ─── -->
+<circle cx="93" cy="45" r="1.8" fill="#D6D2C8">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.1875; 0.20; 0.375; 0.39; 1"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+<circle cx="88" cy="42" r="1.8" fill="#D6D2C8">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.1875; 0.20; 0.375; 0.39; 1"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+<circle cx="88" cy="48" r="1.8" fill="#D6D2C8">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.1875; 0.20; 0.375; 0.39; 1"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+
+<!-- ─── COTS cluster (South, active 3.0–4.5s = keyTimes 0.375–0.5625) ─── -->
+<circle cx="60" cy="71" r="1.8" fill="#D6D2C8">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.375; 0.39; 0.5625; 0.58; 1"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+<circle cx="57" cy="66" r="1.8" fill="#D6D2C8">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.375; 0.39; 0.5625; 0.58; 1"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+<circle cx="63" cy="66" r="1.8" fill="#D6D2C8">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.375; 0.39; 0.5625; 0.58; 1"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+
+<!-- ─── LEGACY cluster (West, active 4.5–6.0s = keyTimes 0.5625–0.75) ─── -->
+<circle cx="27" cy="45" r="1.8" fill="#D6D2C8">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.5625; 0.58; 0.75; 0.77; 1"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+<circle cx="32" cy="42" r="1.8" fill="#D6D2C8">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.5625; 0.58; 0.75; 0.77; 1"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+<circle cx="32" cy="48" r="1.8" fill="#D6D2C8">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.5625; 0.58; 0.75; 0.77; 1"
+           dur="8s" repeatCount="indefinite"/>
+</circle>
+</svg>

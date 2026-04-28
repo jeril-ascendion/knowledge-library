@@ -1,0 +1,69 @@
+flowchart LR
+
+    %% ─── Sources of data ───
+    APP([Application Services])
+
+    %% ─── Operational tier ───
+    subgraph OPS [Operational tier &mdash; today's truth]
+        direction TB
+        REL[(Relational<br/>Postgres / MySQL)]
+        DOC[(Document<br/>MongoDB)]
+        KV[(Key-Value<br/>Redis)]
+    end
+
+    %% ─── Specialised retrieval ───
+    subgraph RETR [Specialised retrieval]
+        direction TB
+        SEARCH[(Search Index<br/>Elasticsearch)]
+        VEC[(Vector Store<br/>Pinecone / pgvector)]
+        GRAPH[(Graph DB<br/>Neo4j)]
+    end
+
+    %% ─── Telemetry ───
+    TS[(Time-Series<br/>InfluxDB / Timescale)]
+
+    %% ─── Change propagation ───
+    BUS[/Message Bus<br/>Kafka &middot; CDC/]
+
+    %% ─── Analytics ───
+    DWH[(Data Warehouse / Lakehouse<br/>Snowflake &middot; Databricks)]
+
+    %% ─── Flow ───
+    APP --> REL
+    APP --> DOC
+    APP --> KV
+    APP --> TS
+
+    REL -.CDC.-> BUS
+    DOC -.CDC.-> BUS
+
+    BUS --> SEARCH
+    BUS --> VEC
+    BUS --> GRAPH
+    BUS --> DWH
+
+    %% ─── NODE STYLES ───
+    style APP fill:#4A90E2,stroke:#2C5F9E,stroke-width:2px,color:#FFFFFF
+
+    %% Operational: amber (the source of truth)
+    style REL fill:#FEF3C7,stroke:#92722C,stroke-width:2px,color:#5C4316
+    style DOC fill:#FEF3C7,stroke:#92722C,stroke-width:1.6px,color:#5C4316
+    style KV  fill:#FEF8E5,stroke:#A8956A,stroke-width:1.4px,color:#5C4316
+
+    %% Retrieval: blue (derived views)
+    style SEARCH fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.6px,color:#1A2840
+    style VEC    fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.6px,color:#1A2840
+    style GRAPH  fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.6px,color:#1A2840
+
+    %% Time-series: cool teal-grey
+    style TS fill:#E5ECF3,stroke:#5A7A9A,stroke-width:1.5px,color:#2C4258
+
+    %% Bus: terracotta accent
+    style BUS fill:#FBEDE0,stroke:#C96330,stroke-width:2px,color:#3A2410
+
+    %% DWH: warm cream
+    style DWH fill:#FEF8E5,stroke:#C96330,stroke-width:2px,color:#5C4316
+
+    %% ─── CLUSTER STYLES ───
+    style OPS  fill:#FEF8E5,stroke:#D4C599,stroke-width:1.2px,color:#5C4316
+    style RETR fill:#EDF4FC,stroke:#A8C0DD,stroke-width:1.2px,color:#1A2840

@@ -1,0 +1,68 @@
+flowchart TB
+
+    %% ─── Identity perimeter ───
+    IDP[Identity Provider<br/>federated SSO]
+    USERS([Engineers / Services])
+    USERS --> IDP
+
+    %% ─── Network ingress ───
+    EDGE[Edge<br/>CDN &middot; WAF &middot; DDoS]
+
+    %% ─── Compute ───
+    subgraph COMPUTE [Managed compute &mdash; stateless workloads]
+        direction LR
+        CONT[Containers<br/>EKS / AKS / GKE]
+        SERV[Serverless<br/>Lambda / Functions / Cloud Run]
+    end
+
+    %% ─── Data services ───
+    subgraph DATA [Managed data services &mdash; stateful tier]
+        direction LR
+        RDS[(Managed RDBMS)]
+        NOSQL[(Managed NoSQL)]
+        QUEUE[/Managed Queue/]
+        OBJ[(Object Store)]
+    end
+
+    %% ─── Cross-cutting ───
+    OBSV[Observability<br/>OpenTelemetry &middot; CloudWatch]
+    SEC[Secrets / KMS<br/>Vault / KMS / Key Vault]
+    COST[Cost &middot; FinOps<br/>tagging &middot; daily spend]
+
+    %% ─── Multi-region ───
+    REGION[(Region B<br/>HA / DR)]
+
+    %% ─── Flow ───
+    USERS -. authn .-> EDGE
+    IDP -. trust .-> EDGE
+    EDGE --> COMPUTE
+    COMPUTE --> DATA
+    COMPUTE --> SEC
+    COMPUTE --> OBSV
+    DATA -. async replication .-> REGION
+
+    COST -. monitors .-> COMPUTE
+    COST -. monitors .-> DATA
+
+    %% ─── NODE STYLES ───
+    style USERS fill:#4A90E2,stroke:#2C5F9E,stroke-width:2px,color:#FFFFFF
+    style IDP   fill:#FBEDE0,stroke:#C96330,stroke-width:2px,color:#3A2410
+    style EDGE  fill:#FBEDE0,stroke:#C96330,stroke-width:1.8px,color:#3A2410
+
+    style CONT fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+    style SERV fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+
+    style RDS   fill:#FEF3C7,stroke:#92722C,stroke-width:1.6px,color:#5C4316
+    style NOSQL fill:#FEF3C7,stroke:#92722C,stroke-width:1.6px,color:#5C4316
+    style QUEUE fill:#FBEDE0,stroke:#C96330,stroke-width:1.5px,color:#3A2410
+    style OBJ   fill:#FEF3C7,stroke:#92722C,stroke-width:1.6px,color:#5C4316
+
+    style OBSV fill:#E8E8E2,stroke:#5C5C5C,stroke-width:1.4px,color:#2C2C2C
+    style SEC  fill:#FBEDE0,stroke:#C96330,stroke-width:1.6px,color:#3A2410
+    style COST fill:#E8E8E2,stroke:#5C5C5C,stroke-width:1.4px,color:#2C2C2C
+
+    style REGION fill:#E5ECF3,stroke:#5A7A9A,stroke-width:1.6px,color:#2C4258
+
+    %% ─── CLUSTER STYLES ───
+    style COMPUTE fill:#EDF4FC,stroke:#A8C0DD,stroke-width:1.2px,color:#1A2840
+    style DATA    fill:#FEF8E5,stroke:#D4C599,stroke-width:1.2px,color:#5C4316

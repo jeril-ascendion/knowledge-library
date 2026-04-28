@@ -1,0 +1,55 @@
+flowchart TB
+
+    %% ─── Three tiers in ascending order ───
+    subgraph TIER1 [Tier 1 &mdash; Staffing &amp; Resource Augmentation]
+        direction LR
+        T1A[Engineers under client governance]
+        T1B[Vehicle: T&amp;M]
+    end
+
+    subgraph TIER2 [Tier 2 &mdash; Managed Capacity]
+        direction LR
+        T2A[Service Delivery Lead<br/>KPI-aligned governance]
+        T2B[Vehicles: T&amp;M &middot; Fixed Price]
+    end
+
+    subgraph TIER3 [Tier 3 &mdash; Managed Services]
+        direction LR
+        T3A[End-to-end solution ownership<br/>partner-driven governance]
+        T3B[Vehicles: Fixed Price &middot; Milestones &middot; Outcomes-based]
+    end
+
+    %% ─── Maturity arrow ───
+    ARROW[Maturity Arrow<br/>trust earned through demonstrated outcomes]
+
+    %% ─── AAVA AI-native delivery ───
+    AAVA[AAVA AI-Native Delivery<br/>multi-agent acceleration<br/>across all tiers]
+
+    %% ─── Flow ───
+    TIER1 -->|trust + demonstrated outcomes| TIER2
+    TIER2 -->|trust + demonstrated outcomes| TIER3
+    ARROW -. shapes progression .-> TIER1
+    ARROW -. shapes progression .-> TIER2
+    ARROW -. shapes progression .-> TIER3
+
+    AAVA -. accelerates .-> TIER1
+    AAVA -. accelerates .-> TIER2
+    AAVA -. accelerates .-> TIER3
+
+    %% ─── NODE STYLES ───
+    style T1A fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.5px,color:#1A2840
+    style T1B fill:#FEF8E5,stroke:#A8956A,stroke-width:1.3px,color:#5C4316
+
+    style T2A fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.7px,color:#1A2840
+    style T2B fill:#FEF8E5,stroke:#A8956A,stroke-width:1.3px,color:#5C4316
+
+    style T3A fill:#DCEAFC,stroke:#2C5F9E,stroke-width:2px,color:#1A2840
+    style T3B fill:#FEF8E5,stroke:#A8956A,stroke-width:1.3px,color:#5C4316
+
+    style ARROW fill:#FBEDE0,stroke:#C96330,stroke-width:2px,color:#3A2410
+    style AAVA  fill:#FEF3C7,stroke:#92722C,stroke-width:1.8px,color:#5C4316
+
+    %% ─── CLUSTER STYLES (gradient — least to most accountability) ───
+    style TIER1 fill:#F2F4F7,stroke:#9CB0C4,stroke-width:1.2px,color:#2C4258
+    style TIER2 fill:#EDF4FC,stroke:#A8C0DD,stroke-width:1.4px,color:#1A2840
+    style TIER3 fill:#FBEDE0,stroke:#C96330,stroke-width:1.6px,color:#3A2410

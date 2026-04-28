@@ -1,0 +1,61 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+<!--
+  UI, UX & CX emblem.
+
+  Visual metaphor: three layers of customer interaction stacked in
+  z-axis depth. The CX layer (deepest, broadest — the whole journey)
+  appears first; the UX layer (the behaviour that shapes flows) appears
+  next; the UI layer (the immediate surface the customer touches) last.
+  All three then hold visible briefly, then fade together and the cycle
+  restarts.
+
+  Layout: three offset rectangles diagonally staggered to suggest depth.
+  The deepest layer is largest and offset back-and-up; the front layer
+  is smallest and offset front-and-down.
+
+  Animation: opacity-only on each layer, with sequential reveal from
+  back to front; all hold; all fade simultaneously.
+
+    0.0–0.6s : CX layer (back) fades in
+    0.6–1.2s : UX layer (mid) fades in
+    1.2–1.8s : UI layer (front) fades in
+    1.8–4.0s : All three hold
+    4.0–4.5s : All fade out simultaneously
+    cycle repeats every 4.5s
+
+  Motion mechanic: LAYERED DEPTH REVEAL (the fifteenth in the catalogue).
+  Distinct from #4 (cross-fade between two GEOMETRICALLY DIFFERENT forms)
+  because here three identical-shape layers reveal in z-axis order.
+  Distinct from #10 (accretive composition with spiral order) because
+  the order is back-to-front depth rather than around a centre.
+
+  Two colours: warm neutral (#D6D2C8) for the back layer (CX, the
+  furthest from the customer, the journey context) and progressively
+  more terracotta (#C96330) for the closer layers (UX surface, UI
+  immediate). The visual gradient in colour reinforces the depth.
+-->
+
+<!-- ─── CX layer (deepest, warm neutral) ─── -->
+<rect x="20" y="22" width="70" height="42" rx="3" fill="#D6D2C8" stroke="#B0AC9F" stroke-width="1" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 1; 1; 0"
+           keyTimes="0; 0.13; 0.89; 1"
+           dur="4.5s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── UX layer (middle: warm neutral fill, terracotta outline) ─── -->
+<rect x="28" y="28" width="70" height="42" rx="3" fill="#D6D2C8" stroke="#C96330" stroke-width="1.5" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 1; 1; 0"
+           keyTimes="0; 0.13; 0.27; 0.89; 1"
+           dur="4.5s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── UI layer (front, terracotta) ─── -->
+<rect x="36" y="34" width="70" height="42" rx="3" fill="#C96330" stroke="#C96330" stroke-width="1.2" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 1; 1; 0"
+           keyTimes="0; 0.27; 0.40; 0.89; 1"
+           dur="4.5s" repeatCount="indefinite"/>
+</rect>
+</svg>

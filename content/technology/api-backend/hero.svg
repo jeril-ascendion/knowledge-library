@@ -1,0 +1,75 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+<!--
+  API & Backend Technologies emblem.
+
+  Visual metaphor: bidirectional API traffic. Two horizontal lanes
+  represent the request/response pair every API serves. In the upper
+  lane, request dots flow left-to-right (client to server); in the
+  lower lane, response dots flow right-to-left (server to client).
+  Both lanes have continuous traffic — a working API is always in
+  conversation with its consumers.
+
+  Layout: two parallel lanes, each with two dots in flight. The dots
+  appear at one edge, traverse the lane, and exit at the other edge.
+  Staggered start times keep the lanes visually busy without becoming
+  chaotic.
+
+  Animation: cx animates linearly from one edge to the other for each
+  dot, with opacity fading at start and end to avoid abrupt appearance.
+  All four dots cycle at 4s with staggered begin times.
+
+    Upper lane (terracotta dots, left → right):
+      Dot 1: starts at x=15, ends at x=105, begin=0s
+      Dot 2: same path, begin=2s
+    Lower lane (warm-neutral dots, right → left):
+      Dot 3: starts at x=105, ends at x=15, begin=1s
+      Dot 4: same path, begin=3s
+
+  Two static lanes (warm-neutral horizontal lines) anchor the geometry.
+
+  Motion mechanic: BIDIRECTIONAL PIPELINE TRAFFIC (the sixteenth in the
+  catalogue). Distinct from #1 (radial particle convergence) by being
+  parallel-linear rather than radial-convergent; distinct from #2
+  (lateral shape oscillation) by being unidirectional traversal rather
+  than back-and-forth drift; distinct from #8 (bidirectional pulsation
+  with two stable nodes) by having dots traverse rather than nodes
+  pulsing in place.
+
+  Two colours only: terracotta (#C96330) for requests in upper lane,
+  warm neutral (#D6D2C8) for responses in lower lane.
+-->
+
+<!-- ─── Upper lane (request lane) ─── -->
+<line x1="10" y1="35" x2="110" y2="35" stroke="#D6D2C8" stroke-width="0.5" stroke-dasharray="2,2" opacity="0.6"/>
+
+<!-- ─── Lower lane (response lane) ─── -->
+<line x1="10" y1="55" x2="110" y2="55" stroke="#D6D2C8" stroke-width="0.5" stroke-dasharray="2,2" opacity="0.6"/>
+
+<!-- ─── Edge markers (client and server endpoints) ─── -->
+<rect x="6" y="38" width="6" height="14" rx="1" fill="#D6D2C8" stroke="#B0AC9F" stroke-width="0.8"/>
+<rect x="108" y="38" width="6" height="14" rx="1" fill="#D6D2C8" stroke="#B0AC9F" stroke-width="0.8"/>
+
+<!-- ─── Upper lane: Dot 1 (request, left→right, begin=0s) ─── -->
+<circle cy="35" r="2.5" fill="#C96330" cx="15">
+  <animate attributeName="cx" values="15; 105" keyTimes="0; 1" dur="4s" begin="0s" repeatCount="indefinite"/>
+  <animate attributeName="opacity" values="0; 1; 1; 0" keyTimes="0; 0.05; 0.92; 1" dur="4s" begin="0s" repeatCount="indefinite"/>
+</circle>
+
+<!-- ─── Upper lane: Dot 2 (request, left→right, begin=2s) ─── -->
+<circle cy="35" r="2.5" fill="#C96330" cx="15">
+  <animate attributeName="cx" values="15; 105" keyTimes="0; 1" dur="4s" begin="2s" repeatCount="indefinite"/>
+  <animate attributeName="opacity" values="0; 1; 1; 0" keyTimes="0; 0.05; 0.92; 1" dur="4s" begin="2s" repeatCount="indefinite"/>
+</circle>
+
+<!-- ─── Lower lane: Dot 3 (response, right→left, begin=1s) ─── -->
+<circle cy="55" r="2.5" fill="#D6D2C8" stroke="#B0AC9F" stroke-width="0.8" cx="105">
+  <animate attributeName="cx" values="105; 15" keyTimes="0; 1" dur="4s" begin="1s" repeatCount="indefinite"/>
+  <animate attributeName="opacity" values="0; 1; 1; 0" keyTimes="0; 0.05; 0.92; 1" dur="4s" begin="1s" repeatCount="indefinite"/>
+</circle>
+
+<!-- ─── Lower lane: Dot 4 (response, right→left, begin=3s) ─── -->
+<circle cy="55" r="2.5" fill="#D6D2C8" stroke="#B0AC9F" stroke-width="0.8" cx="105">
+  <animate attributeName="cx" values="105; 15" keyTimes="0; 1" dur="4s" begin="3s" repeatCount="indefinite"/>
+  <animate attributeName="opacity" values="0; 1; 1; 0" keyTimes="0; 0.05; 0.92; 1" dur="4s" begin="3s" repeatCount="indefinite"/>
+</circle>
+</svg>

@@ -1,0 +1,50 @@
+flowchart TB
+
+    %% ─── Shared foundation ───
+    FOUNDATION[Shared Foundation<br/>methodology &middot; accelerators &middot; AI-native delivery]
+
+    %% ─── The four circles ───
+    subgraph CIRCLES [The four practice circles]
+        direction LR
+        PLAT[Platform Circle<br/>application development<br/>delivery models<br/>strategy &middot; value props]
+        ENT[Enterprise Circle<br/>Salesforce &middot; MuleSoft<br/>Kafka &middot; data platforms]
+        COTS[COTS Circle<br/>Power BI &middot; Tableau<br/>Power Automate &middot; Fabric]
+        LEG[Legacy Modernization<br/>knowledge extraction<br/>strangler-fig &middot; rewrite]
+    end
+
+    %% ─── Cross-pollination ───
+    CROSS[Cross-circle<br/>integration patterns<br/>shared playbooks]
+
+    %% ─── Client engagements ───
+    ENG([Client Engagements])
+
+    %% ─── Flow ───
+    FOUNDATION --> PLAT
+    FOUNDATION --> ENT
+    FOUNDATION --> COTS
+    FOUNDATION --> LEG
+
+    PLAT  --- CROSS
+    ENT   --- CROSS
+    COTS  --- CROSS
+    LEG   --- CROSS
+
+    PLAT --> ENG
+    ENT  --> ENG
+    COTS --> ENG
+    LEG  --> ENG
+
+    %% ─── NODE STYLES ───
+    style FOUNDATION fill:#FBEDE0,stroke:#C96330,stroke-width:2px,color:#3A2410
+
+    style PLAT fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+    style ENT  fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+    style COTS fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+    style LEG  fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+
+    style CROSS fill:#FEF3C7,stroke:#92722C,stroke-width:1.6px,color:#5C4316
+
+    style ENG fill:#4A90E2,stroke:#2C5F9E,stroke-width:2px,color:#FFFFFF
+
+    %% ─── CLUSTER STYLES ───
+    style CIRCLES fill:#EDF4FC,stroke:#A8C0DD,stroke-width:1.2px,color:#1A2840

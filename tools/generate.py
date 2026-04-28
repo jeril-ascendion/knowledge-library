@@ -93,6 +93,61 @@ EMBLEM MOTION MECHANICS (each page must use a DISTINCT mechanic):
                            active simultaneously, and from accretive
                            composition because the envelope rises AND falls
                            rather than monotonic-buildup-then-bulk-fade)
+    technology/ui-ux-cx  → layered depth reveal (three offset rectangles
+                           representing UI/UX/CX layers reveal in z-axis depth
+                           order — back-to-front — via opacity; all hold; all
+                           fade simultaneously; distinct from cross-fade
+                           metamorphosis where two GEOMETRICALLY DIFFERENT
+                           forms swap, and from accretive composition where
+                           tiles appear in spiral order)
+    technology/api-backend → bidirectional pipeline traffic (two horizontal
+                           lanes; in the upper lane request dots flow
+                           left-to-right, in the lower lane response dots
+                           flow right-to-left; continuous bidirectional
+                           traffic; distinct from radial particle convergence
+                           by being parallel-linear rather than radial)
+    technology/databases → sedimentation stacking (small items appear at the
+                           top, fall under gravity to a floor line, accumulate
+                           into a stacked row; once full, all dissolve and the
+                           cycle restarts; vertical translation with
+                           accumulation, distinct from scaling envelope's
+                           in-place colour swap and from accretive
+                           composition's spiral appearance)
+    technology/cloud     → sweeping beam scan (a vertical beam line translates
+                           left-to-right across the canvas; six fixed dots at
+                           staggered positions briefly flash terracotta as
+                           the beam passes their column; distinct from radial
+                           particle flow by being a single linear sweep with
+                           reactive fixed receivers, and from wave propagation
+                           by being a translating line rather than expanding
+                           radius)
+    technology/devops    → conveyor loop (five dots traverse a closed
+                           rectangular path continuously; each dot is at a
+                           different position around the loop; the pipeline
+                           is never empty; distinct from radial particle
+                           convergence and from bidirectional pipeline traffic
+                           by being a single closed-loop perimeter traversal
+                           rather than radial-inward or parallel-linear)
+    technology/practice-circles → cardinal cluster cycle (four dot clusters
+                           — three dots each — arranged in cardinal positions
+                           N/E/S/W around a faint centre; each cluster lights
+                           up in turn (cluster-level sequential illumination),
+                           then the centre brightens to indicate
+                           cross-pollination; distinct from sequential frame
+                           illumination by having clusters as the unit and
+                           an explicit cross-pollination phase, and from
+                           peripheral asynchronous pulse by being synchronised
+                           within clusters and sequential between them)
+    technology/engagement-models → tier ascent (a token — small square —
+                           progresses up three platform steps in sequence
+                           representing Staffing → Managed Capacity →
+                           Managed Services; the token holds at the top tier
+                           briefly, then fades out and the cycle restarts
+                           with a fresh token at the bottom; distinct from
+                           conveyor loop by being unidirectional staircase
+                           progression with a fade-and-restart, not closed
+                           loop, and from scaling envelope by being a single
+                           ascending token rather than an array)
   Future pages must invent a new mechanic, not reuse one.
   Two colours only: warm neutral (#D6D2C8) + terracotta (#C96330).
   Basic SMIL primitives only (animate, animateTransform with type=rotate).
@@ -135,8 +190,8 @@ GROUPS = [
      ["principles", "patterns", "anti-patterns", "adrs", "views"]),
     ("Architecture",   "System design, DDD, frameworks, and design practices",
      ["system-design", "design", "ddd", "frameworks"]),
-    ("Technology",     "Cloud platforms, infrastructure, data, and integration",
-     ["tech", "cloud", "infra", "data", "integration"]),
+    ("Technology",     "UI/UX, backend, data, cloud, DevOps, and engagement models",
+     ["technology", "cloud", "infra", "data", "integration"]),
     ("Quality & Risk", "Security, compliance, governance, and non-functional requirements",
      ["security", "compliance", "governance", "nfr"]),
     ("Operations",     "Observability, runbooks, checklists, and tooling",
@@ -156,6 +211,7 @@ SECTIONS = {
     "ddd":           ("Domain-Driven Design",                 "Context mapping, bounded-context patterns, and aggregate design."),
     "frameworks":    ("Industry Frameworks Mapping",          "TOGAF, NIST CSF, ISO 27001, Zachman, and Gartner — mapped to practice."),
     "tech":          ("Technology Stack Best Practices",      "AWS, Azure, GCP, Java, Angular, DevOps, and AI/ML best practices."),
+    "technology":    ("Technology",                            "Frontend, backend, data, cloud, DevOps, practice circles, and engagement models — how we deliver across the stack."),
     "infra":         ("Infrastructure Architecture",          "IaC, networking, CI/CD, and operational excellence practices."),
     "cloud":         ("Cloud Architecture",                   "Multi-cloud reference architectures across AWS, Azure, and GCP."),
     "ai":            ("AI-Native Architecture",               "AI-native patterns, LLMOps, RAG, agentic systems, and governance."),
@@ -181,7 +237,7 @@ NAV_LINKS = [
     ("Principles",    "principles/index.html"),
     ("Patterns",      "patterns/index.html"),
     ("System Design", "system-design/index.html"),
-    ("Technology",    "tech/index.html"),
+    ("Technology",    "technology/index.html"),
     ("Security",      "security/index.html"),
     ("AI-Native",     "ai/index.html"),
     ("Governance",    "governance/index.html"),
@@ -1164,6 +1220,68 @@ TAG_LINKS = {
     "AWS Well-Architected Reliability Pillar": "https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html",
     "CAP Theorem": "https://en.wikipedia.org/wiki/CAP_theorem",
     "Reactive Manifesto": "https://www.reactivemanifesto.org/",
+    # Frontend frameworks and UX
+    "React": "https://react.dev/",
+    "Angular": "https://angular.dev/",
+    "Vue.js": "https://vuejs.org/",
+    "Svelte": "https://svelte.dev/",
+    "Web Vitals": "https://web.dev/articles/vitals",
+    "Laws of UX": "https://lawsofux.com/",
+    "WCAG": "https://www.w3.org/WAI/standards-guidelines/wcag/",
+    "Material Design": "https://m3.material.io/",
+    "Storybook": "https://storybook.js.org/",
+    # Backend stacks
+    "Spring Boot": "https://spring.io/projects/spring-boot",
+    "Node.js": "https://nodejs.org/",
+    "FastAPI": "https://fastapi.tiangolo.com/",
+    "Django": "https://www.djangoproject.com/",
+    "OpenAPI": "https://www.openapis.org/",
+    "GraphQL": "https://graphql.org/",
+    "gRPC": "https://grpc.io/",
+    # Databases
+    "PostgreSQL": "https://www.postgresql.org/",
+    "MongoDB": "https://www.mongodb.com/",
+    "Redis": "https://redis.io/",
+    "Apache Cassandra": "https://cassandra.apache.org/",
+    "Elasticsearch": "https://www.elastic.co/elasticsearch",
+    "Neo4j": "https://neo4j.com/",
+    "Snowflake": "https://www.snowflake.com/",
+    "ClickHouse": "https://clickhouse.com/",
+    "InfluxDB": "https://www.influxdata.com/",
+    "Pinecone": "https://www.pinecone.io/",
+    "pgvector": "https://github.com/pgvector/pgvector",
+    # Cloud platforms
+    "AWS": "https://aws.amazon.com/",
+    "Microsoft Azure": "https://azure.microsoft.com/",
+    "Google Cloud Platform": "https://cloud.google.com/",
+    "AWS Well-Architected": "https://aws.amazon.com/architecture/well-architected/",
+    "Azure Well-Architected Framework": "https://learn.microsoft.com/en-us/azure/well-architected/",
+    "GCP Architecture Framework": "https://cloud.google.com/architecture/framework",
+    "Terraform": "https://www.terraform.io/",
+    "Pulumi": "https://www.pulumi.com/",
+    # DevOps
+    "GitHub Actions": "https://docs.github.com/en/actions",
+    "GitLab CI": "https://docs.gitlab.com/ee/ci/",
+    "Argo CD": "https://argo-cd.readthedocs.io/",
+    "Flux CD": "https://fluxcd.io/",
+    "OpenTelemetry": "https://opentelemetry.io/",
+    "Prometheus": "https://prometheus.io/",
+    "Grafana": "https://grafana.com/",
+    "GitOps": "https://opengitops.dev/",
+    "SLSA": "https://slsa.dev/",
+    "DORA Metrics": "https://dora.dev/",
+    # Practice Circles platforms
+    "Salesforce": "https://www.salesforce.com/",
+    "MuleSoft": "https://www.mulesoft.com/",
+    "Microsoft Power Platform": "https://www.microsoft.com/en-us/power-platform",
+    "Power BI": "https://www.microsoft.com/en-us/power-platform/products/power-bi",
+    "Tableau": "https://www.tableau.com/",
+    "Microsoft Fabric": "https://www.microsoft.com/en-us/microsoft-fabric",
+    "Databricks": "https://www.databricks.com/",
+    # Engagement models
+    "SAFe": "https://framework.scaledagile.com/",
+    "Lean Software Development": "https://en.wikipedia.org/wiki/Lean_software_development",
+    "Outcomes-Based Contracting": "https://en.wikipedia.org/wiki/Performance-based_contracting",
 }
 
 

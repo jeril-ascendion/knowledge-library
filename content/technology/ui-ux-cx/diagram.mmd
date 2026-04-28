@@ -1,0 +1,74 @@
+flowchart TB
+
+    %% ─── Customer ───
+    CUST([Customer])
+
+    %% ─── Channels ───
+    subgraph CHANNELS [Channels &mdash; rendering surfaces]
+        direction LR
+        WEB[Web App<br/>React / Vue / Angular]
+        MOB[Mobile App]
+        KIOSK[Kiosk / Branch]
+        CC[Contact Centre]
+    end
+
+    %% ─── Shared design system ───
+    DS[Design System<br/>tokens &middot; components &middot; a11y]
+
+    %% ─── Customer state and analytics ───
+    STATE[(Customer State<br/>identity &middot; preferences &middot; context)]
+    ANALYTICS[(Journey Analytics<br/>cross-channel paths)]
+
+    %% ─── Content & data backbone ───
+    subgraph BACKBONE [Headless backbone &mdash; single source of truth]
+        direction LR
+        CMS[Headless CMS<br/>content]
+        CMRC[Federated Commerce<br/>product &middot; price]
+        RULES[Personalisation<br/>rules &middot; targeting]
+    end
+
+    %% ─── Flow ───
+    CUST --> CHANNELS
+
+    WEB   --> DS
+    MOB   --> DS
+    KIOSK --> DS
+    CC    --> DS
+
+    WEB   --> STATE
+    MOB   --> STATE
+    KIOSK --> STATE
+    CC    --> STATE
+
+    WEB   --> ANALYTICS
+    MOB   --> ANALYTICS
+    KIOSK --> ANALYTICS
+    CC    --> ANALYTICS
+
+    DS   --> BACKBONE
+    STATE --> BACKBONE
+
+    %% ─── NODE STYLES ───
+    style CUST fill:#4A90E2,stroke:#2C5F9E,stroke-width:2px,color:#FFFFFF
+
+    %% Channels: emphasised blue
+    style WEB   fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+    style MOB   fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+    style KIOSK fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+    style CC    fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+
+    %% Design system: terracotta accent
+    style DS fill:#FBEDE0,stroke:#C96330,stroke-width:2.2px,color:#3A2410
+
+    %% State and analytics: amber
+    style STATE     fill:#FEF3C7,stroke:#92722C,stroke-width:1.8px,color:#5C4316
+    style ANALYTICS fill:#FEF3C7,stroke:#92722C,stroke-width:1.8px,color:#5C4316
+
+    %% Backbone: cream
+    style CMS   fill:#FEF8E5,stroke:#A8956A,stroke-width:1.5px,color:#5C4316
+    style CMRC  fill:#FEF8E5,stroke:#A8956A,stroke-width:1.5px,color:#5C4316
+    style RULES fill:#FEF8E5,stroke:#A8956A,stroke-width:1.5px,color:#5C4316
+
+    %% ─── CLUSTER STYLES ───
+    style CHANNELS fill:#EDF4FC,stroke:#A8C0DD,stroke-width:1.2px,color:#1A2840
+    style BACKBONE fill:#FEF8E5,stroke:#D4C599,stroke-width:1.2px,color:#5C4316

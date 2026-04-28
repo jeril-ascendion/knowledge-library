@@ -1,0 +1,88 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+<!--
+  Engagement Models emblem.
+
+  Visual metaphor: a partnership maturing through three tiers. Three
+  platform steps at increasing heights represent Staffing → Managed
+  Capacity → Managed Services. A token (small square) progresses up
+  the steps in sequence, indicating the maturity arrow. Once the token
+  reaches the top tier, it briefly holds there, then the whole sequence
+  resets and a new token starts ascending.
+
+  Layout: three platform rectangles at different y-heights forming a
+  staircase from bottom-left to top-right.
+    Step 1 (lowest): x=15-45, y=60-70, width 30, height 10
+    Step 2 (middle): x=45-75, y=45-55
+    Step 3 (top):    x=75-105, y=30-40
+
+  Token positions on each step (centred horizontally, sitting on top):
+    Token on Step 1: cx=30, cy=55 (sits on y=60 platform)
+    Token on Step 2: cx=60, cy=40
+    Token on Step 3: cx=90, cy=25
+
+  Animation: the token's cx and cy animate through three positions.
+  We use opacity to make the token APPEAR at step 1 fresh each cycle,
+  rather than translate it back from the top to the bottom.
+
+  Cycle: 6 seconds.
+    0.0–1.0s: Token appears at Step 1, fades in
+    1.0–1.5s: Token transitions to Step 2 (jump)
+    1.5–2.5s: Token rests at Step 2
+    2.5–3.0s: Token transitions to Step 3 (jump)
+    3.0–4.5s: Token rests at Step 3 (fully matured)
+    4.5–5.5s: Token fades out
+    5.5–6.0s: pause
+    cycle repeats
+
+  We achieve the "jumping" by combining smooth cx animation (which
+  moves the token horizontally during the jump) with a small dip-and-
+  rise in cy to suggest a leap. To keep things simple we use linear
+  cy interpolation between platforms — the visual impression of jumping
+  comes from the simultaneous horizontal+vertical motion.
+
+  Motion mechanic: TIER ASCENT (the twenty-first in the catalogue).
+  Distinct from #1 (radial particle convergence) by being a discrete
+  staircase progression. Distinct from #14 (scaling envelope) by being
+  a single token traversing tiers rather than an array of items rising
+  and falling. Distinct from #19 (conveyor loop) by being unidirectional
+  ascent with a hold-at-top phase, not a continuous closed loop.
+
+  Two colours only: warm neutral (#D6D2C8) for the lower platforms,
+  terracotta (#C96330) for the highest platform (signalling maximum
+  accountability) and the token throughout its ascent.
+-->
+
+<!-- ─── Step 1: Staffing tier (lowest, warm neutral) ─── -->
+<rect x="15" y="60" width="30" height="10" rx="2" fill="#D6D2C8" stroke="#B0AC9F" stroke-width="1"/>
+
+<!-- ─── Step 2: Managed Capacity tier (middle, warm neutral with terracotta accent) ─── -->
+<rect x="45" y="45" width="30" height="10" rx="2" fill="#D6D2C8" stroke="#C96330" stroke-width="1.2"/>
+
+<!-- ─── Step 3: Managed Services tier (top, terracotta — full partnership accountability) ─── -->
+<rect x="75" y="30" width="30" height="10" rx="2" fill="#C96330" stroke="#C96330" stroke-width="1"/>
+
+<!-- ─── Token: ascends through tiers ─── -->
+<rect width="6" height="6" rx="1" fill="#C96330" stroke="#C96330" stroke-width="0.8" opacity="0">
+  <!-- cx-equivalent: x animation. Token x positions for being centred on each step:
+       Step 1 centre: x=27 (cx=30, width 6 → x=27)
+       Step 2 centre: x=57 (cx=60)
+       Step 3 centre: x=87 (cx=90) -->
+  <animate attributeName="x"
+           values="27; 27; 57; 57; 87; 87; 87; 27"
+           keyTimes="0; 0.17; 0.25; 0.42; 0.50; 0.75; 0.92; 1"
+           dur="6s" repeatCount="indefinite"/>
+  <!-- y values: Token sits on top of platform → y = platform_y - 6 (token height)
+       Step 1: y=54
+       Step 2: y=39
+       Step 3: y=24 -->
+  <animate attributeName="y"
+           values="54; 54; 39; 39; 24; 24; 24; 54"
+           keyTimes="0; 0.17; 0.25; 0.42; 0.50; 0.75; 0.92; 1"
+           dur="6s" repeatCount="indefinite"/>
+  <!-- Opacity: fade in at start, hold while moving, fade out at end of cycle -->
+  <animate attributeName="opacity"
+           values="0; 1; 1; 1; 1; 1; 0; 0"
+           keyTimes="0; 0.08; 0.25; 0.42; 0.50; 0.75; 0.92; 1"
+           dur="6s" repeatCount="indefinite"/>
+</rect>
+</svg>

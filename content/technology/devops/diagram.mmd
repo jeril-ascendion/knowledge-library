@@ -1,0 +1,76 @@
+flowchart LR
+
+    %% ─── Source ───
+    GIT([Git Repository<br/>code &middot; IaC &middot; pipelines])
+
+    %% ─── CI ───
+    subgraph CI [CI &mdash; build, test, attest]
+        direction TB
+        BUILD[Build]
+        TEST[Test &middot; SAST &middot; SCA]
+        SIGN[Sign &middot; SLSA Provenance]
+    end
+
+    %% ─── Artifact ───
+    REG[(Artifact Registry<br/>signed images)]
+
+    %% ─── GitOps controller ───
+    GITOPS[GitOps Controller<br/>Argo CD &middot; Flux]
+
+    %% ─── Environments ───
+    subgraph ENVS [Environments &mdash; reconciled from git]
+        direction TB
+        DEV[Dev]
+        STG[Staging]
+        PROD[Production]
+    end
+
+    %% ─── IaC ───
+    IAC[Terraform / Pulumi<br/>infrastructure as code]
+
+    %% ─── Observability ───
+    OBS[OpenTelemetry<br/>logs &middot; metrics &middot; traces]
+
+    %% ─── Policy ───
+    POL[Policy as Code<br/>OPA &middot; Sentinel]
+
+    %% ─── Flow ───
+    GIT --> BUILD
+    BUILD --> TEST
+    TEST --> SIGN
+    SIGN --> REG
+
+    GIT --> GITOPS
+    REG --> GITOPS
+    GITOPS --> DEV
+    GITOPS --> STG
+    GITOPS --> PROD
+
+    IAC -.provisions.-> ENVS
+    POL -.gates.-> GITOPS
+    POL -.gates.-> CI
+
+    ENVS -.telemetry.-> OBS
+
+    %% ─── NODE STYLES ───
+    style GIT fill:#4A90E2,stroke:#2C5F9E,stroke-width:2px,color:#FFFFFF
+
+    style BUILD fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.6px,color:#1A2840
+    style TEST  fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.6px,color:#1A2840
+    style SIGN  fill:#FBEDE0,stroke:#C96330,stroke-width:1.8px,color:#3A2410
+
+    style REG fill:#FEF3C7,stroke:#92722C,stroke-width:1.8px,color:#5C4316
+
+    style GITOPS fill:#FBEDE0,stroke:#C96330,stroke-width:2px,color:#3A2410
+
+    style DEV  fill:#FEF8E5,stroke:#A8956A,stroke-width:1.4px,color:#5C4316
+    style STG  fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+    style PROD fill:#FEF3C7,stroke:#C96330,stroke-width:2px,color:#5C4316
+
+    style IAC fill:#E5ECF3,stroke:#5A7A9A,stroke-width:1.5px,color:#2C4258
+    style OBS fill:#E8E8E2,stroke:#5C5C5C,stroke-width:1.4px,color:#2C2C2C
+    style POL fill:#FBEDE0,stroke:#C96330,stroke-width:1.5px,color:#3A2410
+
+    %% ─── CLUSTER STYLES ───
+    style CI   fill:#EDF4FC,stroke:#A8C0DD,stroke-width:1.2px,color:#1A2840
+    style ENVS fill:#FEF8E5,stroke:#D4C599,stroke-width:1.2px,color:#5C4316

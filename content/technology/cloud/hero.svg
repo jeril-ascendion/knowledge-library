@@ -1,0 +1,126 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+<!--
+  Cloud emblem.
+
+  Visual metaphor: a sweeping beam of cloud coverage moving across a
+  set of fixed regions/zones. The beam is a vertical line that
+  translates left-to-right across the canvas. Six dots at staggered
+  positions briefly light up (warm neutral → terracotta → warm
+  neutral) as the beam passes over their column.
+
+  Layout:
+    - 6 fixed dots arranged in two staggered rows for visual interest
+      Row 1 (y=35): x = 22, 50, 78, 106
+      Row 2 (y=55): x = 36, 64, 92
+    Actually: 6 dots total. Let me place:
+      (20, 35), (35, 55), (50, 35), (65, 55), (80, 35), (95, 55)
+      x coords: 20, 35, 50, 65, 80, 95
+    The beam reaches each in sequence as it sweeps from x=15 to x=105.
+  
+  Animation: the beam is a vertical line; its x1 and x2 animate from 15
+  to 105 over 4 seconds; then beam fades for 0.5s; cycle 4.5s.
+  
+  Each dot's fill animates from warm neutral → terracotta → warm
+  neutral when the beam x position matches the dot's x (with a small
+  illumination window).
+  
+  Beam x sweeps 15 → 105 over 4s (90 units in 4s = 22.5 units/sec).
+  Dot at x=20 lit at t = 4 * (20-15)/(105-15) = 4 * 5/90 ≈ 0.22s
+  Dot at x=35 lit at t = 4 * 20/90 ≈ 0.89s
+  Dot at x=50 lit at t = 4 * 35/90 ≈ 1.56s
+  Dot at x=65 lit at t = 4 * 50/90 ≈ 2.22s
+  Dot at x=80 lit at t = 4 * 65/90 ≈ 2.89s
+  Dot at x=95 lit at t = 4 * 80/90 ≈ 3.56s
+  
+  In 4.5s cycle: keyTimes for each dot's flash:
+    Dot 1: t=0.22 → keyTime 0.049, flash window 0.04-0.06
+    Dot 2: t=0.89 → keyTime 0.198, flash 0.18-0.22
+    Dot 3: t=1.56 → keyTime 0.347, flash 0.33-0.37
+    Dot 4: t=2.22 → keyTime 0.493, flash 0.48-0.52
+    Dot 5: t=2.89 → keyTime 0.642, flash 0.62-0.66
+    Dot 6: t=3.56 → keyTime 0.791, flash 0.77-0.81
+
+  Motion mechanic: SWEEPING BEAM SCAN (the eighteenth in the
+  catalogue). Distinct from #1 (radial particle convergence — many
+  particles travelling on radial paths) by being a single linear
+  sweep with fixed receivers; distinct from #16 (bidirectional
+  pipeline traffic — dots travelling along lanes) by having the
+  travelling element being a LINE not a dot, and by triggering
+  reactions in fixed elements. Distinct from #12 (wave propagation —
+  expanding ring) by being a translating vertical beam rather than
+  an expanding circle.
+
+  Two colours only: warm neutral (#D6D2C8) for dots at rest and the
+  faint beam guideline, terracotta (#C96330) for the sweeping beam
+  itself and dots when illuminated.
+-->
+
+<!-- ─── Faint horizontal guideline at row 1 and row 2 ─── -->
+<line x1="15" y1="35" x2="105" y2="35" stroke="#D6D2C8" stroke-width="0.4" stroke-dasharray="1.5,2" opacity="0.5"/>
+<line x1="15" y1="55" x2="105" y2="55" stroke="#D6D2C8" stroke-width="0.4" stroke-dasharray="1.5,2" opacity="0.5"/>
+
+<!-- ─── The sweeping beam (vertical line) ─── -->
+<line x1="15" y1="20" x2="15" y2="70" stroke="#C96330" stroke-width="1.5" opacity="0.85">
+  <animate attributeName="x1"
+           values="15; 105; 105"
+           keyTimes="0; 0.89; 1"
+           dur="4.5s" repeatCount="indefinite"/>
+  <animate attributeName="x2"
+           values="15; 105; 105"
+           keyTimes="0; 0.89; 1"
+           dur="4.5s" repeatCount="indefinite"/>
+  <animate attributeName="opacity"
+           values="0.85; 0.85; 0; 0.85"
+           keyTimes="0; 0.89; 0.92; 1"
+           dur="4.5s" repeatCount="indefinite"/>
+</line>
+
+<!-- ─── 6 dots with staggered illumination ─── -->
+<!-- Dot 1: x=20, y=35 — flashes at keyTime ≈ 0.049 -->
+<circle cx="20" cy="35" r="2.5" fill="#D6D2C8">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.04; 0.05; 0.07; 1"
+           dur="4.5s" repeatCount="indefinite"/>
+</circle>
+
+<!-- Dot 2: x=35, y=55 — flashes at keyTime ≈ 0.198 -->
+<circle cx="35" cy="55" r="2.5" fill="#D6D2C8">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.19; 0.20; 0.22; 1"
+           dur="4.5s" repeatCount="indefinite"/>
+</circle>
+
+<!-- Dot 3: x=50, y=35 — flashes at keyTime ≈ 0.347 -->
+<circle cx="50" cy="35" r="2.5" fill="#D6D2C8">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.34; 0.35; 0.37; 1"
+           dur="4.5s" repeatCount="indefinite"/>
+</circle>
+
+<!-- Dot 4: x=65, y=55 — flashes at keyTime ≈ 0.493 -->
+<circle cx="65" cy="55" r="2.5" fill="#D6D2C8">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.48; 0.49; 0.51; 1"
+           dur="4.5s" repeatCount="indefinite"/>
+</circle>
+
+<!-- Dot 5: x=80, y=35 — flashes at keyTime ≈ 0.642 -->
+<circle cx="80" cy="35" r="2.5" fill="#D6D2C8">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.63; 0.64; 0.66; 1"
+           dur="4.5s" repeatCount="indefinite"/>
+</circle>
+
+<!-- Dot 6: x=95, y=55 — flashes at keyTime ≈ 0.791 -->
+<circle cx="95" cy="55" r="2.5" fill="#D6D2C8">
+  <animate attributeName="fill"
+           values="#D6D2C8; #D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.78; 0.79; 0.81; 1"
+           dur="4.5s" repeatCount="indefinite"/>
+</circle>
+</svg>

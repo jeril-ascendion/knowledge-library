@@ -178,15 +178,14 @@ TAXONOMY = {
         "ha-dr":         "HA & DR Systems",
         "scalable":      "Scalable Systems",
     },
-    "tech": {
-        "ai-ml":       "AI / ML Stack",
-        "angular":     "Angular Stack",
-        "aws":         "AWS Stack",
-        "azure":       "Azure Stack",
-        "databases":   "Databases",
-        "devops":      "DevOps Stack",
-        "gcp":         "GCP Stack",
-        "java-spring": "Java & Spring Stack",
+    "technology": {
+        "ui-ux-cx":          "UI, UX & CX",
+        "api-backend":       "API & Backend Technologies",
+        "databases":         "Databases",
+        "cloud":             "Cloud",
+        "devops":            "DevOps",
+        "practice-circles":  "Practice Circles",
+        "engagement-models": "Engagement Models",
     },
     "templates": {
         "adr-template":       "ADR Template",
@@ -578,6 +577,14 @@ SHORT_DESC = {
     ("system-design", "event-driven"): "Event-driven system design including event sourcing, CQRS, and stream processing.",
     ("system-design", "ha-dr"):        "High-availability and disaster-recovery system design across regions and providers.",
     ("system-design", "scalable"):     "Scalable system design including horizontal scaling, sharding, and partitioning strategies.",
+
+    ("technology", "ui-ux-cx"):          "Frontend frameworks (React, Angular, Vue), UX laws, and customer-experience architecture.",
+    ("technology", "api-backend"):       "Backend stacks (Java/Spring, Node.js, Python) and API design and delivery patterns.",
+    ("technology", "databases"):         "Database choices across SQL, NoSQL, document, key-value, graph, time-series, and vector.",
+    ("technology", "cloud"):             "Cloud platforms (AWS, Azure, GCP) and 12-factor cloud-native architecture patterns.",
+    ("technology", "devops"):            "DevOps and SRE excellence: pipelines, IaC, GitOps, observability, and security.",
+    ("technology", "practice-circles"):  "Specialized practice circles for platform, enterprise integration, COTS, and legacy modernization.",
+    ("technology", "engagement-models"): "Strategic delivery frameworks: staffing, managed capacity, managed services, and AI-native delivery.",
 
     ("tech", "ai-ml"):       "AI/ML technology stack including training, serving, and feature store technologies.",
     ("tech", "angular"):     "Angular front-end stack including state management, routing, and testing patterns.",
