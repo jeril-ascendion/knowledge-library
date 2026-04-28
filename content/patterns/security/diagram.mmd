@@ -1,49 +1,73 @@
-flowchart TD
-    A([🚀 Start: Security Patterns]) --> B[Assessment & Discovery]
+flowchart TB
 
-    B --> C{Current State\nDocumented?}
-    C -->|No| B
-    C -->|Yes| D[Apply Architecture Principles]
+    %% ─── External entities ───
+    USER([User])
 
-    D --> D1[Design for Change]
-    D --> D2[Least Privilege]
-    D --> D3[Observability First]
-    D --> D4[AI Augmentation Readiness]
+    %% ─── Identity provider (control plane) ───
+    IDP[Identity Provider<br/>OIDC / SAML / Workload Identity]
 
-    D1 & D2 & D3 & D4 --> E[Select Design Patterns]
+    %% ─── Edge: API gateway verifies tokens ───
+    GATEWAY[API Gateway<br/>verifies identity at perimeter]
 
-    E --> F{NFR Targets\nDefined?}
-    F -->|No| F1[Define NFRs in nfr/]
-    F1 --> F
-    F -->|Yes| G[Document ADRs]
+    %% ─── Service mesh: every call verifies identity ───
+    subgraph TRUST [Zero Trust &mdash; every boundary verifies]
+        direction LR
+        SVC_A[Service A]
+        SVC_B[Service B]
+    end
 
-    G --> H[Architecture Review Board]
+    %% ─── Secret store (separate trust domain) ───
+    SECRETS[(Secret Store<br/>HSM / KMS &middot; rotated)]
 
-    H --> I{Security\nReview Passed?}
-    I -->|No| I1[Revise Design]
-    I1 --> H
-    I -->|Yes| J{ARB\nApproval?}
+    %% ─── Encrypted persistence ───
+    DB[(Encrypted Datastore<br/>at rest &middot; in transit)]
 
-    J -->|Rejected| J1[Address Feedback]
-    J1 --> H
-    J -->|Approved| K[Implementation]
+    %% ─── Tamper-evident audit log (separate trust domain) ───
+    AUDIT[(Audit Log<br/>append-only &middot; tamper-evident)]
 
-    K --> L[CI/CD Pipeline]
-    L --> L1[SAST / DAST Scan]
-    L --> L2[Architecture Lint]
-    L --> L3[NFR Validation]
+    %% ─── User authentication ───
+    USER --> IDP
+    IDP -.signed token.-> USER
+    USER --> GATEWAY
+    GATEWAY -.verify token.-> IDP
 
-    L1 & L2 & L3 --> M{All Gates\nPassed?}
-    M -->|No| M1[Fix & Rerun]
-    M1 --> L
-    M -->|Yes| N[Deploy to Production]
+    %% ─── Service-to-service auth ───
+    GATEWAY --> SVC_A
+    SVC_A -.mTLS / workload id.-> SVC_B
+    SVC_A --> SVC_B
 
-    N --> O[Observability Validation]
-    O --> P[Post-Deployment Review]
-    P --> Q([✅ Governance Record Closed])
+    %% ─── Data and secret access ───
+    SVC_A --> DB
+    SVC_B --> DB
+    SVC_A -.fetches keys.-> SECRETS
+    SVC_B -.fetches keys.-> SECRETS
 
-    style A fill:#4f8ef7,color:#fff
-    style Q fill:#10b981,color:#fff
-    style I1 fill:#fef3c7
-    style J1 fill:#fef3c7
-    style M1 fill:#fef3c7
+    %% ─── Audit propagation ───
+    GATEWAY -.events.-> AUDIT
+    SVC_A -.events.-> AUDIT
+    SVC_B -.events.-> AUDIT
+    IDP -.events.-> AUDIT
+
+    %% ─── NODE STYLES ───
+    %% Entry: bright blue
+    style USER fill:#4A90E2,stroke:#2C5F9E,stroke-width:2px,color:#FFFFFF
+
+    %% Identity provider: emphasised cream (the control plane)
+    style IDP fill:#FBEDE0,stroke:#C96330,stroke-width:2.5px,color:#3A2410
+
+    %% Gateway: cream (the verification surface)
+    style GATEWAY fill:#FBEDE0,stroke:#A07A4A,stroke-width:2px,color:#3A2410
+
+    %% Services: blue (the workloads)
+    style SVC_A fill:#DCEAFC,stroke:#2C5F9E,stroke-width:2px,color:#1A2840
+    style SVC_B fill:#DCEAFC,stroke:#2C5F9E,stroke-width:2px,color:#1A2840
+
+    %% Storage: amber
+    style DB      fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+    style SECRETS fill:#FEF3C7,stroke:#92722C,stroke-width:1.8px,color:#5C4316
+
+    %% Audit: distinctive grey (cross-cutting, separate trust domain)
+    style AUDIT fill:#E8E8E2,stroke:#5C5C5C,stroke-width:1.8px,color:#2C2C2C
+
+    %% ─── CLUSTER STYLE ───
+    style TRUST fill:#EDF4FC,stroke:#A8C0DD,stroke-width:1.2px,color:#1A2840

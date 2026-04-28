@@ -55,6 +55,10 @@ EMBLEM MOTION MECHANICS (each page must use a DISTINCT mechanic):
     patterns/integration → bidirectional pulsation (two stable nodes pulse
                            in turn — scale + emphasis — while a static channel
                            brightens between pulses; nothing translates)
+    patterns/security    → concentric perimeter tracing (rings draw themselves
+                           into existence around a protected asset, building
+                           defence in depth via stroke-dashoffset path tracing;
+                           no translation, no scale, no fade)
   Future pages must invent a new mechanic, not reuse one.
   Two colours only: warm neutral (#D6D2C8) + terracotta (#C96330).
   Basic SMIL primitives only (animate, animateTransform with type=rotate).
@@ -1112,6 +1116,8 @@ TAG_LINKS = {
     "AsyncAPI": "https://www.asyncapi.com/",
     "OpenAPI": "https://www.openapis.org/",
     "CloudEvents": "https://cloudevents.io/",
+    "OWASP": "https://owasp.org/",
+    "Zero Trust Architecture": "https://csrc.nist.gov/publications/detail/sp/800-207/final",
 }
 
 

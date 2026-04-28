@@ -1,0 +1,89 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+<!--
+  Security Patterns emblem.
+
+  Visual metaphor: defense in depth. A central asset (terracotta dot)
+  surrounded by four concentric rings of protection. The rings TRACE
+  THEMSELVES OUT from the inside, one after another, each ring's
+  perimeter drawing in a continuous arc until closed. Once all four
+  rings are present, the architecture's defense in depth is complete.
+  After a stable hold, all rings erase simultaneously — the cycle
+  resets, and protection must be re-established.
+
+  Animation: stroke-dashoffset on each ring transitions from the full
+  circumference (line invisible) to zero (line fully drawn), then back
+  to full (erased). Each ring's draw-in is staggered in time. No
+  translation, no rotation, no oscillation, no fade-into-another-form,
+  no replication of separate elements, no sequential frame highlighting,
+  no fill-region growth, no scale pulsation.
+
+  Motion mechanic: CONCENTRIC PERIMETER TRACING (the ninth mechanic
+  in the catalogue). The technique is stroke-dashoffset path tracing —
+  the line literally drawing itself into existence along a closed path.
+  The motion IS the architectural commitment: defenses are built, in
+  order, on purpose.
+
+  Each ring is rotated -90° around its centre so the draw begins from
+  the 12 o'clock position rather than the 3 o'clock default — the more
+  natural starting point for a circle drawing itself.
+
+  Two colours only: warm neutral (#D6D2C8) for the rings; terracotta
+  (#C96330) for the protected asset at the centre.
+
+  Cycle (6s):
+    0.0–0.5s : Ring 1 (innermost, r=8) draws
+    0.4–0.9s : Ring 2 (r=16) draws (slight overlap for smooth feel)
+    0.8–1.3s : Ring 3 (r=24) draws
+    1.2–1.7s : Ring 4 (outermost, r=32) draws
+    1.7–4.5s : ALL rings stable — defence in depth complete
+    4.5–5.0s : ALL rings erase simultaneously (offset 0 → C)
+    5.0–6.0s : invisible (cycle pause), then loop
+-->
+
+<!-- ─── Center asset: the protected thing (static) ─── -->
+<circle cx="60" cy="45" r="2" fill="#C96330"/>
+
+<!-- ─── Ring 1 (innermost, r=8, circumference ≈ 50.27) ─── -->
+<circle cx="60" cy="45" r="8"
+        fill="none" stroke="#D6D2C8" stroke-width="1.5"
+        stroke-dasharray="50.3" stroke-dashoffset="50.3"
+        transform="rotate(-90 60 45)">
+  <animate attributeName="stroke-dashoffset"
+           values="50.3; 0; 0; 50.3; 50.3"
+           keyTimes="0; 0.083; 0.75; 0.833; 1"
+           dur="6s" repeatCount="indefinite"/>
+</circle>
+
+<!-- ─── Ring 2 (r=16, circumference ≈ 100.53) ─── -->
+<circle cx="60" cy="45" r="16"
+        fill="none" stroke="#D6D2C8" stroke-width="1.5"
+        stroke-dasharray="100.5" stroke-dashoffset="100.5"
+        transform="rotate(-90 60 45)">
+  <animate attributeName="stroke-dashoffset"
+           values="100.5; 100.5; 0; 0; 100.5; 100.5"
+           keyTimes="0; 0.067; 0.15; 0.75; 0.833; 1"
+           dur="6s" repeatCount="indefinite"/>
+</circle>
+
+<!-- ─── Ring 3 (r=24, circumference ≈ 150.80) ─── -->
+<circle cx="60" cy="45" r="24"
+        fill="none" stroke="#D6D2C8" stroke-width="1.5"
+        stroke-dasharray="150.8" stroke-dashoffset="150.8"
+        transform="rotate(-90 60 45)">
+  <animate attributeName="stroke-dashoffset"
+           values="150.8; 150.8; 0; 0; 150.8; 150.8"
+           keyTimes="0; 0.133; 0.217; 0.75; 0.833; 1"
+           dur="6s" repeatCount="indefinite"/>
+</circle>
+
+<!-- ─── Ring 4 (outermost, r=32, circumference ≈ 201.06) ─── -->
+<circle cx="60" cy="45" r="32"
+        fill="none" stroke="#D6D2C8" stroke-width="1.5"
+        stroke-dasharray="201.1" stroke-dashoffset="201.1"
+        transform="rotate(-90 60 45)">
+  <animate attributeName="stroke-dashoffset"
+           values="201.1; 201.1; 0; 0; 201.1; 201.1"
+           keyTimes="0; 0.2; 0.283; 0.75; 0.833; 1"
+           dur="6s" repeatCount="indefinite"/>
+</circle>
+</svg>
