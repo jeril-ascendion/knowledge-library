@@ -1,49 +1,68 @@
-flowchart TD
-    A([🚀 Start: Integration Patterns]) --> B[Assessment & Discovery]
+flowchart LR
 
-    B --> C{Current State\nDocumented?}
-    C -->|No| B
-    C -->|Yes| D[Apply Architecture Principles]
+    %% ─── External caller (sync path entry) ───
+    USER([External Caller])
 
-    D --> D1[Design for Change]
-    D --> D2[Least Privilege]
-    D --> D3[Observability First]
-    D --> D4[AI Augmentation Readiness]
+    %% ─── Synchronous path: API gateway with OpenAPI contract ───
+    GATEWAY[API Gateway<br/>OpenAPI contract]
 
-    D1 & D2 & D3 & D4 --> E[Select Design Patterns]
+    %% ─── Producer service ───
+    subgraph SVC_X [Service X &mdash; producer]
+        direction TB
+        XLOGIC[Business Logic]
+        XOUTBOX[(Transactional<br/>Outbox)]
+    end
 
-    E --> F{NFR Targets\nDefined?}
-    F -->|No| F1[Define NFRs in nfr/]
-    F1 --> F
-    F -->|Yes| G[Document ADRs]
+    %% ─── Asynchronous backbone with AsyncAPI contract ───
+    BUS[Event Stream<br/>AsyncAPI contract]
 
-    G --> H[Architecture Review Board]
+    %% ─── Idempotent consumers ───
+    subgraph CONS [Consumers &mdash; idempotent]
+        direction TB
+        SVC_B[Service B]
+        SVC_C[Service C]
+    end
 
-    H --> I{Security\nReview Passed?}
-    I -->|No| I1[Revise Design]
-    I1 --> H
-    I -->|Yes| J{ARB\nApproval?}
+    %% ─── Failure handling ───
+    DLQ[(Dead-Letter<br/>Queue)]
 
-    J -->|Rejected| J1[Address Feedback]
-    J1 --> H
-    J -->|Approved| K[Implementation]
+    %% ─── Synchronous flow ───
+    USER --> GATEWAY
+    GATEWAY --> XLOGIC
+    XLOGIC --> GATEWAY
+    GATEWAY --> USER
 
-    K --> L[CI/CD Pipeline]
-    L --> L1[SAST / DAST Scan]
-    L --> L2[Architecture Lint]
-    L --> L3[NFR Validation]
+    %% ─── Asynchronous flow ───
+    XLOGIC --> XOUTBOX
+    XOUTBOX --> BUS
+    BUS --> SVC_B
+    BUS --> SVC_C
 
-    L1 & L2 & L3 --> M{All Gates\nPassed?}
-    M -->|No| M1[Fix & Rerun]
-    M1 --> L
-    M -->|Yes| N[Deploy to Production]
+    %% ─── Failure paths ───
+    SVC_B -.failed messages.-> DLQ
+    SVC_C -.failed messages.-> DLQ
 
-    N --> O[Observability Validation]
-    O --> P[Post-Deployment Review]
-    P --> Q([✅ Governance Record Closed])
+    %% ─── NODE STYLES ───
+    %% Entry: bright blue
+    style USER fill:#4A90E2,stroke:#2C5F9E,stroke-width:2px,color:#FFFFFF
 
-    style A fill:#4f8ef7,color:#fff
-    style Q fill:#10b981,color:#fff
-    style I1 fill:#fef3c7
-    style J1 fill:#fef3c7
-    style M1 fill:#fef3c7
+    %% Sync gateway: emphasised cream (the contract surface)
+    style GATEWAY fill:#FBEDE0,stroke:#C96330,stroke-width:2.2px,color:#3A2410
+
+    %% Producer service: blue (logic + outbox)
+    style XLOGIC  fill:#DCEAFC,stroke:#2C5F9E,stroke-width:2px,color:#1A2840
+    style XOUTBOX fill:#DCEAFC,stroke:#2C5F9E,stroke-width:1.8px,color:#1A2840
+
+    %% Async backbone: distinctive amber (the propagation channel)
+    style BUS fill:#FBEDE0,stroke:#C96330,stroke-width:2.5px,color:#3A2410
+
+    %% Consumers: amber (read side, idempotent)
+    style SVC_B fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+    style SVC_C fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+
+    %% Failure path: distinctive grey
+    style DLQ fill:#E8E8E2,stroke:#5C5C5C,stroke-width:1.5px,color:#2C2C2C
+
+    %% ─── CLUSTER STYLES ───
+    style SVC_X fill:#EDF4FC,stroke:#A8C0DD,stroke-width:1.2px,color:#1A2840
+    style CONS  fill:#FEF8E5,stroke:#D4C599,stroke-width:1.2px,color:#5C4316

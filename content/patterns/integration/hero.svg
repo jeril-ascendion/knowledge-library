@@ -1,0 +1,96 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+<!--
+  Integration Patterns emblem.
+
+  Visual metaphor: two systems connected by an integration channel,
+  exchanging messages. Each system is a node that PULSES (scales up,
+  briefly turns terracotta, scales back) when it speaks. Between
+  pulses, the channel itself brightens to indicate a message is in
+  transit. The full cycle is: left speaks → channel carries →
+  right responds → channel carries → both quiet → repeat.
+
+  Animation: the SCALE (radius) and EMPHASIS (stroke colour and
+  width) of each node oscillate; the OPACITY of the channel line
+  brightens during transit phases. Nothing translates, rotates,
+  fades-into-another-form, replicates, or fills a region.
+
+  Motion mechanic: BIDIRECTIONAL PULSATION (the eighth mechanic in
+  the catalogue). The motion IS the conversation — speaker pulses,
+  channel carries, responder pulses, channel carries, both rest.
+  The rhythm itself is what the page is about: integration is the
+  back-and-forth between systems that always existed and always will.
+
+  Two colours only: warm neutral (#D6D2C8) at rest, terracotta
+  (#C96330) during the active pulse.
+-->
+
+<!-- ─── Channel line connecting the two nodes ─── -->
+<!--
+  Opacity timeline (4s cycle):
+    0.000–0.500s : 0.30 (quiet during left's pulse)
+    0.500–0.540s : ramp 0.30 → 0.85 (channel brightens)
+    0.540–0.880s : 0.85 (message in transit, left → right)
+    0.880–1.040s : ramp 0.85 → 0.30 (channel dims)
+    1.040–1.500s : 0.30 (quiet during right's pulse)
+    1.500–1.540s : ramp 0.30 → 0.85 (channel brightens)
+    1.540–1.880s : 0.85 (response in transit, right → left)
+    1.880–2.040s : ramp 0.85 → 0.30 (channel dims)
+    2.040–4.000s : 0.30 (long rest)
+-->
+<line x1="42" y1="45" x2="78" y2="45"
+      stroke="#D6D2C8" stroke-width="1.5">
+  <animate attributeName="opacity"
+           values="0.30; 0.30; 0.85; 0.85; 0.30; 0.30; 0.85; 0.85; 0.30; 0.30"
+           keyTimes="0; 0.125; 0.135; 0.22; 0.26; 0.375; 0.385; 0.47; 0.51; 1"
+           dur="4s" repeatCount="indefinite"/>
+</line>
+
+<!-- ─── LEFT node (initiator) ─── -->
+<!--
+  Pulses at 0.000–0.500s (0–12.5% of 4s cycle):
+    0.000–0.250s : ramp r 6 → 8.5, stroke neutral → terracotta
+    0.250–0.500s : ramp back to baseline
+    0.500–4.000s : at rest
+-->
+<circle cx="33" cy="45" r="6"
+        fill="none" stroke="#D6D2C8" stroke-width="1.8">
+  <animate attributeName="r"
+           values="6; 8.5; 6; 6"
+           keyTimes="0; 0.0625; 0.125; 1"
+           dur="4s" repeatCount="indefinite"/>
+  <animate attributeName="stroke"
+           values="#D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.0625; 0.125; 1"
+           dur="4s" repeatCount="indefinite"/>
+  <animate attributeName="stroke-width"
+           values="1.8; 2.6; 1.8; 1.8"
+           keyTimes="0; 0.0625; 0.125; 1"
+           dur="4s" repeatCount="indefinite"/>
+</circle>
+<!-- Inner dot: stays still, anchors the node visually -->
+<circle cx="33" cy="45" r="1.6" fill="#D6D2C8"/>
+
+<!-- ─── RIGHT node (responder) ─── -->
+<!--
+  Pulses at 1.000–1.500s (25–37.5% of 4s cycle):
+    1.000–1.250s : ramp up
+    1.250–1.500s : ramp back
+    rest of cycle: at baseline
+-->
+<circle cx="87" cy="45" r="6"
+        fill="none" stroke="#D6D2C8" stroke-width="1.8">
+  <animate attributeName="r"
+           values="6; 6; 8.5; 6; 6"
+           keyTimes="0; 0.25; 0.3125; 0.375; 1"
+           dur="4s" repeatCount="indefinite"/>
+  <animate attributeName="stroke"
+           values="#D6D2C8; #D6D2C8; #C96330; #D6D2C8; #D6D2C8"
+           keyTimes="0; 0.25; 0.3125; 0.375; 1"
+           dur="4s" repeatCount="indefinite"/>
+  <animate attributeName="stroke-width"
+           values="1.8; 1.8; 2.6; 1.8; 1.8"
+           keyTimes="0; 0.25; 0.3125; 0.375; 1"
+           dur="4s" repeatCount="indefinite"/>
+</circle>
+<circle cx="87" cy="45" r="1.6" fill="#D6D2C8"/>
+</svg>
