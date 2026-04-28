@@ -1,49 +1,78 @@
-flowchart TD
-    A([🚀 Start: Structural Patterns]) --> B[Assessment & Discovery]
+flowchart TB
 
-    B --> C{Current State\nDocumented?}
-    C -->|No| B
-    C -->|Yes| D[Apply Architecture Principles]
+    %% ─── External actors and infrastructure ───
+    USER([Web / Mobile UI])
+    EXT([External API])
+    SCHED([Scheduler / Job])
 
-    D --> D1[Design for Change]
-    D --> D2[Least Privilege]
-    D --> D3[Observability First]
-    D --> D4[AI Augmentation Readiness]
+    %% ─── Adapters layer (the edge that touches the world) ───
+    subgraph ADAPTERS [Adapters &mdash; the edge that touches the world]
+        direction LR
+        HTTP[HTTP Adapter]
+        API_CLI[API Client Adapter]
+        JOB[Job Adapter]
+        DB_AD[DB Adapter]
+        MSG_AD[Message Adapter]
+    end
 
-    D1 & D2 & D3 & D4 --> E[Select Design Patterns]
+    %% ─── Ports owned by the core ───
+    subgraph PORTS [Ports &mdash; interfaces owned by the core]
+        direction LR
+        IN_PORT[Inbound Ports<br/>commands &middot; queries]
+        OUT_PORT[Outbound Ports<br/>persistence &middot; messaging]
+    end
 
-    E --> F{NFR Targets\nDefined?}
-    F -->|No| F1[Define NFRs in nfr/]
-    F1 --> F
-    F -->|Yes| G[Document ADRs]
+    %% ─── The application core ───
+    subgraph CORE [Application Core &mdash; testable without infrastructure]
+        DOMAIN[Domain Logic<br/>entities &middot; aggregates &middot; rules]
+    end
 
-    G --> H[Architecture Review Board]
+    %% ─── Outbound infrastructure ───
+    DB[(Database)]
+    BUS[Message Bus]
 
-    H --> I{Security\nReview Passed?}
-    I -->|No| I1[Revise Design]
-    I1 --> H
-    I -->|Yes| J{ARB\nApproval?}
+    %% ─── Inbound flow ───
+    USER --> HTTP
+    EXT --> API_CLI
+    SCHED --> JOB
 
-    J -->|Rejected| J1[Address Feedback]
-    J1 --> H
-    J -->|Approved| K[Implementation]
+    HTTP --> IN_PORT
+    API_CLI --> IN_PORT
+    JOB --> IN_PORT
 
-    K --> L[CI/CD Pipeline]
-    L --> L1[SAST / DAST Scan]
-    L --> L2[Architecture Lint]
-    L --> L3[NFR Validation]
+    IN_PORT --> DOMAIN
 
-    L1 & L2 & L3 --> M{All Gates\nPassed?}
-    M -->|No| M1[Fix & Rerun]
-    M1 --> L
-    M -->|Yes| N[Deploy to Production]
+    %% ─── Outbound flow ───
+    DOMAIN --> OUT_PORT
+    OUT_PORT --> DB_AD
+    OUT_PORT --> MSG_AD
+    DB_AD --> DB
+    MSG_AD --> BUS
 
-    N --> O[Observability Validation]
-    O --> P[Post-Deployment Review]
-    P --> Q([✅ Governance Record Closed])
+    %% ─── NODE STYLES ───
+    style USER  fill:#4A90E2,stroke:#2C5F9E,stroke-width:2px,color:#FFFFFF
+    style EXT   fill:#4A90E2,stroke:#2C5F9E,stroke-width:2px,color:#FFFFFF
+    style SCHED fill:#4A90E2,stroke:#2C5F9E,stroke-width:2px,color:#FFFFFF
 
-    style A fill:#4f8ef7,color:#fff
-    style Q fill:#10b981,color:#fff
-    style I1 fill:#fef3c7
-    style J1 fill:#fef3c7
-    style M1 fill:#fef3c7
+    %% Adapters: cream (the edge)
+    style HTTP    fill:#FBEDE0,stroke:#A07A4A,stroke-width:1.5px,color:#3A2410
+    style API_CLI fill:#FBEDE0,stroke:#A07A4A,stroke-width:1.5px,color:#3A2410
+    style JOB     fill:#FBEDE0,stroke:#A07A4A,stroke-width:1.5px,color:#3A2410
+    style DB_AD   fill:#FBEDE0,stroke:#A07A4A,stroke-width:1.5px,color:#3A2410
+    style MSG_AD  fill:#FBEDE0,stroke:#A07A4A,stroke-width:1.5px,color:#3A2410
+
+    %% Ports: distinctive amber (the contract surface)
+    style IN_PORT  fill:#FEF3C7,stroke:#C96330,stroke-width:2px,color:#5C4316
+    style OUT_PORT fill:#FEF3C7,stroke:#C96330,stroke-width:2px,color:#5C4316
+
+    %% Domain core: emphasised blue (the heart)
+    style DOMAIN fill:#DCEAFC,stroke:#2C5F9E,stroke-width:2.5px,color:#1A2840
+
+    %% Infrastructure: amber (storage / transport)
+    style DB  fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+    style BUS fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+
+    %% ─── CLUSTER STYLES ───
+    style ADAPTERS fill:#FAF6EE,stroke:#D4C599,stroke-width:1.2px,color:#5C4316
+    style PORTS    fill:#FEF8E5,stroke:#D4C599,stroke-width:1.2px,color:#5C4316
+    style CORE     fill:#EDF4FC,stroke:#A8C0DD,stroke-width:1.2px,color:#1A2840

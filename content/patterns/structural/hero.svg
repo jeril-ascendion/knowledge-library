@@ -1,0 +1,116 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+<!--
+  Structural Patterns emblem.
+
+  Visual metaphor: a system composed of parts. Nine modules arranged
+  in a 3×3 grid. The CORE (terracotta, centre) appears first, then
+  the eight surrounding modules (warm neutral) accrete around it in
+  spiral order — right, top-right, top, top-left, left, bottom-left,
+  bottom, bottom-right. Each takes its turn becoming visible until
+  the full composition stands. After a brief stable hold, all nine
+  modules fade simultaneously and the cycle restarts: the architecture
+  is composed deliberately, holds, dissolves, composes again.
+
+  Animation: opacity-only on each tile, with staggered start times
+  for sequential appearance and synchronous fade at end-of-cycle.
+  No translation, no rotation, no scale, no path-tracing, no
+  oscillation, no fill-region growth. Tiles do not pre-exist with
+  shifting highlight (different from sequential frame illumination)
+  and do not oscillate in waves (different from elastic replication).
+  They simply appear, in order, and stay until the cycle resets.
+
+  Motion mechanic: ACCRETIVE COMPOSITION (the tenth mechanic in
+  the catalogue). The motion IS the composition — discrete parts
+  becoming a whole, in a deliberate sequence, with the core
+  established before the surrounding modules.
+
+  Cycle (5s):
+    0.0–0.4s : Tile 1 (centre, terracotta) appears
+    0.4–0.8s : Tile 2 (right) appears
+    0.8–1.2s : Tile 3 (top-right) appears
+    1.2–1.6s : Tile 4 (top) appears
+    1.6–2.0s : Tile 5 (top-left) appears
+    2.0–2.4s : Tile 6 (left) appears
+    2.4–2.8s : Tile 7 (bottom-left) appears
+    2.8–3.2s : Tile 8 (bottom) appears
+    3.2–3.6s : Tile 9 (bottom-right) appears
+    3.6–4.5s : ALL nine tiles stable (composition complete)
+    4.5–5.0s : ALL nine tiles fade simultaneously
+    cycle repeats
+
+  Two colours only: warm neutral (#D6D2C8) for the modules; terracotta
+  (#C96330) for the core (the first to appear, the heart of the system).
+-->
+
+<!-- ─── Tile 1: CENTRE (the core, terracotta) ─── -->
+<rect x="53" y="38" width="14" height="14" rx="2" fill="#C96330" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 1; 1; 0"
+           keyTimes="0; 0.08; 0.9; 1"
+           dur="5s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── Tile 2: right ─── -->
+<rect x="70" y="38" width="14" height="14" rx="2" fill="#D6D2C8" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 1; 1; 0"
+           keyTimes="0; 0.08; 0.16; 0.9; 1"
+           dur="5s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── Tile 3: top-right ─── -->
+<rect x="70" y="21" width="14" height="14" rx="2" fill="#D6D2C8" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 1; 1; 0"
+           keyTimes="0; 0.16; 0.24; 0.9; 1"
+           dur="5s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── Tile 4: top ─── -->
+<rect x="53" y="21" width="14" height="14" rx="2" fill="#D6D2C8" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 1; 1; 0"
+           keyTimes="0; 0.24; 0.32; 0.9; 1"
+           dur="5s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── Tile 5: top-left ─── -->
+<rect x="36" y="21" width="14" height="14" rx="2" fill="#D6D2C8" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 1; 1; 0"
+           keyTimes="0; 0.32; 0.40; 0.9; 1"
+           dur="5s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── Tile 6: left ─── -->
+<rect x="36" y="38" width="14" height="14" rx="2" fill="#D6D2C8" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 1; 1; 0"
+           keyTimes="0; 0.40; 0.48; 0.9; 1"
+           dur="5s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── Tile 7: bottom-left ─── -->
+<rect x="36" y="55" width="14" height="14" rx="2" fill="#D6D2C8" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 1; 1; 0"
+           keyTimes="0; 0.48; 0.56; 0.9; 1"
+           dur="5s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── Tile 8: bottom ─── -->
+<rect x="53" y="55" width="14" height="14" rx="2" fill="#D6D2C8" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 1; 1; 0"
+           keyTimes="0; 0.56; 0.64; 0.9; 1"
+           dur="5s" repeatCount="indefinite"/>
+</rect>
+
+<!-- ─── Tile 9: bottom-right ─── -->
+<rect x="70" y="55" width="14" height="14" rx="2" fill="#D6D2C8" opacity="0">
+  <animate attributeName="opacity"
+           values="0; 0; 1; 1; 0"
+           keyTimes="0; 0.64; 0.72; 0.9; 1"
+           dur="5s" repeatCount="indefinite"/>
+</rect>
+</svg>

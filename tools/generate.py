@@ -59,6 +59,13 @@ EMBLEM MOTION MECHANICS (each page must use a DISTINCT mechanic):
                            into existence around a protected asset, building
                            defence in depth via stroke-dashoffset path tracing;
                            no translation, no scale, no fade)
+    patterns/structural  → accretive composition (nine tiles in a 3×3 grid; the
+                           core appears first, then the eight surrounding
+                           modules accrete around it in spiral order; all hold,
+                           all fade simultaneously; monotonic buildup followed
+                           by unison reset, distinct from elastic replication's
+                           oscillating waves and from sequential frame
+                           illumination's pre-existing-frame highlighting)
   Future pages must invent a new mechanic, not reuse one.
   Two colours only: warm neutral (#D6D2C8) + terracotta (#C96330).
   Basic SMIL primitives only (animate, animateTransform with type=rotate).
@@ -1118,6 +1125,8 @@ TAG_LINKS = {
     "CloudEvents": "https://cloudevents.io/",
     "OWASP": "https://owasp.org/",
     "Zero Trust Architecture": "https://csrc.nist.gov/publications/detail/sp/800-207/final",
+    "GoF Design Patterns": "https://en.wikipedia.org/wiki/Design_Patterns",
+    "Pattern-Oriented Software Architecture": "https://en.wikipedia.org/wiki/Pattern-Oriented_Software_Architecture",
 }
 
 
