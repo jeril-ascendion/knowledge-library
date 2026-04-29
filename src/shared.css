@@ -379,7 +379,7 @@ a.hero-tag:focus-visible {
   gap: 2rem;
 }
 .footer-logo {
-  height: 26px; width: auto; display: block;
+  height: 30px; width: auto; display: block;
   flex-shrink: 0;
   opacity: 0.85;
   transition: opacity var(--t);

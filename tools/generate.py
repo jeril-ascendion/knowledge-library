@@ -3297,7 +3297,7 @@ def footer_html(label="", prefix=""):
     return (
         f'<footer class="footer" role="button" tabindex="0" '
         f'aria-label="Scroll to top of page">\n  <div class="shell">\n'
-        f'    <img class="footer-logo" src="{prefix}logo.png" alt="" aria-hidden="true">\n'
+        f'    <img class="footer-logo" src="{prefix}footer-logo.png" alt="" aria-hidden="true">\n'
         f'    <div class="footer-meta">© 2025 Ascendion Solutions Architecture Practice</div>\n'
         f'  </div>\n</footer>'
     )
@@ -3874,10 +3874,11 @@ def main():
         sys.exit(1)
 
     # Copy brand assets (logo + favicons). Same search strategy as shared.css.
-    # logo.png   — header + footer brand mark, transparent background
-    # favicon.ico — multi-resolution browser tab icon
-    # favicon-32.png — modern browsers prefer PNG favicons
-    for asset in ("logo.png", "favicon.ico", "favicon-32.png"):
+    # logo.png         — header brand mark (the A), transparent background
+    # footer-logo.png  — footer wordmark (Ascendion), transparent background
+    # favicon.ico      — multi-resolution browser tab icon
+    # favicon-32.png   — modern browsers prefer PNG favicons
+    for asset in ("logo.png", "footer-logo.png", "favicon.ico", "favicon-32.png"):
         for candidate in [
             here.parent / "src" / asset,
             here / "src" / asset,
