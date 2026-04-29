@@ -1,49 +1,53 @@
 flowchart TD
-    A([🚀 Start: Strategy Principles]) --> B[Assessment & Discovery]
 
-    B --> C{Current State\nDocumented?}
-    C -->|No| B
-    C -->|Yes| D[Apply Architecture Principles]
+    %% ─── The five stages of the strategy cycle ───
+    INTENT["<b>1. Strategic Intent</b><br/>diagnosis &middot; guiding policy &middot; coherent action<br/>articulated by leadership;<br/>kernel articulable from memory"]
 
-    D --> D1[Design for Change]
-    D --> D2[Least Privilege]
-    D --> D3[Observability First]
-    D --> D4[AI Augmentation Readiness]
+    OPTIONS["<b>2. Strategic Options Surfaced</b><br/>alternatives documented;<br/>trade-offs explicit;<br/>chosen path with rationale;<br/>rejected paths preserved"]
 
-    D1 & D2 & D3 & D4 --> E[Select Design Patterns]
+    DECISIONS["<b>3. Architectural Decisions</b><br/>ADRs reference strategic premise;<br/>standards justified by intent;<br/>decisions traceable to strategy"]
 
-    E --> F{NFR Targets\nDefined?}
-    F -->|No| F1[Define NFRs in nfr/]
-    F1 --> F
-    F -->|Yes| G[Document ADRs]
+    EXECUTION["<b>4. Engineering Execution</b><br/>roadmap aligned to decisions;<br/>'why are we doing this' answerable;<br/>discipline at execution level"]
 
-    G --> H[Architecture Review Board]
+    MEASURE["<b>5. Outcome Measurement</b><br/>predicted outcomes per premise;<br/>cadence matched to time-to-effect;<br/>discrepancy triggers investigation"]
 
-    H --> I{Security\nReview Passed?}
-    I -->|No| I1[Revise Design]
-    I1 --> H
-    I -->|Yes| J{ARB\nApproval?}
+    REVISE["<b>6. Strategic Revision</b><br/>premise correctness investigated;<br/>supersession ADR documents change;<br/>old premise linked forward to new"]
 
-    J -->|Rejected| J1[Address Feedback]
-    J1 --> H
-    J -->|Approved| K[Implementation]
+    %% ─── Forward flow: strategy descends from intent through to measurement ───
+    INTENT --> OPTIONS
+    OPTIONS --> DECISIONS
+    DECISIONS --> EXECUTION
+    EXECUTION --> MEASURE
+    MEASURE --> REVISE
 
-    K --> L[CI/CD Pipeline]
-    L --> L1[SAST / DAST Scan]
-    L --> L2[Architecture Lint]
-    L --> L3[NFR Validation]
+    %% ─── Feedback flow: revision returns to intent for the next cycle ───
+    REVISE --> INTENT
 
-    L1 & L2 & L3 --> M{All Gates\nPassed?}
-    M -->|No| M1[Fix & Rerun]
-    M1 --> L
-    M -->|Yes| N[Deploy to Production]
+    %% ─── Side artefacts that anchor the cycle ───
+    KERNEL["<b>Strategy Kernel</b><br/>(Rumelt)<br/>diagnosis &middot; policy &middot; action"]
 
-    N --> O[Observability Validation]
-    O --> P[Post-Deployment Review]
-    P --> Q([✅ Governance Record Closed])
+    OPTIONS_VIS["<b>Wardley Map</b><br/>or equivalent visualisation<br/>options on strategic axes"]
 
-    style A fill:#4f8ef7,color:#fff
-    style Q fill:#10b981,color:#fff
-    style I1 fill:#fef3c7
-    style J1 fill:#fef3c7
-    style M1 fill:#fef3c7
+    ADR["<b>ADR Discipline</b><br/>(Nygard)<br/>decision &middot; context &middot;<br/>alternatives &middot; consequences"]
+
+    METRICS["<b>Outcome Metrics</b><br/>(per-premise, not generic)<br/>quantified at strategy time;<br/>before retrospective bias"]
+
+    %% ─── Anchor side-artefacts to their stage ───
+    KERNEL -.anchors.-> INTENT
+    OPTIONS_VIS -.anchors.-> OPTIONS
+    ADR -.anchors.-> DECISIONS
+    METRICS -.anchors.-> MEASURE
+
+    %% ─── Style: cycle stages in warm progression ───
+    style INTENT    fill:#FBEDE0,stroke:#C96330,stroke-width:2px,color:#3A2410
+    style OPTIONS   fill:#FEF8E5,stroke:#A8956A,stroke-width:1.5px,color:#5C4316
+    style DECISIONS fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+    style EXECUTION fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+    style MEASURE   fill:#FBEDE0,stroke:#C96330,stroke-width:1.8px,color:#3A2410
+    style REVISE    fill:#F4E5DD,stroke:#A37050,stroke-width:1.5px,color:#3A2410
+
+    %% ─── Side artefacts: cooler tones to distinguish from cycle stages ───
+    style KERNEL      fill:#E5ECF3,stroke:#5A7A9A,stroke-width:1px,color:#2C4258
+    style OPTIONS_VIS fill:#E5ECF3,stroke:#5A7A9A,stroke-width:1px,color:#2C4258
+    style ADR         fill:#E5ECF3,stroke:#5A7A9A,stroke-width:1px,color:#2C4258
+    style METRICS     fill:#E5ECF3,stroke:#5A7A9A,stroke-width:1px,color:#2C4258

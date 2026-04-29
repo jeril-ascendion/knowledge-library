@@ -1,0 +1,93 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Stair-step maturity ascent">
+<!--
+  AI Readiness Strategy emblem.
+
+  Visual metaphor: organisational AI maturity climbing four
+  rungs from lower-left to upper-right. Each rung represents
+  a maturity stage (Aware → Experimenting → Operationalising
+  → Strategic). The terracotta marker traverses each rung
+  horizontally (a horizontal slide), then steps vertically
+  up to the next rung (a vertical step). Each rung lights
+  up in terracotta as the marker arrives and remains lit
+  through the rest of the cycle, encoding that maturity
+  progression is irreversible: once a stage's prerequisites
+  are met, the organisation does not regress.
+
+  Mechanic #57: STAIR-STEP MATURITY ASCENT.
+  First mechanic to compose horizontal slide + vertical step
+  into a stair-step pattern. Distinct from #56 vertical fill
+  (bars filling, not a marker moving), #51 single horizontal
+  track (no vertical ascent), and #15 perimeter traversal
+  (closed circular loop).
+
+  Geometry:
+    Four ascending rungs (warm-neutral inactive, terracotta lit):
+      Rung 1 (Aware):            x = 12 to 32,  y = 72
+      Rung 2 (Experimenting):    x = 32 to 56,  y = 56
+      Rung 3 (Operationalising): x = 56 to 80,  y = 40
+      Rung 4 (Strategic):        x = 80 to 108, y = 24
+    Each rung has stroke-width 2.2 (inactive) → 2.6 (lit).
+
+    Climbing marker: r=2.6 terracotta filled circle.
+    Path traced via cx/cy animate keyframes (NOT animateMotion):
+      (12,72) → (32,72) → (32,56) → (56,56) → (56,40) →
+      (80,40) → (80,24) → (108,24)
+    Keyframes alternate: horizontal slide segments (cx changes,
+    cy held) and vertical step segments (cx held, cy changes).
+
+  Cycle: 10s.
+    0.00–0.05  marker fades in at start
+    0.05–0.18  slide rung 1
+    0.18–0.22  step up to rung 2
+    0.22–0.40  slide rung 2
+    0.40–0.44  step up to rung 3
+    0.44–0.62  slide rung 3
+    0.62–0.66  step up to rung 4
+    0.66–0.84  slide rung 4
+    0.84–0.92  hold at top (all four rungs lit)
+    0.92–0.97  marker fades out
+    0.97–1.00  rungs reset to inactive
+
+  Colour: warm-neutral #D6D2C8 + terracotta #C96330.
+-->
+
+  <!-- Rung 1 (Aware) -->
+  <line x1="12" y1="72" x2="32" y2="72" stroke="#D6D2C8" stroke-width="2.2" stroke-linecap="round">
+    <animate attributeName="stroke"       values="#D6D2C8;#C96330;#C96330;#D6D2C8" keyTimes="0;0.05;0.97;1" dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-width" values="2.2;2.6;2.6;2.2"                  keyTimes="0;0.05;0.97;1" dur="10s" repeatCount="indefinite"/>
+  </line>
+
+  <!-- Rung 2 (Experimenting) -->
+  <line x1="32" y1="56" x2="56" y2="56" stroke="#D6D2C8" stroke-width="2.2" stroke-linecap="round">
+    <animate attributeName="stroke"       values="#D6D2C8;#D6D2C8;#C96330;#C96330;#D6D2C8" keyTimes="0;0.20;0.23;0.97;1" dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-width" values="2.2;2.2;2.6;2.6;2.2"                     keyTimes="0;0.20;0.23;0.97;1" dur="10s" repeatCount="indefinite"/>
+  </line>
+
+  <!-- Rung 3 (Operationalising) -->
+  <line x1="56" y1="40" x2="80" y2="40" stroke="#D6D2C8" stroke-width="2.2" stroke-linecap="round">
+    <animate attributeName="stroke"       values="#D6D2C8;#D6D2C8;#C96330;#C96330;#D6D2C8" keyTimes="0;0.42;0.45;0.97;1" dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-width" values="2.2;2.2;2.6;2.6;2.2"                     keyTimes="0;0.42;0.45;0.97;1" dur="10s" repeatCount="indefinite"/>
+  </line>
+
+  <!-- Rung 4 (Strategic) -->
+  <line x1="80" y1="24" x2="108" y2="24" stroke="#D6D2C8" stroke-width="2.2" stroke-linecap="round">
+    <animate attributeName="stroke"       values="#D6D2C8;#D6D2C8;#C96330;#C96330;#D6D2C8" keyTimes="0;0.64;0.67;0.97;1" dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-width" values="2.2;2.2;2.6;2.6;2.2"                     keyTimes="0;0.64;0.67;0.97;1" dur="10s" repeatCount="indefinite"/>
+  </line>
+
+  <!-- Climbing marker: composition of horizontal slide + vertical step -->
+  <circle cx="12" cy="72" r="2.6" fill="#C96330">
+    <animate attributeName="opacity"
+             values="0;1;1;0;0"
+             keyTimes="0;0.05;0.92;0.97;1"
+             dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="cx"
+             values="12;12;32;32;56;56;80;80;108;108"
+             keyTimes="0;0.05;0.18;0.22;0.40;0.44;0.62;0.66;0.84;1"
+             dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="cy"
+             values="72;72;72;56;56;40;40;24;24;24"
+             keyTimes="0;0.05;0.18;0.22;0.40;0.44;0.62;0.66;0.84;1"
+             dur="10s" repeatCount="indefinite"/>
+  </circle>
+</svg>

@@ -1,0 +1,102 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Quadrant positioning cascade">
+<!--
+  Modernization Strategy emblem.
+
+  Visual metaphor: portfolio assessment on a Strategic Value
+  × System Health 2×2 matrix. Five system markers populate
+  the grid in staggered sequence, encoding that portfolio
+  assessment positions every system somewhere on the grid
+  simultaneously. One terracotta marker then migrates from
+  the Migrate quadrant (high value, low health, upper-left)
+  to the Invest quadrant (high value, high health, upper-
+  right), encoding modernization completion. A trailing
+  dashed arc shows the migration path.
+
+  Mechanic #58: QUADRANT POSITIONING CASCADE.
+  First mechanic to distribute multiple markers across a 2D
+  quadrant grid simultaneously, with semantically labelled
+  regions (Migrate / Invest / Tolerate / Eliminate) and a
+  single-dot trajectory traversing between named regions.
+  Distinct from all prior mechanics which are 1D-distributed
+  (along a horizontal or vertical axis or perimeter).
+
+  Geometry:
+    Axis lines: horizontal at y=45, vertical at x=60.
+    Quadrants:
+      Upper-left  (Migrate):   x < 60, y < 45
+      Upper-right (Invest):    x > 60, y < 45
+      Lower-left  (Eliminate): x < 60, y > 45
+      Lower-right (Tolerate):  x > 60, y > 45
+
+    Static system markers (warm-neutral, r=2.4):
+      (88, 22)  Invest existing healthy system
+      (28, 68)  Eliminate low-value low-health system
+      (88, 65)  Tolerate low-value high-health system
+      (22, 22)  Migrate static (companion to migrator)
+
+    Migrating marker (terracotta, r=2.8):
+      Starts at (40, 32) in Migrate quadrant.
+      Migrates via 5 bezier-sampled points along
+      Q-curve M 40,32 Q 65,18 95,22:
+        (40, 32) → (53, 26) → (66, 22.5) →
+        (80, 21) → (95, 22)
+      Ends at (95, 22) in Invest quadrant.
+
+    Trailing dashed migration arc: M 40,32 Q 65,18 95,22
+      Stroke terracotta, dashed, opacity 0 → 1 during
+      migration → 0 at cycle reset.
+
+  Cycle: 10s.
+    0.06–0.10  Invest existing system fades in
+    0.14–0.18  Eliminate dot fades in
+    0.22–0.26  Tolerate dot fades in
+    0.30–0.34  Migrate companion fades in
+    0.36–0.40  Migrator fades in (in Migrate quadrant)
+    0.55–0.65  Trailing arc fades in
+    0.62–0.85  Migration along bezier sample points
+    0.85–0.92  Hold at Invest quadrant (all dots visible)
+    0.92–0.97  All markers fade out, arc fades out
+    0.97–1.00  Reset
+
+  Colour: warm-neutral #D6D2C8 + terracotta #C96330.
+-->
+
+  <!-- Quadrant axis lines -->
+  <line x1="10" y1="45" x2="110" y2="45" stroke="#D6D2C8" stroke-width="0.8"/>
+  <line x1="60" y1="10" x2="60" y2="80" stroke="#D6D2C8" stroke-width="0.8"/>
+
+  <!-- Trailing dashed migration arc -->
+  <path d="M 40,32 Q 65,18 95,22" fill="none" stroke="#C96330" stroke-width="0.7" stroke-dasharray="1.5,1.5" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.55;0.65;0.92;0.97;1" dur="10s" repeatCount="indefinite"/>
+  </path>
+
+  <!-- Static dots cascading across quadrants -->
+  <circle cx="88" cy="22" r="2.4" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.06;0.10;0.92;0.97;1" dur="10s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="28" cy="68" r="2.4" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.14;0.18;0.92;0.97;1" dur="10s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="88" cy="65" r="2.4" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.22;0.26;0.92;0.97;1" dur="10s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="22" cy="22" r="2.4" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.30;0.34;0.92;0.97;1" dur="10s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Migrating marker: cx/cy keyframes sampled from Q-bezier (40,32) Q(65,18) (95,22) -->
+  <circle cx="40" cy="32" r="2.8" fill="#C96330" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0;0"
+             keyTimes="0;0.36;0.40;0.92;0.97;1"
+             dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="cx"
+             values="40;40;53;66;80;95;95"
+             keyTimes="0;0.62;0.68;0.74;0.80;0.85;1"
+             dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="cy"
+             values="32;32;26;22.5;21;22;22"
+             keyTimes="0;0.62;0.68;0.74;0.80;0.85;1"
+             dur="10s" repeatCount="indefinite"/>
+  </circle>
+</svg>

@@ -1,49 +1,17 @@
-flowchart TD
-    A([🚀 Start: Modernization Strategy]) --> B[Assessment & Discovery]
-
-    B --> C{Current State\nDocumented?}
-    C -->|No| B
-    C -->|Yes| D[Apply Architecture Principles]
-
-    D --> D1[Design for Change]
-    D --> D2[Least Privilege]
-    D --> D3[Observability First]
-    D --> D4[AI Augmentation Readiness]
-
-    D1 & D2 & D3 & D4 --> E[Select Design Patterns]
-
-    E --> F{NFR Targets\nDefined?}
-    F -->|No| F1[Define NFRs in nfr/]
-    F1 --> F
-    F -->|Yes| G[Document ADRs]
-
-    G --> H[Architecture Review Board]
-
-    H --> I{Security\nReview Passed?}
-    I -->|No| I1[Revise Design]
-    I1 --> H
-    I -->|Yes| J{ARB\nApproval?}
-
-    J -->|Rejected| J1[Address Feedback]
-    J1 --> H
-    J -->|Approved| K[Implementation]
-
-    K --> L[CI/CD Pipeline]
-    L --> L1[SAST / DAST Scan]
-    L --> L2[Architecture Lint]
-    L --> L3[NFR Validation]
-
-    L1 & L2 & L3 --> M{All Gates\nPassed?}
-    M -->|No| M1[Fix & Rerun]
-    M1 --> L
-    M -->|Yes| N[Deploy to Production]
-
-    N --> O[Observability Validation]
-    O --> P[Post-Deployment Review]
-    P --> Q([✅ Governance Record Closed])
-
-    style A fill:#4f8ef7,color:#fff
-    style Q fill:#10b981,color:#fff
-    style I1 fill:#fef3c7
-    style J1 fill:#fef3c7
-    style M1 fill:#fef3c7
+quadrantChart
+    title Portfolio Assessment — System Health vs Strategic Value
+    x-axis Low System Health --> High System Health
+    y-axis Low Strategic Value --> High Strategic Value
+    quadrant-1 Invest (high value, high health)
+    quadrant-2 Migrate (high value, low health)
+    quadrant-3 Eliminate (low value, low health)
+    quadrant-4 Tolerate (low value, high health)
+    Customer-facing API gateway: [0.85, 0.92]
+    Order management system: [0.30, 0.85]
+    Customer data platform: [0.25, 0.78]
+    Pricing engine: [0.78, 0.81]
+    Reporting service: [0.72, 0.35]
+    Internal admin tool: [0.65, 0.28]
+    Legacy batch system: [0.18, 0.20]
+    Defunct integration adapter: [0.22, 0.12]
+    Mobile app backend: [0.38, 0.88]

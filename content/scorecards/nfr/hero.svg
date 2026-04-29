@@ -1,0 +1,114 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gap-arrow visualization across NFR categories">
+<!--
+  NFR Scorecard emblem.
+
+  Visual metaphor: the gap between current operating state and target
+  state, surfaced per NFR category. Three horizontal NFR-category tracks
+  stacked vertically. Each track carries TWO markers: a terracotta
+  "current state" dot at one x-position, and a warm-neutral "target
+  state" dot at a x-position to the right. A terracotta dashed line
+  connects them, drawing itself left-to-right via x2 animation, encoding
+  the gap as visible work-to-do. Gap lengths vary across tracks — track
+  1 has a wide gap (large debt), track 2 a medium gap, track 3 a narrow
+  gap (closer to target). The visualization makes the prioritisation
+  decision obvious: the longest line is the largest gap is where to
+  invest first.
+
+  Mechanic #61: GAP-ARROW VISUALIZATION.
+  First mechanic to pair TWO markers per track (current + target) with
+  an explicit gap-line connector that draws itself between them. Distinct
+  from #60 stacked bar fill (single fill per track growing from baseline,
+  no second marker, no explicit gap), #15 horizontal traversal (single
+  dot moving, no paired markers), #51 lifecycle progression (single track
+  with moving marker and trail), #58 quadrant positioning (dots in 2D
+  regions, not 1D pairs).
+
+  Geometry:
+    Track baselines: x=10 → x=110 at y=22, 45, 68 (faint warm-neutral).
+    Track 1: current at (42, 22), target at (92, 22) — gap 50.
+    Track 2: current at (30, 45), target at (78, 45) — gap 48.
+    Track 3: current at (68, 68), target at (88, 68) — gap 20.
+
+  Cycle: 10s.
+    0.00–0.10  Hold (empty)
+    0.10–0.15  Track 1 markers fade in
+    0.15–0.25  Track 1 gap line draws current → target
+    0.30–0.35  Track 2 markers fade in
+    0.35–0.45  Track 2 gap line draws
+    0.50–0.55  Track 3 markers fade in
+    0.55–0.65  Track 3 gap line draws
+    0.65–0.92  Hold all (gaps visible)
+    0.92–1.00  Fade out, reset
+
+  Colour: warm-neutral #D6D2C8 + terracotta #C96330.
+  No animateMotion / mpath. Basic SMIL only.
+-->
+
+  <!-- Track baselines (faint warm-neutral) -->
+  <line x1="10" y1="22" x2="110" y2="22" stroke="#D6D2C8" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
+  <line x1="10" y1="45" x2="110" y2="45" stroke="#D6D2C8" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
+  <line x1="10" y1="68" x2="110" y2="68" stroke="#D6D2C8" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- ============== TRACK 1 (y=22, gap=50, large debt) ============== -->
+  <!-- Current marker (terracotta) -->
+  <circle cx="42" cy="22" r="3" fill="#C96330" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0"
+             keyTimes="0;0.10;0.15;0.92;1"
+             dur="10s" repeatCount="indefinite"/>
+  </circle>
+  <!-- Target marker (warm-neutral) -->
+  <circle cx="92" cy="22" r="3" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0"
+             keyTimes="0;0.10;0.15;0.92;1"
+             dur="10s" repeatCount="indefinite"/>
+  </circle>
+  <!-- Gap line — animates x2 from current_x to target_x -->
+  <line x1="42" y1="22" x2="42" y2="22" stroke="#C96330" stroke-width="1.6" stroke-dasharray="3 3" stroke-linecap="round">
+    <animate attributeName="x2"
+             values="42;42;92;92;42"
+             keyTimes="0;0.15;0.25;0.92;1"
+             dur="10s" repeatCount="indefinite"/>
+  </line>
+
+  <!-- ============== TRACK 2 (y=45, gap=48, medium debt) ============== -->
+  <circle cx="30" cy="45" r="3" fill="#C96330" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0"
+             keyTimes="0;0.30;0.35;0.92;1"
+             dur="10s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="78" cy="45" r="3" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0"
+             keyTimes="0;0.30;0.35;0.92;1"
+             dur="10s" repeatCount="indefinite"/>
+  </circle>
+  <line x1="30" y1="45" x2="30" y2="45" stroke="#C96330" stroke-width="1.6" stroke-dasharray="3 3" stroke-linecap="round">
+    <animate attributeName="x2"
+             values="30;30;78;78;30"
+             keyTimes="0;0.35;0.45;0.92;1"
+             dur="10s" repeatCount="indefinite"/>
+  </line>
+
+  <!-- ============== TRACK 3 (y=68, gap=20, narrow — close to target) ============== -->
+  <circle cx="68" cy="68" r="3" fill="#C96330" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0"
+             keyTimes="0;0.50;0.55;0.92;1"
+             dur="10s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="88" cy="68" r="3" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0"
+             keyTimes="0;0.50;0.55;0.92;1"
+             dur="10s" repeatCount="indefinite"/>
+  </circle>
+  <line x1="68" y1="68" x2="68" y2="68" stroke="#C96330" stroke-width="1.6" stroke-dasharray="3 3" stroke-linecap="round">
+    <animate attributeName="x2"
+             values="68;68;88;88;68"
+             keyTimes="0;0.55;0.65;0.92;1"
+             dur="10s" repeatCount="indefinite"/>
+  </line>
+</svg>

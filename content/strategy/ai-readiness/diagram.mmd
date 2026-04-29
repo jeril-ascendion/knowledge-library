@@ -1,49 +1,46 @@
-flowchart TD
-    A([🚀 Start: AI Readiness Strategy]) --> B[Assessment & Discovery]
+flowchart LR
 
-    B --> C{Current State\nDocumented?}
-    C -->|No| B
-    C -->|Yes| D[Apply Architecture Principles]
+    %% ─── Four AI readiness maturity stages, left-to-right progression ───
+    S1["<b>Aware</b><br/>understands AI is strategic;<br/>no concrete capability yet"]
+    S2["<b>Experimenting</b><br/>pilots in safe scope;<br/>data foundation gaps surface"]
+    S3["<b>Operationalising</b><br/>first production deployments;<br/>MLOps and monitoring established"]
+    S4["<b>Strategic</b><br/>AI is part of architecture;<br/>portfolio of production systems"]
 
-    D --> D1[Design for Change]
-    D --> D2[Least Privilege]
-    D --> D3[Observability First]
-    D --> D4[AI Augmentation Readiness]
+    S1 --> S2
+    S2 --> S3
+    S3 --> S4
 
-    D1 & D2 & D3 & D4 --> E[Select Design Patterns]
+    %% ─── Per-stage prerequisites (what must be ready to advance) ───
+    P1["<b>To advance from Aware</b><br/>data catalogue exists; lineage tracked;<br/>data literacy across engineering teams;<br/>ethics review process documented"]
 
-    E --> F{NFR Targets\nDefined?}
-    F -->|No| F1[Define NFRs in nfr/]
-    F1 --> F
-    F -->|Yes| G[Document ADRs]
+    P2["<b>To advance from Experimenting</b><br/>data quality SLAs in place;<br/>ML engineering as a specialisation;<br/>risk classification scheme adopted;<br/>model registry as system of record"]
 
-    G --> H[Architecture Review Board]
+    P3["<b>To advance from Operationalising</b><br/>serving platform reused across initiatives;<br/>AI-specific monitoring distinguished from APM;<br/>applied AI architects at senior level;<br/>use-case pipeline with documented rubric"]
 
-    H --> I{Security\nReview Passed?}
-    I -->|No| I1[Revise Design]
-    I1 --> H
-    I -->|Yes| J{ARB\nApproval?}
+    %% ─── Five readiness pillars (always-on assessment dimensions) ───
+    PILLARS["<b>Five readiness pillars</b><br/>(measured per pillar, not aggregated)<br/>Data Foundation &middot; Skills &middot; Governance<br/>Infrastructure &middot; Use-case Pipeline"]
 
-    J -->|Rejected| J1[Address Feedback]
-    J1 --> H
-    J -->|Approved| K[Implementation]
+    %% ─── Connect prerequisites to the stages they unblock ───
+    S1 -.-> P1
+    S2 -.-> P2
+    S3 -.-> P3
 
-    K --> L[CI/CD Pipeline]
-    L --> L1[SAST / DAST Scan]
-    L --> L2[Architecture Lint]
-    L --> L3[NFR Validation]
+    %% ─── All pillars feed into every stage transition ───
+    PILLARS -.-> S1
+    PILLARS -.-> S2
+    PILLARS -.-> S3
+    PILLARS -.-> S4
 
-    L1 & L2 & L3 --> M{All Gates\nPassed?}
-    M -->|No| M1[Fix & Rerun]
-    M1 --> L
-    M -->|Yes| N[Deploy to Production]
+    %% ─── Stage styles: progression from neutral to terracotta as maturity advances ───
+    style S1 fill:#FEF8E5,stroke:#A8956A,stroke-width:1.5px,color:#5C4316
+    style S2 fill:#FEF3C7,stroke:#92722C,stroke-width:1.5px,color:#5C4316
+    style S3 fill:#FBEDE0,stroke:#C96330,stroke-width:1.8px,color:#3A2410
+    style S4 fill:#F4E5DD,stroke:#A37050,stroke-width:1.8px,color:#3A2410
 
-    N --> O[Observability Validation]
-    O --> P[Post-Deployment Review]
-    P --> Q([✅ Governance Record Closed])
+    %% ─── Prerequisite annotation styles: subtle, matched to stage ───
+    style P1 fill:#FEF8E5,stroke:#D4C599,stroke-width:1px,color:#5C4316
+    style P2 fill:#FEF3C7,stroke:#D4C599,stroke-width:1px,color:#5C4316
+    style P3 fill:#FBEDE0,stroke:#D4C599,stroke-width:1px,color:#3A2410
 
-    style A fill:#4f8ef7,color:#fff
-    style Q fill:#10b981,color:#fff
-    style I1 fill:#fef3c7
-    style J1 fill:#fef3c7
-    style M1 fill:#fef3c7
+    %% ─── Pillars node — emphasised as the always-on framework ───
+    style PILLARS fill:#E5ECF3,stroke:#5A7A9A,stroke-width:1.8px,color:#2C4258

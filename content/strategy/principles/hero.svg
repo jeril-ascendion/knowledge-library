@@ -1,0 +1,92 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Forward-return feedback cycle">
+<!--
+  Strategy Principles emblem.
+
+  Visual metaphor: the closed-loop nature of strategy.
+  A terracotta marker traverses four stations forward
+  along a straight horizontal path (Intent → Decisions →
+  Execution → Measurement), each station briefly
+  illuminating as the marker passes. On reaching
+  Measurement, the marker returns to Intent via a curved
+  arc traced above the linear path, encoding that
+  measurement informs the next cycle's intent. The
+  composition of straight forward sweep + curved return
+  arc is the mechanic's signature.
+
+  Mechanic #59: FORWARD-RETURN FEEDBACK CYCLE.
+  First mechanic to compose a straight forward sweep with
+  a curved return arc into a single continuous trajectory.
+  Distinct from #15 horizontal traversal (no return arc),
+  #47 perimeter circle (purely circular, no straight
+  segment), #51 lifecycle progression trail (single
+  horizontal track with no return), #57 stair-step ascent
+  (staircase with no return), and #58 quadrant positioning
+  (2D static distribution with no path).
+
+  Geometry:
+    Forward path: straight line at y=55, x from 14 to 98.
+    Four stations along forward path (warm-neutral, r=2.5):
+      Intent       (14, 55)
+      Decisions    (42, 55)
+      Execution    (70, 55)
+      Measurement  (98, 55)
+
+    Return arc: quadratic Bezier M 98,55 Q 60,16 14,55.
+      Bezier control point (60, 16) sets the arc apex.
+      Visible at all times as a faint dashed curve.
+      Visual apex of the curve falls around (58, 36).
+
+    Marker (terracotta, r=2.8) traverses entire path via
+    cx/cy animate keyframes (NOT animateMotion):
+      Forward: (14,55) → (42,55) → (70,55) → (98,55)
+      Return arc bezier samples:
+        (98,55) → (82,42) → (66,36) → (58,36) →
+        (50,36) → (32,42) → (14,55)
+
+  Cycle: 10s.
+    0.04  Marker enters at Intent; Intent station highlights
+    0.27  Marker passes Decisions; Decisions station highlights
+    0.50  Marker passes Execution; Execution station highlights
+    0.72  Marker reaches Measurement; Measurement station highlights
+    0.72–0.96  Marker traces curved return arc back to Intent
+    0.96–1.00  Marker holds at Intent for next cycle
+
+  Colour: warm-neutral #D6D2C8 + terracotta #C96330.
+-->
+
+  <!-- Forward path (faint visible line) -->
+  <line x1="14" y1="55" x2="98" y2="55" stroke="#D6D2C8" stroke-width="0.8"/>
+
+  <!-- Return arc (faint visible dashed curve) -->
+  <path d="M 98,55 Q 60,16 14,55" fill="none" stroke="#D6D2C8" stroke-width="0.8" stroke-dasharray="2,2"/>
+
+  <!-- Stations (highlight as marker passes) -->
+  <circle cx="14" cy="55" r="2.5" fill="#D6D2C8">
+    <animate attributeName="fill" values="#D6D2C8;#C96330;#D6D2C8;#D6D2C8" keyTimes="0;0.05;0.12;1" dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="r"    values="2.5;3.2;2.5;2.5"                 keyTimes="0;0.05;0.12;1" dur="10s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="42" cy="55" r="2.5" fill="#D6D2C8">
+    <animate attributeName="fill" values="#D6D2C8;#D6D2C8;#C96330;#D6D2C8;#D6D2C8" keyTimes="0;0.23;0.28;0.34;1" dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="r"    values="2.5;2.5;3.2;2.5;2.5"                     keyTimes="0;0.23;0.28;0.34;1" dur="10s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="70" cy="55" r="2.5" fill="#D6D2C8">
+    <animate attributeName="fill" values="#D6D2C8;#D6D2C8;#C96330;#D6D2C8;#D6D2C8" keyTimes="0;0.46;0.51;0.57;1" dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="r"    values="2.5;2.5;3.2;2.5;2.5"                     keyTimes="0;0.46;0.51;0.57;1" dur="10s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="98" cy="55" r="2.5" fill="#D6D2C8">
+    <animate attributeName="fill" values="#D6D2C8;#D6D2C8;#C96330;#D6D2C8;#D6D2C8" keyTimes="0;0.68;0.73;0.79;1" dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="r"    values="2.5;2.5;3.2;2.5;2.5"                     keyTimes="0;0.68;0.73;0.79;1" dur="10s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Marker: forward sweep + bezier-sampled return arc -->
+  <circle cx="14" cy="55" r="2.8" fill="#C96330">
+    <animate attributeName="cx"
+             values="14;14;42;70;98;82;66;58;50;32;14;14"
+             keyTimes="0;0.04;0.27;0.50;0.72;0.76;0.80;0.84;0.88;0.92;0.96;1"
+             dur="10s" repeatCount="indefinite"/>
+    <animate attributeName="cy"
+             values="55;55;55;55;55;42;36;36;36;42;55;55"
+             keyTimes="0;0.04;0.27;0.50;0.72;0.76;0.80;0.84;0.88;0.92;0.96;1"
+             dur="10s" repeatCount="indefinite"/>
+  </circle>
+</svg>

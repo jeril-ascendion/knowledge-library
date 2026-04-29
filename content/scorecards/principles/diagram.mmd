@@ -1,49 +1,23 @@
 flowchart TD
-    A([🚀 Start: Principles Scorecard]) --> B[Assessment & Discovery]
+    A["Identify principles applicable to this system"] --> B["Score each principle on 1-5 graded scale"]
+    B --> C{"Score below threshold?"}
 
-    B --> C{Current State\nDocumented?}
-    C -->|No| B
-    C -->|Yes| D[Apply Architecture Principles]
+    C -->|"No"| D["Record adherence with evidence; close cycle"]
+    C -->|"Yes"| E["Identify deviation evidence"]
 
-    D --> D1[Design for Change]
-    D --> D2[Least Privilege]
-    D --> D3[Observability First]
-    D --> D4[AI Augmentation Readiness]
+    E --> F{"Categorise deviation"}
 
-    D1 & D2 & D3 & D4 --> E[Select Design Patterns]
+    F --> G["Deliberate trade-off (ADR exists)"]
+    F --> H["Oversight (principle not considered)"]
+    F --> I["Drift (originally adherent, has eroded)"]
 
-    E --> F{NFR Targets\nDefined?}
-    F -->|No| F1[Define NFRs in nfr/]
-    F1 --> F
-    F -->|Yes| G[Document ADRs]
+    G --> J["Schedule trade-off revisitation; verify justification still holds"]
+    H --> K["Generate debt item with near-term deadline"]
+    I --> L["Trigger architectural review at practice level"]
 
-    G --> H[Architecture Review Board]
+    J --> M["Update scorecard with categorised deviation; close cycle"]
+    K --> M
+    L --> M
 
-    H --> I{Security\nReview Passed?}
-    I -->|No| I1[Revise Design]
-    I1 --> H
-    I -->|Yes| J{ARB\nApproval?}
-
-    J -->|Rejected| J1[Address Feedback]
-    J1 --> H
-    J -->|Approved| K[Implementation]
-
-    K --> L[CI/CD Pipeline]
-    L --> L1[SAST / DAST Scan]
-    L --> L2[Architecture Lint]
-    L --> L3[NFR Validation]
-
-    L1 & L2 & L3 --> M{All Gates\nPassed?}
-    M -->|No| M1[Fix & Rerun]
-    M1 --> L
-    M -->|Yes| N[Deploy to Production]
-
-    N --> O[Observability Validation]
-    O --> P[Post-Deployment Review]
-    P --> Q([✅ Governance Record Closed])
-
-    style A fill:#4f8ef7,color:#fff
-    style Q fill:#10b981,color:#fff
-    style I1 fill:#fef3c7
-    style J1 fill:#fef3c7
-    style M1 fill:#fef3c7
+    M --> N["Aggregate debt across systems; review at practice level"]
+    N --> O["Inform platform investment and capability development"]

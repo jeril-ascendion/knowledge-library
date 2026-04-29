@@ -1468,6 +1468,140 @@ EMBLEM MOTION MECHANICS (each page must use a DISTINCT mechanic):
                            plus feedback return, where
                            measurement informs the next
                            cycle's intent)
+  #60 STACKED HORIZONTAL BAR-FILL CASCADE (scorecards/architecture-review:
+                           four horizontal score-tracks stacked
+                           vertically at y=20, 36, 52, 68;
+                           each track is a faint warm-neutral
+                           baseline running x=12 to x=104;
+                           a terracotta fill bar grows
+                           left-to-right along each track,
+                           starting at x=12 and ending at a
+                           DIFFERENT target x per track —
+                           encoding that each review dimension
+                           scores independently and the
+                           per-dimension scores VARY; bar
+                           growths are staggered (each starts
+                           at a later time than the prior one)
+                           so the visual reads as a cascade of
+                           independent ratings landing in
+                           sequence; after all four bars have
+                           completed their fills, a small
+                           terracotta verdict mark appears
+                           below the lowest bar (centred at
+                           x=58, y=82) encoding the aggregate
+                           verdict; distinct from #11 vertical
+                           bars rising — that is PURELY
+                           VERTICAL with bars all reaching the
+                           same height; distinct from #45
+                           sequential vertical fill — that is
+                           bottom-to-top and all bars reach
+                           the top; distinct from #51
+                           lifecycle progression trail — that
+                           is a SINGLE horizontal track with a
+                           moving marker, not multiple tracks
+                           with growing fills; distinct from
+                           #56 progressive threshold fill —
+                           that is a SINGLE horizontal fill
+                           pausing at canary checkpoints, not
+                           multiple parallel fills with
+                           varying endpoints; #60 is the first
+                           mechanic to use multiple parallel
+                           horizontal fills WITH VARYING
+                           endpoints PLUS a separate aggregate
+                           verdict element appearing after the
+                           cascade completes — encoding the
+                           scorecard signature: independent
+                           dimensional scoring producing one
+                           collective verdict)
+  #61 GAP-ARROW VISUALIZATION (scorecards/nfr:
+                           three horizontal NFR-category
+                           tracks at y=22, 45, 68; each track
+                           runs x=10 to x=110 as a faint
+                           warm-neutral baseline; each track
+                           carries TWO markers — a terracotta
+                           "current state" dot and a warm-
+                           neutral "target state" dot — at
+                           DIFFERENT x positions per track,
+                           with target always to the right of
+                           current; a terracotta dashed gap
+                           line connects current to target on
+                           each track, drawing itself via
+                           stroke-dasharray animation; markers
+                           appear in cascade (track 1 at
+                           t=0.10, track 2 at t=0.30, track 3
+                           at t=0.50), gap line for each
+                           track draws immediately after both
+                           markers settle; gap lengths vary
+                           per track — encoding that NFR gaps
+                           differ by category and prioritisation
+                           targets the largest gaps; distinct
+                           from #15 horizontal traversal —
+                           that is a single dot moving, no
+                           paired markers, no gap visualization;
+                           distinct from #51 lifecycle
+                           progression — that is a single
+                           track with a moving marker and
+                           historical trail; distinct from
+                           #58 quadrant positioning — that
+                           plots dots in 2D regions, not
+                           pairs along 1D scales; distinct
+                           from #60 stacked bar fill — that
+                           shows fills GROWING from left to
+                           target endpoints, not paired
+                           current-target markers with a gap
+                           line; #61 is the first mechanic to
+                           pair TWO markers per track with an
+                           explicit gap-line connector,
+                           visualising the delta between
+                           current and target — the
+                           architectural signature is
+                           gap-driven prioritisation: the
+                           visible space between markers is
+                           the work)
+  #62 SPOKE CONVERGENCE TO CENTRE (scorecards/principles:
+                           four outer "criterion" dots
+                           positioned in a vertical column on
+                           the LEFT at x=14, y=18/38/56/76;
+                           one central "score" node at
+                           (x=92, y=46); four spokes (lines)
+                           extend from each outer dot to the
+                           central node, each spoke drawing
+                           itself in sequence via
+                           stroke-dasharray animation; spoke
+                           1 draws at t=0.10–0.25, spoke 2 at
+                           t=0.30–0.45, spoke 3 at t=0.50–0.65,
+                           spoke 4 at t=0.70–0.85; the central
+                           node opacity rises progressively
+                           from 0.25 → 0.50 → 0.75 → 1.0 as
+                           each spoke completes (encoding
+                           that each criterion contributes
+                           to the aggregate score); after all
+                           four spokes complete, the central
+                           node pulses (radius 4 → 5 → 4) at
+                           t=0.85–0.95 encoding the final
+                           aggregate principle score; distinct
+                           from #1 particle flow — that has
+                           DOZENS of small particles, not
+                           four discrete spokes; distinct from
+                           patterns/security perimeter tracing
+                           — that draws CONCENTRIC RINGS, not
+                           radial spokes; distinct from #47
+                           perimeter circle marker — that is a
+                           moving dot on a circle, no
+                           convergent geometry; distinct from
+                           #61 gap-arrow — that uses parallel
+                           horizontal tracks, not radial
+                           convergence; #62 is the first
+                           mechanic to use spoke-based
+                           convergence (multiple discrete
+                           lines drawing themselves toward a
+                           single accumulating central node) —
+                           the architectural signature is
+                           evidence-aggregation: each
+                           criterion contributes a discrete
+                           strand of evidence and the
+                           principle score accumulates as
+                           strands attach)
   Future pages must invent a new mechanic, not reuse one.
   Two colours only: warm neutral (#D6D2C8) + terracotta (#C96330).
   Basic SMIL primitives only (animate, animateTransform with type=rotate or translate; stroke-dasharray and opacity animations also valid via animate).
@@ -2875,6 +3009,26 @@ TAG_LINKS = {
     "Google AI Adoption Framework": "https://services.google.com/fh/files/misc/ai_adoption_framework_whitepaper.pdf",
     # Cross-cutting
     "DORA Capabilities Catalog": "https://dora.dev/capabilities/",
+    # Scorecards / assessment frameworks
+    "ISO/IEC 25010 (Software Quality Model)": "https://iso25000.com/index.php/en/iso-25000-standards/iso-25010",
+    "arc42 Architecture Template": "https://arc42.org/",
+    "Architecture Tradeoff Analysis Method (Wikipedia)": "https://en.wikipedia.org/wiki/Architecture_tradeoff_analysis_method",
+    "ATAM at SEI": "https://insights.sei.cmu.edu/library/atam-criteria-evaluation-of-software-and-system-architectures/",
+    "CISQ Software Quality Standards": "https://www.it-cisq.org/standards/",
+    "Quality Attribute Workshop (SEI)": "https://insights.sei.cmu.edu/library/quality-attribute-workshop-third-edition-participants-handbook/",
+    "TOGAF (overview)": "https://en.wikipedia.org/wiki/The_Open_Group_Architecture_Framework",
+    "Capability Maturity Model Integration (CMMI)": "https://en.wikipedia.org/wiki/Capability_Maturity_Model_Integration",
+    "C4 Model": "https://c4model.com/",
+    "Architecture Decision Records (ADR community)": "https://adr.github.io/",
+    "Web Vitals (Google)": "https://web.dev/articles/vitals",
+    "Google SRE Workbook — SLOs": "https://sre.google/workbook/implementing-slos/",
+    "Active Reviews for Intermediate Designs (ARID)": "https://insights.sei.cmu.edu/library/active-reviews-for-intermediate-designs-arid/",
+    "Software Architecture Analysis Method (SAAM)": "https://en.wikipedia.org/wiki/Software_Architecture_Analysis_Method",
+    "ISO/IEC/IEEE 42010 (Architecture description)": "https://en.wikipedia.org/wiki/ISO/IEC/IEEE_42010",
+    "Microsoft Azure Well-Architected Framework": "https://learn.microsoft.com/en-us/azure/well-architected/",
+    "Google Cloud Architecture Framework": "https://cloud.google.com/architecture/framework",
+    "ThoughtWorks Technology Radar": "https://www.thoughtworks.com/radar",
+    "Architecture Decision Records (ADR GitHub Org)": "https://adr.github.io/",
 }
 
 
