@@ -1,126 +1,127 @@
-<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Spoke convergence to a single aggregate node">
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Spoke convergence to a single aggregate node with continuous central pulse">
 <!--
   Principles Scorecard emblem.
 
-  Visual metaphor: each principle's score is composed from multiple
-  criterion measurements that converge to a single aggregate value, and
-  the principle becomes more confident as more criteria report in. Four
-  outer "criterion" dots stand in a vertical column on the LEFT at
-  x=14, y=18/38/56/76. One central "score" node sits at (x=92, y=46).
+  Visual metaphor: a principle's score is composed from multiple
+  criterion measurements that converge to a single aggregate value.
+  The principle becomes more confident as more criteria report in.
+  Four outer "criterion" dots stand in a vertical column on the LEFT
+  at x=14, y=18/38/58/78. One central "score" node sits at (96, 48).
   Four spokes draw themselves from each outer dot to the central node
-  via stroke-dasharray animation, in sequence. The central node opacity
-  rises progressively from 0.25 → 0.50 → 0.75 → 1.0 as each spoke
-  completes, encoding that each criterion contributes to the aggregate
-  principle score. After all four spokes complete, the central node
-  pulses (radius 4 → 5 → 4) encoding the final aggregate score landing.
+  via stroke-dashoffset animation, in sequence. As each spoke
+  completes, the central node opacity rises in steps: 0.25 → 0.50 →
+  0.75 → 1.00, encoding cumulative evidence. After all four spokes
+  complete, the central node CONTINUOUSLY pulses (r 4 → 5.5 → 4) on
+  a 1.0s sub-cycle through the held phase, encoding the sustained
+  aggregate confidence the principle holds. The cycle ends with
+  spokes retracting and the central node fading.
 
-  Mechanic #62: SPOKE CONVERGENCE TO CENTRE.
+  Mechanic #62: SPOKE CONVERGENCE TO CENTRE WITH SUSTAINED PULSE.
   First mechanic to use spoke-based convergence — multiple discrete
-  lines drawing themselves toward a single accumulating central node.
-  Distinct from #1 particle flow (dozens of small particles, no discrete
-  spokes), patterns/security perimeter tracing (concentric rings, not
-  radial spokes), #47 perimeter circle marker (moving dot on a circle,
-  no convergent geometry), #61 gap-arrow (parallel horizontal tracks,
-  no radial convergence). The architectural signature is
-  evidence-aggregation: each criterion contributes a discrete strand of
-  evidence and the principle score accumulates as strands attach.
+  lines drawing themselves toward a single accumulating central node
+  PLUS a continuous post-aggregation pulse on the central node. The
+  architectural signature is evidence-aggregation: each criterion
+  contributes a discrete strand of evidence and the principle score
+  accumulates as strands attach.
 
   Geometry:
-    Outer criterion dots: r=2.4 at (14, 18), (14, 38), (14, 56), (14, 76).
-    Central score node:    r=4   at (92, 46).
-    Spokes (lines): from each outer dot to (92, 46).
-    Spoke length ≈ 80–84 px (computed as √((92-14)² + Δy²)).
+    Outer criterion dots: r=2.8 at (14, 18), (14, 38), (14, 58), (14, 78).
+    Central score node:    r=4   at (96, 48).
+    Spokes (lines): from each outer dot to (96, 48).
+    Spoke length ≈ 82 px (computed as √((96-14)² + Δy²)).
     Stroke-dasharray 90 90 used so dashoffset 90 hides the full spoke,
     dashoffset 0 reveals it fully.
 
-  Cycle: 10s.
-    0.00–0.05  Outer dots fade in
-    0.10–0.25  Spoke 1 (top) draws — node opacity → 0.25
-    0.30–0.45  Spoke 2          draws — node opacity → 0.50
-    0.50–0.65  Spoke 3          draws — node opacity → 0.75
-    0.70–0.85  Spoke 4 (bottom) draws — node opacity → 1.00
-    0.85–0.95  Central node pulses (r 4 → 5 → 4)
-    0.95–1.00  Fade out, reset
+  Cycle: 8s primary; 1.0s sub-cycle for central node pulse.
+    0.00–0.05  Empty / reset
+    0.05–0.10  Outer dots fade in
+    0.10–0.20  Spoke 1 (top) draws — node opacity rises to 0.25
+    0.20–0.30  Spoke 2          draws — node opacity rises to 0.50
+    0.30–0.40  Spoke 3          draws — node opacity rises to 0.75
+    0.40–0.50  Spoke 4 (bottom) draws — node opacity rises to 1.00
+    0.50–0.85  All visible; central node pulses r 4 → 5.5 → 4 continuously
+    0.85–0.95  All fade out
+    0.95–1.00  Cleared, reset
 
   Colour: warm-neutral #D6D2C8 + terracotta #C96330.
-  No animateMotion / mpath. Basic SMIL only.
 -->
 
-  <!-- Outer criterion dots (warm-neutral, fade in early and stay) -->
-  <circle cx="14" cy="18" r="2.4" fill="#D6D2C8" opacity="0">
+  <!-- Outer criterion dots (warm-neutral, fade in early) -->
+  <circle cx="14" cy="18" r="2.8" fill="#D6D2C8" opacity="0">
     <animate attributeName="opacity"
-             values="0;1;1;0"
-             keyTimes="0;0.05;0.95;1"
-             dur="10s" repeatCount="indefinite"/>
+             values="0;0;1;1;0"
+             keyTimes="0;0.05;0.10;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
   </circle>
-  <circle cx="14" cy="38" r="2.4" fill="#D6D2C8" opacity="0">
+  <circle cx="14" cy="38" r="2.8" fill="#D6D2C8" opacity="0">
     <animate attributeName="opacity"
-             values="0;1;1;0"
-             keyTimes="0;0.05;0.95;1"
-             dur="10s" repeatCount="indefinite"/>
+             values="0;0;1;1;0"
+             keyTimes="0;0.05;0.10;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
   </circle>
-  <circle cx="14" cy="56" r="2.4" fill="#D6D2C8" opacity="0">
+  <circle cx="14" cy="58" r="2.8" fill="#D6D2C8" opacity="0">
     <animate attributeName="opacity"
-             values="0;1;1;0"
-             keyTimes="0;0.05;0.95;1"
-             dur="10s" repeatCount="indefinite"/>
+             values="0;0;1;1;0"
+             keyTimes="0;0.05;0.10;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
   </circle>
-  <circle cx="14" cy="76" r="2.4" fill="#D6D2C8" opacity="0">
+  <circle cx="14" cy="78" r="2.8" fill="#D6D2C8" opacity="0">
     <animate attributeName="opacity"
-             values="0;1;1;0"
-             keyTimes="0;0.05;0.95;1"
-             dur="10s" repeatCount="indefinite"/>
+             values="0;0;1;1;0"
+             keyTimes="0;0.05;0.10;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
   </circle>
 
-  <!-- Spoke 1: (14,18) → (92,46), draws at t=0.10–0.25 -->
-  <line x1="14" y1="18" x2="92" y2="46"
-        stroke="#C96330" stroke-width="1.2" stroke-linecap="round"
+  <!-- Spoke 1: (14,18) → (96,48), draws at t=0.10–0.20 -->
+  <line x1="14" y1="18" x2="96" y2="48"
+        stroke="#C96330" stroke-width="1.4" stroke-linecap="round"
         stroke-dasharray="90 90" stroke-dashoffset="90">
     <animate attributeName="stroke-dashoffset"
              values="90;90;0;0;90"
-             keyTimes="0;0.10;0.25;0.95;1"
-             dur="10s" repeatCount="indefinite"/>
+             keyTimes="0;0.10;0.20;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
   </line>
 
-  <!-- Spoke 2: (14,38) → (92,46), draws at t=0.30–0.45 -->
-  <line x1="14" y1="38" x2="92" y2="46"
-        stroke="#C96330" stroke-width="1.2" stroke-linecap="round"
+  <!-- Spoke 2: (14,38) → (96,48), draws at t=0.20–0.30 -->
+  <line x1="14" y1="38" x2="96" y2="48"
+        stroke="#C96330" stroke-width="1.4" stroke-linecap="round"
         stroke-dasharray="90 90" stroke-dashoffset="90">
     <animate attributeName="stroke-dashoffset"
              values="90;90;0;0;90"
-             keyTimes="0;0.30;0.45;0.95;1"
-             dur="10s" repeatCount="indefinite"/>
+             keyTimes="0;0.20;0.30;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
   </line>
 
-  <!-- Spoke 3: (14,56) → (92,46), draws at t=0.50–0.65 -->
-  <line x1="14" y1="56" x2="92" y2="46"
-        stroke="#C96330" stroke-width="1.2" stroke-linecap="round"
+  <!-- Spoke 3: (14,58) → (96,48), draws at t=0.30–0.40 -->
+  <line x1="14" y1="58" x2="96" y2="48"
+        stroke="#C96330" stroke-width="1.4" stroke-linecap="round"
         stroke-dasharray="90 90" stroke-dashoffset="90">
     <animate attributeName="stroke-dashoffset"
              values="90;90;0;0;90"
-             keyTimes="0;0.50;0.65;0.95;1"
-             dur="10s" repeatCount="indefinite"/>
+             keyTimes="0;0.30;0.40;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
   </line>
 
-  <!-- Spoke 4: (14,76) → (92,46), draws at t=0.70–0.85 -->
-  <line x1="14" y1="76" x2="92" y2="46"
-        stroke="#C96330" stroke-width="1.2" stroke-linecap="round"
+  <!-- Spoke 4: (14,78) → (96,48), draws at t=0.40–0.50 -->
+  <line x1="14" y1="78" x2="96" y2="48"
+        stroke="#C96330" stroke-width="1.4" stroke-linecap="round"
         stroke-dasharray="90 90" stroke-dashoffset="90">
     <animate attributeName="stroke-dashoffset"
              values="90;90;0;0;90"
-             keyTimes="0;0.70;0.85;0.95;1"
-             dur="10s" repeatCount="indefinite"/>
+             keyTimes="0;0.40;0.50;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
   </line>
 
-  <!-- Central score node: opacity rises with each spoke completion, then pulse -->
-  <circle cx="92" cy="46" r="4" fill="#C96330" opacity="0">
+  <!-- Central score node: opacity rises stepwise with each spoke completion;
+       continuously pulses r through the held phase 0.50–0.85 -->
+  <circle cx="96" cy="48" r="4" fill="#C96330" opacity="0">
     <animate attributeName="opacity"
-             values="0;0;0.25;0.50;0.75;1.0;1.0;0"
-             keyTimes="0;0.10;0.25;0.45;0.65;0.85;0.95;1"
-             dur="10s" repeatCount="indefinite"/>
+             values="0;0;0.25;0.50;0.75;1;1;0"
+             keyTimes="0;0.10;0.20;0.30;0.40;0.50;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
     <animate attributeName="r"
-             values="4;4;4;5;4;4"
-             keyTimes="0;0.10;0.85;0.90;0.95;1"
-             dur="10s" repeatCount="indefinite"/>
+             values="4;5.5;4"
+             keyTimes="0;0.5;1"
+             dur="1s" repeatCount="indefinite"/>
   </circle>
 </svg>

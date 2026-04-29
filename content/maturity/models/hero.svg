@@ -1,0 +1,146 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Parallel multi-level ladders with varying rung counts">
+<!--
+  Maturity Models emblem.
+
+  Visual metaphor: multiple maturity models with different level
+  structures, surveyed in parallel. Four vertical "ladders" stand
+  side-by-side at x=20, 50, 80, 110. Each ladder has a different number
+  of horizontal "rungs" (discrete level marks) — encoding that the
+  models in the catalogue have structurally different level counts:
+    Ladder 1 (x=20):  3 rungs — represents a 3-level model (e.g. SAMM)
+    Ladder 2 (x=50):  4 rungs — represents a 4-level model
+    Ladder 3 (x=80):  5 rungs — represents a 5-level model (e.g. CMMI)
+    Ladder 4 (x=110): 5 rungs — represents another 5-level model (e.g. CNCF)
+  Each ladder's rungs light up bottom-to-top sequentially, in parallel
+  across all four ladders, encoding "different models being assessed
+  simultaneously, each progressing through its own levels". After all
+  rungs light, the TOP rung of each ladder pulses (stroke-width swells)
+  on independent sub-cycles, encoding "maturity ceiling reached, model
+  staying alive in monitoring."
+
+  Mechanic #64: PARALLEL MULTI-LEVEL LADDERS WITH VARYING RUNG COUNTS.
+  First mechanic to use multiple parallel vertical ladders with
+  STRUCTURALLY DIFFERENT rung counts per ladder, lit up sequentially
+  with continuous post-fill ceiling pulse. Distinct from #11 vertical
+  bars rising (continuous fills, all reach same height — no discrete
+  rungs, no varying counts), #45 sequential vertical fill (single
+  pillar, bottom-to-top continuous fill), #57 stair-step maturity
+  ascent (single zig-zag staircase, equal-sized steps in 2D — not
+  parallel vertical ladders), #60 stacked horizontal bar-fill cascade
+  (horizontal not vertical, no discrete rungs). The architectural
+  signature is "structural heterogeneity across instruments": the
+  catalogue contains models that genuinely differ in their level
+  structure, and a survey across them must respect that difference
+  rather than averaging it away.
+
+  Geometry:
+    Ladder spines (faint warm-neutral verticals): x=20, 50, 80, 110
+                  from y=14 (top) to y=78 (bottom). Length 64.
+    Rung positions (horizontal terracotta lines, 8px wide):
+      Ladder 1 (3 rungs): y=66, 44, 22  (spaced 22px)
+      Ladder 2 (4 rungs): y=70, 52, 34, 16 (spaced 18px)
+      Ladder 3 (5 rungs): y=72, 58, 44, 30, 16 (spaced 14px)
+      Ladder 4 (5 rungs): y=72, 58, 44, 30, 16 (spaced 14px)
+
+  Cycle: 8s primary; sub-cycles 1.2s/1.4s/1.6s/1.8s for ceiling pulses.
+    0.00–0.05  Empty / reset
+    0.05–0.10  Ladder spines fade in (faint backdrop)
+    0.10–0.15  All bottom rungs (level 1) light simultaneously
+    0.20–0.25  All level-2 rungs light
+    0.30–0.35  Ladder 2/3/4 level-3 rungs light
+                (Ladder 1's level 3 was the top — already lit)
+    0.40–0.45  Ladder 3/4 level-4 rungs light
+                (Ladder 2 level 4 = top — light it here)
+    0.50–0.55  Ladder 3/4 level-5 rungs (top) light
+    0.55–0.85  All rungs held; TOP rungs pulse stroke-width on
+               independent sub-cycles (1.2s, 1.4s, 1.6s, 1.8s)
+    0.85–0.95  All fade out
+    0.95–1.00  Cleared, reset
+
+  Colour: warm-neutral #D6D2C8 + terracotta #C96330.
+  No animateMotion / mpath. Basic SMIL only.
+-->
+
+  <!-- Ladder spines (faint vertical baselines) -->
+  <line x1="20"  y1="14" x2="20"  y2="78" stroke="#D6D2C8" stroke-width="1" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.5;0.5;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <line x1="50"  y1="14" x2="50"  y2="78" stroke="#D6D2C8" stroke-width="1" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.5;0.5;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <line x1="80"  y1="14" x2="80"  y2="78" stroke="#D6D2C8" stroke-width="1" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.5;0.5;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <line x1="110" y1="14" x2="110" y2="78" stroke="#D6D2C8" stroke-width="1" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.5;0.5;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+
+  <!-- ============== LADDER 1 (3 rungs at x=20) ============== -->
+  <!-- Level 1 rung (bottom) — lights at t=0.10 -->
+  <line x1="14" y1="66" x2="26" y2="66" stroke="#C96330" stroke-width="2.4" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.10;0.15;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <!-- Level 2 rung — lights at t=0.20 -->
+  <line x1="14" y1="44" x2="26" y2="44" stroke="#C96330" stroke-width="2.4" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.20;0.25;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <!-- Level 3 rung (TOP for ladder 1) — lights at t=0.30, ceiling pulse on 1.2s sub-cycle -->
+  <line x1="14" y1="22" x2="26" y2="22" stroke="#C96330" stroke-width="2.4" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.30;0.35;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-width" values="2.4;3.6;2.4" keyTimes="0;0.5;1" dur="1.2s" repeatCount="indefinite"/>
+  </line>
+
+  <!-- ============== LADDER 2 (4 rungs at x=50) ============== -->
+  <line x1="44" y1="70" x2="56" y2="70" stroke="#C96330" stroke-width="2.4" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.10;0.15;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <line x1="44" y1="52" x2="56" y2="52" stroke="#C96330" stroke-width="2.4" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.20;0.25;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <line x1="44" y1="34" x2="56" y2="34" stroke="#C96330" stroke-width="2.4" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.30;0.35;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <!-- Level 4 (TOP for ladder 2) — ceiling pulse on 1.4s sub-cycle -->
+  <line x1="44" y1="16" x2="56" y2="16" stroke="#C96330" stroke-width="2.4" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.40;0.45;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-width" values="2.4;3.6;2.4" keyTimes="0;0.5;1" dur="1.4s" repeatCount="indefinite"/>
+  </line>
+
+  <!-- ============== LADDER 3 (5 rungs at x=80) ============== -->
+  <line x1="74" y1="72" x2="86" y2="72" stroke="#C96330" stroke-width="2.4" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.10;0.15;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <line x1="74" y1="58" x2="86" y2="58" stroke="#C96330" stroke-width="2.4" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.20;0.25;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <line x1="74" y1="44" x2="86" y2="44" stroke="#C96330" stroke-width="2.4" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.30;0.35;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <line x1="74" y1="30" x2="86" y2="30" stroke="#C96330" stroke-width="2.4" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.40;0.45;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <!-- Level 5 (TOP for ladder 3) — ceiling pulse on 1.6s sub-cycle -->
+  <line x1="74" y1="16" x2="86" y2="16" stroke="#C96330" stroke-width="2.4" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.50;0.55;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-width" values="2.4;3.6;2.4" keyTimes="0;0.5;1" dur="1.6s" repeatCount="indefinite"/>
+  </line>
+
+  <!-- ============== LADDER 4 (5 rungs at x=110) ============== -->
+  <line x1="104" y1="72" x2="116" y2="72" stroke="#C96330" stroke-width="2.4" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.10;0.15;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <line x1="104" y1="58" x2="116" y2="58" stroke="#C96330" stroke-width="2.4" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.20;0.25;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <line x1="104" y1="44" x2="116" y2="44" stroke="#C96330" stroke-width="2.4" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.30;0.35;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <line x1="104" y1="30" x2="116" y2="30" stroke="#C96330" stroke-width="2.4" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.40;0.45;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <!-- Level 5 (TOP for ladder 4) — ceiling pulse on 1.8s sub-cycle -->
+  <line x1="104" y1="16" x2="116" y2="16" stroke="#C96330" stroke-width="2.4" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.50;0.55;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-width" values="2.4;3.6;2.4" keyTimes="0;0.5;1" dur="1.8s" repeatCount="indefinite"/>
+  </line>
+</svg>

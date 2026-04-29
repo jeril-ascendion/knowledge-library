@@ -1,0 +1,95 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Iterative convergence to target with diminishing-returns jumps">
+<!--
+  Maturity Guidelines emblem.
+
+  Visual metaphor: iterative maturity assessment converging on a target
+  state via diminishing-returns improvements. A faint warm-neutral
+  baseline runs horizontally at y=45 from x=10 to x=110. A warm-neutral
+  TARGET marker (filled circle) sits fixed at (104, 45) on the right.
+  A terracotta CURRENT-STATE marker starts at x=14 on the left and
+  JUMPS across three successive assessment cycles, each jump smaller
+  than the last:
+    Jump 1: x=14 → x=50  (covers ~40% of remaining distance)
+    Jump 2: x=50 → x=78  (covers ~30%)
+    Jump 3: x=78 → x=92  (covers ~16% — target NOT fully reached)
+  After each jump, the current marker pulses (r 3 → 4.5 → 3) for ~0.6s
+  encoding "assessment landed, evidence captured." Between jumps, both
+  markers hold static. The marker never reaches the target — encoding
+  the principle that maturity is a trajectory, not a destination, and
+  diminishing-returns is normal.
+
+  Mechanic #63: ITERATIVE CONVERGENCE TO TARGET WITH DIMINISHING JUMPS.
+  First mechanic to use a marker that JUMPS in DISCRETE STEPS via
+  cx animation toward a fixed target, with each jump shorter than the
+  previous, AND each jump confirmed by a per-jump pulse. Distinct from
+  #15 horizontal traversal (continuous motion, single trip), #51
+  lifecycle progression (single track with moving marker and trail —
+  no discrete jumps), #57 stair-step ascent (vertical staircase
+  geometry, equal-sized steps), #61 paired-marker gap-arrow (paired
+  static markers with gap-line, no marker movement). The architectural
+  signature is "iteration with diminishing returns": maturity assessment
+  cycles produce shrinking improvements as the team approaches its
+  target, and recognition that the target is rarely fully reached.
+
+  Geometry:
+    Baseline: x=10 to x=110 at y=45 (faint warm-neutral).
+    Target marker: filled circle r=4 at (104, 45) — warm-neutral.
+    Current-state marker: filled circle r=3 starting at (14, 45) —
+                          terracotta. Animates cx via discrete jumps.
+
+  Cycle: 8s.
+    0.00–0.05  Empty / reset
+    0.05–0.10  Target marker fades in (warm-neutral, fixed)
+    0.10–0.15  Current marker fades in at x=14
+    0.18–0.22  JUMP 1: cx 14 → 50 (rapid)
+    0.22–0.30  Current marker pulses r 3 → 4.5 → 3
+    0.34–0.38  JUMP 2: cx 50 → 78
+    0.38–0.46  Pulse
+    0.50–0.54  JUMP 3: cx 78 → 92
+    0.54–0.62  Pulse
+    0.62–0.85  Hold at x=92 (diminishing-returns plateau visible)
+    0.85–0.95  Both markers fade out
+    0.95–1.00  Cleared, reset
+
+  Colour: warm-neutral #D6D2C8 + terracotta #C96330.
+  No animateMotion / mpath. Basic SMIL only.
+-->
+
+  <!-- Baseline track (faint warm-neutral) -->
+  <line x1="10" y1="45" x2="110" y2="45" stroke="#D6D2C8" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- Target marker (warm-neutral, fixed at right) -->
+  <circle cx="104" cy="45" r="4" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0"
+             keyTimes="0;0.05;0.10;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Target marker outer ring (subtle outline to distinguish from current) -->
+  <circle cx="104" cy="45" r="6" fill="none" stroke="#D6D2C8" stroke-width="1" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;0.6;0.6;0"
+             keyTimes="0;0.05;0.10;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Current-state marker — animates cx through 3 discrete jumps, with r-pulses after each -->
+  <circle cy="45" r="3" fill="#C96330" opacity="0">
+    <!-- Opacity envelope: appears at t=0.10, holds, fades at t=0.85 -->
+    <animate attributeName="opacity"
+             values="0;0;1;1;0"
+             keyTimes="0;0.10;0.15;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
+    <!-- cx: 14 → (jump1) 50 → (hold) → (jump2) 78 → (hold) → (jump3) 92 → hold -->
+    <animate attributeName="cx"
+             values="14;14;50;50;78;78;92;92;14"
+             keyTimes="0;0.18;0.22;0.34;0.38;0.50;0.54;0.85;1"
+             dur="8s" repeatCount="indefinite"/>
+    <!-- r-pulses: three brief swells confirming each landed jump -->
+    <animate attributeName="r"
+             values="3;3;4.5;3;3;4.5;3;3;4.5;3;3"
+             keyTimes="0;0.22;0.26;0.30;0.38;0.42;0.46;0.54;0.58;0.62;1"
+             dur="8s" repeatCount="indefinite"/>
+  </circle>
+</svg>

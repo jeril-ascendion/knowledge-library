@@ -1,114 +1,143 @@
-<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gap-arrow visualization across NFR categories">
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Paired-marker gap-arrow visualization with priority pulse">
 <!--
   NFR Scorecard emblem.
 
   Visual metaphor: the gap between current operating state and target
-  state, surfaced per NFR category. Three horizontal NFR-category tracks
-  stacked vertically. Each track carries TWO markers: a terracotta
-  "current state" dot at one x-position, and a warm-neutral "target
-  state" dot at a x-position to the right. A terracotta dashed line
-  connects them, drawing itself left-to-right via x2 animation, encoding
-  the gap as visible work-to-do. Gap lengths vary across tracks — track
-  1 has a wide gap (large debt), track 2 a medium gap, track 3 a narrow
-  gap (closer to target). The visualization makes the prioritisation
-  decision obvious: the longest line is the largest gap is where to
-  invest first.
+  state, surfaced per NFR category, with prioritisation visibly tied
+  to gap size. Three horizontal NFR-category tracks stacked vertically.
+  Each track carries TWO markers: a terracotta "current state" dot at
+  one x-position, and a warm-neutral "target state" dot at a x-position
+  to the right. A terracotta dashed gap line draws between them via
+  stroke-dashoffset animation, encoding the gap as visible work-to-do.
+  Gap lengths vary per track — track 1 has the largest gap (highest
+  priority), track 3 the smallest. After all three lines have drawn,
+  they CONTINUOUSLY pulse stroke-width on independent sub-cycles
+  (1.4s, 2.0s, 2.8s — fastest pulse on highest priority), so the
+  visual stays alive through the held phase and the priority is
+  encoded in pulse rate.
 
-  Mechanic #61: GAP-ARROW VISUALIZATION.
+  Mechanic #61: PAIRED-MARKER GAP-ARROW WITH PRIORITY PULSE.
   First mechanic to pair TWO markers per track (current + target) with
-  an explicit gap-line connector that draws itself between them. Distinct
-  from #60 stacked bar fill (single fill per track growing from baseline,
-  no second marker, no explicit gap), #15 horizontal traversal (single
-  dot moving, no paired markers), #51 lifecycle progression (single track
-  with moving marker and trail), #58 quadrant positioning (dots in 2D
-  regions, not 1D pairs).
+  an explicit gap-line connector that draws between them, PLUS continuous
+  priority-encoded pulses on the gap lines through the held phase.
 
   Geometry:
-    Track baselines: x=10 → x=110 at y=22, 45, 68 (faint warm-neutral).
-    Track 1: current at (42, 22), target at (92, 22) — gap 50.
-    Track 2: current at (30, 45), target at (78, 45) — gap 48.
-    Track 3: current at (68, 68), target at (88, 68) — gap 20.
+    Track baselines: x=10 to x=110 at y=22, 45, 68 (faint warm-neutral).
+    Track 1: current (40, 22) → target (92, 22) — gap 52 (largest, highest priority).
+    Track 2: current (28, 45) → target (78, 45) — gap 50 (medium).
+    Track 3: current (66, 68) → target (88, 68) — gap 22 (smallest, lowest priority).
 
-  Cycle: 10s.
-    0.00–0.10  Hold (empty)
-    0.10–0.15  Track 1 markers fade in
-    0.15–0.25  Track 1 gap line draws current → target
-    0.30–0.35  Track 2 markers fade in
-    0.35–0.45  Track 2 gap line draws
-    0.50–0.55  Track 3 markers fade in
-    0.55–0.65  Track 3 gap line draws
-    0.65–0.92  Hold all (gaps visible)
-    0.92–1.00  Fade out, reset
+  Cycle: 8s primary; sub-cycles 1.4s / 2.0s / 2.8s for priority pulses.
+    0.00–0.05  Empty / reset
+    0.05–0.10  Track 1 markers fade in
+    0.10–0.20  Track 1 gap line draws current → target
+    0.20–0.25  Track 2 markers fade in
+    0.25–0.35  Track 2 gap line draws
+    0.35–0.40  Track 3 markers fade in
+    0.40–0.50  Track 3 gap line draws
+    0.50–0.85  All visible; gap lines pulse stroke-width on independent sub-cycles
+    0.85–0.95  Fade out
+    0.95–1.00  Cleared, reset
 
   Colour: warm-neutral #D6D2C8 + terracotta #C96330.
-  No animateMotion / mpath. Basic SMIL only.
 -->
 
   <!-- Track baselines (faint warm-neutral) -->
-  <line x1="10" y1="22" x2="110" y2="22" stroke="#D6D2C8" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
-  <line x1="10" y1="45" x2="110" y2="45" stroke="#D6D2C8" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
-  <line x1="10" y1="68" x2="110" y2="68" stroke="#D6D2C8" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
+  <line x1="10" y1="22" x2="110" y2="22" stroke="#D6D2C8" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+  <line x1="10" y1="45" x2="110" y2="45" stroke="#D6D2C8" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+  <line x1="10" y1="68" x2="110" y2="68" stroke="#D6D2C8" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
 
-  <!-- ============== TRACK 1 (y=22, gap=50, large debt) ============== -->
+  <!-- ============== TRACK 1 (gap=52, highest priority) ============== -->
   <!-- Current marker (terracotta) -->
-  <circle cx="42" cy="22" r="3" fill="#C96330" opacity="0">
+  <circle cx="40" cy="22" r="3.2" fill="#C96330" opacity="0">
     <animate attributeName="opacity"
              values="0;0;1;1;0"
-             keyTimes="0;0.10;0.15;0.92;1"
-             dur="10s" repeatCount="indefinite"/>
+             keyTimes="0;0.05;0.10;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
   </circle>
   <!-- Target marker (warm-neutral) -->
-  <circle cx="92" cy="22" r="3" fill="#D6D2C8" opacity="0">
+  <circle cx="92" cy="22" r="3.2" fill="#D6D2C8" opacity="0">
     <animate attributeName="opacity"
              values="0;0;1;1;0"
-             keyTimes="0;0.10;0.15;0.92;1"
-             dur="10s" repeatCount="indefinite"/>
+             keyTimes="0;0.05;0.10;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
   </circle>
-  <!-- Gap line — animates x2 from current_x to target_x -->
-  <line x1="42" y1="22" x2="42" y2="22" stroke="#C96330" stroke-width="1.6" stroke-dasharray="3 3" stroke-linecap="round">
-    <animate attributeName="x2"
-             values="42;42;92;92;42"
-             keyTimes="0;0.15;0.25;0.92;1"
-             dur="10s" repeatCount="indefinite"/>
+  <!-- Gap line: drawn via stroke-dashoffset, then continuously pulses stroke-width -->
+  <line x1="40" y1="22" x2="92" y2="22"
+        stroke="#C96330" stroke-width="2" stroke-dasharray="3 3"
+        stroke-linecap="round" stroke-dashoffset="52" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0"
+             keyTimes="0;0.10;0.20;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-dashoffset"
+             values="52;52;0;0;52"
+             keyTimes="0;0.10;0.20;0.85;1"
+             dur="8s" repeatCount="indefinite"/>
+    <!-- Continuous priority pulse: fastest sub-cycle, brightest -->
+    <animate attributeName="stroke-width"
+             values="2;3.2;2"
+             keyTimes="0;0.5;1"
+             dur="1.4s" repeatCount="indefinite"/>
   </line>
 
-  <!-- ============== TRACK 2 (y=45, gap=48, medium debt) ============== -->
-  <circle cx="30" cy="45" r="3" fill="#C96330" opacity="0">
+  <!-- ============== TRACK 2 (gap=50, medium priority) ============== -->
+  <circle cx="28" cy="45" r="3.2" fill="#C96330" opacity="0">
     <animate attributeName="opacity"
              values="0;0;1;1;0"
-             keyTimes="0;0.30;0.35;0.92;1"
-             dur="10s" repeatCount="indefinite"/>
+             keyTimes="0;0.20;0.25;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
   </circle>
-  <circle cx="78" cy="45" r="3" fill="#D6D2C8" opacity="0">
+  <circle cx="78" cy="45" r="3.2" fill="#D6D2C8" opacity="0">
     <animate attributeName="opacity"
              values="0;0;1;1;0"
-             keyTimes="0;0.30;0.35;0.92;1"
-             dur="10s" repeatCount="indefinite"/>
+             keyTimes="0;0.20;0.25;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
   </circle>
-  <line x1="30" y1="45" x2="30" y2="45" stroke="#C96330" stroke-width="1.6" stroke-dasharray="3 3" stroke-linecap="round">
-    <animate attributeName="x2"
-             values="30;30;78;78;30"
-             keyTimes="0;0.35;0.45;0.92;1"
-             dur="10s" repeatCount="indefinite"/>
+  <line x1="28" y1="45" x2="78" y2="45"
+        stroke="#C96330" stroke-width="1.8" stroke-dasharray="3 3"
+        stroke-linecap="round" stroke-dashoffset="50" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0"
+             keyTimes="0;0.25;0.35;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-dashoffset"
+             values="50;50;0;0;50"
+             keyTimes="0;0.25;0.35;0.85;1"
+             dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-width"
+             values="1.8;2.8;1.8"
+             keyTimes="0;0.5;1"
+             dur="2s" repeatCount="indefinite"/>
   </line>
 
-  <!-- ============== TRACK 3 (y=68, gap=20, narrow — close to target) ============== -->
-  <circle cx="68" cy="68" r="3" fill="#C96330" opacity="0">
+  <!-- ============== TRACK 3 (gap=22, lowest priority) ============== -->
+  <circle cx="66" cy="68" r="3.2" fill="#C96330" opacity="0">
     <animate attributeName="opacity"
              values="0;0;1;1;0"
-             keyTimes="0;0.50;0.55;0.92;1"
-             dur="10s" repeatCount="indefinite"/>
+             keyTimes="0;0.35;0.40;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
   </circle>
-  <circle cx="88" cy="68" r="3" fill="#D6D2C8" opacity="0">
+  <circle cx="88" cy="68" r="3.2" fill="#D6D2C8" opacity="0">
     <animate attributeName="opacity"
              values="0;0;1;1;0"
-             keyTimes="0;0.50;0.55;0.92;1"
-             dur="10s" repeatCount="indefinite"/>
+             keyTimes="0;0.35;0.40;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
   </circle>
-  <line x1="68" y1="68" x2="68" y2="68" stroke="#C96330" stroke-width="1.6" stroke-dasharray="3 3" stroke-linecap="round">
-    <animate attributeName="x2"
-             values="68;68;88;88;68"
-             keyTimes="0;0.55;0.65;0.92;1"
-             dur="10s" repeatCount="indefinite"/>
+  <line x1="66" y1="68" x2="88" y2="68"
+        stroke="#C96330" stroke-width="1.6" stroke-dasharray="3 3"
+        stroke-linecap="round" stroke-dashoffset="22" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0"
+             keyTimes="0;0.40;0.50;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-dashoffset"
+             values="22;22;0;0;22"
+             keyTimes="0;0.40;0.50;0.85;1"
+             dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-width"
+             values="1.6;2.4;1.6"
+             keyTimes="0;0.5;1"
+             dur="2.8s" repeatCount="indefinite"/>
   </line>
 </svg>

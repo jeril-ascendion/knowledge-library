@@ -1,90 +1,90 @@
-<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Stacked horizontal bar-fill cascade">
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Stacked horizontal bar-fill cascade with verdict pulse">
 <!--
   Architecture Review Scorecard emblem.
 
   Visual metaphor: independent dimensional scoring producing one
-  collective verdict. Four horizontal score-tracks stacked vertically.
-  Each track carries a faint warm-neutral baseline running x=12 to x=104.
-  A terracotta fill bar grows left-to-right along each track, starting
-  at x=12 and ending at a DIFFERENT target x — encoding that each
-  review dimension scores independently and the per-dimension scores
-  vary. Bar growths are staggered so the visual reads as a cascade of
-  independent ratings landing in sequence. After all four bars have
-  completed their fills, a small terracotta verdict mark appears below
-  the lowest bar (centred at x=58, y=82) encoding the aggregate verdict.
+  collective verdict. Four horizontal score-tracks stacked vertically,
+  each showing a DIFFERENT score endpoint (encoding that review
+  dimensions score independently). After all four bars settle, a
+  central verdict mark pulses CONTINUOUSLY through the held phase,
+  encoding the aggregate verdict that emerges from the per-dimension
+  scores. The cycle ends with bars retracting, giving the visual a
+  clear loop without long dead-time.
 
   Mechanic #60: STACKED HORIZONTAL BAR-FILL CASCADE.
   First mechanic to use multiple parallel horizontal fills with VARYING
-  endpoints PLUS a separate aggregate verdict element appearing after
-  the cascade completes. Distinct from #11 vertical bars rising (purely
-  vertical, all bars reach same height), #45 sequential vertical fill
-  (bottom-to-top, all bars reach the top), #51 lifecycle progression
-  (single horizontal track with moving marker), #56 progressive
-  threshold fill (single horizontal fill with checkpoint pauses).
+  endpoints PLUS a separate aggregate verdict element that continuously
+  pulses through the held phase.
 
   Geometry:
-    Track baselines: x=12 → x=104 at y=20, 36, 52, 68 (warm neutral).
-    Fill targets per track:    x=92 (track 1, score ≈ 87%)
-                                x=72 (track 2, score ≈ 65%)
-                                x=98 (track 3, score ≈ 94%)
-                                x=80 (track 4, score ≈ 74%)
-    Verdict mark: small filled circle r=2.5 centred at (58, 82).
+    Track baselines: x=12 to x=104 at y=18, 34, 50, 66 (warm-neutral).
+    Fill targets per track:    x=92  (score ≈ 87)
+                                x=72  (score ≈ 65)
+                                x=100 (score ≈ 96)
+                                x=80  (score ≈ 74)
+    Verdict mark: filled circle r=3 centred at (58, 82).
 
-  Cycle: 10s.
-    0.05–0.20  Track 1 fill grows 12 → 92
-    0.25–0.40  Track 2 fill grows 12 → 72
-    0.45–0.60  Track 3 fill grows 12 → 98
-    0.65–0.80  Track 4 fill grows 12 → 80
-    0.82–0.88  Verdict mark fades in
-    0.88–0.95  Hold all fills + verdict
-    0.95–1.00  Fade out, reset
+  Cycle: 8s primary; 1.0s sub-cycle for verdict pulse.
+    0.00–0.05  Empty / reset
+    0.05–0.15  Track 1 fill grows 12 → 92
+    0.15–0.25  Track 2 fill grows 12 → 72
+    0.25–0.35  Track 3 fill grows 12 → 100
+    0.35–0.45  Track 4 fill grows 12 → 80
+    0.45–0.50  Verdict mark fades in
+    0.50–0.85  Bars held; verdict pulses r 3 → 4.5 → 3 continuously
+    0.85–0.95  Bars retract to x=12 in reverse-cascade; verdict fades
+    0.95–1.00  All cleared, reset
 
   Colour: warm-neutral #D6D2C8 + terracotta #C96330.
 -->
 
   <!-- Track baselines (faint warm-neutral) -->
-  <line x1="12" y1="20" x2="104" y2="20" stroke="#D6D2C8" stroke-width="1.4" stroke-linecap="round"/>
-  <line x1="12" y1="36" x2="104" y2="36" stroke="#D6D2C8" stroke-width="1.4" stroke-linecap="round"/>
-  <line x1="12" y1="52" x2="104" y2="52" stroke="#D6D2C8" stroke-width="1.4" stroke-linecap="round"/>
-  <line x1="12" y1="68" x2="104" y2="68" stroke="#D6D2C8" stroke-width="1.4" stroke-linecap="round"/>
+  <line x1="12" y1="18" x2="104" y2="18" stroke="#D6D2C8" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+  <line x1="12" y1="34" x2="104" y2="34" stroke="#D6D2C8" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+  <line x1="12" y1="50" x2="104" y2="50" stroke="#D6D2C8" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+  <line x1="12" y1="66" x2="104" y2="66" stroke="#D6D2C8" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
 
   <!-- Track 1 fill (target x=92) -->
-  <line x1="12" y1="20" x2="12" y2="20" stroke="#C96330" stroke-width="2.4" stroke-linecap="round">
+  <line x1="12" y1="18" x2="12" y2="18" stroke="#C96330" stroke-width="3" stroke-linecap="round">
     <animate attributeName="x2"
-             values="12;12;92;92;12"
-             keyTimes="0;0.05;0.20;0.95;1"
-             dur="10s" repeatCount="indefinite"/>
+             values="12;12;92;92;12;12"
+             keyTimes="0;0.05;0.15;0.85;0.92;1"
+             dur="8s" repeatCount="indefinite"/>
   </line>
 
   <!-- Track 2 fill (target x=72) -->
-  <line x1="12" y1="36" x2="12" y2="36" stroke="#C96330" stroke-width="2.4" stroke-linecap="round">
+  <line x1="12" y1="34" x2="12" y2="34" stroke="#C96330" stroke-width="3" stroke-linecap="round">
     <animate attributeName="x2"
-             values="12;12;72;72;12"
-             keyTimes="0;0.25;0.40;0.95;1"
-             dur="10s" repeatCount="indefinite"/>
+             values="12;12;72;72;12;12"
+             keyTimes="0;0.15;0.25;0.85;0.91;1"
+             dur="8s" repeatCount="indefinite"/>
   </line>
 
-  <!-- Track 3 fill (target x=98) -->
-  <line x1="12" y1="52" x2="12" y2="52" stroke="#C96330" stroke-width="2.4" stroke-linecap="round">
+  <!-- Track 3 fill (target x=100) -->
+  <line x1="12" y1="50" x2="12" y2="50" stroke="#C96330" stroke-width="3" stroke-linecap="round">
     <animate attributeName="x2"
-             values="12;12;98;98;12"
-             keyTimes="0;0.45;0.60;0.95;1"
-             dur="10s" repeatCount="indefinite"/>
+             values="12;12;100;100;12;12"
+             keyTimes="0;0.25;0.35;0.85;0.90;1"
+             dur="8s" repeatCount="indefinite"/>
   </line>
 
   <!-- Track 4 fill (target x=80) -->
-  <line x1="12" y1="68" x2="12" y2="68" stroke="#C96330" stroke-width="2.4" stroke-linecap="round">
+  <line x1="12" y1="66" x2="12" y2="66" stroke="#C96330" stroke-width="3" stroke-linecap="round">
     <animate attributeName="x2"
-             values="12;12;80;80;12"
-             keyTimes="0;0.65;0.80;0.95;1"
-             dur="10s" repeatCount="indefinite"/>
+             values="12;12;80;80;12;12"
+             keyTimes="0;0.35;0.45;0.85;0.89;1"
+             dur="8s" repeatCount="indefinite"/>
   </line>
 
-  <!-- Aggregate verdict mark — appears after all four bars complete -->
-  <circle cx="58" cy="82" r="2.5" fill="#C96330" opacity="0">
+  <!-- Aggregate verdict mark: appears, pulses continuously through held phase, fades -->
+  <circle cx="58" cy="82" r="3" fill="#C96330" opacity="0">
     <animate attributeName="opacity"
              values="0;0;1;1;0"
-             keyTimes="0;0.82;0.88;0.95;1"
-             dur="10s" repeatCount="indefinite"/>
+             keyTimes="0;0.45;0.50;0.85;0.95"
+             dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="r"
+             values="3;4.5;3"
+             keyTimes="0;0.5;1"
+             dur="1s" repeatCount="indefinite"/>
   </circle>
 </svg>

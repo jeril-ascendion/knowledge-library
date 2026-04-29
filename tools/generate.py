@@ -1602,6 +1602,88 @@ EMBLEM MOTION MECHANICS (each page must use a DISTINCT mechanic):
                            strand of evidence and the
                            principle score accumulates as
                            strands attach)
+  #63 ITERATIVE CONVERGENCE TO TARGET WITH DIMINISHING JUMPS
+                          (maturity/guidelines: a faint warm-neutral
+                           horizontal baseline runs at y=45 from
+                           x=10 to x=110; a fixed warm-neutral target
+                           marker (filled circle r=4 plus subtle outer
+                           ring r=6) sits at (104, 45) on the right;
+                           a terracotta current-state marker (filled
+                           circle r=3) starts at x=14 on the left and
+                           JUMPS via cx animation through three
+                           successive discrete jumps of decreasing
+                           length: jump 1 at t=0.18-0.22 covers
+                           x=14→50, jump 2 at t=0.34-0.38 covers
+                           x=50→78, jump 3 at t=0.50-0.54 covers
+                           x=78→92; after each jump, the current
+                           marker pulses r 3→4.5→3 confirming the
+                           assessment landed; the marker holds at
+                           x=92 from t=0.62-0.85, NEVER fully
+                           reaching the target, encoding diminishing-
+                           returns convergence; distinct from #15
+                           horizontal traversal — that uses
+                           continuous motion across a single trip,
+                           no discrete jumps; distinct from #51
+                           lifecycle progression — that has a
+                           moving marker with historical trail along
+                           a single track, no discrete jump
+                           structure; distinct from #57 stair-step
+                           ascent — that climbs vertical stairs in
+                           equal-sized steps in 2D; distinct from
+                           #61 paired-marker gap-arrow — that uses
+                           paired static markers with a connecting
+                           gap line, no marker movement; #63 is the
+                           first mechanic to use cx jumps with
+                           diminishing distances and per-jump pulse
+                           confirmation — the architectural signature
+                           is iterative-with-diminishing-returns:
+                           maturity assessment cycles produce
+                           shrinking improvements toward a target
+                           that is rarely fully reached)
+  #64 PARALLEL MULTI-LEVEL LADDERS WITH VARYING RUNG COUNTS
+                          (maturity/models: four vertical "ladder"
+                           spines (faint warm-neutral lines from
+                           y=14 to y=78) at x=20, 50, 80, 110; each
+                           ladder carries a DIFFERENT NUMBER of
+                           horizontal terracotta "rungs" — ladder 1
+                           has 3 rungs (at y=66/44/22), ladder 2 has
+                           4 rungs (at y=70/52/34/16), ladder 3 has
+                           5 rungs (at y=72/58/44/30/16), ladder 4
+                           has 5 rungs (same y as ladder 3); rungs
+                           light up bottom-to-top sequentially across
+                           the cycle — ALL bottom rungs at t=0.10,
+                           ALL second rungs at t=0.20, etc., with
+                           ladders dropping out of the cascade once
+                           their top rung is reached (ladder 1 stops
+                           lighting after t=0.30, ladder 2 after
+                           t=0.40, ladders 3/4 after t=0.50); after
+                           all rungs light, each ladder's TOP rung
+                           pulses stroke-width 2.4→3.6→2.4 on
+                           independent sub-cycles (1.2s, 1.4s, 1.6s,
+                           1.8s) encoding "maturity ceiling reached,
+                           model staying alive in monitoring";
+                           distinct from #11 vertical bars rising —
+                           that has continuous bar fills all reaching
+                           SAME height, no discrete rungs, no varying
+                           total counts; distinct from #45 sequential
+                           vertical fill — that is a single pillar
+                           with continuous bottom-to-top fill;
+                           distinct from #57 stair-step ascent —
+                           that is a single zig-zag staircase in 2D
+                           with equal-sized steps, not parallel
+                           vertical ladders; distinct from #60
+                           stacked horizontal bar-fill cascade —
+                           that has horizontal fills, not vertical
+                           rung-by-rung lighting; #64 is the first
+                           mechanic to use multiple parallel vertical
+                           ladders with STRUCTURALLY DIFFERENT rung
+                           counts per ladder plus per-ladder ceiling
+                           pulse — the architectural signature is
+                           structural-heterogeneity-across-instruments:
+                           the catalogue contains models whose level
+                           structures genuinely differ, and a survey
+                           across them must respect that difference
+                           rather than averaging it away)
   Future pages must invent a new mechanic, not reuse one.
   Two colours only: warm neutral (#D6D2C8) + terracotta (#C96330).
   Basic SMIL primitives only (animate, animateTransform with type=rotate or translate; stroke-dasharray and opacity animations also valid via animate).

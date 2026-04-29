@@ -1,49 +1,25 @@
 flowchart TD
-    A([🚀 Start: Maturity Guidelines]) --> B[Assessment & Discovery]
+    A["Pick one published maturity model deliberately"] --> B["Document target state per capability area with rationale"]
+    B --> C["Schedule cadence matched to capability-change rate"]
 
-    B --> C{Current State\nDocumented?}
-    C -->|No| B
-    C -->|Yes| D[Apply Architecture Principles]
+    C --> D["Run assessment: gather evidence per capability area"]
+    D --> E{"Evidence cited<br/>for each scored level?"}
 
-    D --> D1[Design for Change]
-    D --> D2[Least Privilege]
-    D --> D3[Observability First]
-    D --> D4[AI Augmentation Readiness]
+    E -->|"No"| E1["Mark area low-confidence; exclude from trajectory"]
+    E -->|"Yes"| F["Compute distance from target state per area"]
+    E1 --> F
 
-    D1 & D2 & D3 & D4 --> E[Select Design Patterns]
+    F --> G["Update trajectory line: current cycle vs prior cycles"]
+    G --> H{"Trajectory<br/>diagnosis"}
 
-    E --> F{NFR Targets\nDefined?}
-    F -->|No| F1[Define NFRs in nfr/]
-    F1 --> F
-    F -->|Yes| G[Document ADRs]
+    H --> I["Ascending: study and amplify"]
+    H --> J["Plateau: assign intervention owner"]
+    H --> K["Declining: trigger urgent capability review"]
 
-    G --> H[Architecture Review Board]
+    I --> L["Update prioritised investment plan with named owners"]
+    J --> L
+    K --> L
 
-    H --> I{Security\nReview Passed?}
-    I -->|No| I1[Revise Design]
-    I1 --> H
-    I -->|Yes| J{ARB\nApproval?}
-
-    J -->|Rejected| J1[Address Feedback]
-    J1 --> H
-    J -->|Approved| K[Implementation]
-
-    K --> L[CI/CD Pipeline]
-    L --> L1[SAST / DAST Scan]
-    L --> L2[Architecture Lint]
-    L --> L3[NFR Validation]
-
-    L1 & L2 & L3 --> M{All Gates\nPassed?}
-    M -->|No| M1[Fix & Rerun]
-    M1 --> L
-    M -->|Yes| N[Deploy to Production]
-
-    N --> O[Observability Validation]
-    O --> P[Post-Deployment Review]
-    P --> Q([✅ Governance Record Closed])
-
-    style A fill:#4f8ef7,color:#fff
-    style Q fill:#10b981,color:#fff
-    style I1 fill:#fef3c7
-    style J1 fill:#fef3c7
-    style M1 fill:#fef3c7
+    L --> M["Publish: trajectories at portfolio level; absolute scores within-team only"]
+    M --> N["Next cycle starts: review prior investment-plan outcomes first"]
+    N --> D
