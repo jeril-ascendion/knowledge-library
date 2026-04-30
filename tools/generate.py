@@ -7371,6 +7371,7 @@ def compute_graph_data(metadata):
     nodes = {}
     edges = []
     substantive_ids = {pid for pid, m in metadata.items() if m["is_substantive"]}
+    sorted_substantive = sorted(substantive_ids)
 
     # Reverse index: page_id → [lens_id, ...] for lens annotation on page nodes.
     page_lenses = {}
@@ -7379,7 +7380,7 @@ def compute_graph_data(metadata):
             page_lenses.setdefault(member_id, []).append(lens_id)
 
     # 1) Add page nodes for all substantive pages
-    for pid in substantive_ids:
+    for pid in sorted_substantive:
         m = metadata[pid]
         nodes[pid] = {
             "id": pid,
@@ -7392,7 +7393,7 @@ def compute_graph_data(metadata):
         }
 
     # 2) Add standard/concept nodes from alignments + alignment edges
-    for pid in substantive_ids:
+    for pid in sorted_substantive:
         for tag in metadata[pid]["alignments"]:
             tag_id = f"tag:{tag}"
             if tag_id not in nodes:
@@ -7406,12 +7407,15 @@ def compute_graph_data(metadata):
             edges.append({"source": pid, "target": tag_id, "kind": "alignment"})
 
     # 3) Add related-page edges (both endpoints must be substantive)
-    for pid in substantive_ids:
+    for pid in sorted_substantive:
         for target in metadata[pid]["related_links"]:
             if target in substantive_ids and target != pid:
                 edges.append({"source": pid, "target": target, "kind": "related"})
 
-    return {"nodes": list(nodes.values()), "links": edges}
+    # Final sort guarantees byte-deterministic output across runs.
+    sorted_nodes = sorted(nodes.values(), key=lambda n: n["id"])
+    sorted_edges = sorted(edges, key=lambda e: (e["source"], e["target"], e["kind"]))
+    return {"nodes": sorted_nodes, "links": sorted_edges}
 
 
 def nav_html(prefix, active=""):
