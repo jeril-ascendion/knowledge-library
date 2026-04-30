@@ -28,3 +28,7 @@ tools/stage_v*.sh
 tools/CLEANUP_v*.sh
 tools/migrate_repo.sh
 dist_baseline/
+
+# Pre-existing stub directory; ai-native/ is the substantive version.
+# Cleanup deferred to a post-v1.1 taxonomy decision.
+content/ai/
