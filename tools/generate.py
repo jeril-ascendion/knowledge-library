@@ -2091,7 +2091,7 @@ from pathlib import Path
 # `vulnerability-management/`. Strictness here makes the TAXONOMY the
 # single source of truth.
 sys.path.insert(0, str(Path(__file__).parent))
-from seed_content import TAXONOMY
+from seed_content import TAXONOMY, CONCEPT_LENSES
 
 try:
     import markdown
@@ -7372,6 +7372,12 @@ def compute_graph_data(metadata):
     edges = []
     substantive_ids = {pid for pid, m in metadata.items() if m["is_substantive"]}
 
+    # Reverse index: page_id → [lens_id, ...] for lens annotation on page nodes.
+    page_lenses = {}
+    for lens_id, lens in CONCEPT_LENSES.items():
+        for member_id in lens["members"]:
+            page_lenses.setdefault(member_id, []).append(lens_id)
+
     # 1) Add page nodes for all substantive pages
     for pid in substantive_ids:
         m = metadata[pid]
@@ -7382,6 +7388,7 @@ def compute_graph_data(metadata):
             "type": "page",
             "url": f"/{pid}/",
             "description": m["description"],
+            "lenses": page_lenses.get(pid, []),
         }
 
     # 2) Add standard/concept nodes from alignments + alignment edges
