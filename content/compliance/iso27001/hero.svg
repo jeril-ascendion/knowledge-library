@@ -1,0 +1,142 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Risk-control cross-walk lines showing Statement of Applicability traceability">
+<!--
+  ISO 27001 emblem.
+
+  Visual metaphor: the Statement of Applicability traces each
+  identified risk to one or more selected Annex A controls. The
+  visual encodes this with two columns of nodes connected by
+  cross-walk lines drawn left-to-right sequentially.
+
+    Left column (risks identified):  3 nodes at x=24
+      Risk 1 at (24, 24)
+      Risk 2 at (24, 45)
+      Risk 3 at (24, 66)
+
+    Right column (controls selected): 3 nodes at x=96
+      Control A at (96, 30)
+      Control B at (96, 50)
+      Control C at (96, 60)
+
+    Three diagonal lines drawn left-to-right SEQUENTIALLY (not
+    simultaneously) via stroke-dashoffset animation:
+      Line 1: (24,24) → (96,30)  [Risk 1 traced to Control A]
+      Line 2: (24,45) → (96,50)  [Risk 2 traced to Control B]
+      Line 3: (24,66) → (96,60)  [Risk 3 traced to Control C]
+
+  As each line completes, a small terracotta linkage indicator
+  appears at the right-column endpoint encoding "control linked to
+  risk in SoA, evidence collected." After all three lines drawn,
+  all six nodes plus all three lines remain visible while the right-
+  column endpoints pulse on independent sub-cycles encoding ongoing
+  audit-evidence capture.
+
+  Mechanic #72: RISK-CONTROL CROSS-WALK LINES.
+  First mechanic to use SEQUENTIAL DIAGONAL LINE DRAWING between two
+  vertical columns of nodes via stroke-dashoffset animation, with
+  per-completion endpoint pulse. Distinct from #62 spoke convergence
+  to centre — that has multiple spokes converging from outside to
+  ONE central point (radial convergence pattern); #72 has multiple
+  parallel diagonal lines between two columns (lateral mapping
+  pattern). Distinct from #64 parallel ladders — those are vertical
+  with horizontal rungs; #72 is two columns of points connected by
+  diagonals. Distinct from #66 percentile fan-out — that has three
+  traces from a SHARED ORIGIN going to different endpoints; #72
+  has three lines from DIFFERENT ORIGINS going to DIFFERENT
+  endpoints, drawn sequentially. The architectural signature is
+  N-to-N traceability: every risk traces to its mitigating control,
+  every control traces back to the risks it mitigates, and the
+  trace is visible as the architectural artefact the SoA produces.
+
+  Cycle: 8s; sub-cycles 1.0s/1.4s/1.8s for endpoint pulses.
+    0.00–0.05  Empty / reset
+    0.05–0.10  Both columns of nodes fade in (warm-neutral, dim)
+    0.10–0.30  Line 1 draws via stroke-dashoffset (75 → 0)
+    0.20–0.22  Line 1 right endpoint becomes terracotta linkage
+    0.30–0.50  Line 2 draws
+    0.40–0.42  Line 2 right endpoint becomes linkage
+    0.50–0.70  Line 3 draws
+    0.60–0.62  Line 3 right endpoint becomes linkage
+    0.70–0.85  All endpoints pulse on independent sub-cycles
+    0.85–0.95  Fade out
+    0.95–1.00  Cleared, reset
+
+  Path lengths (computed from coordinates):
+    Line 1 (24,24)→(96,30): √(72² + 6²) ≈ 72.25
+    Line 2 (24,45)→(96,50): √(72² + 5²) ≈ 72.17
+    Line 3 (24,66)→(96,60): √(72² + 6²) ≈ 72.25
+  We use stroke-dasharray=75 75 for all three for simplicity.
+
+  Colour: warm-neutral #D6D2C8 + terracotta #C96330.
+-->
+
+  <!-- ============== LEFT COLUMN — RISK NODES (warm-neutral, static) ============== -->
+  <circle cx="24" cy="24" r="3.4" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.7;0.7;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="24" cy="45" r="3.4" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.7;0.7;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="24" cy="66" r="3.4" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.7;0.7;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ============== RIGHT COLUMN — CONTROL NODES (warm-neutral background) ============== -->
+  <circle cx="96" cy="30" r="3.4" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.4;0.4;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="96" cy="50" r="3.4" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.4;0.4;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="96" cy="60" r="3.4" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.4;0.4;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ============== CROSS-WALK LINE 1 (Risk 1 → Control A) ============== -->
+  <line x1="24" y1="24" x2="96" y2="30" stroke="#C96330" stroke-width="1.6"
+        stroke-linecap="round" stroke-dasharray="75 75" stroke-dashoffset="75">
+    <animate attributeName="stroke-dashoffset"
+             values="75;75;0;0;75"
+             keyTimes="0;0.10;0.30;0.92;1"
+             dur="8s" repeatCount="indefinite"/>
+  </line>
+  <!-- Right endpoint linkage indicator (becomes terracotta after line draws) -->
+  <circle cx="96" cy="30" r="3.4" fill="#C96330" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0"
+             keyTimes="0;0.28;0.30;0.85;0.92"
+             dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="3.4;4.4;3.4" keyTimes="0;0.5;1" dur="1.0s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ============== CROSS-WALK LINE 2 (Risk 2 → Control B) ============== -->
+  <line x1="24" y1="45" x2="96" y2="50" stroke="#C96330" stroke-width="1.6"
+        stroke-linecap="round" stroke-dasharray="75 75" stroke-dashoffset="75">
+    <animate attributeName="stroke-dashoffset"
+             values="75;75;0;0;75"
+             keyTimes="0;0.30;0.50;0.92;1"
+             dur="8s" repeatCount="indefinite"/>
+  </line>
+  <circle cx="96" cy="50" r="3.4" fill="#C96330" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0"
+             keyTimes="0;0.48;0.50;0.85;0.92"
+             dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="3.4;4.4;3.4" keyTimes="0;0.5;1" dur="1.4s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ============== CROSS-WALK LINE 3 (Risk 3 → Control C) ============== -->
+  <line x1="24" y1="66" x2="96" y2="60" stroke="#C96330" stroke-width="1.6"
+        stroke-linecap="round" stroke-dasharray="75 75" stroke-dashoffset="75">
+    <animate attributeName="stroke-dashoffset"
+             values="75;75;0;0;75"
+             keyTimes="0;0.50;0.70;0.92;1"
+             dur="8s" repeatCount="indefinite"/>
+  </line>
+  <circle cx="96" cy="60" r="3.4" fill="#C96330" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0"
+             keyTimes="0;0.68;0.70;0.85;0.92"
+             dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="3.4;4.4;3.4" keyTimes="0;0.5;1" dur="1.8s" repeatCount="indefinite"/>
+  </circle>
+</svg>

@@ -1,49 +1,38 @@
 flowchart TD
-    A([🚀 Start: BSP & AFASA (Philippine FSI)]) --> B[Assessment & Discovery]
+    A["Event detected by monitoring or customer report"] --> B{"Event class"}
 
-    B --> C{Current State\nDocumented?}
-    C -->|No| B
-    C -->|Yes| D[Apply Architecture Principles]
+    B -->|"Service disruption"| C["AFASA disruption-notification path"]
+    B -->|"Account takeover or scam"| D["AFASA scam-notification path"]
+    B -->|"Routine operational event"| E["Standard incident-management"]
+    B -->|"AML/CFT trigger"| F["AMLC suspicious-transaction path"]
 
-    D --> D1[Design for Change]
-    D --> D2[Least Privilege]
-    D --> D3[Observability First]
-    D --> D4[AI Augmentation Readiness]
+    C --> C1{"Material<br/>service impact?"}
+    C1 -->|"No"| E
+    C1 -->|"Yes"| C2["BSP 2-hour notification clock starts"]
+    C2 --> C3["Compose disruption notice with required fields"]
+    C3 --> C4{"Authorized signatory<br/>available within 90min?"}
+    C4 -->|"Yes"| C5["Submit to BSP via designated channel"]
+    C4 -->|"No"| C6["Escalate to alternate signatory in on-call rotation"]
+    C6 --> C5
 
-    D1 & D2 & D3 & D4 --> E[Select Design Patterns]
+    D --> D1["BSP 24-hour notification clock starts"]
+    D1 --> D2["Customer affected account flagged"]
+    D2 --> D3["Account-protection workflow triggered"]
+    D3 --> D4["Compose AFASA notice with affected-customer count, scam type, controls invoked"]
+    D4 --> D5["Submit to BSP within window"]
 
-    E --> F{NFR Targets\nDefined?}
-    F -->|No| F1[Define NFRs in nfr/]
-    F1 --> F
-    F -->|Yes| G[Document ADRs]
+    F --> F1["STR drafted within prescribed window"]
+    F1 --> F2["Submit to AMLC; cross-reference to BSP if applicable"]
 
-    G --> H[Architecture Review Board]
+    C5 --> G["Update regulatory-finding ledger"]
+    D5 --> G
+    E --> G
+    F2 --> G
 
-    H --> I{Security\nReview Passed?}
-    I -->|No| I1[Revise Design]
-    I1 --> H
-    I -->|Yes| J{ARB\nApproval?}
+    G --> H["Trajectory review at next quarterly compliance forum"]
+    H --> I["Architectural change scheduled if pattern detected"]
 
-    J -->|Rejected| J1[Address Feedback]
-    J1 --> H
-    J -->|Approved| K[Implementation]
-
-    K --> L[CI/CD Pipeline]
-    L --> L1[SAST / DAST Scan]
-    L --> L2[Architecture Lint]
-    L --> L3[NFR Validation]
-
-    L1 & L2 & L3 --> M{All Gates\nPassed?}
-    M -->|No| M1[Fix & Rerun]
-    M1 --> L
-    M -->|Yes| N[Deploy to Production]
-
-    N --> O[Observability Validation]
-    O --> P[Post-Deployment Review]
-    P --> Q([✅ Governance Record Closed])
-
-    style A fill:#4f8ef7,color:#fff
-    style Q fill:#10b981,color:#fff
-    style I1 fill:#fef3c7
-    style J1 fill:#fef3c7
-    style M1 fill:#fef3c7
+    style C2 fill:#fef3c7
+    style D1 fill:#fef3c7
+    style C5 fill:#d1fae5
+    style D5 fill:#d1fae5

@@ -1,0 +1,147 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hexagonal lawful-basis rotation with sequential active-state cycling">
+<!--
+  GDPR emblem.
+
+  Visual metaphor: GDPR Article 6 enumerates exactly six lawful bases
+  for processing personal data. Every processing activity must operate
+  under one of them at any given moment. The visual encodes this with
+  a hexagonal arrangement of six nodes, each representing one lawful
+  basis. At any time, exactly one node is "active" (terracotta, full
+  opacity, pulsing) while the others are dim (warm-neutral, low
+  opacity). The active state rotates clockwise around the hexagon
+  through the cycle, encoding that processing activities cycle through
+  different lawful bases over time and across activities. After all
+  six have been visited individually, all six light up sustained
+  briefly encoding the full register's existence, before fading.
+
+  Six hexagon vertices at radius=24 from centre (60, 45):
+    Vertex 0 (top):       (60, 21)        — Consent
+    Vertex 1 (top-right): (80.78, 33)     — Contract
+    Vertex 2 (bot-right): (80.78, 57)     — Legal Obligation
+    Vertex 3 (bottom):    (60, 69)        — Vital Interests
+    Vertex 4 (bot-left):  (39.22, 57)     — Public Task
+    Vertex 5 (top-left):  (39.22, 33)     — Legitimate Interests
+  Centre marker (warm-neutral) at (60, 45) — represents the data
+  subject whose processing is being lawfully grounded.
+
+  Mechanic #71: HEXAGONAL ROTATING ACTIVE-STATE.
+  First mechanic to use a hexagonal arrangement of N=6 nodes with
+  exactly one active at any time, the active state rotating
+  clockwise through all positions sequentially. Distinct from #46
+  concentric ring activation — those are CIRCLES expanding outward
+  from a centre, not discrete vertex nodes; #46 has continuous ring
+  geometry, #71 has discrete vertex points. Distinct from #62 spoke
+  convergence to centre — that has spokes converging INWARD to a
+  centre with sustained pulse at centre; #71 has rotating active
+  state at OUTER vertices with the centre as a static marker.
+  Distinct from #67 dual-node failover alternation — that has TWO
+  nodes alternating; #71 has SIX nodes cycling with exactly one
+  active at a time. The architectural signature is exclusive-state-
+  rotation: at any moment exactly one of N possible states is
+  active, encoding the GDPR architectural decision that every
+  processing activity has exactly one lawful basis chosen
+  deliberately from the catalogue of six.
+
+  Cycle: 8s; sub-cycle 0.8s for active-vertex pulse.
+    0.00–0.05  Empty / reset
+    0.05–0.10  Centre marker fades in
+    0.10–0.15  All six vertices fade in (dim/inactive)
+    0.10–0.21  Vertex 0 (top) is active
+    0.21–0.32  Vertex 1 (top-right) is active
+    0.32–0.43  Vertex 2 (bot-right) is active
+    0.43–0.54  Vertex 3 (bottom) is active
+    0.54–0.65  Vertex 4 (bot-left) is active
+    0.65–0.76  Vertex 5 (top-left) is active
+    0.76–0.85  All six vertices simultaneously active (full register)
+    0.85–0.95  Fade out
+    0.95–1.00  Cleared, reset
+
+  Colour: warm-neutral #D6D2C8 + terracotta #C96330.
+  No animateMotion / mpath. Basic SMIL only.
+-->
+
+  <!-- Centre marker (data subject — warm-neutral, static) -->
+  <circle cx="60" cy="45" r="3" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.7;0.7;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Faint hexagon outline connecting vertices (warm-neutral guide lines) -->
+  <polygon points="60,21 80.78,33 80.78,57 60,69 39.22,57 39.22,33"
+           fill="none" stroke="#D6D2C8" stroke-width="0.8" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.3;0.3;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </polygon>
+
+  <!-- ============== VERTEX 0 (TOP — Consent) ============== -->
+  <!-- Background dim representation -->
+  <circle cx="60" cy="21" r="5" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.4;0.4;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <!-- Active overlay: bright during 0.10-0.21 and during full-register window 0.76-0.85 -->
+  <circle cx="60" cy="21" r="5" fill="#C96330" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0;0;1;1;0"
+             keyTimes="0;0.10;0.12;0.21;0.22;0.76;0.78;0.85;0.92"
+             dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="5;6;5" keyTimes="0;0.5;1" dur="0.8s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ============== VERTEX 1 (TOP-RIGHT — Contract) ============== -->
+  <circle cx="80.78" cy="33" r="5" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.4;0.4;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="80.78" cy="33" r="5" fill="#C96330" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0;0;1;1;0"
+             keyTimes="0;0.21;0.22;0.32;0.33;0.76;0.78;0.85;0.92"
+             dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="5;6;5" keyTimes="0;0.5;1" dur="0.8s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ============== VERTEX 2 (BOTTOM-RIGHT — Legal Obligation) ============== -->
+  <circle cx="80.78" cy="57" r="5" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.4;0.4;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="80.78" cy="57" r="5" fill="#C96330" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0;0;1;1;0"
+             keyTimes="0;0.32;0.33;0.43;0.44;0.76;0.78;0.85;0.92"
+             dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="5;6;5" keyTimes="0;0.5;1" dur="0.8s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ============== VERTEX 3 (BOTTOM — Vital Interests) ============== -->
+  <circle cx="60" cy="69" r="5" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.4;0.4;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="60" cy="69" r="5" fill="#C96330" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0;0;1;1;0"
+             keyTimes="0;0.43;0.44;0.54;0.55;0.76;0.78;0.85;0.92"
+             dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="5;6;5" keyTimes="0;0.5;1" dur="0.8s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ============== VERTEX 4 (BOTTOM-LEFT — Public Task) ============== -->
+  <circle cx="39.22" cy="57" r="5" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.4;0.4;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="39.22" cy="57" r="5" fill="#C96330" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0;0;1;1;0"
+             keyTimes="0;0.54;0.55;0.65;0.66;0.76;0.78;0.85;0.92"
+             dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="5;6;5" keyTimes="0;0.5;1" dur="0.8s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ============== VERTEX 5 (TOP-LEFT — Legitimate Interests) ============== -->
+  <circle cx="39.22" cy="33" r="5" fill="#D6D2C8" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.4;0.4;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="39.22" cy="33" r="5" fill="#C96330" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;1;0;1;1;0"
+             keyTimes="0;0.65;0.66;0.76;0.78;0.83;0.85;0.92"
+             dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="5;6;5" keyTimes="0;0.5;1" dur="0.8s" repeatCount="indefinite"/>
+  </circle>
+</svg>

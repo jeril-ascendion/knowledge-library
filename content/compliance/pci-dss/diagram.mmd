@@ -1,49 +1,67 @@
-flowchart TD
-    A([🚀 Start: PCI DSS]) --> B[Assessment & Discovery]
+erDiagram
+    CARDHOLDER ||--o{ PAYMENT_ACCOUNT : holds
+    PAYMENT_ACCOUNT ||--o{ PAN : "linked to"
+    PAN ||--|| TOKEN : "tokenised as"
+    PAN ||--o{ TRANSACTION : "appears in"
+    PAYMENT_ACCOUNT ||--o{ SAD : "may carry (NEVER STORED)"
 
-    B --> C{Current State\nDocumented?}
-    C -->|No| B
-    C -->|Yes| D[Apply Architecture Principles]
+    CDE_BOUNDARY ||--|{ CDE_SYSTEM : "encloses"
+    CDE_SYSTEM ||--o{ PAN : "stores or processes"
+    CDE_SYSTEM }o--|| NETWORK_SEGMENT : "deployed to"
+    NETWORK_SEGMENT ||--o{ SEGMENTATION_TEST : "validated by quarterly"
 
-    D --> D1[Design for Change]
-    D --> D2[Least Privilege]
-    D --> D3[Observability First]
-    D --> D4[AI Augmentation Readiness]
+    CDE_SYSTEM ||--|{ ACCESS_CONTROL : "gated by"
+    ACCESS_CONTROL ||--|{ CUSTODIAN_ROLE : "assigned to"
+    CUSTODIAN_ROLE ||--o{ AUDIT_EVENT : "produces"
 
-    D1 & D2 & D3 & D4 --> E[Select Design Patterns]
+    PAN ||--|{ ENCRYPTION_KEY : "encrypted by"
+    ENCRYPTION_KEY ||--|| KEY_CUSTODIAN : "managed by"
+    KEY_CUSTODIAN ||--|{ KEY_ROTATION : "executes per cadence"
+    ENCRYPTION_KEY ||--|{ AUDIT_EVENT : "lifecycle logged in"
 
-    E --> F{NFR Targets\nDefined?}
-    F -->|No| F1[Define NFRs in nfr/]
-    F1 --> F
-    F -->|Yes| G[Document ADRs]
+    AUDIT_EVENT }|..|| LOG_PIPELINE : "shipped to"
+    LOG_PIPELINE ||--|| ROC_EVIDENCE : "feeds annual"
+    ROC_EVIDENCE ||--|{ FINDING : "may surface"
+    FINDING ||--|| REMEDIATION : "tracked to"
+    REMEDIATION ||--|{ FINDING_LEDGER : "recorded in"
 
-    G --> H[Architecture Review Board]
+    SEGMENTATION_TEST ||--o{ FINDING : "may produce"
+    VULNERABILITY_SCAN ||--o{ FINDING : "may produce"
+    CDE_SYSTEM ||--|{ VULNERABILITY_SCAN : "scanned quarterly"
 
-    H --> I{Security\nReview Passed?}
-    I -->|No| I1[Revise Design]
-    I1 --> H
-    I -->|Yes| J{ARB\nApproval?}
-
-    J -->|Rejected| J1[Address Feedback]
-    J1 --> H
-    J -->|Approved| K[Implementation]
-
-    K --> L[CI/CD Pipeline]
-    L --> L1[SAST / DAST Scan]
-    L --> L2[Architecture Lint]
-    L --> L3[NFR Validation]
-
-    L1 & L2 & L3 --> M{All Gates\nPassed?}
-    M -->|No| M1[Fix & Rerun]
-    M1 --> L
-    M -->|Yes| N[Deploy to Production]
-
-    N --> O[Observability Validation]
-    O --> P[Post-Deployment Review]
-    P --> Q([✅ Governance Record Closed])
-
-    style A fill:#4f8ef7,color:#fff
-    style Q fill:#10b981,color:#fff
-    style I1 fill:#fef3c7
-    style J1 fill:#fef3c7
-    style M1 fill:#fef3c7
+    CARDHOLDER {
+        string identifier
+        string name
+    }
+    PAN {
+        string fullValue
+        boolean storedOnlyEncrypted
+        date capturedAt
+    }
+    SAD {
+        string track
+        string cvv
+        string pin
+        boolean prohibitedFromStorage
+    }
+    TOKEN {
+        string opaqueValue
+        string vaultReference
+    }
+    CDE_SYSTEM {
+        string identifier
+        string scopeRationale
+        date lastSegmentationTest
+    }
+    ENCRYPTION_KEY {
+        string keyId
+        string algorithm
+        string custodianRole
+        date nextRotation
+    }
+    FINDING_LEDGER {
+        string findingId
+        string decision
+        string owner
+        date dueDate
+    }

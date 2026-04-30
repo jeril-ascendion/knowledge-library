@@ -1876,6 +1876,186 @@ EMBLEM MOTION MECHANICS (each page must use a DISTINCT mechanic):
                            and the compression-and-resume rhythm
                            encodes that good UX acknowledges friction
                            explicitly rather than hiding it)
+  #70 TIERED-CADENCE PARALLEL PROGRESS
+                          (compliance/bsp-afasa: three horizontal
+                           track-bars stacked vertically — top track
+                           at y=22 (annual cadence), middle at y=45
+                           (quarterly), bottom at y=68 (monthly) —
+                           each with a faint warm-neutral baseline
+                           x=14 to x=104; a terracotta progress bar
+                           grows from x=14 rightward along each
+                           track via x2 animation, but at INDEPENDENT
+                           rates: annual track completes ONCE over
+                           the cycle (single fill 14→104 over t=
+                           0.10–0.85), quarterly track completes
+                           4 times (4 fill-and-reset cycles within
+                           t=0.10–0.85), monthly track completes 3
+                           times (simplified for legibility); when
+                           each progress bar reaches the right end,
+                           a small terracotta "filed" badge (r=2.4)
+                           pulses at (108, y) on a sub-cycle matched
+                           to the cadence speed (annual badge 2.0s,
+                           quarterly 1.4s, monthly 1.0s); distinct
+                           from #11 vertical bars rising — those
+                           are vertical and reach the SAME height,
+                           #70 is horizontal with INDEPENDENT
+                           completion times; distinct from #60
+                           stacked horizontal bar-fill cascade —
+                           that has 4 bars filling SEQUENTIALLY one
+                           after another within a single cycle, #70
+                           has 3 bars filling INDEPENDENTLY at
+                           different rates with multiple completions
+                           for the faster bars; distinct from #66
+                           percentile fan-out — that has three
+                           traces from a SHARED ORIGIN going to
+                           different endpoints once, #70 has three
+                           tracks completing cyclically at different
+                           frequencies; the architectural signature
+                           is multi-frequency-cyclical-obligation:
+                           the compliance posture is defined by
+                           accommodating multiple regulatory clocks
+                           running simultaneously, each with its own
+                           cadence and submission)
+  #71 HEXAGONAL ROTATING ACTIVE-STATE
+                          (compliance/gdpr: six discrete vertex
+                           nodes arranged hexagonally at radius 24
+                           from centre (60, 45) — vertex 0 at
+                           (60, 21), vertex 1 at (80.78, 33), vertex
+                           2 at (80.78, 57), vertex 3 at (60, 69),
+                           vertex 4 at (39.22, 57), vertex 5 at
+                           (39.22, 33); a faint warm-neutral hexagon
+                           outline polygon connects the vertices as
+                           guide; a static warm-neutral centre
+                           marker (r=3) sits at (60, 45); each
+                           vertex has a warm-neutral background
+                           circle (r=5, opacity 0.4) layered with a
+                           terracotta active overlay that toggles
+                           opacity 0→1; the active state ROTATES
+                           CLOCKWISE through all six vertices
+                           sequentially, each active for ~0.11 of
+                           the cycle (vertex 0: 0.10–0.21, vertex 1:
+                           0.21–0.32, vertex 2: 0.32–0.43, vertex 3:
+                           0.43–0.54, vertex 4: 0.54–0.65, vertex 5:
+                           0.65–0.76), with EXACTLY ONE vertex
+                           active at any time during sequential
+                           phase; after sequence completes, ALL six
+                           vertices brighten simultaneously during
+                           t=0.76–0.85 (full register); each active
+                           overlay pulses r 5→6→5 on 0.8s sub-cycle
+                           while active; distinct from #46
+                           concentric ring activation — those are
+                           CIRCLES expanding outward from a centre
+                           with continuous ring geometry, #71 has
+                           DISCRETE VERTEX POINTS at fixed positions
+                           with rotating active state; distinct
+                           from #62 spoke convergence to centre —
+                           that has spokes converging INWARD to a
+                           centre with sustained pulse at centre,
+                           #71 has rotating active state at OUTER
+                           vertices with the centre as a static
+                           marker; distinct from #67 dual-node
+                           failover alternation — that has TWO
+                           nodes alternating, #71 has SIX nodes
+                           cycling with exactly one active at a
+                           time; the architectural signature is
+                           exclusive-state-rotation: at any moment
+                           exactly one of N possible states is
+                           active, encoding architectural decisions
+                           like the GDPR rule that every processing
+                           activity has exactly one lawful basis
+                           chosen deliberately from a catalogue)
+  #72 RISK-CONTROL CROSS-WALK LINES
+                          (compliance/iso27001: two vertical
+                           columns of nodes — left column with three
+                           warm-neutral risk nodes (r=3.4) at (24,
+                           24), (24, 45), (24, 66); right column
+                           with three control-target positions at
+                           (96, 30), (96, 50), (96, 60); three
+                           terracotta diagonal lines drawn left-to-
+                           right SEQUENTIALLY (not simultaneously)
+                           via stroke-dashoffset (75→0) animation
+                           connecting risk to control: line 1
+                           (24,24)→(96,30) draws over t=0.10–0.30,
+                           line 2 (24,45)→(96,50) draws over t=
+                           0.30–0.50, line 3 (24,66)→(96,60) draws
+                           over t=0.50–0.70; as each line completes,
+                           the right-column endpoint becomes a
+                           terracotta linkage indicator (r=3.4) with
+                           opacity envelope appearing at line-end
+                           and pulsing r 3.4→4.4→3.4 on independent
+                           sub-cycles 1.0s, 1.4s, 1.8s; distinct
+                           from #62 spoke convergence to centre —
+                           that has multiple spokes converging from
+                           outside to ONE central point (radial
+                           convergence pattern), #72 has multiple
+                           parallel diagonal lines between two
+                           columns (lateral mapping pattern);
+                           distinct from #64 parallel ladders —
+                           those are vertical lines with horizontal
+                           rungs, #72 is two columns of points
+                           connected by diagonals; distinct from
+                           #66 percentile fan-out — that has three
+                           traces from a SHARED ORIGIN going to
+                           different endpoints simultaneously, #72
+                           has three lines from DIFFERENT ORIGINS
+                           going to DIFFERENT endpoints drawn
+                           SEQUENTIALLY; the architectural signature
+                           is N-to-N traceability: every risk
+                           traces to its mitigating control, every
+                           control traces back to the risks it
+                           mitigates, the trace is visible as the
+                           architectural artefact)
+  #73 BOUNDARY-CROSSING SHAPE TRANSFORMATION
+                          (compliance/pci-dss: a vertical warm-
+                           neutral boundary line at x=60, y=14 to
+                           y=78, with dashed stroke pattern (3 3)
+                           and tick-mark pips at top y=14 and bottom
+                           y=78; three sequential "token paths" at
+                           y=24, 45, 66 each carry a terracotta
+                           CIRCLE (r=3.5) on the LEFT SIDE that
+                           moves from x=14 to x=58 (just before
+                           boundary), then at the boundary the
+                           circle FADES OUT and a terracotta SQUARE
+                           (rect 6×6) FADES IN at the same y
+                           position, then the SQUARE moves from
+                           x=62 to x=104 (right side); the three
+                           paths run SEQUENTIALLY (not simultaneously)
+                           with timing offsets — path 1 at t=
+                           0.10–0.32, path 2 at t=0.30–0.52, path 3
+                           at t=0.50–0.72; after all three crossings
+                           complete, the three squares remain on the
+                           right side and pulse via width and height
+                           6→7→6 on independent sub-cycles 1.0s,
+                           1.4s, 1.8s encoding tokens are persistent
+                           in the non-CDE environment whereas the
+                           PANs were ephemeral; distinct from #15
+                           horizontal traversal — that uses a single
+                           shape moving across uniform track with no
+                           transformation, #73 has TWO DISTINCT
+                           SHAPES representing different data states
+                           with explicit transformation event at
+                           boundary; distinct from #54 dual-track
+                           parallel lifecycle — that has two parallel
+                           horizontal tracks for two version blocks,
+                           #73 has one track per path but with a
+                           transformation point dividing pre- and
+                           post-states; distinct from #67 dual-node
+                           failover alternation — that has two
+                           static nodes alternating, #73 has one
+                           moving entity per path that changes form
+                           during traversal; distinct from #68
+                           stacked control-layer verification —
+                           that has a marker descending vertically
+                           through layers emitting per-layer stamps,
+                           #73 has markers traversing horizontally
+                           across a single boundary with shape
+                           change; the architectural signature is
+                           state-transformation-at-trust-boundary:
+                           data exists in different forms on either
+                           side of a trust boundary, and the
+                           boundary's purpose is to perform the
+                           transformation that converts sensitive to
+                           non-sensitive form before propagation)
   Future pages must invent a new mechanic, not reuse one.
   Two colours only: warm neutral (#D6D2C8) + terracotta (#C96330).
   Basic SMIL primitives only (animate, animateTransform with type=rotate or translate; stroke-dasharray and opacity animations also valid via animate).

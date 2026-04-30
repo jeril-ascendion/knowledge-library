@@ -1,49 +1,37 @@
-flowchart TD
-    A([🚀 Start: GDPR]) --> B[Assessment & Discovery]
-
-    B --> C{Current State\nDocumented?}
-    C -->|No| B
-    C -->|Yes| D[Apply Architecture Principles]
-
-    D --> D1[Design for Change]
-    D --> D2[Least Privilege]
-    D --> D3[Observability First]
-    D --> D4[AI Augmentation Readiness]
-
-    D1 & D2 & D3 & D4 --> E[Select Design Patterns]
-
-    E --> F{NFR Targets\nDefined?}
-    F -->|No| F1[Define NFRs in nfr/]
-    F1 --> F
-    F -->|Yes| G[Document ADRs]
-
-    G --> H[Architecture Review Board]
-
-    H --> I{Security\nReview Passed?}
-    I -->|No| I1[Revise Design]
-    I1 --> H
-    I -->|Yes| J{ARB\nApproval?}
-
-    J -->|Rejected| J1[Address Feedback]
-    J1 --> H
-    J -->|Approved| K[Implementation]
-
-    K --> L[CI/CD Pipeline]
-    L --> L1[SAST / DAST Scan]
-    L --> L2[Architecture Lint]
-    L --> L3[NFR Validation]
-
-    L1 & L2 & L3 --> M{All Gates\nPassed?}
-    M -->|No| M1[Fix & Rerun]
-    M1 --> L
-    M -->|Yes| N[Deploy to Production]
-
-    N --> O[Observability Validation]
-    O --> P[Post-Deployment Review]
-    P --> Q([✅ Governance Record Closed])
-
-    style A fill:#4f8ef7,color:#fff
-    style Q fill:#10b981,color:#fff
-    style I1 fill:#fef3c7
-    style J1 fill:#fef3c7
-    style M1 fill:#fef3c7
+mindmap
+  root((GDPR<br/>Lawful Basis<br/>Register))
+    Consent
+      Article 6.1.a
+      Withdraw mechanism required
+      Demonstrable freely-given evidence
+      Marketing and optional features
+      Children require parental consent
+    Contract Necessity
+      Article 6.1.b
+      Pre-contract steps included
+      Service-essential processing
+      Account creation and delivery
+      Payment for goods or services
+    Legal Obligation
+      Article 6.1.c
+      Citation to specific statute
+      Tax record retention
+      AML transaction reporting
+      Regulatory disclosure
+    Vital Interests
+      Article 6.1.d
+      Life-threatening situations only
+      Emergency contact processing
+      Public-health emergency narrow scope
+    Public Task
+      Article 6.1.e
+      Public authority or official function
+      Documented public-interest task
+      Limited applicability for private firms
+    Legitimate Interests
+      Article 6.1.f
+      Documented balancing test required
+      Objection-handling pipeline mandatory
+      Network security and fraud prevention
+      Internal administration and analytics
+      Cannot override fundamental rights

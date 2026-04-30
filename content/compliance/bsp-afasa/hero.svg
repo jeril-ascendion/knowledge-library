@@ -1,0 +1,121 @@
+<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tiered-cadence parallel progress with three frequencies">
+<!--
+  BSP & AFASA emblem.
+
+  Visual metaphor: Philippine FSI regulatory obligations operate at
+  multiple frequencies simultaneously. Three horizontal track-bars
+  stacked vertically represent the three primary cadences:
+    Top track    (y=22) → annual cycle (slowest)
+    Middle track (y=45) → quarterly cycle (medium)
+    Bottom track (y=68) → monthly cycle (fastest)
+  Each track has a faint warm-neutral baseline running x=14 to x=104.
+  A terracotta progress bar grows from x=14 rightward along each
+  track, but each at a different rate matched to its cadence:
+    Annual track completes once per cycle (slowest)
+    Quarterly track completes 4 times per cycle (4 fills + resets)
+    Monthly track completes 12 times per cycle would be too busy —
+      we render 3 fills + resets to keep visual legibility
+  When each track's progress bar reaches the end (x=104), a small
+  "filed" badge (terracotta circle, r=2.4) pulses at the right edge
+  encoding the regulatory submission. The three independent cadences
+  produce a layered visual rhythm: a slow steady fill at the top, a
+  medium-speed fill-reset cycle in the middle, a fast fill-reset
+  cycle at the bottom. The architectural narrative: regulatory
+  obligations operate on multiple independent clocks; the compliance
+  architecture must accommodate all of them simultaneously.
+
+  Mechanic #70: TIERED-CADENCE PARALLEL PROGRESS.
+  First mechanic to use three horizontal track-bars filling left-to-
+  right at INDEPENDENT RATES with each completion producing a "filed"
+  badge at the right edge. Distinct from #11 vertical bars rising —
+  those are vertical and reach the same height; #70 is horizontal
+  and the three bars complete at different times. Distinct from #60
+  stacked horizontal bar-fill cascade — that has 4 bars filling
+  sequentially (one after another) within a single cycle; #70 has
+  3 bars filling INDEPENDENTLY at different rates (multiple
+  completions for the faster bars). Distinct from #66 percentile
+  fan-out — that has three traces sharing a common origin growing
+  to different endpoints once; #70 has three tracks completing
+  cyclically at different frequencies. The architectural signature
+  is multi-frequency-cyclical-obligation: the compliance posture is
+  defined by accommodating multiple clocks running simultaneously.
+
+  Geometry:
+    Track 1 (annual):   baseline y=22, fill from x=14 to x=104
+    Track 2 (quarterly): baseline y=45, fill from x=14 to x=104
+    Track 3 (monthly):   baseline y=68, fill from x=14 to x=104
+    Filed badges (terracotta circles r=2.4): at (108, 22), (108, 45),
+                                              (108, 68)
+
+  Cycle: 8s primary.
+    Annual track: 1 complete fill (x2 grows 14→104 over t=0.10–0.85)
+    Quarterly track: 4 fill-and-reset cycles within t=0.10–0.85
+                     (each cycle ~0.19 of total time)
+    Monthly track: 3 visible fill-and-reset cycles within t=0.10–0.85
+                   (each cycle ~0.25 of total time, simplified for
+                    visibility — actual 12/year would be too busy)
+    Filed badges pulse on independent sub-cycles 2.0s, 1.4s, 1.0s
+    matching their cadence speed (slower badge for slower cadence).
+
+  Colour: warm-neutral #D6D2C8 + terracotta #C96330.
+  No animateMotion / mpath. Basic SMIL only.
+-->
+
+  <!-- ============== TRACK 1 (ANNUAL — y=22, slowest) ============== -->
+  <line x1="14" y1="22" x2="104" y2="22" stroke="#D6D2C8" stroke-width="1.2" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.6;0.6;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <!-- Annual progress bar: grows once over the cycle -->
+  <line x1="14" y1="22" x2="14" y2="22" stroke="#C96330" stroke-width="2.6" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.10;0.12;0.85;0.92" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="x2" values="14;14;104;14" keyTimes="0;0.10;0.85;1" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <!-- Annual filed badge (terracotta circle at right) -->
+  <circle cx="108" cy="22" r="2.4" fill="#C96330" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.83;0.85;0.92;0.95" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="2.4;3.6;2.4" keyTimes="0;0.5;1" dur="2.0s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ============== TRACK 2 (QUARTERLY — y=45, medium) ============== -->
+  <line x1="14" y1="45" x2="104" y2="45" stroke="#D6D2C8" stroke-width="1.2" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.6;0.6;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <!-- Quarterly progress bar: 4 fill-and-reset cycles via x2 keyframes -->
+  <line x1="14" y1="45" x2="14" y2="45" stroke="#C96330" stroke-width="2.6" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.10;0.12;0.85;0.92" dur="8s" repeatCount="indefinite"/>
+    <!-- Each quarter: fill from 14 to 104 then snap reset to 14 -->
+    <animate attributeName="x2"
+             values="14;14;104;14;104;14;104;14;104;14"
+             keyTimes="0;0.10;0.30;0.30;0.49;0.49;0.68;0.68;0.85;1"
+             dur="8s" repeatCount="indefinite"/>
+  </line>
+  <!-- Quarterly filed badge: pulses 4 times per cycle as quarters complete -->
+  <circle cx="108" cy="45" r="2.4" fill="#C96330" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;0;1;0;1;0;1;0"
+             keyTimes="0;0.27;0.30;0.34;0.49;0.53;0.68;0.72;0.85;0.92"
+             dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="2.4;3.4;2.4" keyTimes="0;0.5;1" dur="1.4s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ============== TRACK 3 (MONTHLY — y=68, fastest) ============== -->
+  <line x1="14" y1="68" x2="104" y2="68" stroke="#D6D2C8" stroke-width="1.2" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;0.6;0.6;0" keyTimes="0;0.05;0.10;0.85;0.95" dur="8s" repeatCount="indefinite"/>
+  </line>
+  <!-- Monthly progress bar: 3 fill-and-reset cycles (simplified for legibility) -->
+  <line x1="14" y1="68" x2="14" y2="68" stroke="#C96330" stroke-width="2.6" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.10;0.12;0.85;0.92" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="x2"
+             values="14;14;104;14;104;14;104;14"
+             keyTimes="0;0.10;0.35;0.35;0.60;0.60;0.85;1"
+             dur="8s" repeatCount="indefinite"/>
+  </line>
+  <!-- Monthly filed badge: pulses 3 times per cycle as months complete -->
+  <circle cx="108" cy="68" r="2.4" fill="#C96330" opacity="0">
+    <animate attributeName="opacity"
+             values="0;0;1;0;1;0;1;0"
+             keyTimes="0;0.32;0.35;0.40;0.60;0.65;0.85;0.92"
+             dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="2.4;3.4;2.4" keyTimes="0;0.5;1" dur="1.0s" repeatCount="indefinite"/>
+  </circle>
+</svg>
