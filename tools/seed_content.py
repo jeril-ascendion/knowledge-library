@@ -237,6 +237,65 @@ TAXONOMY = {
     },
 }
 
+# ─────────────────────────────────────────────────────────────────────────────
+# CONCEPT_LENSES — cross-cutting patterns asserted across multiple TAXONOMY
+# entries. Mechanism is generic; future lenses cost ~5 lines each. See
+# docs/v1.1/spec.md §5.3 and docs/v1.1/playbook.md T1.2.
+# ─────────────────────────────────────────────────────────────────────────────
+CONCEPT_LENSES = {
+    "debt-ledger": {
+        "label": "Debt Ledger",
+        "description": (
+            "Eight pages share the same architectural shape: every well-run "
+            "NFR or compliance domain produces a debt-ledger artefact whose "
+            "movement is architectural signal — not a defect to suppress."
+        ),
+        "members": [
+            "nfr/maintainability",
+            "nfr/security",
+            "nfr/reliability",
+            "nfr/usability",
+            "compliance/bsp-afasa",
+            "compliance/gdpr",
+            "compliance/iso27001",
+            "compliance/pci-dss",
+        ],
+        "caption_source": "nfr/usability",
+    },
+    # Mechanism is generic; future lenses cost ~5 lines each.
+}
+
+
+def _validate_concept_lenses():
+    """Assert every lens member resolves to a real TAXONOMY entry.
+
+    Fail loudly with a clear message identifying both the orphaned page and
+    the lens that references it, so the fix is one-line.
+    """
+    for lens_id, lens in CONCEPT_LENSES.items():
+        for member in lens["members"]:
+            try:
+                section, sub = member.split("/", 1)
+            except ValueError:
+                raise ValueError(
+                    f"CONCEPT_LENSES['{lens_id}'] has malformed member "
+                    f"'{member}' — expected 'section/subsection' format."
+                )
+            if section not in TAXONOMY:
+                raise ValueError(
+                    f"CONCEPT_LENSES['{lens_id}'] references member "
+                    f"'{member}' but section '{section}' is not in TAXONOMY."
+                )
+            if sub not in TAXONOMY[section]:
+                raise ValueError(
+                    f"CONCEPT_LENSES['{lens_id}'] references member "
+                    f"'{member}' but subsection '{sub}' is not in "
+                    f"TAXONOMY['{section}']."
+                )
+
+
+_validate_concept_lenses()
+
 # Section-aware "body topic" used inside the boilerplate
 SECTION_LABELS = {
     "adrs": "Architecture Governance",
