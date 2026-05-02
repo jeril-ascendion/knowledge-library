@@ -7412,6 +7412,30 @@ def compute_graph_data(metadata):
             if target in substantive_ids and target != pid:
                 edges.append({"source": pid, "target": target, "kind": "related"})
 
+    # 4) Add section nodes — derived from already-emitted page nodes
+    #    (EPIC-4 T4.1: section nodes + contains-edges).
+    substantive_sections = sorted({
+        n["id"].split("/")[0]
+        for n in nodes.values()
+        if n["type"] == "page"
+    })
+    for section_id in substantive_sections:
+        title, description = SECTIONS.get(section_id, (section_id.title(), ""))
+        nodes[section_id] = {
+            "id": section_id,
+            "type": "section",
+            "label": title,
+            "description": description,
+        }
+
+    # 5) Add contains-edges: one per substantive page (section → page).
+    for pid in sorted_substantive:
+        edges.append({
+            "source": pid.split("/")[0],
+            "target": pid,
+            "kind": "contains",
+        })
+
     # Final sort guarantees byte-deterministic output across runs.
     sorted_nodes = sorted(nodes.values(), key=lambda n: n["id"])
     sorted_edges = sorted(edges, key=lambda e: (e["source"], e["target"], e["kind"]))

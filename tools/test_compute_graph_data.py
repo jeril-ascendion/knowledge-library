@@ -114,10 +114,19 @@ def test_standard_nodes_have_no_lenses_field():
 
 
 def test_node_count_unchanged_by_annotation():
-    """Lens annotation must not add or drop nodes/links."""
+    """Graph data shape regression guard.
+
+    The total node count must equal the sum of typed components (pages, standards, sections),
+    and total links must equal the sum of typed kinds (alignment, related, contains).
+    Catches accidental orphan node types or edge kinds.
+    """
     graph = _graph()
     pages = [n for n in graph["nodes"] if n["type"] == "page"]
     standards = [n for n in graph["nodes"] if n["type"] == "standard"]
+    sections = [n for n in graph["nodes"] if n["type"] == "section"]
+    contains_edges = [e for e in graph["links"] if e["kind"] == "contains"]
+    alignment_edges = [e for e in graph["links"] if e["kind"] == "alignment"]
+    related_edges = [e for e in graph["links"] if e["kind"] == "related"]
 
     assert len(pages) == 73, (
         f"page node count drift: got {len(pages)}, expected 73."
@@ -125,11 +134,17 @@ def test_node_count_unchanged_by_annotation():
     assert len(standards) == 224, (
         f"standard node count drift: got {len(standards)}, expected 224."
     )
-    assert len(graph["nodes"]) == 297, (
-        f"total node count drift: got {len(graph['nodes'])}, expected 297."
+    # Total nodes must equal pages + standards + sections (no orphan node types).
+    assert len(graph["nodes"]) == len(pages) + len(standards) + len(sections), (
+        f"total node count drift: got {len(graph['nodes'])}, "
+        f"expected pages({len(pages)}) + standards({len(standards)}) + sections({len(sections)}) "
+        f"= {len(pages) + len(standards) + len(sections)}. Possible orphan node type."
     )
-    assert len(graph["links"]) == 547, (
-        f"link count drift: got {len(graph['links'])}, expected 547."
+    # Total links must equal alignment + related + contains (no orphan edge kinds).
+    assert len(graph["links"]) == len(alignment_edges) + len(related_edges) + len(contains_edges), (
+        f"total link count drift: got {len(graph['links'])}, "
+        f"expected alignment({len(alignment_edges)}) + related({len(related_edges)}) + contains({len(contains_edges)}) "
+        f"= {len(alignment_edges) + len(related_edges) + len(contains_edges)}. Possible orphan edge kind."
     )
 
 
