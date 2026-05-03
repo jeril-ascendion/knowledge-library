@@ -7867,6 +7867,11 @@ def gen_knowledge_graph_page(graph_data, out_root):
           <svg id="kg-svg" role="img" aria-label="Knowledge graph visualization"></svg>
           <div id="kg-tooltip" class="kg-tooltip" aria-hidden="true"></div>
         </div>
+        <aside class="kg-panel" id="kg-panel" aria-label="Selection panel">
+          <div class="kg-panel-empty">
+            <p class="kg-panel-empty-copy">Click any node to open it here. Pages, standards, and topic groups &mdash; explore relationships without losing your place.</p>
+          </div>
+        </aside>
         <p class="kg-note">
           Only pages with canonical, authored content appear in the graph today.
           Stub pages join automatically as they gain real content (Six principles,

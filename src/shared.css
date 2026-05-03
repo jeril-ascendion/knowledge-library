@@ -831,7 +831,19 @@ a.hero-tag:focus-visible {
   border-radius: var(--r-lg);
   padding: 1.25rem;
   margin: 1rem 0 2rem;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "controls controls"
+    "canvas   panel"
+    "note     note";
+  gap: 1.25rem;
 }
+.kg-controls    { grid-area: controls; }
+.kg-canvas-wrap { grid-area: canvas; }
+.kg-panel       { grid-area: panel; }
+.kg-note        { grid-area: note; }
 .kg-controls {
   display: flex;
   justify-content: space-between;
@@ -902,6 +914,32 @@ a.hero-tag:focus-visible {
   width: 100%;
   height: 620px;
   display: block;
+}
+.kg-panel {
+  background: #EFEEE7;
+  border: 1px solid var(--border, #E0DED7);
+  border-radius: 0.5rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.kg-panel-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.75rem;
+}
+.kg-panel-empty-copy {
+  font-family: Georgia, 'IBM Plex Serif', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--ink-2, #3C3C3C);
+  margin: 0;
+  text-wrap: pretty;
 }
 .kg-tooltip {
   position: absolute;
@@ -988,6 +1026,22 @@ a.hero-tag:focus-visible {
 }
 .kg-node-standard:hover .kg-label {
   opacity: 1;
+}
+
+/* ── KG MOBILE: panel becomes row below canvas ───────────── */
+@media (max-width: 880px) {
+  .kg-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas:
+      "controls"
+      "canvas"
+      "panel"
+      "note";
+  }
+  .kg-panel {
+    max-height: 50vh;
+  }
 }
 
 /* ── EXTERNAL-LINK INDICATOR — subtle "↗" after links that open new tab ── */
