@@ -7439,7 +7439,21 @@ def compute_graph_data(metadata):
     # Final sort guarantees byte-deterministic output across runs.
     sorted_nodes = sorted(nodes.values(), key=lambda n: n["id"])
     sorted_edges = sorted(edges, key=lambda e: (e["source"], e["target"], e["kind"]))
-    return {"nodes": sorted_nodes, "links": sorted_edges}
+
+    # Lens registry — per Decision 1, expose as GRAPH_DATA.lenses for runtime JS
+    # consumption by dropdown (T6.1) and highlight/dim engine (T6.2).
+    lenses_out = []
+    for lens_id in sorted(CONCEPT_LENSES.keys()):
+        lens = CONCEPT_LENSES[lens_id]
+        lenses_out.append({
+            "id": lens_id,
+            "label": lens["label"],
+            "description": lens["description"],
+            "members": sorted(lens["members"]),
+            "caption_source": lens["caption_source"],
+        })
+
+    return {"nodes": sorted_nodes, "links": sorted_edges, "lenses": lenses_out}
 
 
 def nav_html(prefix, active=""):
@@ -7860,6 +7874,21 @@ def gen_knowledge_graph_page(graph_data, out_root):
               <span class="kg-legend-line kg-line-related"></span>
               <span>Related</span>
             </div>
+          </div>
+          <div class="kg-lens-selector" id="kg-lens-selector">
+            <span class="kg-lens-label" id="kg-lens-label">Lens</span>
+            <button class="kg-lens-trigger" id="kg-lens-trigger" type="button"
+                    role="combobox"
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                    aria-controls="kg-lens-listbox"
+                    aria-labelledby="kg-lens-label kg-lens-trigger-text">
+              <span class="kg-lens-trigger-text" id="kg-lens-trigger-text">All</span>
+              <span class="kg-lens-trigger-arrow" aria-hidden="true">&#9662;</span>
+            </button>
+            <ul class="kg-lens-listbox" id="kg-lens-listbox" role="listbox" aria-labelledby="kg-lens-label" hidden>
+              <!-- Options populated by JS at runtime so future lenses appear automatically -->
+            </ul>
           </div>
           <div class="kg-hint">Click a node to open · drag to rearrange · scroll to zoom</div>
         </div>
@@ -8293,21 +8322,252 @@ const GRAPH_DATA = {graph_json};
 
   // ─── Selection state (URL hash as source of truth) ───
   function getSelectedFromHash() {{
-    const m = window.location.hash.match(/^#node=(.+)$/);
-    return m ? decodeURIComponent(m[1]) : null;
+    const hash = window.location.hash;
+    if (!hash) return null;
+    // Parse hash as &-separated key=value pairs (supports node= and lens=)
+    const params = hash.slice(1).split('&');
+    for (const p of params) {{
+      if (p.startsWith('node=')) {{
+        return decodeURIComponent(p.substring(5));
+      }}
+    }}
+    return null;
   }}
 
   function selectNode(id) {{
-    if (id === null || id === undefined) {{
-      // Clear selection
+    // Preserve current lens (if any) when changing node selection
+    const currentLens = getActiveLensFromHash();
+    let newHash = '';
+    if (id !== null && id !== undefined) newHash += 'node=' + encodeURIComponent(id);
+    if (currentLens) {{
+      if (newHash) newHash += '&';
+      newHash += 'lens=' + encodeURIComponent(currentLens);
+    }}
+    if (newHash === '') {{
+      // Empty hash — use replaceState to avoid an extra history entry
       if (window.location.hash) {{
         history.replaceState(null, '', window.location.pathname + window.location.search);
         window.dispatchEvent(new HashChangeEvent('hashchange'));
       }}
     }} else {{
-      window.location.hash = '#node=' + encodeURIComponent(id);
+      window.location.hash = newHash;
     }}
   }}
+
+  // ─── Lens dropdown (T6.1) ───
+  const lensTrigger = document.getElementById('kg-lens-trigger');
+  const lensTriggerText = document.getElementById('kg-lens-trigger-text');
+  const lensListbox = document.getElementById('kg-lens-listbox');
+  const LENSES = (GRAPH_DATA.lenses || []);
+
+  // Build options: "All" first, then each lens. Used for both initial render and keyboard nav.
+  const LENS_OPTIONS = [{{id: 'all', label: 'All'}}].concat(
+    LENSES.map(l => ({{id: l.id, label: l.label}}))
+  );
+
+  // Render listbox options
+  if (lensListbox) {{
+    LENS_OPTIONS.forEach((opt, idx) => {{
+      const li = document.createElement('li');
+      li.className = 'kg-lens-option';
+      li.setAttribute('role', 'option');
+      li.setAttribute('id', 'kg-lens-option-' + idx);
+      li.setAttribute('data-lens-id', opt.id);
+      li.setAttribute('data-index', idx);
+      li.textContent = opt.label;
+      lensListbox.appendChild(li);
+    }});
+  }}
+
+  function getActiveLensFromHash() {{
+    const hash = window.location.hash;
+    if (!hash) return null;
+    const params = hash.slice(1).split('&');
+    for (const p of params) {{
+      if (p.startsWith('lens=')) {{
+        const v = decodeURIComponent(p.substring(5));
+        if (v === 'all' || v === '') return null;
+        // Validate against registered lenses
+        const exists = LENSES.some(l => l.id === v);
+        return exists ? v : null;
+      }}
+    }}
+    return null;
+  }}
+
+  function setLens(lensId) {{
+    // Normalize: 'all' or null both mean no lens
+    const normalized = (lensId && lensId !== 'all') ? lensId : null;
+
+    // Update trigger text
+    if (lensTriggerText) {{
+      const opt = LENS_OPTIONS.find(o => o.id === (normalized || 'all'));
+      lensTriggerText.textContent = opt ? opt.label : 'All';
+    }}
+
+    // Update URL hash — preserve any existing &node= parameter
+    const currentNode = getSelectedFromHash();
+    let newHash = '';
+    if (currentNode !== null) newHash += 'node=' + encodeURIComponent(currentNode);
+    if (normalized) {{
+      if (newHash) newHash += '&';
+      newHash += 'lens=' + encodeURIComponent(normalized);
+    }}
+    window.location.hash = newHash;
+
+    // Mark selected option in listbox
+    if (lensListbox) {{
+      lensListbox.querySelectorAll('.kg-lens-option').forEach(el => {{
+        const isSelected = el.getAttribute('data-lens-id') === (normalized || 'all');
+        el.classList.toggle('is-selected', isSelected);
+        el.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+      }});
+    }}
+
+    // T6.2 wires applyLens here to do the highlight/dim work.
+  }}
+
+  function openLensListbox() {{
+    if (!lensListbox || !lensTrigger) return;
+    lensListbox.hidden = false;
+    lensTrigger.setAttribute('aria-expanded', 'true');
+    // Focus the currently-selected option, or first
+    const selected = lensListbox.querySelector('.kg-lens-option.is-selected');
+    const target = selected || lensListbox.querySelector('.kg-lens-option');
+    if (target) {{
+      target.classList.add('is-active');
+      lensTrigger.setAttribute('aria-activedescendant', target.id);
+    }}
+  }}
+
+  function closeLensListbox(restoreFocus) {{
+    if (!lensListbox || !lensTrigger) return;
+    lensListbox.hidden = true;
+    lensTrigger.setAttribute('aria-expanded', 'false');
+    lensTrigger.removeAttribute('aria-activedescendant');
+    lensListbox.querySelectorAll('.is-active').forEach(el => el.classList.remove('is-active'));
+    if (restoreFocus) lensTrigger.focus();
+  }}
+
+  function moveActiveOption(delta) {{
+    if (!lensListbox) return;
+    const options = Array.from(lensListbox.querySelectorAll('.kg-lens-option'));
+    if (options.length === 0) return;
+    const current = lensListbox.querySelector('.kg-lens-option.is-active');
+    let nextIdx;
+    if (!current) {{
+      nextIdx = delta > 0 ? 0 : options.length - 1;
+    }} else {{
+      const currentIdx = options.indexOf(current);
+      nextIdx = currentIdx + delta;
+      if (nextIdx < 0) nextIdx = 0;
+      if (nextIdx >= options.length) nextIdx = options.length - 1;
+      current.classList.remove('is-active');
+    }}
+    const next = options[nextIdx];
+    next.classList.add('is-active');
+    if (lensTrigger) lensTrigger.setAttribute('aria-activedescendant', next.id);
+    next.scrollIntoView({{block: 'nearest'}});
+  }}
+
+  function moveActiveToEnd(toLast) {{
+    if (!lensListbox) return;
+    const options = Array.from(lensListbox.querySelectorAll('.kg-lens-option'));
+    if (options.length === 0) return;
+    options.forEach(el => el.classList.remove('is-active'));
+    const target = toLast ? options[options.length - 1] : options[0];
+    target.classList.add('is-active');
+    if (lensTrigger) lensTrigger.setAttribute('aria-activedescendant', target.id);
+    target.scrollIntoView({{block: 'nearest'}});
+  }}
+
+  function commitActiveOption() {{
+    if (!lensListbox) return;
+    const active = lensListbox.querySelector('.kg-lens-option.is-active');
+    if (active) {{
+      const lensId = active.getAttribute('data-lens-id');
+      setLens(lensId);
+    }}
+    closeLensListbox(true);
+  }}
+
+  // Trigger button: click to toggle, keyboard to open
+  if (lensTrigger) {{
+    lensTrigger.addEventListener('click', () => {{
+      if (lensTrigger.getAttribute('aria-expanded') === 'true') {{
+        closeLensListbox(false);
+      }} else {{
+        openLensListbox();
+      }}
+    }});
+
+    lensTrigger.addEventListener('keydown', (event) => {{
+      const expanded = lensTrigger.getAttribute('aria-expanded') === 'true';
+      if (!expanded) {{
+        if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {{
+          event.preventDefault();
+          openLensListbox();
+        }}
+      }} else {{
+        if (event.key === 'Escape') {{
+          event.preventDefault();
+          closeLensListbox(true);
+        }} else if (event.key === 'ArrowDown') {{
+          event.preventDefault();
+          moveActiveOption(1);
+        }} else if (event.key === 'ArrowUp') {{
+          event.preventDefault();
+          moveActiveOption(-1);
+        }} else if (event.key === 'Home') {{
+          event.preventDefault();
+          moveActiveToEnd(false);
+        }} else if (event.key === 'End') {{
+          event.preventDefault();
+          moveActiveToEnd(true);
+        }} else if (event.key === 'Enter') {{
+          event.preventDefault();
+          commitActiveOption();
+        }} else if (event.key === 'Tab') {{
+          // Allow tab to close and pass through normally
+          closeLensListbox(false);
+        }}
+      }}
+    }});
+  }}
+
+  // Listbox: click an option to select
+  if (lensListbox) {{
+    lensListbox.addEventListener('click', (event) => {{
+      const opt = event.target.closest('.kg-lens-option');
+      if (!opt) return;
+      const lensId = opt.getAttribute('data-lens-id');
+      setLens(lensId);
+      closeLensListbox(true);
+    }});
+
+    // Hover updates active for keyboard alignment
+    lensListbox.addEventListener('mousemove', (event) => {{
+      const opt = event.target.closest('.kg-lens-option');
+      if (!opt) return;
+      lensListbox.querySelectorAll('.is-active').forEach(el => el.classList.remove('is-active'));
+      opt.classList.add('is-active');
+      if (lensTrigger) lensTrigger.setAttribute('aria-activedescendant', opt.id);
+    }});
+  }}
+
+  // Click outside the dropdown closes it
+  document.addEventListener('click', (event) => {{
+    const selector = document.getElementById('kg-lens-selector');
+    if (!selector) return;
+    if (lensTrigger && lensTrigger.getAttribute('aria-expanded') === 'true') {{
+      if (!selector.contains(event.target)) {{
+        closeLensListbox(false);
+      }}
+    }}
+  }});
+
+  // Initial sync from URL hash (in case page loads with #lens= already set)
+  setLens(getActiveLensFromHash());
 
   function renderSelection() {{
     const id = getSelectedFromHash();
