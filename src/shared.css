@@ -912,7 +912,7 @@ a.hero-tag:focus-visible {
 }
 #kg-svg {
   width: 100%;
-  height: 620px;
+  height: clamp(540px, 65vh, 720px);
   display: block;
 }
 .kg-panel {
@@ -945,7 +945,7 @@ a.hero-tag:focus-visible {
 /* ── KG Panel: Header (breadcrumb + close) ───────────────── */
 .kg-panel-header {
   background: #FAFAF7;
-  padding: 1.25rem 1.5rem 0.875rem 1.5rem;
+  padding: 1.25rem 1.5rem 0.875rem 3.5rem;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -1127,6 +1127,22 @@ a.hero-tag:focus-visible {
   border-bottom-color: var(--ink, #1A1A1A);
 }
 
+/* Override site .article-body link color for panel links —
+   mockup specifies ink color; orange comes from inherited
+   site styles. Use higher-specificity selector to win without
+   !important. */
+.kg-panel .kg-panel-list-link,
+.kg-panel .kg-panel-aligned-link,
+.kg-panel .kg-panel-list-rich-title {
+  color: var(--ink, #1A1A1A);
+}
+.kg-panel .kg-panel-list-link:hover,
+.kg-panel .kg-panel-aligned-link:hover,
+.kg-panel .kg-panel-list-rich-title:hover {
+  color: var(--ink, #1A1A1A);
+  opacity: 1;
+}
+
 /* ── KG Panel: Aligned standards items (no truncation) ───── */
 .kg-panel-aligned-item {
   display: flex;
@@ -1179,6 +1195,19 @@ a.hero-tag:focus-visible {
 .kg-panel-cta:hover {
   background: #000000;
 }
+
+/* Force white CTA text — the site's .article-body a rule
+   sets color: var(--accent) which overrides the .kg-panel-cta
+   color. Higher-specificity selector ensures white wins. */
+.kg-panel a.kg-panel-cta,
+.kg-panel a.kg-panel-cta:hover,
+.kg-panel a.kg-panel-cta:visited {
+  color: #FFFFFF;
+}
+.kg-panel a.kg-panel-cta .kg-panel-cta-arrow {
+  color: #FFFFFF;
+}
+
 .kg-panel-cta-arrow {
   font-size: 1.1rem;
   line-height: 1;
@@ -1188,7 +1217,7 @@ a.hero-tag:focus-visible {
 .kg-panel-collapse-toggle {
   position: absolute;
   top: 0.75rem;
-  right: 0.75rem;
+  left: 0.75rem;
   width: 28px;
   height: 28px;
   background: rgba(255, 255, 255, 0.85);
@@ -1229,14 +1258,21 @@ a.hero-tag:focus-visible {
   display: none;
   flex-direction: column;
   align-items: center;
-  padding: 1rem 0;
-  gap: 1rem;
+  padding: 1.5rem 0 1rem 0;
+  gap: 1.5rem;
   height: 100%;
 }
 .kg-panel.is-collapsed {
   /* Override the 400px column on the parent grid */
   width: 56px;
   min-width: 56px;
+}
+/* When the panel collapses, the .kg-shell grid template should
+   give the panel column its real 56px width — not the original
+   400px allocation — so the canvas column (1fr) absorbs the
+   freed horizontal space. */
+.kg-shell:has(.kg-panel.is-collapsed) {
+  grid-template-columns: 1fr 56px;
 }
 .kg-panel.is-collapsed .kg-panel-content,
 .kg-panel.is-collapsed .kg-panel-empty {
@@ -1279,31 +1315,21 @@ a.hero-tag:focus-visible {
   max-height: 200px;
   overflow: hidden;
 }
-.kg-panel-rail-spacer {
-  flex: 1;
-}
-.kg-panel-rail-footer {
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
-  font-size: 0.6rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ink-2, #9A9A9A);
-}
-
 /* ── KG Panel: Standard pill (neutral grey instead of orange) ─── */
 .kg-panel-pill-standard {
   color: var(--ink-2, #6B6B6B);
 }
 .kg-panel-pill-dot-standard {
   display: inline-block;
-  width: 6px;
-  height: 6px;
-  background: var(--ink-2, #6B6B6B);
-  /* Square shape to mirror the standard node geometry in the graph */
+  width: 9px;
+  height: 9px;
+  background: var(--ink, #1A1A1A);
+  /* Square shape to mirror the standard node geometry in the graph,
+     slightly larger and darker than T5.1.4's version for better
+     visual identity at panel scale */
   border-radius: 1px;
   transform: rotate(45deg);
+  margin-right: 0.15em;
 }
 
 /* ── KG Panel: Standard "Open source" outline button ───────── */
@@ -1501,6 +1527,10 @@ a.hero-tag:focus-visible {
     box-shadow: 0 -8px 24px rgba(14, 14, 14, 0.08);
     transition: height 0.25s cubic-bezier(0.32, 0.72, 0, 1);
   }
+  /* Restore standard left padding on mobile (collapse toggle is hidden) */
+  .kg-panel-header {
+    padding-left: 1.5rem;
+  }
   /* Drawer height by state */
   .kg-panel[data-drawer-state="peek"] {
     height: 60px;
@@ -1547,6 +1577,42 @@ a.hero-tag:focus-visible {
 /* Drag handle hidden by default (desktop) */
 .kg-panel-drawer-handle {
   display: none;
+}
+
+/* ─── KG PAGE: full-viewport layout (Option A + X) ───────────
+   The KG page benefits from canvas breathing room. We override
+   the standard .shell max-width constraint specifically when
+   <main class="kg-page"> is set. The article-hero (heading +
+   intro) stays at article width per Option X — heading reads
+   normally, kg-shell breaks out below. */
+
+/* The .shell normally constrains to var(--max) ~1100px.
+   On KG page, allow .shell to span full viewport with small
+   horizontal padding for breathing room. */
+main.kg-page > .shell {
+  max-width: none;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Article hero (heading + intro + summary stats) stays at
+   article width even though the parent .shell is now full-bleed.
+   This is Option X — readable heading, full-bleed canvas. */
+main.kg-page > .shell > .article-hero {
+  max-width: var(--max, 1100px);
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 2.5rem;
+}
+
+/* The article-body wrapper inherits .shell's full width.
+   Already has max-width: none from existing rules — confirmed. */
+
+/* The kg-shell itself can now span the full width.
+   Remove the side margin to use all available space. */
+main.kg-page .kg-shell {
+  margin-left: 0;
+  margin-right: 0;
 }
 
 /* ── EXTERNAL-LINK INDICATOR — subtle "↗" after links that open new tab ── */

@@ -7811,7 +7811,7 @@ def gen_knowledge_graph_page(graph_data, out_root):
 
     body = f"""
 {nav}
-<main id="main">
+<main id="main" class="kg-page">
   <div class="shell">
     <div class="article-hero">
       <div class="hero-row">
@@ -7877,8 +7877,6 @@ def gen_knowledge_graph_page(graph_data, out_root):
             </button>
             <div class="kg-panel-rail-divider"></div>
             <div class="kg-panel-rail-label" id="kg-panel-rail-label"></div>
-            <div class="kg-panel-rail-spacer"></div>
-            <div class="kg-panel-rail-footer">Panel collapsed</div>
           </div>
           <div class="kg-panel-content" id="kg-panel-content">
             <div class="kg-panel-empty">
@@ -8162,7 +8160,12 @@ const GRAPH_DATA = {graph_json};
 
     // Footer CTA
     if (node.url) {{
-      html += '<a class="kg-panel-cta" href="..' + escapeHtml(node.url) + '">';
+      let openHref = '..' + node.url;
+      // Append index.html for trailing-slash URLs so file:// access
+      // (e.g., wsl.localhost previews) works. S3/CloudFront would
+      // auto-resolve to index.html, but file:// shows a directory listing.
+      if (openHref.endsWith('/')) openHref += 'index.html';
+      html += '<a class="kg-panel-cta" href="' + escapeHtml(openHref) + '">';
       html += '  Open page <span class="kg-panel-cta-arrow">&rarr;</span>';
       html += '</a>';
     }}
