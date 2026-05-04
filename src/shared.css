@@ -1028,6 +1028,19 @@ a.hero-tag:focus-visible {
   opacity: 1;
 }
 
+/* T5.1.2 — selected node highlight */
+.kg-node.selected circle,
+.kg-node.selected polygon,
+.kg-node.selected rect {
+  stroke: var(--ink);
+  stroke-width: 3;
+  filter: drop-shadow(0 0 8px rgba(201, 99, 48, 0.4));
+}
+.kg-node.selected .kg-label {
+  opacity: 1;
+  font-weight: 600;
+}
+
 /* ── KG MOBILE: panel becomes row below canvas ───────────── */
 @media (max-width: 880px) {
   .kg-shell {

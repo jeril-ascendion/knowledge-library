@@ -7997,21 +7997,51 @@ const GRAPH_DATA = {graph_json};
     tooltip.setAttribute('aria-hidden', 'true');
   }});
 
-  // Click navigation
+  // T5.1.2 — Click selects node (panel-driven, no hard navigation).
+  // External standard links remain external; everything else opens panel.
   node.on('click', function(event, d) {{
     if (event.defaultPrevented) return;  // ignore drag-end clicks
-    if (d.type === 'section') {{
-      // T4.3 stub — EPIC-5 replaces this with side-panel rendering
-      console.log('section click:', d.id);
-      return;
-    }}
-    if (!d.url) return;
-    if (d.type === 'standard') {{
-      window.open(d.url, '_blank', 'noopener');
-    }} else {{
-      window.location.href = '..' + d.url;
-    }}
+    selectNode(d.id);
   }}).style('cursor', 'pointer');
+
+  // ─── Selection state (URL hash as source of truth) ───
+  function getSelectedFromHash() {{
+    const m = window.location.hash.match(/^#node=(.+)$/);
+    return m ? decodeURIComponent(m[1]) : null;
+  }}
+
+  function selectNode(id) {{
+    if (id === null || id === undefined) {{
+      // Clear selection
+      if (window.location.hash) {{
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+        window.dispatchEvent(new HashChangeEvent('hashchange'));
+      }}
+    }} else {{
+      window.location.hash = '#node=' + encodeURIComponent(id);
+    }}
+  }}
+
+  function renderSelection() {{
+    const id = getSelectedFromHash();
+    // Toggle .selected class on nodes
+    node.classed('selected', d => d.id === id);
+    // T5.1.3+ replaces this with actual panel rendering.
+    // For T5.1.2, just log so we can verify the wiring works.
+    console.log('selected:', id);
+  }}
+
+  window.addEventListener('hashchange', renderSelection);
+
+  // Esc clears selection
+  window.addEventListener('keydown', (event) => {{
+    if (event.key === 'Escape') {{
+      selectNode(null);
+    }}
+  }});
+
+  // On load, render whatever the hash says (handles deep linking)
+  renderSelection();
 
   simulation.on('tick', () => {{
     link
