@@ -8395,6 +8395,48 @@ const GRAPH_DATA = {graph_json};
     return null;
   }}
 
+  function applyLens(lensId) {{
+    // Resolve lens object from registry
+    const lens = LENSES.find(l => l.id === lensId);
+
+    if (!lens) {{
+      // No lens active — clear all lens-related classes
+      node.classed('lens-lit', false).classed('lens-dimmed', false);
+      link.classed('lens-edge-lit', false)
+          .classed('lens-edge-fade', false)
+          .classed('lens-edge-dimmed', false);
+      return;
+    }}
+
+    // Build member set (page IDs that are members of this lens)
+    const memberSet = new Set(lens.members);
+
+    // Node classes: lit if id in memberSet, dimmed otherwise
+    node.classed('lens-lit', d => memberSet.has(d.id));
+    node.classed('lens-dimmed', d => !memberSet.has(d.id));
+
+    // Edge classification based on endpoint membership.
+    // D3 force simulation mutates edge.source and edge.target from
+    // string IDs to node object references after the simulation runs,
+    // so handle both cases.
+    function endpointId(end) {{
+      return typeof end === 'object' ? end.id : end;
+    }}
+
+    link.classed('lens-edge-lit', d => {{
+      return memberSet.has(endpointId(d.source)) && memberSet.has(endpointId(d.target));
+    }});
+    link.classed('lens-edge-fade', d => {{
+      const sourceLit = memberSet.has(endpointId(d.source));
+      const targetLit = memberSet.has(endpointId(d.target));
+      // One endpoint lit, but not both
+      return (sourceLit !== targetLit);
+    }});
+    link.classed('lens-edge-dimmed', d => {{
+      return !memberSet.has(endpointId(d.source)) && !memberSet.has(endpointId(d.target));
+    }});
+  }}
+
   function setLens(lensId) {{
     // Normalize: 'all' or null both mean no lens
     const normalized = (lensId && lensId !== 'all') ? lensId : null;
@@ -8424,7 +8466,8 @@ const GRAPH_DATA = {graph_json};
       }});
     }}
 
-    // T6.2 wires applyLens here to do the highlight/dim work.
+    // Apply visual highlight/dim to the graph
+    applyLens(normalized);
   }}
 
   function openLensListbox() {{
@@ -8622,7 +8665,13 @@ const GRAPH_DATA = {graph_json};
     }}
   }}
 
-  window.addEventListener('hashchange', renderSelection);
+  window.addEventListener('hashchange', () => {{
+    // Re-sync both selection state and lens state from the URL.
+    // setLens reads the lens from URL hash and updates trigger + applyLens.
+    // renderSelection reads node from hash and updates panel + .selected class.
+    setLens(getActiveLensFromHash());
+    renderSelection();
+  }});
 
   // Esc clears selection
   window.addEventListener('keydown', (event) => {{

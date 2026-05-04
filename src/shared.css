@@ -1615,6 +1615,53 @@ main.kg-page .kg-shell {
   margin-right: 0;
 }
 
+/* ── KG Lens — highlight/dim activation (T6.2) ────────────
+   Classes are added to nodes and edges by applyLens(). When
+   no lens is active, no lens-* class is present and rendering
+   reverts to default styling. Per Decision 4. */
+
+/* Node opacity transition — applies even when classes are absent
+   so the fade-out / fade-in feels symmetric */
+.kg-node {
+  transition: opacity 350ms ease-in-out;
+}
+
+/* Lit nodes: full opacity (default — no class needed),
+   but we declare the rule for clarity in case future
+   interactions want to over-emphasise lit state */
+.kg-node.lens-lit {
+  opacity: 1;
+}
+
+/* Dimmed nodes: 25% opacity per Decision 4 */
+.kg-node.lens-dimmed {
+  opacity: 0.25;
+}
+
+/* Edge transitions — opacity, stroke colour, stroke width */
+.kg-link {
+  transition: opacity 350ms ease-in-out,
+              stroke 350ms ease-in-out,
+              stroke-width 350ms ease-in-out;
+}
+
+/* Edges between two lit nodes: terracotta, thicker, 90% opacity */
+.kg-link.lens-edge-lit {
+  stroke: #C96330;
+  stroke-width: 2.25px;  /* 1.5x the typical 1.5px */
+  opacity: 0.9;
+}
+
+/* Edges with one lit endpoint: 30% opacity, original colour */
+.kg-link.lens-edge-fade {
+  opacity: 0.3;
+}
+
+/* Edges with no lit endpoints: 25% opacity */
+.kg-link.lens-edge-dimmed {
+  opacity: 0.25;
+}
+
 /* ── KG Lens Selector (T6.1) ────────────────────────────── */
 .kg-lens-selector {
   position: relative;
