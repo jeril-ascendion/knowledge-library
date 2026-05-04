@@ -672,6 +672,56 @@ Polish the mobile panel into a proper drawer.
 
 **Tool routing:** Claude Design for the interaction spec, Claude Code for the touch event handling.
 
+#### EPIC-5 retrospective (May 4, 2026)
+
+Shipped: side panel system covering all three node types (page, standard, section), desktop collapse-to-rail with keyboard shortcut, mobile bottom drawer with peek/open/full states, full-viewport layout for the KG page. 7 commits, ~6 hours of focused work, single calendar day.
+
+##### What worked
+
+**Pre-flight introspection paid off, especially on layout work.** Before writing the polish prompt that touched layout structure, we did a 30-second grep + sed inspection of the page wrapper hierarchy, the .shell container max-width rule, and the existing `#kg-svg` height. That five-minute investment surfaced that `.article-body` already has `max-width: none` and the constraint was at `.shell` — saving us from writing a wrong-shaped breakout edit. The rule from EPIC-3 ("pre-flight introspection before writing prompts → single-iteration convergence") continues to hold.
+
+**Locking architectural decisions before T5.1.** Decisions 1-8 (CSS Grid layout, URL hash as state source, dynamic per-selection rendering, 880px breakpoint, 400px panel width, "Open page" as plain `<a href>`, empty state copy, panel HTML structure) were committed as a separate doc commit BEFORE any implementation. This made every subsequent prompt cleaner: each task could reference "per Decision N" and Claude Code didn't have to make interpretive calls.
+
+**Small focused commits as save points.** Seven commits across the EPIC, each crossing a meaningful checkpoint: shell-only, page-panel, standard+section panels, collapse-rail+drawer, polish. When polish revealed four rounds of additional issues, we never had to roll back functional work — each prior commit was a known-good state.
+
+**Path B locked early, mockup as north star.** The decision to keep the full Claude Design mockup as the v1.1 north star (vs. a stripped-down Path A) before T5.1 meant every implementation task had a concrete visual reference. When questions came up mid-implementation ("which way does the collapse arrow point", "what color is the lens badge background"), the mockup answered them. Without that anchor, we'd have made interpretive calls that could've drifted.
+
+##### What we learned
+
+**Polish is its own work, and it has rounds.** The original plan was "T5.1.5 + one polish commit." Reality: polish surfaced four rounds of issues across browser testing, with each round revealing new problems made visible by the previous fixes. Pattern observed: layout issues only become visible after content fills the layout; collapse issues only become visible after collapse works; rail spacing issues only become visible after rail content stabilises. Future EPICs should budget multi-round polish, not single-round.
+
+**CTA links inheriting site-wide accent color is a recurring trap.** The site's `.article-body a { color: var(--accent) }` rule overrode our panel-specific colors three separate times: list links, aligned links, CTA text. Fix is consistently the same — higher-specificity selector with `.kg-panel` prefix. Worth noting in design system docs.
+
+**`:has()` selector unlocked dynamic grid redistribution without JS.** When the panel collapses, having `.kg-shell:has(.kg-panel.is-collapsed) { grid-template-columns: 1fr 56px; }` redistributes the freed 344px to the canvas column purely through CSS. Pre-`:has()`, this would've needed a JS class on the parent — added complexity for a state-machine concern. Modern CSS supports the architecture we want.
+
+**Heredoc + pasted markdown = lossy.** The polish commit message got mangled twice when pasted into a bash heredoc — markdown auto-linking added `[text](url)` brackets to plain words like `generate.py`, and special characters were silently truncated. Fix: write commit messages to a temp file via `cat > /tmp/msg.txt << 'EOF'`, then `git commit -F /tmp/msg.txt`. The `-F` flag also avoids any shell quoting issues with the message body. New durable rule: prefer `-F file` over heredoc for any non-trivial commit message.
+
+**D3 force simulation doesn't reflow on container resize.** When the canvas grows wider on collapse, the SVG container reflows but the D3-simulated node positions stay frozen. Visible cost: the graph "looks" off-center when canvas expands. Pragmatic fix shipped (CSS-only canvas redistribution); real fix (simulation reheating with recomputed force-center) deferred to v1.2 as its own scoped task. Lesson: layout systems and simulation systems need to be wired together explicitly; one isn't automatically responsive to the other.
+
+**Mobile testing in DevTools has gaps.** Touch event handling on iOS Safari has real quirks that DevTools' touch emulation doesn't always reproduce. Drag worked under mouse-emulation; tap-to-cycle worked under touch emulation; but real-device validation is still needed before the EPIC can be considered "done on mobile." Action: use a real iPhone to verify before marking v1.1 GA.
+
+##### Decisions locked during EPIC-5 (additions to the spec)
+
+- URL hash format: `#node=<id>` with URL-encoded ID. Empty hash = empty state. Stale hash = empty state (no error).
+- Mobile auto-promote: selecting a node from drawer's peek state promotes drawer to open. Open-to-full or full-to-peek transitions remain manual (user-controlled).
+- Standards panel shows what's available; metadata enrichment is EPIC-7+ scope.
+- Layout selector deferred. Minimap deferred to EPIC-10. Sparse/dense toggle cut.
+- "Panel collapsed" footer text removed; rail's visual state communicates the mode.
+
+##### Known follow-ups (tracked, not blocking)
+
+- **F1: D3 simulation reheat on canvas resize.** Real fix for the frozen-nodes-on-collapse issue. Target: v1.2 first sprint. Estimated effort: 2-4 hours including tuning to avoid jiggle.
+- **F2: Mobile real-device validation.** Test on physical iPhone (iOS Safari) and Android (Chrome). Sign off before v1.1 GA.
+- **F3: Standards metadata enrichment.** Schema additions for organisation, license, last-verified date. Coordinate with EPIC-7 standards work. Standards panel rendering already shape-compatible.
+- **F4: Polish round budget.** Future EPICs of comparable visual scope should plan for 2-3 polish rounds, not assume a single round.
+
+##### Velocity check
+
+- EPIC-5 budget: 2-3 working days for the largest EPIC.
+- Actual: ~6 hours of focused work in 1 calendar day.
+- 5/10 EPICs done by Day 6. Tracking comfortably ahead of the 25-35 working day budget.
+- Caveat: subsequent EPICs (6-10) are smaller in scope on average; this pace probably won't sustain across the back half, but the buffer earned in the first half allows for measured execution on the rest.
+
 ---
 
 ### EPIC-6 — Concept lens UI
