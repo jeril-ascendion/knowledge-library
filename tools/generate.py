@@ -8004,6 +8004,135 @@ const GRAPH_DATA = {graph_json};
     selectNode(d.id);
   }}).style('cursor', 'pointer');
 
+  // ─── Panel rendering helpers ───
+  function escapeHtml(str) {{
+    if (str === null || str === undefined) return '';
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+  }}
+
+  function nodeById(id) {{
+    return GRAPH_DATA.nodes.find(n => n.id === id);
+  }}
+
+  function findEdgesFor(nodeId, kind) {{
+    // Returns edges where this node is source AND kind matches
+    return GRAPH_DATA.links.filter(e => {{
+      const sourceId = typeof e.source === 'object' ? e.source.id : e.source;
+      return sourceId === nodeId && e.kind === kind;
+    }});
+  }}
+
+  function findIncomingEdgesFor(nodeId, kind) {{
+    // Returns edges where this node is target AND kind matches
+    return GRAPH_DATA.links.filter(e => {{
+      const targetId = typeof e.target === 'object' ? e.target.id : e.target;
+      return targetId === nodeId && e.kind === kind;
+    }});
+  }}
+
+  function getSectionLabel(sectionId) {{
+    const sec = nodeById(sectionId);
+    return sec ? sec.label : sectionId;
+  }}
+
+  function renderPagePanel(node) {{
+    const sectionLabel = getSectionLabel(node.section);
+    const hasLens = Array.isArray(node.lenses) && node.lenses.length > 0;
+
+    // Find related pages (outgoing 'related' edges where target is a page)
+    const relatedEdges = findEdgesFor(node.id, 'related');
+    const relatedPages = relatedEdges
+      .map(e => {{
+        const targetId = typeof e.target === 'object' ? e.target.id : e.target;
+        return nodeById(targetId);
+      }})
+      .filter(n => n && n.type === 'page');
+
+    // Find aligned standards (outgoing 'alignment' edges)
+    const alignmentEdges = findEdgesFor(node.id, 'alignment');
+    const alignedStandards = alignmentEdges
+      .map(e => {{
+        const targetId = typeof e.target === 'object' ? e.target.id : e.target;
+        return nodeById(targetId);
+      }})
+      .filter(n => n && n.type === 'standard');
+
+    // Build HTML
+    let html = '';
+
+    // Header: breadcrumb + close
+    html += '<div class="kg-panel-header">';
+    html += '  <nav class="kg-panel-breadcrumb" aria-label="Breadcrumb">';
+    html += '    ' + escapeHtml(sectionLabel) + ' <span class="kg-panel-breadcrumb-sep">/</span> ' + escapeHtml(node.label);
+    html += '  </nav>';
+    html += '  <button class="kg-panel-close" aria-label="Close panel" type="button">&times;</button>';
+    html += '</div>';
+
+    // Body
+    html += '<div class="kg-panel-body">';
+    html += '  <span class="kg-panel-pill kg-panel-pill-page"><span class="kg-panel-pill-dot"></span>Substantive page</span>';
+    html += '  <h2 class="kg-panel-title">' + escapeHtml(node.label) + '</h2>';
+
+    if (hasLens) {{
+      html += '  <span class="kg-panel-lens-badge"><span class="kg-panel-lens-dot"></span>Debt Ledger</span>';
+    }}
+
+    if (node.description) {{
+      html += '  <p class="kg-panel-description">' + escapeHtml(node.description) + '</p>';
+    }}
+
+    // Related pages section
+    if (relatedPages.length > 0) {{
+      html += '  <section class="kg-panel-section">';
+      html += '    <header class="kg-panel-section-header">';
+      html += '      <span class="kg-panel-section-label">Related pages</span>';
+      html += '      <span class="kg-panel-count">' + relatedPages.length + '</span>';
+      html += '    </header>';
+      html += '    <ul class="kg-panel-list">';
+      relatedPages.forEach(p => {{
+        const isLedger = Array.isArray(p.lenses) && p.lenses.length > 0;
+        const dotClass = isLedger ? 'kg-panel-list-dot-ledger' : 'kg-panel-list-dot-page';
+        html += '<li class="kg-panel-list-item">';
+        html += '  <span class="kg-panel-list-dot ' + dotClass + '"></span>';
+        html += '  <a href="#node=' + encodeURIComponent(p.id) + '" data-node-id="' + escapeHtml(p.id) + '" class="kg-panel-list-link">' + escapeHtml(p.label) + '</a>';
+        html += '</li>';
+      }});
+      html += '    </ul>';
+      html += '  </section>';
+    }}
+
+    // Aligned standards section
+    if (alignedStandards.length > 0) {{
+      html += '  <section class="kg-panel-section">';
+      html += '    <header class="kg-panel-section-header">';
+      html += '      <span class="kg-panel-section-label">Aligned standards</span>';
+      html += '      <span class="kg-panel-count">' + alignedStandards.length + '</span>';
+      html += '    </header>';
+      html += '    <ul class="kg-panel-list">';
+      alignedStandards.forEach(s => {{
+        html += '<li class="kg-panel-aligned-item">';
+        html += '  <span class="kg-panel-aligned-dot"></span>';
+        html += '  <a href="#node=' + encodeURIComponent(s.id) + '" data-node-id="' + escapeHtml(s.id) + '" class="kg-panel-aligned-link">' + escapeHtml(s.label) + '</a>';
+        html += '</li>';
+      }});
+      html += '    </ul>';
+      html += '  </section>';
+    }}
+
+    html += '</div>';  // close kg-panel-body
+
+    // Footer CTA
+    if (node.url) {{
+      html += '<a class="kg-panel-cta" href="..' + escapeHtml(node.url) + '">';
+      html += '  Open page <span class="kg-panel-cta-arrow">&rarr;</span>';
+      html += '</a>';
+    }}
+
+    return html;
+  }}
+
   // ─── Selection state (URL hash as source of truth) ───
   function getSelectedFromHash() {{
     const m = window.location.hash.match(/^#node=(.+)$/);
@@ -8026,9 +8155,48 @@ const GRAPH_DATA = {graph_json};
     const id = getSelectedFromHash();
     // Toggle .selected class on nodes
     node.classed('selected', d => d.id === id);
-    // T5.1.3+ replaces this with actual panel rendering.
-    // For T5.1.2, just log so we can verify the wiring works.
-    console.log('selected:', id);
+
+    const panel = document.getElementById('kg-panel');
+    if (!panel) return;
+
+    if (id === null) {{
+      // Empty state — restore original empty state HTML
+      panel.innerHTML = '<div class="kg-panel-empty"><p class="kg-panel-empty-copy">Click any node to open it here. Pages, standards, and topic groups &mdash; explore relationships without losing your place.</p></div>';
+      return;
+    }}
+
+    const selected = nodeById(id);
+    if (!selected) {{
+      // Unknown id (e.g., stale deep link) — show empty state
+      panel.innerHTML = '<div class="kg-panel-empty"><p class="kg-panel-empty-copy">Click any node to open it here. Pages, standards, and topic groups &mdash; explore relationships without losing your place.</p></div>';
+      return;
+    }}
+
+    if (selected.type === 'page') {{
+      panel.innerHTML = renderPagePanel(selected);
+
+      // Wire close button
+      const closeBtn = panel.querySelector('.kg-panel-close');
+      if (closeBtn) {{
+        closeBtn.addEventListener('click', () => selectNode(null));
+      }}
+
+      // Wire panel-list-link clicks: prevent default, call selectNode
+      panel.querySelectorAll('.kg-panel-list-link, .kg-panel-aligned-link').forEach(link => {{
+        link.addEventListener('click', (event) => {{
+          event.preventDefault();
+          const targetId = link.getAttribute('data-node-id');
+          if (targetId) selectNode(targetId);
+        }});
+      }});
+
+      // Scroll panel back to top so each new selection starts from the top
+      panel.scrollTop = 0;
+    }} else {{
+      // Standard or section — T5.1.4 will render these properly.
+      // For now, show empty state with a hint about what was selected.
+      panel.innerHTML = '<div class="kg-panel-empty"><p class="kg-panel-empty-copy">Selected: ' + escapeHtml(selected.label) + ' (' + escapeHtml(selected.type) + ')<br><small style="display:block; margin-top: 0.75rem; font-size: 0.85rem; opacity: 0.7;">Standard and topic-group panels render in T5.1.4.</small></p></div>';
+    }}
   }}
 
   window.addEventListener('hashchange', renderSelection);
