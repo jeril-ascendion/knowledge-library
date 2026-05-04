@@ -7851,6 +7851,9 @@ def gen_knowledge_graph_page(graph_data, out_root):
     </div>
 
     <div class="article-body">
+      <div class="kg-lens-banner" id="kg-lens-banner" style="display: none;" role="status" aria-live="polite">
+        <p class="kg-lens-banner-text" id="kg-lens-banner-text"></p>
+      </div>
       <div class="kg-shell">
         <div class="kg-controls">
           <div class="kg-legend">
@@ -8468,6 +8471,25 @@ const GRAPH_DATA = {graph_json};
 
     // Apply visual highlight/dim to the graph
     applyLens(normalized);
+
+    // Update caption banner — per Decision 5
+    const banner = document.getElementById('kg-lens-banner');
+    const bannerText = document.getElementById('kg-lens-banner-text');
+    if (banner && bannerText) {{
+      if (normalized) {{
+        const lens = LENSES.find(l => l.id === normalized);
+        if (lens && lens.description) {{
+          bannerText.textContent = lens.description;
+          banner.style.display = 'block';
+        }} else {{
+          banner.style.display = 'none';
+          bannerText.textContent = '';
+        }}
+      }} else {{
+        banner.style.display = 'none';
+        bannerText.textContent = '';
+      }}
+    }}
   }}
 
   function openLensListbox() {{

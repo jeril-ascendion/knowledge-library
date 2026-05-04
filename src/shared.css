@@ -1615,6 +1615,28 @@ main.kg-page .kg-shell {
   margin-right: 0;
 }
 
+/* ── KG Lens caption banner (T6.3) ─────────────────────────
+   Visible only when a lens is active. Sits above .kg-shell
+   within .article-body, inheriting the full-viewport width
+   treatment from EPIC-5's main.kg-page > .shell override.
+   Per Decision 5. */
+.kg-lens-banner {
+  background: rgba(201, 99, 48, 0.04);
+  border-left: 4px solid #C96330;
+  padding: 0.875rem 1.25rem;
+  margin: 0 0 1rem 0;
+  border-radius: 0 0.25rem 0.25rem 0;
+}
+.kg-lens-banner-text {
+  margin: 0;
+  font-family: 'IBM Plex Serif', Georgia, serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--ink-2, #3C3C3C);
+  text-wrap: pretty;
+}
+
 /* ── KG Lens — highlight/dim activation (T6.2) ────────────
    Classes are added to nodes and edges by applyLens(). When
    no lens is active, no lens-* class is present and rendering
