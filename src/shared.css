@@ -1183,6 +1183,91 @@ a.hero-tag:focus-visible {
   font-size: 1.1rem;
   line-height: 1;
 }
+
+/* ── KG Panel: Standard pill (neutral grey instead of orange) ─── */
+.kg-panel-pill-standard {
+  color: var(--ink-2, #6B6B6B);
+}
+.kg-panel-pill-dot-standard {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--ink-2, #6B6B6B);
+  /* Square shape to mirror the standard node geometry in the graph */
+  border-radius: 1px;
+  transform: rotate(45deg);
+}
+
+/* ── KG Panel: Standard "Open source" outline button ───────── */
+.kg-panel-source-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid rgba(14, 14, 14, 0.18);
+  border-radius: 0.3rem;
+  color: var(--ink, #1A1A1A);
+  text-decoration: none;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+  transition: background var(--t, 0.15s ease), border-color var(--t, 0.15s ease);
+}
+.kg-panel-source-link:hover {
+  background: rgba(14, 14, 14, 0.04);
+  border-color: rgba(14, 14, 14, 0.32);
+}
+.kg-panel-source-link-arrow {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+/* ── KG Panel: Rich list (member pages with descriptions) ───── */
+.kg-panel-list-rich {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+.kg-panel-list-rich-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+}
+.kg-panel-list-rich-item .kg-panel-list-dot {
+  margin-top: 0.45rem;
+}
+.kg-panel-list-rich-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  flex: 1;
+}
+.kg-panel-list-rich-title {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink, #1A1A1A);
+  text-decoration: none;
+  line-height: 1.3;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--t, 0.15s ease);
+  align-self: flex-start;
+}
+.kg-panel-list-rich-title:hover {
+  border-bottom-color: var(--ink, #1A1A1A);
+}
+.kg-panel-list-rich-desc {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.78rem;
+  color: var(--ink-2, #6B6B6B);
+  line-height: 1.4;
+}
+
 .kg-tooltip {
   position: absolute;
   background: #1A1A1A;

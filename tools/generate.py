@@ -8037,6 +8037,26 @@ const GRAPH_DATA = {graph_json};
     return sec ? sec.label : sectionId;
   }}
 
+  function wirePanelInteractions(panel) {{
+    // Wire close button
+    const closeBtn = panel.querySelector('.kg-panel-close');
+    if (closeBtn) {{
+      closeBtn.addEventListener('click', () => selectNode(null));
+    }}
+
+    // Wire panel-list-link clicks (used by all three panels): preventDefault, call selectNode
+    panel.querySelectorAll('.kg-panel-list-link, .kg-panel-aligned-link, .kg-panel-list-rich-title').forEach(link => {{
+      link.addEventListener('click', (event) => {{
+        event.preventDefault();
+        const targetId = link.getAttribute('data-node-id');
+        if (targetId) selectNode(targetId);
+      }});
+    }});
+
+    // Scroll panel back to top so each new selection starts from the top
+    panel.scrollTop = 0;
+  }}
+
   function renderPagePanel(node) {{
     const sectionLabel = getSectionLabel(node.section);
     const hasLens = Array.isArray(node.lenses) && node.lenses.length > 0;
@@ -8133,6 +8153,124 @@ const GRAPH_DATA = {graph_json};
     return html;
   }}
 
+  function renderStandardPanel(node) {{
+    // Find pages that align with this standard (incoming 'alignment' edges)
+    const alignmentEdges = findIncomingEdgesFor(node.id, 'alignment');
+    const aligningPages = alignmentEdges
+      .map(e => {{
+        const sourceId = typeof e.source === 'object' ? e.source.id : e.source;
+        return nodeById(sourceId);
+      }})
+      .filter(n => n && n.type === 'page');
+
+    let html = '';
+
+    // Header
+    html += '<div class="kg-panel-header">';
+    html += '  <nav class="kg-panel-breadcrumb" aria-label="Breadcrumb">Standard</nav>';
+    html += '  <button class="kg-panel-close" aria-label="Close panel" type="button">&times;</button>';
+    html += '</div>';
+
+    // Body
+    html += '<div class="kg-panel-body">';
+    html += '  <span class="kg-panel-pill kg-panel-pill-standard"><span class="kg-panel-pill-dot-standard"></span>Standard</span>';
+    html += '  <h2 class="kg-panel-title">' + escapeHtml(node.label) + '</h2>';
+
+    if (node.description) {{
+      html += '  <p class="kg-panel-description">' + escapeHtml(node.description) + '</p>';
+    }}
+
+    // Open source link (only if URL is non-empty)
+    if (node.url) {{
+      html += '  <a class="kg-panel-source-link" href="' + escapeHtml(node.url) + '" target="_blank" rel="noopener">';
+      html += '    <span class="kg-panel-source-link-arrow">&#8599;</span>';
+      html += '    Open source';
+      html += '  </a>';
+    }}
+
+    // Pages aligning with this standard
+    if (aligningPages.length > 0) {{
+      html += '  <section class="kg-panel-section">';
+      html += '    <header class="kg-panel-section-header">';
+      html += '      <span class="kg-panel-section-label">Pages aligning with this standard</span>';
+      html += '      <span class="kg-panel-count">' + aligningPages.length + '</span>';
+      html += '    </header>';
+      html += '    <ul class="kg-panel-list">';
+      aligningPages.forEach(p => {{
+        const isLedger = Array.isArray(p.lenses) && p.lenses.length > 0;
+        const dotClass = isLedger ? 'kg-panel-list-dot-ledger' : 'kg-panel-list-dot-page';
+        html += '<li class="kg-panel-list-item">';
+        html += '  <span class="kg-panel-list-dot ' + dotClass + '"></span>';
+        html += '  <a href="#node=' + encodeURIComponent(p.id) + '" data-node-id="' + escapeHtml(p.id) + '" class="kg-panel-list-link">' + escapeHtml(p.label) + '</a>';
+        html += '</li>';
+      }});
+      html += '    </ul>';
+      html += '  </section>';
+    }}
+
+    html += '</div>';  // close kg-panel-body
+
+    return html;
+  }}
+
+  function renderSectionPanel(node) {{
+    // Find member pages (outgoing 'contains' edges)
+    const containsEdges = findEdgesFor(node.id, 'contains');
+    const memberPages = containsEdges
+      .map(e => {{
+        const targetId = typeof e.target === 'object' ? e.target.id : e.target;
+        return nodeById(targetId);
+      }})
+      .filter(n => n && n.type === 'page');
+
+    let html = '';
+
+    // Header
+    html += '<div class="kg-panel-header">';
+    html += '  <nav class="kg-panel-breadcrumb" aria-label="Breadcrumb">Topic group <span class="kg-panel-breadcrumb-sep">·</span> ' + memberPages.length + ' pages</nav>';
+    html += '  <button class="kg-panel-close" aria-label="Close panel" type="button">&times;</button>';
+    html += '</div>';
+
+    // Body
+    html += '<div class="kg-panel-body">';
+    html += '  <h2 class="kg-panel-title">' + escapeHtml(node.label) + '</h2>';
+
+    if (node.description) {{
+      html += '  <p class="kg-panel-description">' + escapeHtml(node.description) + '</p>';
+    }}
+
+    // Member pages section
+    if (memberPages.length > 0) {{
+      html += '  <section class="kg-panel-section">';
+      html += '    <header class="kg-panel-section-header">';
+      html += '      <span class="kg-panel-section-label">Member pages</span>';
+      html += '      <span class="kg-panel-count">' + memberPages.length + '</span>';
+      html += '    </header>';
+      html += '    <ul class="kg-panel-list-rich">';
+      memberPages.forEach(p => {{
+        const isLedger = Array.isArray(p.lenses) && p.lenses.length > 0;
+        const dotClass = isLedger ? 'kg-panel-list-dot-ledger' : 'kg-panel-list-dot-page';
+        // Truncate description to ~80 chars
+        const truncDesc = p.description ? (p.description.length > 80 ? p.description.substring(0, 80).trim() + '…' : p.description) : '';
+        html += '<li class="kg-panel-list-rich-item">';
+        html += '  <span class="kg-panel-list-dot ' + dotClass + '"></span>';
+        html += '  <div class="kg-panel-list-rich-content">';
+        html += '    <a href="#node=' + encodeURIComponent(p.id) + '" data-node-id="' + escapeHtml(p.id) + '" class="kg-panel-list-rich-title">' + escapeHtml(p.label) + '</a>';
+        if (truncDesc) {{
+          html += '    <span class="kg-panel-list-rich-desc">' + escapeHtml(truncDesc) + '</span>';
+        }}
+        html += '  </div>';
+        html += '</li>';
+      }});
+      html += '    </ul>';
+      html += '  </section>';
+    }}
+
+    html += '</div>';  // close kg-panel-body
+
+    return html;
+  }}
+
   // ─── Selection state (URL hash as source of truth) ───
   function getSelectedFromHash() {{
     const m = window.location.hash.match(/^#node=(.+)$/);
@@ -8174,28 +8312,16 @@ const GRAPH_DATA = {graph_json};
 
     if (selected.type === 'page') {{
       panel.innerHTML = renderPagePanel(selected);
-
-      // Wire close button
-      const closeBtn = panel.querySelector('.kg-panel-close');
-      if (closeBtn) {{
-        closeBtn.addEventListener('click', () => selectNode(null));
-      }}
-
-      // Wire panel-list-link clicks: prevent default, call selectNode
-      panel.querySelectorAll('.kg-panel-list-link, .kg-panel-aligned-link').forEach(link => {{
-        link.addEventListener('click', (event) => {{
-          event.preventDefault();
-          const targetId = link.getAttribute('data-node-id');
-          if (targetId) selectNode(targetId);
-        }});
-      }});
-
-      // Scroll panel back to top so each new selection starts from the top
-      panel.scrollTop = 0;
+      wirePanelInteractions(panel);
+    }} else if (selected.type === 'standard') {{
+      panel.innerHTML = renderStandardPanel(selected);
+      wirePanelInteractions(panel);
+    }} else if (selected.type === 'section') {{
+      panel.innerHTML = renderSectionPanel(selected);
+      wirePanelInteractions(panel);
     }} else {{
-      // Standard or section — T5.1.4 will render these properly.
-      // For now, show empty state with a hint about what was selected.
-      panel.innerHTML = '<div class="kg-panel-empty"><p class="kg-panel-empty-copy">Selected: ' + escapeHtml(selected.label) + ' (' + escapeHtml(selected.type) + ')<br><small style="display:block; margin-top: 0.75rem; font-size: 0.85rem; opacity: 0.7;">Standard and topic-group panels render in T5.1.4.</small></p></div>';
+      // Unknown type — show empty state
+      panel.innerHTML = '<div class="kg-panel-empty"><p class="kg-panel-empty-copy">Click any node to open it here. Pages, standards, and topic groups &mdash; explore relationships without losing your place.</p></div>';
     }}
   }}
 
