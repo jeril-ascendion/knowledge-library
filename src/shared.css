@@ -831,7 +831,19 @@ a.hero-tag:focus-visible {
   border-radius: var(--r-lg);
   padding: 1.25rem;
   margin: 1rem 0 2rem;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "controls controls"
+    "canvas   panel"
+    "note     note";
+  gap: 1.25rem;
 }
+.kg-controls    { grid-area: controls; }
+.kg-canvas-wrap { grid-area: canvas; }
+.kg-panel       { grid-area: panel; }
+.kg-note        { grid-area: note; }
 .kg-controls {
   display: flex;
   justify-content: space-between;
@@ -900,9 +912,496 @@ a.hero-tag:focus-visible {
 }
 #kg-svg {
   width: 100%;
-  height: 620px;
+  height: clamp(540px, 65vh, 720px);
   display: block;
 }
+.kg-panel {
+  background: #EFEEE7;
+  border: 1px solid var(--border, #E0DED7);
+  border-radius: 0.5rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.kg-panel-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.75rem;
+}
+.kg-panel-empty-copy {
+  font-family: Georgia, 'IBM Plex Serif', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--ink-2, #3C3C3C);
+  margin: 0;
+  text-wrap: pretty;
+}
+
+/* ── KG Panel: Header (breadcrumb + close) ───────────────── */
+.kg-panel-header {
+  background: #FAFAF7;
+  padding: 1.25rem 1.5rem 0.875rem 3.5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-bottom: 1px solid rgba(14, 14, 14, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.kg-panel-breadcrumb {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2, #6B6B6B);
+  line-height: 1.4;
+  padding-top: 0.25rem;
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+.kg-panel-breadcrumb-sep {
+  margin: 0 0.4em;
+  opacity: 0.5;
+}
+.kg-panel-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 0.2rem 0.4rem;
+  color: var(--ink-2, #6B6B6B);
+  border-radius: 0.25rem;
+  transition: background var(--t, 0.15s ease), color var(--t, 0.15s ease);
+  flex-shrink: 0;
+}
+.kg-panel-close:hover {
+  background: rgba(14, 14, 14, 0.06);
+  color: var(--ink, #1A1A1A);
+}
+
+/* ── KG Panel: Body ──────────────────────────────────────── */
+.kg-panel-body {
+  padding: 1.25rem 1.5rem 1.5rem 1.5rem;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 0;
+}
+.kg-panel-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: #C96330;
+  margin-bottom: 0.5rem;
+}
+.kg-panel-pill-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #C96330;
+}
+.kg-panel-title {
+  font-family: 'IBM Plex Serif', Georgia, serif;
+  font-size: 1.75rem;
+  line-height: 1.2;
+  color: var(--ink, #1A1A1A);
+  margin: 0 0 0.75rem 0;
+  font-weight: 500;
+}
+.kg-panel-lens-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #C96330;
+  background: rgba(201, 99, 48, 0.08);
+  border: 1px solid rgba(201, 99, 48, 0.3);
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+.kg-panel-lens-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #C96330;
+}
+.kg-panel-description {
+  font-family: 'IBM Plex Serif', Georgia, serif;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--ink-2, #3C3C3C);
+  margin: 0 0 1.5rem 0;
+}
+
+/* ── KG Panel: Sections (Related, Aligned) ───────────────── */
+.kg-panel-section {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(14, 14, 14, 0.06);
+  border-radius: 0.4rem;
+  padding: 0.875rem 1rem;
+  margin-bottom: 1rem;
+}
+.kg-panel-section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.625rem;
+}
+.kg-panel-section-label {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2, #6B6B6B);
+  font-weight: 500;
+}
+.kg-panel-count {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.75rem;
+  color: var(--ink-2, #9A9A9A);
+  font-weight: 400;
+}
+.kg-panel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.kg-panel-list-item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+.kg-panel-list-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.kg-panel-list-dot-page {
+  background: var(--ink-2, #3C3C3C);
+  opacity: 0.55;
+}
+.kg-panel-list-dot-ledger {
+  background: #C96330;
+}
+.kg-panel-list-link {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.875rem;
+  color: var(--ink, #1A1A1A);
+  text-decoration: none;
+  line-height: 1.4;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--t, 0.15s ease);
+}
+.kg-panel-list-link:hover {
+  border-bottom-color: var(--ink, #1A1A1A);
+}
+
+/* Override site .article-body link color for panel links —
+   mockup specifies ink color; orange comes from inherited
+   site styles. Use higher-specificity selector to win without
+   !important. */
+.kg-panel .kg-panel-list-link,
+.kg-panel .kg-panel-aligned-link,
+.kg-panel .kg-panel-list-rich-title {
+  color: var(--ink, #1A1A1A);
+}
+.kg-panel .kg-panel-list-link:hover,
+.kg-panel .kg-panel-aligned-link:hover,
+.kg-panel .kg-panel-list-rich-title:hover {
+  color: var(--ink, #1A1A1A);
+  opacity: 1;
+}
+
+/* ── KG Panel: Aligned standards items (no truncation) ───── */
+.kg-panel-aligned-item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+.kg-panel-aligned-dot {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--ink-2, #9A9A9A);
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+.kg-panel-aligned-link {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.825rem;
+  color: var(--ink, #1A1A1A);
+  text-decoration: none;
+  line-height: 1.4;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--t, 0.15s ease);
+}
+.kg-panel-aligned-link:hover {
+  border-bottom-color: var(--ink, #1A1A1A);
+}
+
+/* ── KG Panel: CTA (Open page →) ─────────────────────────── */
+.kg-panel-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--ink, #1A1A1A);
+  color: #FFFFFF;
+  text-decoration: none;
+  padding: 0.875rem 1.25rem;
+  margin: 0 1.5rem 1.5rem 1.5rem;
+  border-radius: 0.3rem;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background var(--t, 0.15s ease);
+}
+.kg-panel-cta:hover {
+  background: #000000;
+}
+
+/* Force white CTA text — the site's .article-body a rule
+   sets color: var(--accent) which overrides the .kg-panel-cta
+   color. Higher-specificity selector ensures white wins. */
+.kg-panel a.kg-panel-cta,
+.kg-panel a.kg-panel-cta:hover,
+.kg-panel a.kg-panel-cta:visited {
+  color: #FFFFFF;
+}
+.kg-panel a.kg-panel-cta .kg-panel-cta-arrow {
+  color: #FFFFFF;
+}
+
+.kg-panel-cta-arrow {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+/* ── KG Panel: Collapse toggle button (top-right of expanded panel) ── */
+.kg-panel-collapse-toggle {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(14, 14, 14, 0.12);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  color: var(--ink-2, #6B6B6B);
+  transition: background var(--t, 0.15s ease), color var(--t, 0.15s ease);
+}
+.kg-panel-collapse-toggle:hover {
+  background: rgba(14, 14, 14, 0.06);
+  color: var(--ink, #1A1A1A);
+}
+.kg-panel-collapse-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+.kg-panel:not(.is-collapsed) .kg-panel-collapse-toggle {
+  /* shows › pointing right → collapse */
+}
+
+/* When panel is collapsed, hide the toggle (rail has its own expand button) */
+.kg-panel.is-collapsed .kg-panel-collapse-toggle {
+  display: none;
+}
+
+/* Also need the panel itself to be position: relative for absolute toggle */
+.kg-panel {
+  position: relative;
+}
+
+/* ── KG Panel: Collapsed rail (desktop, 56px wide) ────────── */
+.kg-panel-rail {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 0 1rem 0;
+  gap: 1.5rem;
+  height: 100%;
+}
+.kg-panel.is-collapsed {
+  /* Override the 400px column on the parent grid */
+  width: 56px;
+  min-width: 56px;
+}
+/* When the panel collapses, the .kg-shell grid template should
+   give the panel column its real 56px width — not the original
+   400px allocation — so the canvas column (1fr) absorbs the
+   freed horizontal space. */
+.kg-shell:has(.kg-panel.is-collapsed) {
+  grid-template-columns: 1fr 56px;
+}
+.kg-panel.is-collapsed .kg-panel-content,
+.kg-panel.is-collapsed .kg-panel-empty {
+  display: none;
+}
+.kg-panel.is-collapsed .kg-panel-rail {
+  display: flex;
+}
+.kg-panel-rail-expand {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: 1px solid rgba(14, 14, 14, 0.12);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  color: var(--ink-2, #3C3C3C);
+  font-size: 0.95rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--t, 0.15s ease);
+}
+.kg-panel-rail-expand:hover {
+  background: rgba(14, 14, 14, 0.06);
+}
+.kg-panel-rail-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(14, 14, 14, 0.12);
+}
+.kg-panel-rail-label {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: 'IBM Plex Serif', Georgia, serif;
+  font-size: 0.85rem;
+  color: var(--ink, #1A1A1A);
+  letter-spacing: 0.02em;
+  text-align: center;
+  max-height: 200px;
+  overflow: hidden;
+}
+/* ── KG Panel: Standard pill (neutral grey instead of orange) ─── */
+.kg-panel-pill-standard {
+  color: var(--ink-2, #6B6B6B);
+}
+.kg-panel-pill-dot-standard {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  background: var(--ink, #1A1A1A);
+  /* Square shape to mirror the standard node geometry in the graph,
+     slightly larger and darker than T5.1.4's version for better
+     visual identity at panel scale */
+  border-radius: 1px;
+  transform: rotate(45deg);
+  margin-right: 0.15em;
+}
+
+/* ── KG Panel: Standard "Open source" outline button ───────── */
+.kg-panel-source-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid rgba(14, 14, 14, 0.18);
+  border-radius: 0.3rem;
+  color: var(--ink, #1A1A1A);
+  text-decoration: none;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+  transition: background var(--t, 0.15s ease), border-color var(--t, 0.15s ease);
+}
+.kg-panel-source-link:hover {
+  background: rgba(14, 14, 14, 0.04);
+  border-color: rgba(14, 14, 14, 0.32);
+}
+.kg-panel-source-link-arrow {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+/* ── KG Panel: Rich list (member pages with descriptions) ───── */
+.kg-panel-list-rich {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+.kg-panel-list-rich-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+}
+.kg-panel-list-rich-item .kg-panel-list-dot {
+  margin-top: 0.45rem;
+}
+.kg-panel-list-rich-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  flex: 1;
+}
+.kg-panel-list-rich-title {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink, #1A1A1A);
+  text-decoration: none;
+  line-height: 1.3;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--t, 0.15s ease);
+  align-self: flex-start;
+}
+.kg-panel-list-rich-title:hover {
+  border-bottom-color: var(--ink, #1A1A1A);
+}
+.kg-panel-list-rich-desc {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.78rem;
+  color: var(--ink-2, #6B6B6B);
+  line-height: 1.4;
+}
+
 .kg-tooltip {
   position: absolute;
   background: #1A1A1A;
@@ -988,6 +1487,132 @@ a.hero-tag:focus-visible {
 }
 .kg-node-standard:hover .kg-label {
   opacity: 1;
+}
+
+/* T5.1.2 — selected node highlight */
+.kg-node.selected circle,
+.kg-node.selected polygon,
+.kg-node.selected rect {
+  stroke: var(--ink);
+  stroke-width: 3;
+  filter: drop-shadow(0 0 8px rgba(201, 99, 48, 0.4));
+}
+.kg-node.selected .kg-label {
+  opacity: 1;
+  font-weight: 600;
+}
+
+/* ── KG MOBILE: panel becomes a bottom drawer with three states ── */
+@media (max-width: 880px) {
+  .kg-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      "controls"
+      "canvas"
+      "note";
+  }
+  /* Panel removed from grid flow on mobile — becomes fixed bottom drawer */
+  .kg-panel {
+    grid-area: unset;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    max-height: none;
+    border-radius: 0.75rem 0.75rem 0 0;
+    border: none;
+    border-top: 1px solid rgba(14, 14, 14, 0.12);
+    box-shadow: 0 -8px 24px rgba(14, 14, 14, 0.08);
+    transition: height 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  /* Restore standard left padding on mobile (collapse toggle is hidden) */
+  .kg-panel-header {
+    padding-left: 1.5rem;
+  }
+  /* Drawer height by state */
+  .kg-panel[data-drawer-state="peek"] {
+    height: 60px;
+  }
+  .kg-panel[data-drawer-state="open"] {
+    height: 60vh;
+  }
+  .kg-panel[data-drawer-state="full"] {
+    height: 95vh;
+  }
+  /* During drag, use the inline custom property to override */
+  .kg-panel.is-dragging {
+    transition: none;
+    height: var(--drawer-drag-height, 60vh);
+  }
+  /* Drag handle visible only on mobile */
+  .kg-panel-drawer-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    flex-shrink: 0;
+  }
+  .kg-panel-drawer-handle-bar {
+    width: 36px;
+    height: 4px;
+    background: rgba(14, 14, 14, 0.18);
+    border-radius: 2px;
+  }
+  /* Hide the desktop collapse toggle on mobile */
+  .kg-panel-collapse-toggle {
+    display: none;
+  }
+  /* In peek mode, hide content body */
+  .kg-panel[data-drawer-state="peek"] .kg-panel-content,
+  .kg-panel[data-drawer-state="peek"] .kg-panel-empty {
+    overflow: hidden;
+  }
+}
+
+/* Drag handle hidden by default (desktop) */
+.kg-panel-drawer-handle {
+  display: none;
+}
+
+/* ─── KG PAGE: full-viewport layout (Option A + X) ───────────
+   The KG page benefits from canvas breathing room. We override
+   the standard .shell max-width constraint specifically when
+   <main class="kg-page"> is set. The article-hero (heading +
+   intro) stays at article width per Option X — heading reads
+   normally, kg-shell breaks out below. */
+
+/* The .shell normally constrains to var(--max) ~1100px.
+   On KG page, allow .shell to span full viewport with small
+   horizontal padding for breathing room. */
+main.kg-page > .shell {
+  max-width: none;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Article hero (heading + intro + summary stats) stays at
+   article width even though the parent .shell is now full-bleed.
+   This is Option X — readable heading, full-bleed canvas. */
+main.kg-page > .shell > .article-hero {
+  max-width: var(--max, 1100px);
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 2.5rem;
+}
+
+/* The article-body wrapper inherits .shell's full width.
+   Already has max-width: none from existing rules — confirmed. */
+
+/* The kg-shell itself can now span the full width.
+   Remove the side margin to use all available space. */
+main.kg-page .kg-shell {
+  margin-left: 0;
+  margin-right: 0;
 }
 
 /* ── EXTERNAL-LINK INDICATOR — subtle "↗" after links that open new tab ── */

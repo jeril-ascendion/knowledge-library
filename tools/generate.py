@@ -7811,7 +7811,7 @@ def gen_knowledge_graph_page(graph_data, out_root):
 
     body = f"""
 {nav}
-<main id="main">
+<main id="main" class="kg-page">
   <div class="shell">
     <div class="article-hero">
       <div class="hero-row">
@@ -7867,6 +7867,26 @@ def gen_knowledge_graph_page(graph_data, out_root):
           <svg id="kg-svg" role="img" aria-label="Knowledge graph visualization"></svg>
           <div id="kg-tooltip" class="kg-tooltip" aria-hidden="true"></div>
         </div>
+        <aside class="kg-panel" id="kg-panel" aria-label="Selection panel">
+          <button class="kg-panel-collapse-toggle" id="kg-panel-collapse-toggle" type="button" aria-label="Collapse panel" title="Collapse panel">
+            <span class="kg-panel-collapse-icon" aria-hidden="true">&rsaquo;</span>
+          </button>
+          <div class="kg-panel-rail" id="kg-panel-rail" aria-hidden="true">
+            <button class="kg-panel-rail-expand" type="button" aria-label="Expand panel" title="Expand panel">
+              <span aria-hidden="true">&lsaquo;</span>
+            </button>
+            <div class="kg-panel-rail-divider"></div>
+            <div class="kg-panel-rail-label" id="kg-panel-rail-label"></div>
+          </div>
+          <div class="kg-panel-content" id="kg-panel-content">
+            <div class="kg-panel-empty">
+              <p class="kg-panel-empty-copy">Click any node to open it here. Pages, standards, and topic groups &mdash; explore relationships without losing your place.</p>
+            </div>
+          </div>
+          <div class="kg-panel-drawer-handle" aria-hidden="true">
+            <div class="kg-panel-drawer-handle-bar"></div>
+          </div>
+        </aside>
         <p class="kg-note">
           Only pages with canonical, authored content appear in the graph today.
           Stub pages join automatically as they gain real content (Six principles,
@@ -7992,21 +8012,490 @@ const GRAPH_DATA = {graph_json};
     tooltip.setAttribute('aria-hidden', 'true');
   }});
 
-  // Click navigation
+  // T5.1.2 — Click selects node (panel-driven, no hard navigation).
+  // External standard links remain external; everything else opens panel.
   node.on('click', function(event, d) {{
     if (event.defaultPrevented) return;  // ignore drag-end clicks
-    if (d.type === 'section') {{
-      // T4.3 stub — EPIC-5 replaces this with side-panel rendering
-      console.log('section click:', d.id);
-      return;
-    }}
-    if (!d.url) return;
-    if (d.type === 'standard') {{
-      window.open(d.url, '_blank', 'noopener');
-    }} else {{
-      window.location.href = '..' + d.url;
-    }}
+    selectNode(d.id);
   }}).style('cursor', 'pointer');
+
+  // ─── Panel rendering helpers ───
+  function escapeHtml(str) {{
+    if (str === null || str === undefined) return '';
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+  }}
+
+  function nodeById(id) {{
+    return GRAPH_DATA.nodes.find(n => n.id === id);
+  }}
+
+  function findEdgesFor(nodeId, kind) {{
+    // Returns edges where this node is source AND kind matches
+    return GRAPH_DATA.links.filter(e => {{
+      const sourceId = typeof e.source === 'object' ? e.source.id : e.source;
+      return sourceId === nodeId && e.kind === kind;
+    }});
+  }}
+
+  function findIncomingEdgesFor(nodeId, kind) {{
+    // Returns edges where this node is target AND kind matches
+    return GRAPH_DATA.links.filter(e => {{
+      const targetId = typeof e.target === 'object' ? e.target.id : e.target;
+      return targetId === nodeId && e.kind === kind;
+    }});
+  }}
+
+  function getSectionLabel(sectionId) {{
+    const sec = nodeById(sectionId);
+    return sec ? sec.label : sectionId;
+  }}
+
+  function wirePanelInteractions(panel) {{
+    // Query inside the content wrapper (added in T5.1.5) rather than the panel root
+    const target = panel.querySelector('.kg-panel-content') || panel;
+
+    const closeBtn = target.querySelector('.kg-panel-close');
+    if (closeBtn) {{
+      closeBtn.addEventListener('click', () => selectNode(null));
+    }}
+
+    target.querySelectorAll('.kg-panel-list-link, .kg-panel-aligned-link, .kg-panel-list-rich-title').forEach(link => {{
+      link.addEventListener('click', (event) => {{
+        event.preventDefault();
+        const targetId = link.getAttribute('data-node-id');
+        if (targetId) selectNode(targetId);
+      }});
+    }});
+
+    target.scrollTop = 0;
+  }}
+
+  function renderPagePanel(node) {{
+    const sectionLabel = getSectionLabel(node.section);
+    const hasLens = Array.isArray(node.lenses) && node.lenses.length > 0;
+
+    // Find related pages (outgoing 'related' edges where target is a page)
+    const relatedEdges = findEdgesFor(node.id, 'related');
+    const relatedPages = relatedEdges
+      .map(e => {{
+        const targetId = typeof e.target === 'object' ? e.target.id : e.target;
+        return nodeById(targetId);
+      }})
+      .filter(n => n && n.type === 'page');
+
+    // Find aligned standards (outgoing 'alignment' edges)
+    const alignmentEdges = findEdgesFor(node.id, 'alignment');
+    const alignedStandards = alignmentEdges
+      .map(e => {{
+        const targetId = typeof e.target === 'object' ? e.target.id : e.target;
+        return nodeById(targetId);
+      }})
+      .filter(n => n && n.type === 'standard');
+
+    // Build HTML
+    let html = '';
+
+    // Header: breadcrumb + close
+    html += '<div class="kg-panel-header">';
+    html += '  <nav class="kg-panel-breadcrumb" aria-label="Breadcrumb">';
+    html += '    ' + escapeHtml(sectionLabel) + ' <span class="kg-panel-breadcrumb-sep">/</span> ' + escapeHtml(node.label);
+    html += '  </nav>';
+    html += '  <button class="kg-panel-close" aria-label="Close panel" type="button">&times;</button>';
+    html += '</div>';
+
+    // Body
+    html += '<div class="kg-panel-body">';
+    html += '  <span class="kg-panel-pill kg-panel-pill-page"><span class="kg-panel-pill-dot"></span>Substantive page</span>';
+    html += '  <h2 class="kg-panel-title">' + escapeHtml(node.label) + '</h2>';
+
+    if (hasLens) {{
+      html += '  <span class="kg-panel-lens-badge"><span class="kg-panel-lens-dot"></span>Debt Ledger</span>';
+    }}
+
+    if (node.description) {{
+      html += '  <p class="kg-panel-description">' + escapeHtml(node.description) + '</p>';
+    }}
+
+    // Related pages section
+    if (relatedPages.length > 0) {{
+      html += '  <section class="kg-panel-section">';
+      html += '    <header class="kg-panel-section-header">';
+      html += '      <span class="kg-panel-section-label">Related pages</span>';
+      html += '      <span class="kg-panel-count">' + relatedPages.length + '</span>';
+      html += '    </header>';
+      html += '    <ul class="kg-panel-list">';
+      relatedPages.forEach(p => {{
+        const isLedger = Array.isArray(p.lenses) && p.lenses.length > 0;
+        const dotClass = isLedger ? 'kg-panel-list-dot-ledger' : 'kg-panel-list-dot-page';
+        html += '<li class="kg-panel-list-item">';
+        html += '  <span class="kg-panel-list-dot ' + dotClass + '"></span>';
+        html += '  <a href="#node=' + encodeURIComponent(p.id) + '" data-node-id="' + escapeHtml(p.id) + '" class="kg-panel-list-link">' + escapeHtml(p.label) + '</a>';
+        html += '</li>';
+      }});
+      html += '    </ul>';
+      html += '  </section>';
+    }}
+
+    // Aligned standards section
+    if (alignedStandards.length > 0) {{
+      html += '  <section class="kg-panel-section">';
+      html += '    <header class="kg-panel-section-header">';
+      html += '      <span class="kg-panel-section-label">Aligned standards</span>';
+      html += '      <span class="kg-panel-count">' + alignedStandards.length + '</span>';
+      html += '    </header>';
+      html += '    <ul class="kg-panel-list">';
+      alignedStandards.forEach(s => {{
+        html += '<li class="kg-panel-aligned-item">';
+        html += '  <span class="kg-panel-aligned-dot"></span>';
+        html += '  <a href="#node=' + encodeURIComponent(s.id) + '" data-node-id="' + escapeHtml(s.id) + '" class="kg-panel-aligned-link">' + escapeHtml(s.label) + '</a>';
+        html += '</li>';
+      }});
+      html += '    </ul>';
+      html += '  </section>';
+    }}
+
+    html += '</div>';  // close kg-panel-body
+
+    // Footer CTA
+    if (node.url) {{
+      let openHref = '..' + node.url;
+      // Append index.html for trailing-slash URLs so file:// access
+      // (e.g., wsl.localhost previews) works. S3/CloudFront would
+      // auto-resolve to index.html, but file:// shows a directory listing.
+      if (openHref.endsWith('/')) openHref += 'index.html';
+      html += '<a class="kg-panel-cta" href="' + escapeHtml(openHref) + '">';
+      html += '  Open page <span class="kg-panel-cta-arrow">&rarr;</span>';
+      html += '</a>';
+    }}
+
+    return html;
+  }}
+
+  function renderStandardPanel(node) {{
+    // Find pages that align with this standard (incoming 'alignment' edges)
+    const alignmentEdges = findIncomingEdgesFor(node.id, 'alignment');
+    const aligningPages = alignmentEdges
+      .map(e => {{
+        const sourceId = typeof e.source === 'object' ? e.source.id : e.source;
+        return nodeById(sourceId);
+      }})
+      .filter(n => n && n.type === 'page');
+
+    let html = '';
+
+    // Header
+    html += '<div class="kg-panel-header">';
+    html += '  <nav class="kg-panel-breadcrumb" aria-label="Breadcrumb">Standard</nav>';
+    html += '  <button class="kg-panel-close" aria-label="Close panel" type="button">&times;</button>';
+    html += '</div>';
+
+    // Body
+    html += '<div class="kg-panel-body">';
+    html += '  <span class="kg-panel-pill kg-panel-pill-standard"><span class="kg-panel-pill-dot-standard"></span>Standard</span>';
+    html += '  <h2 class="kg-panel-title">' + escapeHtml(node.label) + '</h2>';
+
+    if (node.description) {{
+      html += '  <p class="kg-panel-description">' + escapeHtml(node.description) + '</p>';
+    }}
+
+    // Open source link (only if URL is non-empty)
+    if (node.url) {{
+      html += '  <a class="kg-panel-source-link" href="' + escapeHtml(node.url) + '" target="_blank" rel="noopener">';
+      html += '    <span class="kg-panel-source-link-arrow">&#8599;</span>';
+      html += '    Open source';
+      html += '  </a>';
+    }}
+
+    // Pages aligning with this standard
+    if (aligningPages.length > 0) {{
+      html += '  <section class="kg-panel-section">';
+      html += '    <header class="kg-panel-section-header">';
+      html += '      <span class="kg-panel-section-label">Pages aligning with this standard</span>';
+      html += '      <span class="kg-panel-count">' + aligningPages.length + '</span>';
+      html += '    </header>';
+      html += '    <ul class="kg-panel-list">';
+      aligningPages.forEach(p => {{
+        const isLedger = Array.isArray(p.lenses) && p.lenses.length > 0;
+        const dotClass = isLedger ? 'kg-panel-list-dot-ledger' : 'kg-panel-list-dot-page';
+        html += '<li class="kg-panel-list-item">';
+        html += '  <span class="kg-panel-list-dot ' + dotClass + '"></span>';
+        html += '  <a href="#node=' + encodeURIComponent(p.id) + '" data-node-id="' + escapeHtml(p.id) + '" class="kg-panel-list-link">' + escapeHtml(p.label) + '</a>';
+        html += '</li>';
+      }});
+      html += '    </ul>';
+      html += '  </section>';
+    }}
+
+    html += '</div>';  // close kg-panel-body
+
+    return html;
+  }}
+
+  function renderSectionPanel(node) {{
+    // Find member pages (outgoing 'contains' edges)
+    const containsEdges = findEdgesFor(node.id, 'contains');
+    const memberPages = containsEdges
+      .map(e => {{
+        const targetId = typeof e.target === 'object' ? e.target.id : e.target;
+        return nodeById(targetId);
+      }})
+      .filter(n => n && n.type === 'page');
+
+    let html = '';
+
+    // Header
+    html += '<div class="kg-panel-header">';
+    html += '  <nav class="kg-panel-breadcrumb" aria-label="Breadcrumb">Topic group <span class="kg-panel-breadcrumb-sep">·</span> ' + memberPages.length + ' pages</nav>';
+    html += '  <button class="kg-panel-close" aria-label="Close panel" type="button">&times;</button>';
+    html += '</div>';
+
+    // Body
+    html += '<div class="kg-panel-body">';
+    html += '  <h2 class="kg-panel-title">' + escapeHtml(node.label) + '</h2>';
+
+    if (node.description) {{
+      html += '  <p class="kg-panel-description">' + escapeHtml(node.description) + '</p>';
+    }}
+
+    // Member pages section
+    if (memberPages.length > 0) {{
+      html += '  <section class="kg-panel-section">';
+      html += '    <header class="kg-panel-section-header">';
+      html += '      <span class="kg-panel-section-label">Member pages</span>';
+      html += '      <span class="kg-panel-count">' + memberPages.length + '</span>';
+      html += '    </header>';
+      html += '    <ul class="kg-panel-list-rich">';
+      memberPages.forEach(p => {{
+        const isLedger = Array.isArray(p.lenses) && p.lenses.length > 0;
+        const dotClass = isLedger ? 'kg-panel-list-dot-ledger' : 'kg-panel-list-dot-page';
+        // Truncate description to ~80 chars
+        const truncDesc = p.description ? (p.description.length > 80 ? p.description.substring(0, 80).trim() + '…' : p.description) : '';
+        html += '<li class="kg-panel-list-rich-item">';
+        html += '  <span class="kg-panel-list-dot ' + dotClass + '"></span>';
+        html += '  <div class="kg-panel-list-rich-content">';
+        html += '    <a href="#node=' + encodeURIComponent(p.id) + '" data-node-id="' + escapeHtml(p.id) + '" class="kg-panel-list-rich-title">' + escapeHtml(p.label) + '</a>';
+        if (truncDesc) {{
+          html += '    <span class="kg-panel-list-rich-desc">' + escapeHtml(truncDesc) + '</span>';
+        }}
+        html += '  </div>';
+        html += '</li>';
+      }});
+      html += '    </ul>';
+      html += '  </section>';
+    }}
+
+    html += '</div>';  // close kg-panel-body
+
+    return html;
+  }}
+
+  // ─── Selection state (URL hash as source of truth) ───
+  function getSelectedFromHash() {{
+    const m = window.location.hash.match(/^#node=(.+)$/);
+    return m ? decodeURIComponent(m[1]) : null;
+  }}
+
+  function selectNode(id) {{
+    if (id === null || id === undefined) {{
+      // Clear selection
+      if (window.location.hash) {{
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+        window.dispatchEvent(new HashChangeEvent('hashchange'));
+      }}
+    }} else {{
+      window.location.hash = '#node=' + encodeURIComponent(id);
+    }}
+  }}
+
+  function renderSelection() {{
+    const id = getSelectedFromHash();
+    // Toggle .selected class on nodes
+    node.classed('selected', d => d.id === id);
+
+    const panel = document.getElementById('kg-panel');
+    const content = document.getElementById('kg-panel-content');
+    const rail = document.getElementById('kg-panel-rail-label');
+    if (!panel || !content) return;
+
+    let selected = null;
+
+    if (id === null) {{
+      // Empty state — restore original empty state HTML
+      content.innerHTML = '<div class="kg-panel-empty"><p class="kg-panel-empty-copy">Click any node to open it here. Pages, standards, and topic groups &mdash; explore relationships without losing your place.</p></div>';
+    }} else {{
+      selected = nodeById(id);
+      if (!selected) {{
+        // Unknown id (e.g., stale deep link) — show empty state
+        content.innerHTML = '<div class="kg-panel-empty"><p class="kg-panel-empty-copy">Click any node to open it here. Pages, standards, and topic groups &mdash; explore relationships without losing your place.</p></div>';
+      }} else if (selected.type === 'page') {{
+        content.innerHTML = renderPagePanel(selected);
+        wirePanelInteractions(panel);
+      }} else if (selected.type === 'standard') {{
+        content.innerHTML = renderStandardPanel(selected);
+        wirePanelInteractions(panel);
+      }} else if (selected.type === 'section') {{
+        content.innerHTML = renderSectionPanel(selected);
+        wirePanelInteractions(panel);
+      }} else {{
+        // Unknown type — show empty state
+        content.innerHTML = '<div class="kg-panel-empty"><p class="kg-panel-empty-copy">Click any node to open it here. Pages, standards, and topic groups &mdash; explore relationships without losing your place.</p></div>';
+      }}
+    }}
+
+    // Update the rail label for collapsed-mode
+    if (rail) {{
+      if (id === null || !selected) {{
+        rail.textContent = '';
+      }} else {{
+        rail.textContent = selected.label;
+      }}
+    }}
+
+    // On mobile: any selection auto-promotes drawer to 'open' state if currently 'peek'
+    if (id !== null && selected && window.matchMedia('(max-width: 880px)').matches) {{
+      const drawerState = panel.getAttribute('data-drawer-state');
+      if (drawerState === 'peek' || !drawerState) {{
+        setDrawerState('open');
+      }}
+    }}
+  }}
+
+  window.addEventListener('hashchange', renderSelection);
+
+  // Esc clears selection
+  window.addEventListener('keydown', (event) => {{
+    if (event.key === 'Escape') {{
+      selectNode(null);
+    }}
+  }});
+
+  // On load, render whatever the hash says (handles deep linking)
+  renderSelection();
+
+  // ─── Collapsed-rail (desktop) ───
+  function setCollapsed(collapsed) {{
+    const panelEl = document.getElementById('kg-panel');
+    if (!panelEl) return;
+    panelEl.classList.toggle('is-collapsed', !!collapsed);
+    // ARIA for toggle button
+    const toggle = document.getElementById('kg-panel-collapse-toggle');
+    if (toggle) {{
+      toggle.setAttribute('aria-label', collapsed ? 'Expand panel' : 'Collapse panel');
+      toggle.setAttribute('title', collapsed ? 'Expand panel ( [ )' : 'Collapse panel ( [ )');
+    }}
+  }}
+
+  // Wire collapse toggle (top-right of expanded panel)
+  const collapseToggle = document.getElementById('kg-panel-collapse-toggle');
+  if (collapseToggle) {{
+    collapseToggle.addEventListener('click', () => setCollapsed(true));
+  }}
+
+  // Wire rail expand button
+  const railExpand = document.querySelector('.kg-panel-rail-expand');
+  if (railExpand) {{
+    railExpand.addEventListener('click', () => setCollapsed(false));
+  }}
+
+  // Keyboard shortcut: [ toggles collapse
+  window.addEventListener('keydown', (event) => {{
+    if (event.key === '[') {{
+      const panelEl = document.getElementById('kg-panel');
+      if (panelEl) setCollapsed(!panelEl.classList.contains('is-collapsed'));
+    }}
+  }});
+
+  // ─── Mobile drawer (≤880px) ───
+  // States: 'peek' (60px), 'open' (~60vh), 'full' (~95vh)
+  function setDrawerState(state) {{
+    const panelEl = document.getElementById('kg-panel');
+    if (!panelEl) return;
+    if (!['peek', 'open', 'full'].includes(state)) state = 'open';
+    panelEl.setAttribute('data-drawer-state', state);
+  }}
+
+  // Initialize drawer state on mobile
+  function initDrawer() {{
+    const panelEl = document.getElementById('kg-panel');
+    if (!panelEl) return;
+    if (window.matchMedia('(max-width: 880px)').matches) {{
+      if (!panelEl.getAttribute('data-drawer-state')) {{
+        setDrawerState('peek');
+      }}
+    }} else {{
+      panelEl.removeAttribute('data-drawer-state');
+    }}
+  }}
+  initDrawer();
+  window.addEventListener('resize', initDrawer);
+
+  // Drawer drag handler
+  (function setupDrawerDrag() {{
+    const panelEl = document.getElementById('kg-panel');
+    const handle = panelEl ? panelEl.querySelector('.kg-panel-drawer-handle') : null;
+    if (!panelEl || !handle) return;
+
+    let startY = 0;
+    let startHeight = 0;
+    let dragging = false;
+
+    function onStart(event) {{
+      if (!window.matchMedia('(max-width: 880px)').matches) return;
+      dragging = true;
+      const touch = event.touches ? event.touches[0] : event;
+      startY = touch.clientY;
+      startHeight = panelEl.getBoundingClientRect().height;
+      panelEl.classList.add('is-dragging');
+      // Prevent scroll during drag
+      if (event.cancelable) event.preventDefault();
+    }}
+
+    function onMove(event) {{
+      if (!dragging) return;
+      const touch = event.touches ? event.touches[0] : event;
+      const deltaY = startY - touch.clientY;  // up is positive
+      // Apply transient height during drag (CSS uses --drawer-drag-height for transient state)
+      const newHeight = Math.max(50, startHeight + deltaY);
+      panelEl.style.setProperty('--drawer-drag-height', newHeight + 'px');
+    }}
+
+    function onEnd(event) {{
+      if (!dragging) return;
+      dragging = false;
+      panelEl.classList.remove('is-dragging');
+      panelEl.style.removeProperty('--drawer-drag-height');
+      // Determine target state from final height vs viewport
+      const finalHeight = panelEl.getBoundingClientRect().height;
+      const vh = window.innerHeight;
+      let target;
+      if (finalHeight < vh * 0.25) target = 'peek';
+      else if (finalHeight < vh * 0.75) target = 'open';
+      else target = 'full';
+      setDrawerState(target);
+    }}
+
+    handle.addEventListener('touchstart', onStart, {{ passive: false }});
+    handle.addEventListener('touchmove', onMove, {{ passive: false }});
+    handle.addEventListener('touchend', onEnd);
+    handle.addEventListener('mousedown', onStart);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onEnd);
+
+    // Tap (no drag) on handle: cycle peek → open → full → peek
+    let tapStartTime = 0;
+    handle.addEventListener('touchstart', () => {{ tapStartTime = Date.now(); }}, {{ passive: true }});
+    handle.addEventListener('touchend', (event) => {{
+      const elapsed = Date.now() - tapStartTime;
+      const moved = Math.abs((panelEl.style.getPropertyValue('--drawer-drag-height') || '0').replace('px','') - 0) > 10;
+      if (elapsed < 200 && !moved) {{
+        const current = panelEl.getAttribute('data-drawer-state') || 'peek';
+        const next = current === 'peek' ? 'open' : current === 'open' ? 'full' : 'peek';
+        setDrawerState(next);
+      }}
+    }});
+  }})();
 
   simulation.on('tick', () => {{
     link
