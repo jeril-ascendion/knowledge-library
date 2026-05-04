@@ -7868,8 +7868,25 @@ def gen_knowledge_graph_page(graph_data, out_root):
           <div id="kg-tooltip" class="kg-tooltip" aria-hidden="true"></div>
         </div>
         <aside class="kg-panel" id="kg-panel" aria-label="Selection panel">
-          <div class="kg-panel-empty">
-            <p class="kg-panel-empty-copy">Click any node to open it here. Pages, standards, and topic groups &mdash; explore relationships without losing your place.</p>
+          <button class="kg-panel-collapse-toggle" id="kg-panel-collapse-toggle" type="button" aria-label="Collapse panel" title="Collapse panel">
+            <span class="kg-panel-collapse-icon" aria-hidden="true">&rsaquo;</span>
+          </button>
+          <div class="kg-panel-rail" id="kg-panel-rail" aria-hidden="true">
+            <button class="kg-panel-rail-expand" type="button" aria-label="Expand panel" title="Expand panel">
+              <span aria-hidden="true">&lsaquo;</span>
+            </button>
+            <div class="kg-panel-rail-divider"></div>
+            <div class="kg-panel-rail-label" id="kg-panel-rail-label"></div>
+            <div class="kg-panel-rail-spacer"></div>
+            <div class="kg-panel-rail-footer">Panel collapsed</div>
+          </div>
+          <div class="kg-panel-content" id="kg-panel-content">
+            <div class="kg-panel-empty">
+              <p class="kg-panel-empty-copy">Click any node to open it here. Pages, standards, and topic groups &mdash; explore relationships without losing your place.</p>
+            </div>
+          </div>
+          <div class="kg-panel-drawer-handle" aria-hidden="true">
+            <div class="kg-panel-drawer-handle-bar"></div>
           </div>
         </aside>
         <p class="kg-note">
@@ -8038,14 +8055,15 @@ const GRAPH_DATA = {graph_json};
   }}
 
   function wirePanelInteractions(panel) {{
-    // Wire close button
-    const closeBtn = panel.querySelector('.kg-panel-close');
+    // Query inside the content wrapper (added in T5.1.5) rather than the panel root
+    const target = panel.querySelector('.kg-panel-content') || panel;
+
+    const closeBtn = target.querySelector('.kg-panel-close');
     if (closeBtn) {{
       closeBtn.addEventListener('click', () => selectNode(null));
     }}
 
-    // Wire panel-list-link clicks (used by all three panels): preventDefault, call selectNode
-    panel.querySelectorAll('.kg-panel-list-link, .kg-panel-aligned-link, .kg-panel-list-rich-title').forEach(link => {{
+    target.querySelectorAll('.kg-panel-list-link, .kg-panel-aligned-link, .kg-panel-list-rich-title').forEach(link => {{
       link.addEventListener('click', (event) => {{
         event.preventDefault();
         const targetId = link.getAttribute('data-node-id');
@@ -8053,8 +8071,7 @@ const GRAPH_DATA = {graph_json};
       }});
     }});
 
-    // Scroll panel back to top so each new selection starts from the top
-    panel.scrollTop = 0;
+    target.scrollTop = 0;
   }}
 
   function renderPagePanel(node) {{
@@ -8295,33 +8312,50 @@ const GRAPH_DATA = {graph_json};
     node.classed('selected', d => d.id === id);
 
     const panel = document.getElementById('kg-panel');
-    if (!panel) return;
+    const content = document.getElementById('kg-panel-content');
+    const rail = document.getElementById('kg-panel-rail-label');
+    if (!panel || !content) return;
+
+    let selected = null;
 
     if (id === null) {{
       // Empty state — restore original empty state HTML
-      panel.innerHTML = '<div class="kg-panel-empty"><p class="kg-panel-empty-copy">Click any node to open it here. Pages, standards, and topic groups &mdash; explore relationships without losing your place.</p></div>';
-      return;
-    }}
-
-    const selected = nodeById(id);
-    if (!selected) {{
-      // Unknown id (e.g., stale deep link) — show empty state
-      panel.innerHTML = '<div class="kg-panel-empty"><p class="kg-panel-empty-copy">Click any node to open it here. Pages, standards, and topic groups &mdash; explore relationships without losing your place.</p></div>';
-      return;
-    }}
-
-    if (selected.type === 'page') {{
-      panel.innerHTML = renderPagePanel(selected);
-      wirePanelInteractions(panel);
-    }} else if (selected.type === 'standard') {{
-      panel.innerHTML = renderStandardPanel(selected);
-      wirePanelInteractions(panel);
-    }} else if (selected.type === 'section') {{
-      panel.innerHTML = renderSectionPanel(selected);
-      wirePanelInteractions(panel);
+      content.innerHTML = '<div class="kg-panel-empty"><p class="kg-panel-empty-copy">Click any node to open it here. Pages, standards, and topic groups &mdash; explore relationships without losing your place.</p></div>';
     }} else {{
-      // Unknown type — show empty state
-      panel.innerHTML = '<div class="kg-panel-empty"><p class="kg-panel-empty-copy">Click any node to open it here. Pages, standards, and topic groups &mdash; explore relationships without losing your place.</p></div>';
+      selected = nodeById(id);
+      if (!selected) {{
+        // Unknown id (e.g., stale deep link) — show empty state
+        content.innerHTML = '<div class="kg-panel-empty"><p class="kg-panel-empty-copy">Click any node to open it here. Pages, standards, and topic groups &mdash; explore relationships without losing your place.</p></div>';
+      }} else if (selected.type === 'page') {{
+        content.innerHTML = renderPagePanel(selected);
+        wirePanelInteractions(panel);
+      }} else if (selected.type === 'standard') {{
+        content.innerHTML = renderStandardPanel(selected);
+        wirePanelInteractions(panel);
+      }} else if (selected.type === 'section') {{
+        content.innerHTML = renderSectionPanel(selected);
+        wirePanelInteractions(panel);
+      }} else {{
+        // Unknown type — show empty state
+        content.innerHTML = '<div class="kg-panel-empty"><p class="kg-panel-empty-copy">Click any node to open it here. Pages, standards, and topic groups &mdash; explore relationships without losing your place.</p></div>';
+      }}
+    }}
+
+    // Update the rail label for collapsed-mode
+    if (rail) {{
+      if (id === null || !selected) {{
+        rail.textContent = '';
+      }} else {{
+        rail.textContent = selected.label;
+      }}
+    }}
+
+    // On mobile: any selection auto-promotes drawer to 'open' state if currently 'peek'
+    if (id !== null && selected && window.matchMedia('(max-width: 880px)').matches) {{
+      const drawerState = panel.getAttribute('data-drawer-state');
+      if (drawerState === 'peek' || !drawerState) {{
+        setDrawerState('open');
+      }}
     }}
   }}
 
@@ -8336,6 +8370,129 @@ const GRAPH_DATA = {graph_json};
 
   // On load, render whatever the hash says (handles deep linking)
   renderSelection();
+
+  // ─── Collapsed-rail (desktop) ───
+  function setCollapsed(collapsed) {{
+    const panelEl = document.getElementById('kg-panel');
+    if (!panelEl) return;
+    panelEl.classList.toggle('is-collapsed', !!collapsed);
+    // ARIA for toggle button
+    const toggle = document.getElementById('kg-panel-collapse-toggle');
+    if (toggle) {{
+      toggle.setAttribute('aria-label', collapsed ? 'Expand panel' : 'Collapse panel');
+      toggle.setAttribute('title', collapsed ? 'Expand panel ( [ )' : 'Collapse panel ( [ )');
+    }}
+  }}
+
+  // Wire collapse toggle (top-right of expanded panel)
+  const collapseToggle = document.getElementById('kg-panel-collapse-toggle');
+  if (collapseToggle) {{
+    collapseToggle.addEventListener('click', () => setCollapsed(true));
+  }}
+
+  // Wire rail expand button
+  const railExpand = document.querySelector('.kg-panel-rail-expand');
+  if (railExpand) {{
+    railExpand.addEventListener('click', () => setCollapsed(false));
+  }}
+
+  // Keyboard shortcut: [ toggles collapse
+  window.addEventListener('keydown', (event) => {{
+    if (event.key === '[') {{
+      const panelEl = document.getElementById('kg-panel');
+      if (panelEl) setCollapsed(!panelEl.classList.contains('is-collapsed'));
+    }}
+  }});
+
+  // ─── Mobile drawer (≤880px) ───
+  // States: 'peek' (60px), 'open' (~60vh), 'full' (~95vh)
+  function setDrawerState(state) {{
+    const panelEl = document.getElementById('kg-panel');
+    if (!panelEl) return;
+    if (!['peek', 'open', 'full'].includes(state)) state = 'open';
+    panelEl.setAttribute('data-drawer-state', state);
+  }}
+
+  // Initialize drawer state on mobile
+  function initDrawer() {{
+    const panelEl = document.getElementById('kg-panel');
+    if (!panelEl) return;
+    if (window.matchMedia('(max-width: 880px)').matches) {{
+      if (!panelEl.getAttribute('data-drawer-state')) {{
+        setDrawerState('peek');
+      }}
+    }} else {{
+      panelEl.removeAttribute('data-drawer-state');
+    }}
+  }}
+  initDrawer();
+  window.addEventListener('resize', initDrawer);
+
+  // Drawer drag handler
+  (function setupDrawerDrag() {{
+    const panelEl = document.getElementById('kg-panel');
+    const handle = panelEl ? panelEl.querySelector('.kg-panel-drawer-handle') : null;
+    if (!panelEl || !handle) return;
+
+    let startY = 0;
+    let startHeight = 0;
+    let dragging = false;
+
+    function onStart(event) {{
+      if (!window.matchMedia('(max-width: 880px)').matches) return;
+      dragging = true;
+      const touch = event.touches ? event.touches[0] : event;
+      startY = touch.clientY;
+      startHeight = panelEl.getBoundingClientRect().height;
+      panelEl.classList.add('is-dragging');
+      // Prevent scroll during drag
+      if (event.cancelable) event.preventDefault();
+    }}
+
+    function onMove(event) {{
+      if (!dragging) return;
+      const touch = event.touches ? event.touches[0] : event;
+      const deltaY = startY - touch.clientY;  // up is positive
+      // Apply transient height during drag (CSS uses --drawer-drag-height for transient state)
+      const newHeight = Math.max(50, startHeight + deltaY);
+      panelEl.style.setProperty('--drawer-drag-height', newHeight + 'px');
+    }}
+
+    function onEnd(event) {{
+      if (!dragging) return;
+      dragging = false;
+      panelEl.classList.remove('is-dragging');
+      panelEl.style.removeProperty('--drawer-drag-height');
+      // Determine target state from final height vs viewport
+      const finalHeight = panelEl.getBoundingClientRect().height;
+      const vh = window.innerHeight;
+      let target;
+      if (finalHeight < vh * 0.25) target = 'peek';
+      else if (finalHeight < vh * 0.75) target = 'open';
+      else target = 'full';
+      setDrawerState(target);
+    }}
+
+    handle.addEventListener('touchstart', onStart, {{ passive: false }});
+    handle.addEventListener('touchmove', onMove, {{ passive: false }});
+    handle.addEventListener('touchend', onEnd);
+    handle.addEventListener('mousedown', onStart);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onEnd);
+
+    // Tap (no drag) on handle: cycle peek → open → full → peek
+    let tapStartTime = 0;
+    handle.addEventListener('touchstart', () => {{ tapStartTime = Date.now(); }}, {{ passive: true }});
+    handle.addEventListener('touchend', (event) => {{
+      const elapsed = Date.now() - tapStartTime;
+      const moved = Math.abs((panelEl.style.getPropertyValue('--drawer-drag-height') || '0').replace('px','') - 0) > 10;
+      if (elapsed < 200 && !moved) {{
+        const current = panelEl.getAttribute('data-drawer-state') || 'peek';
+        const next = current === 'peek' ? 'open' : current === 'open' ? 'full' : 'peek';
+        setDrawerState(next);
+      }}
+    }});
+  }})();
 
   simulation.on('tick', () => {{
     link

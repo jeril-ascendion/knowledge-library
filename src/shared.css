@@ -1184,6 +1184,114 @@ a.hero-tag:focus-visible {
   line-height: 1;
 }
 
+/* ── KG Panel: Collapse toggle button (top-right of expanded panel) ── */
+.kg-panel-collapse-toggle {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(14, 14, 14, 0.12);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  color: var(--ink-2, #6B6B6B);
+  transition: background var(--t, 0.15s ease), color var(--t, 0.15s ease);
+}
+.kg-panel-collapse-toggle:hover {
+  background: rgba(14, 14, 14, 0.06);
+  color: var(--ink, #1A1A1A);
+}
+.kg-panel-collapse-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+.kg-panel:not(.is-collapsed) .kg-panel-collapse-toggle {
+  /* shows › pointing right → collapse */
+}
+
+/* When panel is collapsed, hide the toggle (rail has its own expand button) */
+.kg-panel.is-collapsed .kg-panel-collapse-toggle {
+  display: none;
+}
+
+/* Also need the panel itself to be position: relative for absolute toggle */
+.kg-panel {
+  position: relative;
+}
+
+/* ── KG Panel: Collapsed rail (desktop, 56px wide) ────────── */
+.kg-panel-rail {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0;
+  gap: 1rem;
+  height: 100%;
+}
+.kg-panel.is-collapsed {
+  /* Override the 400px column on the parent grid */
+  width: 56px;
+  min-width: 56px;
+}
+.kg-panel.is-collapsed .kg-panel-content,
+.kg-panel.is-collapsed .kg-panel-empty {
+  display: none;
+}
+.kg-panel.is-collapsed .kg-panel-rail {
+  display: flex;
+}
+.kg-panel-rail-expand {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: 1px solid rgba(14, 14, 14, 0.12);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  color: var(--ink-2, #3C3C3C);
+  font-size: 0.95rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--t, 0.15s ease);
+}
+.kg-panel-rail-expand:hover {
+  background: rgba(14, 14, 14, 0.06);
+}
+.kg-panel-rail-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(14, 14, 14, 0.12);
+}
+.kg-panel-rail-label {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: 'IBM Plex Serif', Georgia, serif;
+  font-size: 0.85rem;
+  color: var(--ink, #1A1A1A);
+  letter-spacing: 0.02em;
+  text-align: center;
+  max-height: 200px;
+  overflow: hidden;
+}
+.kg-panel-rail-spacer {
+  flex: 1;
+}
+.kg-panel-rail-footer {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-2, #9A9A9A);
+}
+
 /* ── KG Panel: Standard pill (neutral grey instead of orange) ─── */
 .kg-panel-pill-standard {
   color: var(--ink-2, #6B6B6B);
@@ -1368,20 +1476,77 @@ a.hero-tag:focus-visible {
   font-weight: 600;
 }
 
-/* ── KG MOBILE: panel becomes row below canvas ───────────── */
+/* ── KG MOBILE: panel becomes a bottom drawer with three states ── */
 @media (max-width: 880px) {
   .kg-shell {
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto auto;
+    grid-template-rows: auto auto auto;
     grid-template-areas:
       "controls"
       "canvas"
-      "panel"
       "note";
   }
+  /* Panel removed from grid flow on mobile — becomes fixed bottom drawer */
   .kg-panel {
-    max-height: 50vh;
+    grid-area: unset;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    max-height: none;
+    border-radius: 0.75rem 0.75rem 0 0;
+    border: none;
+    border-top: 1px solid rgba(14, 14, 14, 0.12);
+    box-shadow: 0 -8px 24px rgba(14, 14, 14, 0.08);
+    transition: height 0.25s cubic-bezier(0.32, 0.72, 0, 1);
   }
+  /* Drawer height by state */
+  .kg-panel[data-drawer-state="peek"] {
+    height: 60px;
+  }
+  .kg-panel[data-drawer-state="open"] {
+    height: 60vh;
+  }
+  .kg-panel[data-drawer-state="full"] {
+    height: 95vh;
+  }
+  /* During drag, use the inline custom property to override */
+  .kg-panel.is-dragging {
+    transition: none;
+    height: var(--drawer-drag-height, 60vh);
+  }
+  /* Drag handle visible only on mobile */
+  .kg-panel-drawer-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    flex-shrink: 0;
+  }
+  .kg-panel-drawer-handle-bar {
+    width: 36px;
+    height: 4px;
+    background: rgba(14, 14, 14, 0.18);
+    border-radius: 2px;
+  }
+  /* Hide the desktop collapse toggle on mobile */
+  .kg-panel-collapse-toggle {
+    display: none;
+  }
+  /* In peek mode, hide content body */
+  .kg-panel[data-drawer-state="peek"] .kg-panel-content,
+  .kg-panel[data-drawer-state="peek"] .kg-panel-empty {
+    overflow: hidden;
+  }
+}
+
+/* Drag handle hidden by default (desktop) */
+.kg-panel-drawer-handle {
+  display: none;
 }
 
 /* ── EXTERNAL-LINK INDICATOR — subtle "↗" after links that open new tab ── */
