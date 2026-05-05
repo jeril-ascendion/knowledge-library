@@ -785,6 +785,52 @@ Above the graph canvas, a thin banner shows the lens caption when one is active.
 
 **Tool routing:** Claude Design.
 
+#### EPIC-6 retrospective (May 4, 2026)
+
+Shipped: concept lens UI with custom keyboard-accessible dropdown selector, D3-driven highlight/dim activation across nodes and edges, caption banner above the canvas. 4 commits, ~90 minutes of focused work, single calendar day. No polish round needed — locked decisions covered the visual specification thoroughly enough that the implementation matched intent on first build.
+
+##### What worked
+
+**Decision-locking-before-implementation continued to deliver outsized returns.** EPIC-6 had six locked decisions before T6.1, each specifying not just what to build but quantitative details: opacity values to two decimal places, transition duration in milliseconds, banner padding in rem, ARIA pattern names. Implementation prompts could reference "per Decision N" instead of relitigating mid-build. Result: zero design questions during implementation, no polish round needed.
+
+**Pre-flight introspection caught two real issues before they cost time.** First: the inspection of `build_index_json.py` revealed `index.json` already had a top-level lenses field (added in EPIC-3), saving us from writing a redundant edit. Second: the inspection of `getSelectedFromHash` revealed it used an anchored regex `/^#node=(.+)$/` rather than a multi-parameter parser — telling us we needed a rewrite, not an extension. Both findings would have surfaced as bugs during testing without the pre-flight reads.
+
+**Forward-compatible class naming as a deliberate architectural choice.** Per Decision 6, EPIC-6 uses `.lens-lit`, `.lens-dimmed`, `.lens-edge-lit`, `.lens-edge-fade`, `.lens-edge-dimmed` — distinct from EPIC-7's future `.search-lit` / `.search-dimmed`. That naming was free to make now and would have been expensive to retrofit during EPIC-7 with users in flight. Pattern worth applying everywhere: when you know a sibling concern is coming, prefix-namespace your classes from the start.
+
+**Custom dropdown earned its keep.** The user picked custom dropdown over native `<select>` despite the larger code footprint. The result felt cohesive with the rest of the design system (terracotta focus ring, animated arrow, panel styling matched the side panel). A native `<select>` would have stood out as a platform widget in an otherwise designed page. The cost was ~80 lines of JS for keyboard handling — modest given the visual return.
+
+##### What we learned
+
+**Smaller-scope EPICs reveal that the pre-investment in patterns pays compounding returns.** EPIC-6 was about half the scope of EPIC-5 and shipped in about a third of the time. The accumulated infrastructure (decision-locking docs, pre-flight inspection rule, file-based commit messages, small focused commits, mockup-as-north-star) all carried over with no per-EPIC re-establishment cost. Each pattern was a fixed investment that paid off proportionally more on smaller EPICs.
+
+**D3 selections + CSS classes is the right division of concerns for state-driven graph styling.** EPIC-6 had a real choice between (a) D3-driven with CSS classes acting as state markers and CSS handling visual transitions, or (b) D3 directly setting fill/stroke/opacity attributes per frame. Option (a) won on three counts: cleaner separation of concerns, free CSS transitions instead of D3 transition tweens, and easier to layer EPIC-7's search highlights on top. Worth establishing as the default pattern for future graph-state work.
+
+**Polish round budget is correctly variable, not fixed.** EPIC-5's retrospective lesson F4 said "future visual EPICs should plan for 2-3 polish rounds." EPIC-6 needed zero. Why the difference: EPIC-5 was layout work where the visual issues only become visible after content fills the layout (and content interacts with layout in unpredictable ways). EPIC-6 was activation/styling work over an already-laid-out feature, where every visual was specified to a unit value before implementation. **Lesson refinement: layout EPICs need polish rounds; activation/styling EPICs over established layout often don't.**
+
+**The polish-skip decision was a real engineering judgment, not laziness.** When asked "polish or skip?" after T6.3, the answer was "looks great as-is — go to PR." That's the harder answer to give. Manufacturing polish to satisfy a perceived rule would have been waste. The rule from EPIC-5 retrospective F4 should be read as "don't be surprised by polish rounds in visual work," not as "always do polish rounds."
+
+##### Decisions locked during EPIC-6 (additions to the spec)
+
+- Lens registry shape: `{id, label, description, members, caption_source}` per lens, sorted alphabetically.
+- URL hash format: `node=<id>&lens=<id>` with `&` separator. `lens=all` and absent lens both mean "no lens."
+- Custom dropdown ARIA pattern: `role="combobox"` on trigger, `role="listbox"` on panel, `role="option"` on items.
+- Highlight/dim opacity values: lit 1.0, dimmed 0.25, edge-lit 0.9, edge-fade 0.3, edge-dimmed 0.25.
+- Transition duration: 350ms ease-in-out (slightly under the spec's "~400ms"; tested as more responsive).
+- Caption banner: italic Plex Serif 0.95rem, 4px terracotta left border, 0.04 alpha terracotta tint, hidden via `display: none` (no layout reservation).
+
+##### Known follow-ups (tracked, not blocking)
+
+- **F5: Lens member set extensible to non-page node types.** Current `applyLens` works on any node ID, but no current lens has standards or sections in its `members` array. If a future lens (e.g., a "AI safety governance" lens) wants to highlight standards alongside pages, the schema already supports it — just add the standard IDs to the `members` array in `seed_content.py`. No code change needed in `applyLens`. Verify this is documented in the lens schema notes.
+- **F6: Multiple simultaneous lenses.** Current design enforces one active lens via radio-button-equivalent dropdown. If users want to combine lenses (e.g., "show me pages that are BOTH debt-ledger AND AI-related"), the URL hash format and class naming both support this without breaking changes — `lens=debt-ledger,ai-readiness` could parse to a Set. Tracked for v1.2 if user feedback supports.
+- **F7: Lens hint integration with side panel.** When a lens is active and the user clicks a non-lit node, the panel renders normally. Could add a hint like "this page is not in the active lens" to make the relationship explicit. Considered for v1.2.
+
+##### Velocity check
+
+- EPIC-6 budget: 0.5 working days (½ day per playbook).
+- Actual: ~90 minutes.
+- 6/10 EPICs done by Day 6. Tracking comfortably ahead of the 25-35 working day budget.
+- Velocity is correctly variable across EPICs: EPIC-5 needed 6 hours for layout discovery + four polish rounds. EPIC-6 needed 90 minutes because the layout was already there and decisions covered the styling. EPIC-7 (search) is likely closer to EPIC-6 in scope than EPIC-5; expect another fast EPIC.
+
 ---
 
 ### EPIC-7 — Semantic search frontend
