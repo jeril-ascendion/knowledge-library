@@ -7878,6 +7878,19 @@ def gen_knowledge_graph_page(graph_data, out_root):
               <span>Related</span>
             </div>
           </div>
+          <div class="kg-search-trigger-wrap">
+            <button type="button" class="kg-search-trigger" id="kg-search-trigger"
+                    aria-label="Search the library"
+                    aria-keyshortcuts="/"
+                    title="Search ( / )">
+              <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" focusable="false">
+                <circle cx="9" cy="9" r="6.5" fill="none" stroke="currentColor" stroke-width="2"></circle>
+                <line x1="13.5" y1="13.5" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+              </svg>
+              <span class="kg-search-trigger-label">Search</span>
+              <kbd class="kg-search-trigger-kbd">/</kbd>
+            </button>
+          </div>
           <div class="kg-lens-selector" id="kg-lens-selector">
             <span class="kg-lens-label" id="kg-lens-label">Lens</span>
             <button class="kg-lens-trigger" id="kg-lens-trigger" type="button"
@@ -7929,10 +7942,75 @@ def gen_knowledge_graph_page(graph_data, out_root):
     </div>
 
   </div>
+  <!-- T7.1: Search modal — rendered at page load, hidden by default. Per Decision 11. -->
+  <div class="kg-search-modal" id="kg-search-modal" hidden role="dialog" aria-modal="true" aria-labelledby="kg-search-modal-title">
+    <div class="kg-search-backdrop" id="kg-search-backdrop"></div>
+    <div class="kg-search-card" role="document">
+      <div class="kg-search-header">
+        <h2 id="kg-search-modal-title" class="kg-search-modal-title">Search the library</h2>
+        <button type="button" class="kg-search-close" id="kg-search-close" aria-label="Close search">
+          <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
+            <line x1="5" y1="5" x2="15" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+            <line x1="5" y1="15" x2="15" y2="5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="kg-search-input-wrap">
+        <input type="text" class="kg-search-input" id="kg-search-input"
+               placeholder="Search the library..."
+               role="combobox"
+               aria-expanded="false"
+               aria-controls="kg-search-results"
+               aria-autocomplete="list"
+               autocomplete="off"
+               autocapitalize="off"
+               autocorrect="off"
+               spellcheck="false"
+               disabled />
+        <div class="kg-search-progress-strip" id="kg-search-progress-strip" hidden></div>
+      </div>
+      <div class="kg-search-state-loading" id="kg-search-state-loading">
+        <p class="kg-search-loading-copy" id="kg-search-loading-copy">Loading semantic search engine...</p>
+        <div class="kg-search-progress-bar">
+          <div class="kg-search-progress-fill" id="kg-search-progress-fill" style="width: 0%"></div>
+        </div>
+        <p class="kg-search-loading-note">This download is cached for future visits.</p>
+      </div>
+      <div class="kg-search-state-error" id="kg-search-state-error" hidden>
+        <p class="kg-search-error-copy" id="kg-search-error-copy"></p>
+        <button type="button" class="kg-search-error-action" id="kg-search-error-action">Retry</button>
+      </div>
+      <div class="kg-search-state-ready" id="kg-search-state-ready" hidden>
+        <ul class="kg-search-results" id="kg-search-results" role="listbox" aria-label="Search results">
+          <!-- T7.3 will populate this -->
+        </ul>
+        <p class="kg-search-empty-state" id="kg-search-empty-state">Type to search semantically across the library.</p>
+      </div>
+    </div>
+  </div>
 </main>
 {foot}
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script type="module">
+  // T7.1: Lazy-load Transformers.js only when search modal opens.
+  // Do NOT call pipeline() at page load — first call happens
+  // when the user opens the modal and types their first query.
+  window.__transformersImportPromise = null;
+  window.__transformersPipeline = null;
+
+  window.__loadTransformers = async function() {{
+    if (window.__transformersImportPromise) return window.__transformersImportPromise;
+    window.__transformersImportPromise = (async () => {{
+      const tx = await import('https://esm.sh/@xenova/transformers@2.17.2');
+      tx.env.allowRemoteModels = true;
+      tx.env.useBrowserCache = true;
+      tx.env.useFSCache = false;
+      return tx;
+    }})();
+    return window.__transformersImportPromise;
+  }};
+</script>
 <script>
 const GRAPH_DATA = {graph_json};
 
@@ -8695,12 +8773,240 @@ const GRAPH_DATA = {graph_json};
     renderSelection();
   }});
 
-  // Esc clears selection
+  // T7.1: Global keydown — Escape clears node selection (when modal closed),
+  // `/` opens the search modal. Modal-internal Escape is handled separately.
   window.addEventListener('keydown', (event) => {{
-    if (event.key === 'Escape') {{
+    const modal = document.getElementById('kg-search-modal');
+    const modalOpen = modal && !modal.hasAttribute('hidden');
+
+    if (event.key === '/' && !modalOpen) {{
+      const t = event.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) {{
+        return;
+      }}
+      event.preventDefault();
+      openSearchModal();
+      return;
+    }}
+
+    if (event.key === 'Escape' && !modalOpen) {{
       selectNode(null);
     }}
   }});
+
+  // ─── T7.1: Search modal controller ────────────────────────────
+  // Modal is rendered at page load with hidden attribute. Open
+  // toggles hidden + sets focus to input + lazy-initialises model.
+  // Per Decisions 1, 3, 4, 9, 11.
+
+  let __searchModelPipeline = null;
+  let __searchModelLoading = false;
+  let __searchModelError = null;
+
+  function openSearchModal() {{
+    const modal = document.getElementById('kg-search-modal');
+    const input = document.getElementById('kg-search-input');
+    if (!modal) return;
+
+    modal.removeAttribute('hidden');
+    document.body.classList.add('kg-search-modal-open');
+
+    requestAnimationFrame(() => {{
+      if (input) input.focus();
+    }});
+
+    if (!__searchModelPipeline && !__searchModelLoading) {{
+      ensureSearchModelLoaded().catch(err => {{
+        console.error('[search] model load failed:', err);
+      }});
+    }} else if (__searchModelPipeline) {{
+      showSearchState('ready');
+    }}
+  }}
+
+  function closeSearchModal() {{
+    const modal = document.getElementById('kg-search-modal');
+    const trigger = document.getElementById('kg-search-trigger');
+    if (!modal) return;
+
+    modal.setAttribute('hidden', '');
+    document.body.classList.remove('kg-search-modal-open');
+
+    if (trigger) trigger.focus();
+  }}
+
+  function showSearchState(state) {{
+    const loadingEl = document.getElementById('kg-search-state-loading');
+    const errorEl = document.getElementById('kg-search-state-error');
+    const readyEl = document.getElementById('kg-search-state-ready');
+    const input = document.getElementById('kg-search-input');
+
+    if (loadingEl) {{
+      if (state === 'loading') loadingEl.removeAttribute('hidden');
+      else loadingEl.setAttribute('hidden', '');
+    }}
+    if (errorEl) {{
+      if (state === 'error') errorEl.removeAttribute('hidden');
+      else errorEl.setAttribute('hidden', '');
+    }}
+    if (readyEl) {{
+      if (state === 'ready') readyEl.removeAttribute('hidden');
+      else readyEl.setAttribute('hidden', '');
+    }}
+
+    if (input) {{
+      if (state === 'ready') {{
+        input.disabled = false;
+        input.placeholder = 'Search the library...';
+      }} else {{
+        input.disabled = true;
+      }}
+    }}
+  }}
+
+  function showSearchError(kind) {{
+    const copyEl = document.getElementById('kg-search-error-copy');
+    const actionBtn = document.getElementById('kg-search-error-action');
+    if (!copyEl || !actionBtn) return;
+
+    let copy, actionLabel, actionHandler;
+    if (kind === 'offline') {{
+      copy = 'Cannot reach search engine. Check your connection and try again.';
+      actionLabel = 'Retry';
+      actionHandler = () => {{
+        __searchModelError = null;
+        ensureSearchModelLoaded();
+      }};
+    }} else if (kind === 'wasm') {{
+      copy = 'Search is unavailable in this browser. Try a recent Chrome, Firefox, or Safari version.';
+      actionLabel = '';
+      actionHandler = null;
+    }} else {{
+      copy = 'Search engine could not load. Please try refreshing the page.';
+      actionLabel = 'Reload';
+      actionHandler = () => location.reload();
+    }}
+
+    copyEl.textContent = copy;
+    if (actionLabel) {{
+      actionBtn.removeAttribute('hidden');
+      actionBtn.textContent = actionLabel;
+      actionBtn.onclick = actionHandler;
+    }} else {{
+      actionBtn.setAttribute('hidden', '');
+    }}
+
+    showSearchState('error');
+  }}
+
+  async function ensureSearchModelLoaded() {{
+    if (__searchModelPipeline) return __searchModelPipeline;
+    if (__searchModelLoading) return new Promise((resolve, reject) => {{
+      const check = setInterval(() => {{
+        if (__searchModelPipeline) {{
+          clearInterval(check);
+          resolve(__searchModelPipeline);
+        }} else if (__searchModelError) {{
+          clearInterval(check);
+          reject(__searchModelError);
+        }}
+      }}, 100);
+    }});
+
+    __searchModelLoading = true;
+    __searchModelError = null;
+    showSearchState('loading');
+
+    const fillEl = document.getElementById('kg-search-progress-fill');
+    const copyEl = document.getElementById('kg-search-loading-copy');
+
+    if (copyEl) copyEl.textContent = 'Loading semantic search engine (33 MB, one-time)...';
+
+    try {{
+      if (!navigator.onLine) {{
+        throw new Error('OFFLINE');
+      }}
+
+      const tx = await window.__loadTransformers();
+
+      const pipeline = await tx.pipeline(
+        'feature-extraction',
+        'Xenova/bge-small-en-v1.5',
+        {{
+          progress_callback: (data) => {{
+            if (data && typeof data.progress === 'number' && fillEl) {{
+              fillEl.style.width = data.progress.toFixed(1) + '%';
+            }}
+            if (data && data.status && copyEl) {{
+              if (data.status === 'progress' && data.file) {{
+                copyEl.textContent = 'Loading: ' + data.file + ' (' + (data.progress || 0).toFixed(0) + '%)';
+              }} else if (data.status === 'done' && data.file) {{
+                copyEl.textContent = 'Loaded: ' + data.file;
+              }}
+            }}
+          }}
+        }}
+      );
+
+      __searchModelPipeline = pipeline;
+      __searchModelLoading = false;
+
+      if (fillEl) fillEl.style.width = '100%';
+
+      setTimeout(() => showSearchState('ready'), 200);
+
+      return pipeline;
+    }} catch (err) {{
+      __searchModelLoading = false;
+      __searchModelError = err;
+
+      const msg = String(err && err.message || err);
+      if (msg === 'OFFLINE' || msg.includes('Failed to fetch') || msg.includes('NetworkError')) {{
+        showSearchError('offline');
+      }} else if (msg.includes('WebAssembly') || msg.includes('wasm')) {{
+        showSearchError('wasm');
+      }} else if (msg.includes('404') || msg.includes('Not Found')) {{
+        showSearchError('model-404');
+      }} else {{
+        showSearchError('offline');
+      }}
+
+      throw err;
+    }}
+  }}
+
+  // T7.2 + T7.3 will use this. T7.1 just defines the contract.
+  async function embedSearchQuery(text) {{
+    const pipeline = await ensureSearchModelLoaded();
+    const output = await pipeline(text, {{ pooling: 'mean', normalize: true }});
+    return output.data;
+  }}
+
+  // ─── Wire up modal interactions ─────────────────────────────
+
+  const __searchTrigger = document.getElementById('kg-search-trigger');
+  if (__searchTrigger) {{
+    __searchTrigger.addEventListener('click', openSearchModal);
+  }}
+
+  const __searchClose = document.getElementById('kg-search-close');
+  if (__searchClose) {{
+    __searchClose.addEventListener('click', closeSearchModal);
+  }}
+  const __searchBackdrop = document.getElementById('kg-search-backdrop');
+  if (__searchBackdrop) {{
+    __searchBackdrop.addEventListener('click', closeSearchModal);
+  }}
+
+  const __searchModalEl = document.getElementById('kg-search-modal');
+  if (__searchModalEl) {{
+    __searchModalEl.addEventListener('keydown', (event) => {{
+      if (event.key === 'Escape') {{
+        event.stopPropagation();
+        closeSearchModal();
+      }}
+    }});
+  }}
 
   // On load, render whatever the hash says (handles deep linking)
   renderSelection();
