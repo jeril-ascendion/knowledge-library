@@ -8815,11 +8815,25 @@ const GRAPH_DATA = {graph_json};
       if (input) input.focus();
     }});
 
-    if (!__searchModelPipeline && !__searchModelLoading) {{
+    // T7.2: kick off both model load AND index load in parallel.
+    // Both must succeed before the modal is "ready" for queries.
+    // Index load is fast (~200ms) and can complete before model.
+    const needsModel = !__searchModelPipeline && !__searchModelLoading;
+    const needsIndex = !__searchIndex && !__searchIndexLoading;
+
+    if (needsModel) {{
       ensureSearchModelLoaded().catch(err => {{
         console.error('[search] model load failed:', err);
       }});
-    }} else if (__searchModelPipeline) {{
+    }}
+    if (needsIndex) {{
+      ensureSearchIndexLoaded().catch(err => {{
+        console.error('[search] index load failed:', err);
+      }});
+    }}
+
+    // If both are already loaded, transition straight to ready.
+    if (__searchModelPipeline && __searchIndex) {{
       showSearchState('ready');
     }}
   }}
@@ -8974,6 +8988,187 @@ const GRAPH_DATA = {graph_json};
       throw err;
     }}
   }}
+
+  // ─── T7.2 (Option A): Search index — brute-force cosine over vectors.bin ─
+  // hnswlib-wasm 0.7.0's data flow does not match our deployment model
+  // (it builds in-browser with addItems(); we build server-side in Python
+  // via build_vector_index.py and ship the artifact). After multiple
+  // integration attempts we confirmed there is no public byte-injection
+  // API. Brute-force cosine completes in ~3-5ms for 724 vectors which
+  // is comparable to HNSW at this scale; HNSW only wins at 5K+ vectors.
+  // Re-evaluate with voy/usearch in v1.2 when chunk count grows.
+  //
+  // vectors.bin format (from tools/build_vector_index.py):
+  //   uint32 LE: count (724)
+  //   uint32 LE: dims  (384)
+  //   float32 LE: count*dims values, L2-normalized
+  // Both query and document vectors are L2-normalized, so cosine
+  // similarity = dot product (no magnitude term needed).
+
+  let __searchChunks = null;          // array of 724 chunk objects
+  let __searchVectors = null;         // Float32Array(count*dims), L2-normalized
+  let __searchCount = 0;
+  let __searchDims = 0;
+  let __searchIndexLoading = false;
+  let __searchIndexError = null;
+
+  // Resolve agent endpoint relative to knowledge-graph/index.html.
+  const __SEARCH_AGENT_BASE = 'agent/v1';
+
+  async function ensureSearchIndexLoaded() {{
+    if (__searchVectors && __searchChunks) {{
+      return {{ vectors: __searchVectors, chunks: __searchChunks }};
+    }}
+    if (__searchIndexLoading) {{
+      // Another caller is loading. Poll until done.
+      return new Promise((resolve, reject) => {{
+        const check = setInterval(() => {{
+          if (__searchVectors && __searchChunks) {{
+            clearInterval(check);
+            resolve({{ vectors: __searchVectors, chunks: __searchChunks }});
+          }} else if (__searchIndexError) {{
+            clearInterval(check);
+            reject(__searchIndexError);
+          }}
+        }}, 100);
+      }});
+    }}
+
+    __searchIndexLoading = true;
+    __searchIndexError = null;
+
+    try {{
+      // Fetch chunks.json and vectors.bin in parallel.
+      // Note: index.bin (HNSW graph) is NO LONGER fetched here.
+      // It is still built by build_vector_index.py for future migration.
+      const [chunksResp, vectorsResp] = await Promise.all([
+        fetch(__SEARCH_AGENT_BASE + '/chunks.json'),
+        fetch(__SEARCH_AGENT_BASE + '/vectors.bin'),
+      ]);
+
+      if (!chunksResp.ok) {{
+        throw new Error('CHUNKS_FETCH_' + chunksResp.status);
+      }}
+      if (!vectorsResp.ok) {{
+        throw new Error('VECTORS_FETCH_' + vectorsResp.status);
+      }}
+
+      const chunksData = await chunksResp.json();
+      const vectorsBuffer = await vectorsResp.arrayBuffer();
+
+      // Per Decision 12: chunks are at chunksData.chunks (not chunksData[i])
+      const chunks = chunksData.chunks;
+      if (!Array.isArray(chunks)) {{
+        throw new Error('CHUNKS_SHAPE_INVALID');
+      }}
+
+      // Parse vectors.bin header (8 bytes: 2x uint32 little-endian).
+      const headerView = new DataView(vectorsBuffer, 0, 8);
+      const count = headerView.getUint32(0, true);
+      const dims = headerView.getUint32(4, true);
+
+      if (count !== chunks.length) {{
+        throw new Error('VECTORS_CHUNK_MISMATCH_' + count + '_vs_' + chunks.length);
+      }}
+      if (dims !== 384) {{
+        throw new Error('VECTORS_DIMS_UNEXPECTED_' + dims);
+      }}
+
+      // Float32Array view over the body. Zero-copy.
+      // vectors[i*dims + j] is the j-th component of the i-th chunk's embedding.
+      const vectors = new Float32Array(vectorsBuffer, 8, count * dims);
+
+      __searchChunks = chunks;
+      __searchVectors = vectors;
+      __searchCount = count;
+      __searchDims = dims;
+      __searchIndexLoading = false;
+
+      return {{ vectors, chunks }};
+    }} catch (err) {{
+      __searchIndexLoading = false;
+      __searchIndexError = err;
+      console.error('[search] index load failed:', err);
+      throw err;
+    }}
+  }}
+
+  // ─── T7.2: kNN search ───────────────────────────────────────
+  // Takes a normalized 384-dim query Float32Array (from
+  // embedSearchQuery) and returns ranked chunk results.
+
+  // Brute-force cosine kNN. Both query and document vectors are L2-normalized,
+  // so cosine similarity = dot product. We compute the dot product against
+  // every chunk vector, then sort descending and take the top k.
+  // Cost: 724 vectors * 384 dims = ~278K float multiply-adds per query.
+  // Empirically ~3-5ms on commodity hardware. No WASM, no FFI, no IDBFS.
+  async function searchKnn(queryEmbedding, k) {{
+    if (k === undefined) k = 20;
+    const {{ vectors, chunks }} = await ensureSearchIndexLoaded();
+    const count = __searchCount;
+    const dims = __searchDims;
+
+    // Compute dot products for all vectors. Tight inner loop on Float32Array.
+    const scores = new Float32Array(count);
+    for (let i = 0; i < count; i++) {{
+      let dot = 0;
+      const offset = i * dims;
+      for (let j = 0; j < dims; j++) {{
+        dot += vectors[offset + j] * queryEmbedding[j];
+      }}
+      scores[i] = dot;
+    }}
+
+    // Pair indices with scores, sort descending, take top k.
+    const ranked = [];
+    for (let i = 0; i < count; i++) {{
+      ranked.push({{ idx: i, score: scores[i] }});
+    }}
+    ranked.sort((a, b) => b.score - a.score);
+    const topK = ranked.slice(0, k);
+
+    return topK.map((r, rank) => ({{
+      chunk: chunks[r.idx],
+      // Convert cosine similarity to cosine distance for consistent semantics
+      // with the prior HNSW implementation (lower = more similar).
+      distance: 1 - r.score,
+      rank: rank,
+    }}));
+  }}
+
+  // ─── T7.2: Debug helper for DevTools acceptance test ────────
+  // Usage in browser console:
+  //   await window.__searchTest('audit findings')
+  // Returns an array of {{chunk, distance, rank}} objects.
+  // T7.3 will replace this with proper UI rendering.
+
+  window.__searchTest = async function(queryText) {{
+    if (!queryText || typeof queryText !== 'string') {{
+      console.warn('[search] usage: await __searchTest("your query")');
+      return [];
+    }}
+    const t0 = performance.now();
+    const queryVec = await embedSearchQuery(queryText);
+    const t1 = performance.now();
+    const results = await searchKnn(queryVec, 20);
+    const t2 = performance.now();
+    console.log(
+      '[search] ' + queryText + '\\n' +
+      '  embed: ' + (t1 - t0).toFixed(1) + 'ms\\n' +
+      '  knn: ' + (t2 - t1).toFixed(1) + 'ms\\n' +
+      '  results:'
+    );
+    results.forEach((r, i) => {{
+      console.log(
+        '  ' + (i + 1).toString().padStart(2, ' ') + '. ' +
+        '[' + (r.distance !== null ? r.distance.toFixed(4) : '?') + '] ' +
+        r.chunk.page_id + ' :: ' + r.chunk.chunk_type +
+        (r.chunk.chunk_index ? ':' + r.chunk.chunk_index : '') +
+        ' — ' + r.chunk.text.slice(0, 80).replace(/\\s+/g, ' ') + '...'
+      );
+    }});
+    return results;
+  }};
 
   // T7.2 + T7.3 will use this. T7.1 just defines the contract.
   async function embedSearchQuery(text) {{
