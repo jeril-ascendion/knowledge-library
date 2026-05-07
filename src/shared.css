@@ -2068,3 +2068,127 @@ body.kg-search-modal-open {
     display: none;
   }
 }
+
+  /* ─── T7.3: Search result list ─────────────────────────────── */
+
+  .kg-search-results {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .kg-search-results:empty {
+    display: none;
+  }
+
+  /* Hide empty-state caption when results are visible */
+  .kg-search-results:not(:empty) ~ .kg-search-empty-state {
+    display: none;
+  }
+
+  .kg-search-result {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    cursor: pointer;
+    transition: background-color 150ms ease-in-out;
+  }
+
+  .kg-search-result:last-child {
+    border-bottom: none;
+  }
+
+  .kg-search-result:hover,
+  .kg-search-result.is-active {
+    background-color: rgba(201, 99, 48, 0.06);
+  }
+
+  .kg-search-result.is-active {
+    outline: 2px solid #C96330;
+    outline-offset: -2px;
+  }
+
+  .kg-search-result-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #6B6B6B;
+  }
+
+  .kg-search-result-rank {
+    color: #C96330;
+    font-weight: 600;
+    min-width: 2rem;
+  }
+
+  .kg-search-result-page {
+    color: #1A1A1A;
+    font-weight: 500;
+  }
+
+  .kg-search-result-type {
+    color: #999;
+  }
+
+  .kg-search-result-text {
+    margin: 0;
+    font-family: 'IBM Plex Serif', Georgia, serif;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: #2A2A2A;
+  }
+
+  .kg-search-empty-state {
+    text-align: center;
+    color: #6B6B6B;
+    font-style: italic;
+    padding: 2rem 1rem;
+    margin: 0;
+  }
+
+  /* Mobile: 44pt touch targets per Decision 7 */
+  @media (max-width: 880px) {
+    .kg-search-result {
+      padding: 0.875rem 1rem;
+      min-height: 44px;
+    }
+  }
+
+  /* ─── T7.3: Search-state graph classes (Decision 6) ────────── */
+  /* These layer atop the lens-* classes; search wins per Decision 5. */
+  /* Faster transition (250ms) than lens (350ms) — Decision 6 sign-off. */
+
+  .kg-graph .node.search-lit circle {
+    opacity: 1.0;
+    transition: opacity 250ms ease-in-out, stroke 250ms ease-in-out;
+  }
+
+  .kg-graph .node.search-dimmed circle {
+    opacity: 0.20;
+    transition: opacity 250ms ease-in-out;
+  }
+
+  .kg-graph .link.search-edge-lit {
+    stroke: #3D7B8C;
+    stroke-width: 3px;
+    stroke-opacity: 1.0;
+    transition: stroke 250ms ease-in-out, stroke-width 250ms ease-in-out, stroke-opacity 250ms ease-in-out;
+  }
+
+  .kg-graph .link.search-edge-fade {
+    stroke-opacity: 0.30;
+    transition: stroke-opacity 250ms ease-in-out;
+  }
+
+  .kg-graph .link.search-edge-dimmed {
+    stroke-opacity: 0.25;
+    transition: stroke-opacity 250ms ease-in-out;
+  }

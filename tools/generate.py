@@ -8168,7 +8168,10 @@ const GRAPH_DATA = {graph_json};
 
     const closeBtn = target.querySelector('.kg-panel-close');
     if (closeBtn) {{
-      closeBtn.addEventListener('click', () => selectNode(null));
+      closeBtn.addEventListener('click', () => {{
+        clearSearchHighlight();  // T7.3
+        selectNode(null);
+      }});
     }}
 
     target.querySelectorAll('.kg-panel-list-link, .kg-panel-aligned-link, .kg-panel-list-rich-title').forEach(link => {{
@@ -8790,6 +8793,7 @@ const GRAPH_DATA = {graph_json};
     }}
 
     if (event.key === 'Escape' && !modalOpen) {{
+      clearSearchHighlight();  // T7.3: panel-close clears search-state
       selectNode(null);
     }}
   }});
@@ -8804,6 +8808,7 @@ const GRAPH_DATA = {graph_json};
   let __searchModelError = null;
 
   function openSearchModal() {{
+    clearSearchHighlight();  // T7.3: re-opening modal clears prior search-state
     const modal = document.getElementById('kg-search-modal');
     const input = document.getElementById('kg-search-input');
     if (!modal) return;
@@ -8819,7 +8824,7 @@ const GRAPH_DATA = {graph_json};
     // Both must succeed before the modal is "ready" for queries.
     // Index load is fast (~200ms) and can complete before model.
     const needsModel = !__searchModelPipeline && !__searchModelLoading;
-    const needsIndex = !__searchIndex && !__searchIndexLoading;
+    const needsIndex = !__searchVectors && !__searchIndexLoading;
 
     if (needsModel) {{
       ensureSearchModelLoaded().catch(err => {{
@@ -8833,7 +8838,7 @@ const GRAPH_DATA = {graph_json};
     }}
 
     // If both are already loaded, transition straight to ready.
-    if (__searchModelPipeline && __searchIndex) {{
+    if (__searchModelPipeline && __searchVectors) {{
       showSearchState('ready');
     }}
   }}
@@ -9169,6 +9174,316 @@ const GRAPH_DATA = {graph_json};
     }});
     return results;
   }};
+
+  // ─── T7.3: Search input → debounce → query → render pipeline ──
+  // Per Decision 8: 300ms debounce, AbortController on embed step.
+  // kNN is synchronous (~5ms brute force) so no cancellation needed.
+
+  let __searchDebounceTimer = null;
+  let __searchEmbedController = null;
+  let __searchActiveResultIndex = -1;  // for keyboard nav (Decision 9)
+  let __searchCurrentResults = [];     // most recent rendered results
+
+  const __SEARCH_DEBOUNCE_MS = 300;
+  const __SEARCH_MIN_QUERY_LEN = 2;
+
+  function clearSearchResults() {{
+    const listEl = document.getElementById('kg-search-results');
+    if (listEl) listEl.innerHTML = '';
+    __searchActiveResultIndex = -1;
+    __searchCurrentResults = [];
+    const inputEl = document.getElementById('kg-search-input');
+    if (inputEl) inputEl.removeAttribute('aria-activedescendant');
+  }}
+
+  function renderSearchResults(results) {{
+    const listEl = document.getElementById('kg-search-results');
+    if (!listEl) return;
+    listEl.innerHTML = '';
+    __searchCurrentResults = results;
+    __searchActiveResultIndex = -1;
+
+    if (!results || results.length === 0) {{
+      // Empty state shows automatically (CSS rule on :empty)
+      return;
+    }}
+
+    results.forEach((result, idx) => {{
+      const li = document.createElement('li');
+      li.className = 'kg-search-result';
+      li.setAttribute('role', 'option');
+      li.setAttribute('id', 'kg-search-result-' + idx);
+      li.setAttribute('aria-selected', 'false');
+      li.setAttribute('data-page-id', result.chunk.page_id);
+      li.setAttribute('data-chunk-id', result.chunk.id);
+      li.setAttribute('data-chunk-index', String(result.chunk.chunk_index));
+      li.setAttribute('data-rank', String(idx));
+      // Distance kept for debugging only — not visible per Decision 4
+      li.setAttribute('data-distance', result.distance.toFixed(4));
+
+      const header = document.createElement('div');
+      header.className = 'kg-search-result-header';
+
+      const rankEl = document.createElement('span');
+      rankEl.className = 'kg-search-result-rank';
+      rankEl.textContent = String(idx + 1).padStart(2, ' ');
+
+      const pageEl = document.createElement('span');
+      pageEl.className = 'kg-search-result-page';
+      pageEl.textContent = result.chunk.page_id;
+
+      const typeEl = document.createElement('span');
+      typeEl.className = 'kg-search-result-type';
+      const typeLabel = result.chunk.chunk_type +
+        (result.chunk.chunk_index > 0 ? ' #' + result.chunk.chunk_index : '');
+      typeEl.textContent = typeLabel;
+
+      header.appendChild(rankEl);
+      header.appendChild(pageEl);
+      header.appendChild(typeEl);
+
+      const textEl = document.createElement('p');
+      textEl.className = 'kg-search-result-text';
+      // Truncate to ~160 chars, collapse whitespace, strip markdown headers
+      const cleanText = result.chunk.text
+        .replace(/^#+\\s+/gm, '')
+        .replace(/\\s+/g, ' ')
+        .trim();
+      textEl.textContent = cleanText.length > 160
+        ? cleanText.slice(0, 160) + '…'
+        : cleanText;
+
+      li.appendChild(header);
+      li.appendChild(textEl);
+
+      // Click → activate result
+      li.addEventListener('click', () => activateSearchResult(idx));
+
+      listEl.appendChild(li);
+    }});
+  }}
+
+  async function performSearch(queryText, signal) {{
+    // Embed query (cancellable via signal)
+    const queryVec = await embedSearchQuery(queryText);
+    if (signal && signal.aborted) {{
+      const err = new Error('aborted');
+      err.name = 'AbortError';
+      throw err;
+    }}
+    // kNN is fast and synchronous — no cancellation needed
+    const results = await searchKnn(queryVec, 20);
+    if (signal && signal.aborted) {{
+      const err = new Error('aborted');
+      err.name = 'AbortError';
+      throw err;
+    }}
+    return results;
+  }}
+
+  function handleSearchInput(queryText) {{
+    // Cancel any in-flight embed
+    if (__searchEmbedController) {{
+      __searchEmbedController.abort();
+    }}
+
+    // Clear pending debounce
+    if (__searchDebounceTimer) {{
+      clearTimeout(__searchDebounceTimer);
+    }}
+
+    const trimmed = queryText.trim();
+    if (trimmed.length < __SEARCH_MIN_QUERY_LEN) {{
+      clearSearchResults();
+      return;
+    }}
+
+    // Schedule the actual query
+    __searchDebounceTimer = setTimeout(async () => {{
+      __searchEmbedController = new AbortController();
+      const signal = __searchEmbedController.signal;
+      try {{
+        const results = await performSearch(trimmed, signal);
+        renderSearchResults(results);
+      }} catch (err) {{
+        if (err.name === 'AbortError') {{
+          // Superseded by a newer query — silent
+          return;
+        }}
+        console.error('[search] query failed:', err);
+        // Don't show error UI for transient query failures —
+        // model/index errors are surfaced by showSearchState('error')
+      }}
+    }}, __SEARCH_DEBOUNCE_MS);
+  }}
+
+  // ─── T7.3: Result click → close modal + clear lens + dim graph ──
+  // Per Decision 5: search wins — clear lens entirely on result-click.
+  // Per Decision 6: apply search-* classes to graph (not lens-*).
+  // Per F10 (deferred): scroll to chunk-position is out of scope;
+  // we just open the page panel via existing selectNode(pageId).
+
+  function clearSearchHighlight() {{
+    const svg = d3.select('.kg-graph');
+    if (svg.empty()) return;
+    svg.selectAll('.node')
+       .classed('search-lit', false)
+       .classed('search-dimmed', false);
+    svg.selectAll('.link')
+       .classed('search-edge-lit', false)
+       .classed('search-edge-fade', false)
+       .classed('search-edge-dimmed', false);
+  }}
+
+  function applySearchHighlight(litPageId) {{
+    const svg = d3.select('.kg-graph');
+    if (svg.empty()) return;
+
+    // Determine which links touch the lit node
+    const litLinkSet = new Set();
+    const adjacentNodeSet = new Set([litPageId]);
+    svg.selectAll('.link').each(function(d) {{
+      const sourceId = (d.source && d.source.id) || d.source;
+      const targetId = (d.target && d.target.id) || d.target;
+      if (sourceId === litPageId || targetId === litPageId) {{
+        litLinkSet.add(d);
+        adjacentNodeSet.add(sourceId);
+        adjacentNodeSet.add(targetId);
+      }}
+    }});
+
+    svg.selectAll('.node')
+       .classed('search-lit', d => d.id === litPageId)
+       .classed('search-dimmed', d => !adjacentNodeSet.has(d.id));
+
+    svg.selectAll('.link')
+       .classed('search-edge-lit', d => litLinkSet.has(d))
+       .classed('search-edge-fade', d => !litLinkSet.has(d) && (
+         adjacentNodeSet.has((d.source && d.source.id) || d.source) ||
+         adjacentNodeSet.has((d.target && d.target.id) || d.target)
+       ))
+       .classed('search-edge-dimmed', d => {{
+         if (litLinkSet.has(d)) return false;
+         const s = (d.source && d.source.id) || d.source;
+         const t = (d.target && d.target.id) || d.target;
+         return !adjacentNodeSet.has(s) && !adjacentNodeSet.has(t);
+       }});
+  }}
+
+  function clearLensSelection() {{
+    // Per Decision 5: clear lens entirely. Update hash and dropdown.
+    const currentNode = (function() {{
+      const hash = window.location.hash;
+      if (!hash) return null;
+      const params = hash.slice(1).split('&');
+      for (const p of params) {{
+        if (p.startsWith('node=')) {{
+          return decodeURIComponent(p.substring(5));
+        }}
+      }}
+      return null;
+    }})();
+
+    let newHash = '';
+    if (currentNode) newHash = 'node=' + encodeURIComponent(currentNode);
+    if (newHash) {{
+      window.location.hash = newHash;
+    }} else if (window.location.hash) {{
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
+    }}
+  }}
+
+  function activateSearchResult(idx) {{
+    const result = __searchCurrentResults[idx];
+    if (!result) return;
+
+    const pageId = result.chunk.page_id;
+
+    // Step 1: close the modal
+    closeSearchModal();
+
+    // Step 2: clear lens (Decision 5)
+    clearLensSelection();
+
+    // Step 3: select the node (opens panel via existing hash-driven flow)
+    selectNode(pageId);
+
+    // Step 4: apply search highlight to graph (Decision 6)
+    // Wait one frame so D3 has rendered the node-selected state first
+    requestAnimationFrame(() => {{
+      applySearchHighlight(pageId);
+    }});
+  }}
+
+  // ─── T7.3: Combobox keyboard navigation (Decision 9) ─────────
+  function setActiveSearchResult(idx) {{
+    const items = document.querySelectorAll('.kg-search-result');
+    if (items.length === 0) return;
+
+    // Bound idx to valid range
+    if (idx < 0) idx = items.length - 1;
+    if (idx >= items.length) idx = 0;
+
+    items.forEach((el, i) => {{
+      el.classList.toggle('is-active', i === idx);
+      el.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+    }});
+
+    __searchActiveResultIndex = idx;
+
+    const inputEl = document.getElementById('kg-search-input');
+    if (inputEl) {{
+      inputEl.setAttribute('aria-activedescendant', 'kg-search-result-' + idx);
+    }}
+
+    // Scroll the active item into view inside the listbox
+    items[idx].scrollIntoView({{ block: 'nearest' }});
+  }}
+
+  function handleSearchKeydown(event) {{
+    const items = document.querySelectorAll('.kg-search-result');
+    if (items.length === 0) return;  // no results, no nav
+
+    if (event.key === 'ArrowDown') {{
+      event.preventDefault();
+      setActiveSearchResult(__searchActiveResultIndex + 1);
+    }} else if (event.key === 'ArrowUp') {{
+      event.preventDefault();
+      setActiveSearchResult(__searchActiveResultIndex - 1);
+    }} else if (event.key === 'Home') {{
+      event.preventDefault();
+      setActiveSearchResult(0);
+    }} else if (event.key === 'End') {{
+      event.preventDefault();
+      setActiveSearchResult(items.length - 1);
+    }} else if (event.key === 'Enter') {{
+      if (__searchActiveResultIndex >= 0) {{
+        event.preventDefault();
+        activateSearchResult(__searchActiveResultIndex);
+      }}
+      // If no active result, Enter is a no-op (don't submit form, don't close modal)
+    }}
+    // Escape is handled by existing modal-internal keydown listener at line 9198
+  }}
+
+  // ─── T7.3: Wire input + keydown listeners ────────────────────
+  (function() {{
+    const inputEl = document.getElementById('kg-search-input');
+    if (!inputEl) return;
+
+    // ARIA: input is the combobox controller; listbox is its target
+    inputEl.setAttribute('role', 'combobox');
+    inputEl.setAttribute('aria-controls', 'kg-search-results');
+    inputEl.setAttribute('aria-autocomplete', 'list');
+    inputEl.setAttribute('aria-expanded', 'true');
+
+    inputEl.addEventListener('input', (event) => {{
+      handleSearchInput(event.target.value);
+    }});
+
+    inputEl.addEventListener('keydown', handleSearchKeydown);
+  }})();
 
   // T7.2 + T7.3 will use this. T7.1 just defines the contract.
   async function embedSearchQuery(text) {{
