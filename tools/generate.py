@@ -8918,6 +8918,49 @@ const GRAPH_DATA = {graph_json};
     showSearchState('error');
   }}
 
+  // ─── T7.4: Performance instrumentation (?perf=1 mode) ─────────
+  // Per Decision 10: hidden URL parameter enables structured timing
+  // for six phases (model_load, vector_load, index_load, embed_query,
+  // knn_search, render_results). Dormant when perf=1 absent.
+  // Output via console.log per measurement + window.__perfDump() for
+  // a console.table summary suitable for copy-paste into the perf doc.
+
+  const __perfMode = (() => {{
+    try {{
+      return new URLSearchParams(window.location.search).has('perf');
+    }} catch (_) {{ return false; }}
+  }})();
+
+  const __perfLog = [];
+
+  function __perfMark(phase, ms, extra) {{
+    if (!__perfMode) return;
+    const row = {{
+      phase: phase,
+      ms: Number(ms.toFixed(1)),
+      t: Math.round(performance.now()),
+    }};
+    if (extra) Object.assign(row, extra);
+    __perfLog.push(row);
+    console.log('[perf]', phase, ms.toFixed(1) + 'ms', extra || '');
+  }}
+
+  // Note for transparency: index_load is deprecated in Option A
+  // (brute-force cosine; no HNSW graph loaded at runtime).
+  // We emit a one-time placeholder so the phase appears in __perfDump.
+  if (__perfMode) {{
+    __perfMark('index_load', 0, {{ note: 'deprecated in Option A' }});
+  }}
+
+  window.__perfDump = function() {{
+    if (!__perfMode) {{
+      console.log('[perf] not in perf mode — open URL with ?perf=1 to enable');
+      return [];
+    }}
+    console.table(__perfLog);
+    return __perfLog;
+  }};
+
   async function ensureSearchModelLoaded() {{
     if (__searchModelPipeline) return __searchModelPipeline;
     if (__searchModelLoading) return new Promise((resolve, reject) => {{
@@ -8948,6 +8991,7 @@ const GRAPH_DATA = {graph_json};
 
       const tx = await window.__loadTransformers();
 
+      const __t_model_start = performance.now();
       const pipeline = await tx.pipeline(
         'feature-extraction',
         'Xenova/bge-small-en-v1.5',
@@ -8966,6 +9010,8 @@ const GRAPH_DATA = {graph_json};
           }}
         }}
       );
+
+      __perfMark('model_load', performance.now() - __t_model_start);
 
       __searchModelPipeline = pipeline;
       __searchModelLoading = false;
@@ -9043,6 +9089,7 @@ const GRAPH_DATA = {graph_json};
     __searchIndexError = null;
 
     try {{
+      const __t_vec_start = performance.now();
       // Fetch chunks.json and vectors.bin in parallel.
       // Note: index.bin (HNSW graph) is NO LONGER fetched here.
       // It is still built by build_vector_index.py for future migration.
@@ -9088,6 +9135,12 @@ const GRAPH_DATA = {graph_json};
       __searchCount = count;
       __searchDims = dims;
       __searchIndexLoading = false;
+
+      __perfMark('vector_load', performance.now() - __t_vec_start, {{
+        bytes: vectorsBuffer.byteLength,
+        count: count,
+        dims: dims,
+      }});
 
       return {{ vectors, chunks }};
     }} catch (err) {{
@@ -9197,6 +9250,7 @@ const GRAPH_DATA = {graph_json};
   }}
 
   function renderSearchResults(results) {{
+    const __t_render_start = performance.now();
     const listEl = document.getElementById('kg-search-results');
     if (!listEl) return;
     listEl.innerHTML = '';
@@ -9204,6 +9258,9 @@ const GRAPH_DATA = {graph_json};
     __searchActiveResultIndex = -1;
 
     if (!results || results.length === 0) {{
+      __perfMark('render_results', performance.now() - __t_render_start, {{
+        result_count: 0,
+      }});
       // Empty state shows automatically (CSS rule on :empty)
       return;
     }}
@@ -9261,18 +9318,30 @@ const GRAPH_DATA = {graph_json};
 
       listEl.appendChild(li);
     }});
+
+    __perfMark('render_results', performance.now() - __t_render_start, {{
+      result_count: results.length,
+    }});
   }}
 
   async function performSearch(queryText, signal) {{
     // Embed query (cancellable via signal)
+    const __t_embed_start = performance.now();
     const queryVec = await embedSearchQuery(queryText);
+    __perfMark('embed_query', performance.now() - __t_embed_start, {{
+      query_len: queryText.length,
+    }});
     if (signal && signal.aborted) {{
       const err = new Error('aborted');
       err.name = 'AbortError';
       throw err;
     }}
     // kNN is fast and synchronous — no cancellation needed
+    const __t_knn_start = performance.now();
     const results = await searchKnn(queryVec, 20);
+    __perfMark('knn_search', performance.now() - __t_knn_start, {{
+      result_count: results.length,
+    }});
     if (signal && signal.aborted) {{
       const err = new Error('aborted');
       err.name = 'AbortError';
