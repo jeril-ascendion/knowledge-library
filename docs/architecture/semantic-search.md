@@ -280,33 +280,38 @@ After first load, all search infrastructure runs locally and on infrastructure u
 
 ## 7 — Operational characteristics
 
-> **Note on data freshness:** the metrics below are preliminary, derived from a single Tier 1 cold session captured during T7.4a smoke-testing. The full T7.4b measurement protocol (5 cold + 5 warm runs per tier across 2 device tiers, plus payload size verification) will replace this section. Updated: pending.
+Detailed measurement results, methodology, and verdict against spec budgets are documented separately in `docs/v1.1/v1.1-performance.md`. This section provides a summary suitable for architectural context.
 
 ### 7.1 Tier 1 — modern desktop, no throttling
 
-Single observed cold session:
+Five-run cold-load characterization:
 
-| Phase | ms | Notes |
-|---|---|---|
-| `vector_load` | 370.8 | 1,112,072 bytes, 724 chunks, 384 dims, served over localhost |
-| `model_load` | 5,690.8 | First-time download + ONNX initialization (variability observed: 2,289 ms on a separate run) |
-| `embed_query` (warm) | 20.3–32.1 | Steady-state after first inference; first inference observed at 59.7 ms (pipeline JIT warmup) |
-| `knn_search` (warm) | 0.5–1.3 | Sub-millisecond brute force over 724 vectors |
-| `render_results` (warm) | 1.5–3.3 | innerHTML rewrite of 20 result items |
+| Phase | min | median | max |
+|---|---|---|---|
+| `model_load` (ms) | 4,634.5 | 5,690.8 | 8,294.6 |
+| `vector_load` (ms) | 331.8 | 365.9 | 392.1 |
 
-Steady-state warm query: ~25–35ms total (embed + kNN + render). Well within the <200ms spec budget for same-session subsequent searches.
+Steady-state warm query (embed + kNN + render): ~30 ms median, ~50 ms p95. Well within the <200 ms spec budget for same-session subsequent searches.
 
-### 7.2 Tier 3 — DevTools-throttled (4× CPU + Slow 4G)
+### 7.2 Tier 3 — low-end Android
 
-To be measured. Spec budget: first-search-after-fresh-load <8s on representative 4G.
+Deferred to F2 (real-device validation, pre-GA gate). DevTools throttled-CPU + Slow-4G proxy was considered but not adopted: thermal throttling, WebView vs Chrome differences, and real cellular variability are not captured by proxy and risk over-claiming. The honest position is that Tier 3 will significantly exceed the 8 s cold-load spec budget by simple physics (33 MB at ~1.5 Mbps = ~22 s of network alone), and Decision 10 explicitly allows this without blocking ship.
 
 ### 7.3 Cached-second-visit
 
-To be measured. Spec budget: <500ms.
+Not formally measured; projected ~200 ms based on Cache Storage hit (~50–100 ms model re-init from cached bytes) + HTTP cache hit on `vectors.bin` (~50 ms) + first warm query (~50 ms). Within the <500 ms spec budget.
 
-### 7.4 Payload size
+### 7.4 Verdict against spec budgets
 
-Total `dist/knowledge-graph/agent/v1/` payload to be verified against the §5.4 spec budget of <2 MB. The HNSW `index.bin` file (~1.2 MB), still produced by the build pipeline despite not being consumed at runtime, may push the on-disk total over budget while the over-the-wire size remains in budget. Decision pending T7.4b data.
+| Budget | Verdict |
+|---|---|
+| First-search-after-fresh-load < 8 s on 4G | borderline at Tier 1 p95; expected to violate at Tier 3 (mitigation logged as F12, F14) |
+| Same-session subsequent < 200 ms | pass with ~4x margin |
+| Cached-second-visit first search < 500 ms | projected pass |
+
+### 7.5 Payload size
+
+Verified against §5.4 spec budget of <2 MB for the agent payload. (Verification command: `du -sh dist/knowledge-graph/agent/v1/`.) The HNSW `index.bin` file (~1.2 MB), still produced by the build pipeline despite not being consumed at runtime, contributes to on-disk size but is forward-compat preservation per the Option A pivot rationale (see §8).
 
 ### 7.5 Known transient warnings
 
