@@ -1,6 +1,7 @@
 # Knowledge Graph v1.1 — Implementation Playbook
 
 **Companion to:** `knowledge-graph-v1.1.md` (architectural specification)
+**See also:** `docs/architecture/semantic-search.md` (system explainer for the search subsystem)
 **Status:** All six open questions signed off — implementation green-lit
 **Author:** Drafted for Jeril John Panicker, Platform Engineering, Ascendion
 **Target:** v42 of `ascendion.engineering` codebase → v43+ feature ships
