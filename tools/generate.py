@@ -7878,6 +7878,19 @@ def gen_knowledge_graph_page(graph_data, out_root):
               <span>Related</span>
             </div>
           </div>
+          <div class="kg-search-trigger-wrap">
+            <button type="button" class="kg-search-trigger" id="kg-search-trigger"
+                    aria-label="Search the library"
+                    aria-keyshortcuts="/"
+                    title="Search ( / )">
+              <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" focusable="false">
+                <circle cx="9" cy="9" r="6.5" fill="none" stroke="currentColor" stroke-width="2"></circle>
+                <line x1="13.5" y1="13.5" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+              </svg>
+              <span class="kg-search-trigger-label">Search</span>
+              <kbd class="kg-search-trigger-kbd">/</kbd>
+            </button>
+          </div>
           <div class="kg-lens-selector" id="kg-lens-selector">
             <span class="kg-lens-label" id="kg-lens-label">Lens</span>
             <button class="kg-lens-trigger" id="kg-lens-trigger" type="button"
@@ -7929,10 +7942,75 @@ def gen_knowledge_graph_page(graph_data, out_root):
     </div>
 
   </div>
+  <!-- T7.1: Search modal — rendered at page load, hidden by default. Per Decision 11. -->
+  <div class="kg-search-modal" id="kg-search-modal" hidden role="dialog" aria-modal="true" aria-labelledby="kg-search-modal-title">
+    <div class="kg-search-backdrop" id="kg-search-backdrop"></div>
+    <div class="kg-search-card" role="document">
+      <div class="kg-search-header">
+        <h2 id="kg-search-modal-title" class="kg-search-modal-title">Search the library</h2>
+        <button type="button" class="kg-search-close" id="kg-search-close" aria-label="Close search">
+          <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
+            <line x1="5" y1="5" x2="15" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+            <line x1="5" y1="15" x2="15" y2="5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="kg-search-input-wrap">
+        <input type="text" class="kg-search-input" id="kg-search-input"
+               placeholder="Search the library..."
+               role="combobox"
+               aria-expanded="false"
+               aria-controls="kg-search-results"
+               aria-autocomplete="list"
+               autocomplete="off"
+               autocapitalize="off"
+               autocorrect="off"
+               spellcheck="false"
+               disabled />
+        <div class="kg-search-progress-strip" id="kg-search-progress-strip" hidden></div>
+      </div>
+      <div class="kg-search-state-loading" id="kg-search-state-loading">
+        <p class="kg-search-loading-copy" id="kg-search-loading-copy">Loading semantic search engine...</p>
+        <div class="kg-search-progress-bar">
+          <div class="kg-search-progress-fill" id="kg-search-progress-fill" style="width: 0%"></div>
+        </div>
+        <p class="kg-search-loading-note">This download is cached for future visits.</p>
+      </div>
+      <div class="kg-search-state-error" id="kg-search-state-error" hidden>
+        <p class="kg-search-error-copy" id="kg-search-error-copy"></p>
+        <button type="button" class="kg-search-error-action" id="kg-search-error-action">Retry</button>
+      </div>
+      <div class="kg-search-state-ready" id="kg-search-state-ready" hidden>
+        <ul class="kg-search-results" id="kg-search-results" role="listbox" aria-label="Search results">
+          <!-- T7.3 will populate this -->
+        </ul>
+        <p class="kg-search-empty-state" id="kg-search-empty-state">Type to search semantically across the library.</p>
+      </div>
+    </div>
+  </div>
 </main>
 {foot}
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script type="module">
+  // T7.1: Lazy-load Transformers.js only when search modal opens.
+  // Do NOT call pipeline() at page load — first call happens
+  // when the user opens the modal and types their first query.
+  window.__transformersImportPromise = null;
+  window.__transformersPipeline = null;
+
+  window.__loadTransformers = async function() {{
+    if (window.__transformersImportPromise) return window.__transformersImportPromise;
+    window.__transformersImportPromise = (async () => {{
+      const tx = await import('https://esm.sh/@xenova/transformers@2.17.2');
+      tx.env.allowRemoteModels = true;
+      tx.env.useBrowserCache = true;
+      tx.env.useFSCache = false;
+      return tx;
+    }})();
+    return window.__transformersImportPromise;
+  }};
+</script>
 <script>
 const GRAPH_DATA = {graph_json};
 
@@ -8090,7 +8168,10 @@ const GRAPH_DATA = {graph_json};
 
     const closeBtn = target.querySelector('.kg-panel-close');
     if (closeBtn) {{
-      closeBtn.addEventListener('click', () => selectNode(null));
+      closeBtn.addEventListener('click', () => {{
+        clearSearchHighlight();  // T7.3
+        selectNode(null);
+      }});
     }}
 
     target.querySelectorAll('.kg-panel-list-link, .kg-panel-aligned-link, .kg-panel-list-rich-title').forEach(link => {{
@@ -8695,12 +8776,816 @@ const GRAPH_DATA = {graph_json};
     renderSelection();
   }});
 
-  // Esc clears selection
+  // T7.1: Global keydown — Escape clears node selection (when modal closed),
+  // `/` opens the search modal. Modal-internal Escape is handled separately.
   window.addEventListener('keydown', (event) => {{
-    if (event.key === 'Escape') {{
+    const modal = document.getElementById('kg-search-modal');
+    const modalOpen = modal && !modal.hasAttribute('hidden');
+
+    if (event.key === '/' && !modalOpen) {{
+      const t = event.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) {{
+        return;
+      }}
+      event.preventDefault();
+      openSearchModal();
+      return;
+    }}
+
+    if (event.key === 'Escape' && !modalOpen) {{
+      clearSearchHighlight();  // T7.3: panel-close clears search-state
       selectNode(null);
     }}
   }});
+
+  // ─── T7.1: Search modal controller ────────────────────────────
+  // Modal is rendered at page load with hidden attribute. Open
+  // toggles hidden + sets focus to input + lazy-initialises model.
+  // Per Decisions 1, 3, 4, 9, 11.
+
+  let __searchModelPipeline = null;
+  let __searchModelLoading = false;
+  let __searchModelError = null;
+
+  function openSearchModal() {{
+    clearSearchHighlight();  // T7.3: re-opening modal clears prior search-state
+    const modal = document.getElementById('kg-search-modal');
+    const input = document.getElementById('kg-search-input');
+    if (!modal) return;
+
+    modal.removeAttribute('hidden');
+    document.body.classList.add('kg-search-modal-open');
+
+    requestAnimationFrame(() => {{
+      if (input) input.focus();
+    }});
+
+    // T7.2: kick off both model load AND index load in parallel.
+    // Both must succeed before the modal is "ready" for queries.
+    // Index load is fast (~200ms) and can complete before model.
+    const needsModel = !__searchModelPipeline && !__searchModelLoading;
+    const needsIndex = !__searchVectors && !__searchIndexLoading;
+
+    if (needsModel) {{
+      ensureSearchModelLoaded().catch(err => {{
+        console.error('[search] model load failed:', err);
+      }});
+    }}
+    if (needsIndex) {{
+      ensureSearchIndexLoaded().catch(err => {{
+        console.error('[search] index load failed:', err);
+      }});
+    }}
+
+    // If both are already loaded, transition straight to ready.
+    if (__searchModelPipeline && __searchVectors) {{
+      showSearchState('ready');
+    }}
+  }}
+
+  function closeSearchModal() {{
+    const modal = document.getElementById('kg-search-modal');
+    const trigger = document.getElementById('kg-search-trigger');
+    if (!modal) return;
+
+    modal.setAttribute('hidden', '');
+    document.body.classList.remove('kg-search-modal-open');
+
+    if (trigger) trigger.focus();
+  }}
+
+  function showSearchState(state) {{
+    const loadingEl = document.getElementById('kg-search-state-loading');
+    const errorEl = document.getElementById('kg-search-state-error');
+    const readyEl = document.getElementById('kg-search-state-ready');
+    const input = document.getElementById('kg-search-input');
+
+    if (loadingEl) {{
+      if (state === 'loading') loadingEl.removeAttribute('hidden');
+      else loadingEl.setAttribute('hidden', '');
+    }}
+    if (errorEl) {{
+      if (state === 'error') errorEl.removeAttribute('hidden');
+      else errorEl.setAttribute('hidden', '');
+    }}
+    if (readyEl) {{
+      if (state === 'ready') readyEl.removeAttribute('hidden');
+      else readyEl.setAttribute('hidden', '');
+    }}
+
+    if (input) {{
+      if (state === 'ready') {{
+        input.disabled = false;
+        input.placeholder = 'Search the library...';
+      }} else {{
+        input.disabled = true;
+      }}
+    }}
+  }}
+
+  function showSearchError(kind) {{
+    const copyEl = document.getElementById('kg-search-error-copy');
+    const actionBtn = document.getElementById('kg-search-error-action');
+    if (!copyEl || !actionBtn) return;
+
+    let copy, actionLabel, actionHandler;
+    if (kind === 'offline') {{
+      copy = 'Cannot reach search engine. Check your connection and try again.';
+      actionLabel = 'Retry';
+      actionHandler = () => {{
+        __searchModelError = null;
+        ensureSearchModelLoaded();
+      }};
+    }} else if (kind === 'wasm') {{
+      copy = 'Search is unavailable in this browser. Try a recent Chrome, Firefox, or Safari version.';
+      actionLabel = '';
+      actionHandler = null;
+    }} else {{
+      copy = 'Search engine could not load. Please try refreshing the page.';
+      actionLabel = 'Reload';
+      actionHandler = () => location.reload();
+    }}
+
+    copyEl.textContent = copy;
+    if (actionLabel) {{
+      actionBtn.removeAttribute('hidden');
+      actionBtn.textContent = actionLabel;
+      actionBtn.onclick = actionHandler;
+    }} else {{
+      actionBtn.setAttribute('hidden', '');
+    }}
+
+    showSearchState('error');
+  }}
+
+  // ─── T7.4: Performance instrumentation (?perf=1 mode) ─────────
+  // Per Decision 10: hidden URL parameter enables structured timing
+  // for six phases (model_load, vector_load, index_load, embed_query,
+  // knn_search, render_results). Dormant when perf=1 absent.
+  // Output via console.log per measurement + window.__perfDump() for
+  // a console.table summary suitable for copy-paste into the perf doc.
+
+  const __perfMode = (() => {{
+    try {{
+      return new URLSearchParams(window.location.search).has('perf');
+    }} catch (_) {{ return false; }}
+  }})();
+
+  const __perfLog = [];
+
+  function __perfMark(phase, ms, extra) {{
+    if (!__perfMode) return;
+    const row = {{
+      phase: phase,
+      ms: Number(ms.toFixed(1)),
+      t: Math.round(performance.now()),
+    }};
+    if (extra) Object.assign(row, extra);
+    __perfLog.push(row);
+    console.log('[perf]', phase, ms.toFixed(1) + 'ms', extra || '');
+  }}
+
+  // Note for transparency: index_load is deprecated in Option A
+  // (brute-force cosine; no HNSW graph loaded at runtime).
+  // We emit a one-time placeholder so the phase appears in __perfDump.
+  if (__perfMode) {{
+    __perfMark('index_load', 0, {{ note: 'deprecated in Option A' }});
+  }}
+
+  window.__perfDump = function() {{
+    if (!__perfMode) {{
+      console.log('[perf] not in perf mode — open URL with ?perf=1 to enable');
+      return [];
+    }}
+    console.table(__perfLog);
+    return __perfLog;
+  }};
+
+  async function ensureSearchModelLoaded() {{
+    if (__searchModelPipeline) return __searchModelPipeline;
+    if (__searchModelLoading) return new Promise((resolve, reject) => {{
+      const check = setInterval(() => {{
+        if (__searchModelPipeline) {{
+          clearInterval(check);
+          resolve(__searchModelPipeline);
+        }} else if (__searchModelError) {{
+          clearInterval(check);
+          reject(__searchModelError);
+        }}
+      }}, 100);
+    }});
+
+    __searchModelLoading = true;
+    __searchModelError = null;
+    showSearchState('loading');
+
+    const fillEl = document.getElementById('kg-search-progress-fill');
+    const copyEl = document.getElementById('kg-search-loading-copy');
+
+    if (copyEl) copyEl.textContent = 'Loading semantic search engine (33 MB, one-time)...';
+
+    try {{
+      if (!navigator.onLine) {{
+        throw new Error('OFFLINE');
+      }}
+
+      const tx = await window.__loadTransformers();
+
+      const __t_model_start = performance.now();
+      const pipeline = await tx.pipeline(
+        'feature-extraction',
+        'Xenova/bge-small-en-v1.5',
+        {{
+          progress_callback: (data) => {{
+            if (data && typeof data.progress === 'number' && fillEl) {{
+              fillEl.style.width = data.progress.toFixed(1) + '%';
+            }}
+            if (data && data.status && copyEl) {{
+              if (data.status === 'progress' && data.file) {{
+                copyEl.textContent = 'Loading: ' + data.file + ' (' + (data.progress || 0).toFixed(0) + '%)';
+              }} else if (data.status === 'done' && data.file) {{
+                copyEl.textContent = 'Loaded: ' + data.file;
+              }}
+            }}
+          }}
+        }}
+      );
+
+      __perfMark('model_load', performance.now() - __t_model_start);
+
+      __searchModelPipeline = pipeline;
+      __searchModelLoading = false;
+
+      if (fillEl) fillEl.style.width = '100%';
+
+      setTimeout(() => showSearchState('ready'), 200);
+
+      return pipeline;
+    }} catch (err) {{
+      __searchModelLoading = false;
+      __searchModelError = err;
+
+      const msg = String(err && err.message || err);
+      if (msg === 'OFFLINE' || msg.includes('Failed to fetch') || msg.includes('NetworkError')) {{
+        showSearchError('offline');
+      }} else if (msg.includes('WebAssembly') || msg.includes('wasm')) {{
+        showSearchError('wasm');
+      }} else if (msg.includes('404') || msg.includes('Not Found')) {{
+        showSearchError('model-404');
+      }} else {{
+        showSearchError('offline');
+      }}
+
+      throw err;
+    }}
+  }}
+
+  // ─── T7.2 (Option A): Search index — brute-force cosine over vectors.bin ─
+  // hnswlib-wasm 0.7.0's data flow does not match our deployment model
+  // (it builds in-browser with addItems(); we build server-side in Python
+  // via build_vector_index.py and ship the artifact). After multiple
+  // integration attempts we confirmed there is no public byte-injection
+  // API. Brute-force cosine completes in ~3-5ms for 724 vectors which
+  // is comparable to HNSW at this scale; HNSW only wins at 5K+ vectors.
+  // Re-evaluate with voy/usearch in v1.2 when chunk count grows.
+  //
+  // vectors.bin format (from tools/build_vector_index.py):
+  //   uint32 LE: count (724)
+  //   uint32 LE: dims  (384)
+  //   float32 LE: count*dims values, L2-normalized
+  // Both query and document vectors are L2-normalized, so cosine
+  // similarity = dot product (no magnitude term needed).
+
+  let __searchChunks = null;          // array of 724 chunk objects
+  let __searchVectors = null;         // Float32Array(count*dims), L2-normalized
+  let __searchCount = 0;
+  let __searchDims = 0;
+  let __searchIndexLoading = false;
+  let __searchIndexError = null;
+
+  // Resolve agent endpoint relative to knowledge-graph/index.html.
+  const __SEARCH_AGENT_BASE = 'agent/v1';
+
+  async function ensureSearchIndexLoaded() {{
+    if (__searchVectors && __searchChunks) {{
+      return {{ vectors: __searchVectors, chunks: __searchChunks }};
+    }}
+    if (__searchIndexLoading) {{
+      // Another caller is loading. Poll until done.
+      return new Promise((resolve, reject) => {{
+        const check = setInterval(() => {{
+          if (__searchVectors && __searchChunks) {{
+            clearInterval(check);
+            resolve({{ vectors: __searchVectors, chunks: __searchChunks }});
+          }} else if (__searchIndexError) {{
+            clearInterval(check);
+            reject(__searchIndexError);
+          }}
+        }}, 100);
+      }});
+    }}
+
+    __searchIndexLoading = true;
+    __searchIndexError = null;
+
+    try {{
+      const __t_vec_start = performance.now();
+      // Fetch chunks.json and vectors.bin in parallel.
+      // Note: index.bin (HNSW graph) is NO LONGER fetched here.
+      // It is still built by build_vector_index.py for future migration.
+      const [chunksResp, vectorsResp] = await Promise.all([
+        fetch(__SEARCH_AGENT_BASE + '/chunks.json'),
+        fetch(__SEARCH_AGENT_BASE + '/vectors.bin'),
+      ]);
+
+      if (!chunksResp.ok) {{
+        throw new Error('CHUNKS_FETCH_' + chunksResp.status);
+      }}
+      if (!vectorsResp.ok) {{
+        throw new Error('VECTORS_FETCH_' + vectorsResp.status);
+      }}
+
+      const chunksData = await chunksResp.json();
+      const vectorsBuffer = await vectorsResp.arrayBuffer();
+
+      // Per Decision 12: chunks are at chunksData.chunks (not chunksData[i])
+      const chunks = chunksData.chunks;
+      if (!Array.isArray(chunks)) {{
+        throw new Error('CHUNKS_SHAPE_INVALID');
+      }}
+
+      // Parse vectors.bin header (8 bytes: 2x uint32 little-endian).
+      const headerView = new DataView(vectorsBuffer, 0, 8);
+      const count = headerView.getUint32(0, true);
+      const dims = headerView.getUint32(4, true);
+
+      if (count !== chunks.length) {{
+        throw new Error('VECTORS_CHUNK_MISMATCH_' + count + '_vs_' + chunks.length);
+      }}
+      if (dims !== 384) {{
+        throw new Error('VECTORS_DIMS_UNEXPECTED_' + dims);
+      }}
+
+      // Float32Array view over the body. Zero-copy.
+      // vectors[i*dims + j] is the j-th component of the i-th chunk's embedding.
+      const vectors = new Float32Array(vectorsBuffer, 8, count * dims);
+
+      __searchChunks = chunks;
+      __searchVectors = vectors;
+      __searchCount = count;
+      __searchDims = dims;
+      __searchIndexLoading = false;
+
+      __perfMark('vector_load', performance.now() - __t_vec_start, {{
+        bytes: vectorsBuffer.byteLength,
+        count: count,
+        dims: dims,
+      }});
+
+      return {{ vectors, chunks }};
+    }} catch (err) {{
+      __searchIndexLoading = false;
+      __searchIndexError = err;
+      console.error('[search] index load failed:', err);
+      throw err;
+    }}
+  }}
+
+  // ─── T7.2: kNN search ───────────────────────────────────────
+  // Takes a normalized 384-dim query Float32Array (from
+  // embedSearchQuery) and returns ranked chunk results.
+
+  // Brute-force cosine kNN. Both query and document vectors are L2-normalized,
+  // so cosine similarity = dot product. We compute the dot product against
+  // every chunk vector, then sort descending and take the top k.
+  // Cost: 724 vectors * 384 dims = ~278K float multiply-adds per query.
+  // Empirically ~3-5ms on commodity hardware. No WASM, no FFI, no IDBFS.
+  async function searchKnn(queryEmbedding, k) {{
+    if (k === undefined) k = 20;
+    const {{ vectors, chunks }} = await ensureSearchIndexLoaded();
+    const count = __searchCount;
+    const dims = __searchDims;
+
+    // Compute dot products for all vectors. Tight inner loop on Float32Array.
+    const scores = new Float32Array(count);
+    for (let i = 0; i < count; i++) {{
+      let dot = 0;
+      const offset = i * dims;
+      for (let j = 0; j < dims; j++) {{
+        dot += vectors[offset + j] * queryEmbedding[j];
+      }}
+      scores[i] = dot;
+    }}
+
+    // Pair indices with scores, sort descending, take top k.
+    const ranked = [];
+    for (let i = 0; i < count; i++) {{
+      ranked.push({{ idx: i, score: scores[i] }});
+    }}
+    ranked.sort((a, b) => b.score - a.score);
+    const topK = ranked.slice(0, k);
+
+    return topK.map((r, rank) => ({{
+      chunk: chunks[r.idx],
+      // Convert cosine similarity to cosine distance for consistent semantics
+      // with the prior HNSW implementation (lower = more similar).
+      distance: 1 - r.score,
+      rank: rank,
+    }}));
+  }}
+
+  // ─── T7.2: Debug helper for DevTools acceptance test ────────
+  // Usage in browser console:
+  //   await window.__searchTest('audit findings')
+  // Returns an array of {{chunk, distance, rank}} objects.
+  // T7.3 will replace this with proper UI rendering.
+
+  window.__searchTest = async function(queryText) {{
+    if (!queryText || typeof queryText !== 'string') {{
+      console.warn('[search] usage: await __searchTest("your query")');
+      return [];
+    }}
+    const t0 = performance.now();
+    const queryVec = await embedSearchQuery(queryText);
+    const t1 = performance.now();
+    const results = await searchKnn(queryVec, 20);
+    const t2 = performance.now();
+    console.log(
+      '[search] ' + queryText + '\\n' +
+      '  embed: ' + (t1 - t0).toFixed(1) + 'ms\\n' +
+      '  knn: ' + (t2 - t1).toFixed(1) + 'ms\\n' +
+      '  results:'
+    );
+    results.forEach((r, i) => {{
+      console.log(
+        '  ' + (i + 1).toString().padStart(2, ' ') + '. ' +
+        '[' + (r.distance !== null ? r.distance.toFixed(4) : '?') + '] ' +
+        r.chunk.page_id + ' :: ' + r.chunk.chunk_type +
+        (r.chunk.chunk_index ? ':' + r.chunk.chunk_index : '') +
+        ' — ' + r.chunk.text.slice(0, 80).replace(/\\s+/g, ' ') + '...'
+      );
+    }});
+    return results;
+  }};
+
+  // ─── T7.3: Search input → debounce → query → render pipeline ──
+  // Per Decision 8: 300ms debounce, AbortController on embed step.
+  // kNN is synchronous (~5ms brute force) so no cancellation needed.
+
+  let __searchDebounceTimer = null;
+  let __searchEmbedController = null;
+  let __searchActiveResultIndex = -1;  // for keyboard nav (Decision 9)
+  let __searchCurrentResults = [];     // most recent rendered results
+
+  const __SEARCH_DEBOUNCE_MS = 300;
+  const __SEARCH_MIN_QUERY_LEN = 2;
+
+  function clearSearchResults() {{
+    const listEl = document.getElementById('kg-search-results');
+    if (listEl) listEl.innerHTML = '';
+    __searchActiveResultIndex = -1;
+    __searchCurrentResults = [];
+    const inputEl = document.getElementById('kg-search-input');
+    if (inputEl) inputEl.removeAttribute('aria-activedescendant');
+  }}
+
+  function renderSearchResults(results) {{
+    const __t_render_start = performance.now();
+    const listEl = document.getElementById('kg-search-results');
+    if (!listEl) return;
+    listEl.innerHTML = '';
+    __searchCurrentResults = results;
+    __searchActiveResultIndex = -1;
+
+    if (!results || results.length === 0) {{
+      __perfMark('render_results', performance.now() - __t_render_start, {{
+        result_count: 0,
+      }});
+      // Empty state shows automatically (CSS rule on :empty)
+      return;
+    }}
+
+    results.forEach((result, idx) => {{
+      const li = document.createElement('li');
+      li.className = 'kg-search-result';
+      li.setAttribute('role', 'option');
+      li.setAttribute('id', 'kg-search-result-' + idx);
+      li.setAttribute('aria-selected', 'false');
+      li.setAttribute('data-page-id', result.chunk.page_id);
+      li.setAttribute('data-chunk-id', result.chunk.id);
+      li.setAttribute('data-chunk-index', String(result.chunk.chunk_index));
+      li.setAttribute('data-rank', String(idx));
+      // Distance kept for debugging only — not visible per Decision 4
+      li.setAttribute('data-distance', result.distance.toFixed(4));
+
+      const header = document.createElement('div');
+      header.className = 'kg-search-result-header';
+
+      const rankEl = document.createElement('span');
+      rankEl.className = 'kg-search-result-rank';
+      rankEl.textContent = String(idx + 1).padStart(2, ' ');
+
+      const pageEl = document.createElement('span');
+      pageEl.className = 'kg-search-result-page';
+      pageEl.textContent = result.chunk.page_id;
+
+      const typeEl = document.createElement('span');
+      typeEl.className = 'kg-search-result-type';
+      const typeLabel = result.chunk.chunk_type +
+        (result.chunk.chunk_index > 0 ? ' #' + result.chunk.chunk_index : '');
+      typeEl.textContent = typeLabel;
+
+      header.appendChild(rankEl);
+      header.appendChild(pageEl);
+      header.appendChild(typeEl);
+
+      const textEl = document.createElement('p');
+      textEl.className = 'kg-search-result-text';
+      // Truncate to ~160 chars, collapse whitespace, strip markdown headers
+      const cleanText = result.chunk.text
+        .replace(/^#+\\s+/gm, '')
+        .replace(/\\s+/g, ' ')
+        .trim();
+      textEl.textContent = cleanText.length > 160
+        ? cleanText.slice(0, 160) + '…'
+        : cleanText;
+
+      li.appendChild(header);
+      li.appendChild(textEl);
+
+      // Click → activate result
+      li.addEventListener('click', () => activateSearchResult(idx));
+
+      listEl.appendChild(li);
+    }});
+
+    __perfMark('render_results', performance.now() - __t_render_start, {{
+      result_count: results.length,
+    }});
+  }}
+
+  async function performSearch(queryText, signal) {{
+    // Embed query (cancellable via signal)
+    const __t_embed_start = performance.now();
+    const queryVec = await embedSearchQuery(queryText);
+    __perfMark('embed_query', performance.now() - __t_embed_start, {{
+      query_len: queryText.length,
+    }});
+    if (signal && signal.aborted) {{
+      const err = new Error('aborted');
+      err.name = 'AbortError';
+      throw err;
+    }}
+    // kNN is fast and synchronous — no cancellation needed
+    const __t_knn_start = performance.now();
+    const results = await searchKnn(queryVec, 20);
+    __perfMark('knn_search', performance.now() - __t_knn_start, {{
+      result_count: results.length,
+    }});
+    if (signal && signal.aborted) {{
+      const err = new Error('aborted');
+      err.name = 'AbortError';
+      throw err;
+    }}
+    return results;
+  }}
+
+  function handleSearchInput(queryText) {{
+    // Cancel any in-flight embed
+    if (__searchEmbedController) {{
+      __searchEmbedController.abort();
+    }}
+
+    // Clear pending debounce
+    if (__searchDebounceTimer) {{
+      clearTimeout(__searchDebounceTimer);
+    }}
+
+    const trimmed = queryText.trim();
+    if (trimmed.length < __SEARCH_MIN_QUERY_LEN) {{
+      clearSearchResults();
+      return;
+    }}
+
+    // Schedule the actual query
+    __searchDebounceTimer = setTimeout(async () => {{
+      __searchEmbedController = new AbortController();
+      const signal = __searchEmbedController.signal;
+      try {{
+        const results = await performSearch(trimmed, signal);
+        renderSearchResults(results);
+      }} catch (err) {{
+        if (err.name === 'AbortError') {{
+          // Superseded by a newer query — silent
+          return;
+        }}
+        console.error('[search] query failed:', err);
+        // Don't show error UI for transient query failures —
+        // model/index errors are surfaced by showSearchState('error')
+      }}
+    }}, __SEARCH_DEBOUNCE_MS);
+  }}
+
+  // ─── T7.3: Result click → close modal + clear lens + dim graph ──
+  // Per Decision 5: search wins — clear lens entirely on result-click.
+  // Per Decision 6: apply search-* classes to graph (not lens-*).
+  // Per F10 (deferred): scroll to chunk-position is out of scope;
+  // we just open the page panel via existing selectNode(pageId).
+
+  function clearSearchHighlight() {{
+    const svg = d3.select('.kg-graph');
+    if (svg.empty()) return;
+    svg.selectAll('.node')
+       .classed('search-lit', false)
+       .classed('search-dimmed', false);
+    svg.selectAll('.link')
+       .classed('search-edge-lit', false)
+       .classed('search-edge-fade', false)
+       .classed('search-edge-dimmed', false);
+  }}
+
+  function applySearchHighlight(litPageId) {{
+    const svg = d3.select('.kg-graph');
+    if (svg.empty()) return;
+
+    // Determine which links touch the lit node
+    const litLinkSet = new Set();
+    const adjacentNodeSet = new Set([litPageId]);
+    svg.selectAll('.link').each(function(d) {{
+      const sourceId = (d.source && d.source.id) || d.source;
+      const targetId = (d.target && d.target.id) || d.target;
+      if (sourceId === litPageId || targetId === litPageId) {{
+        litLinkSet.add(d);
+        adjacentNodeSet.add(sourceId);
+        adjacentNodeSet.add(targetId);
+      }}
+    }});
+
+    svg.selectAll('.node')
+       .classed('search-lit', d => d.id === litPageId)
+       .classed('search-dimmed', d => !adjacentNodeSet.has(d.id));
+
+    svg.selectAll('.link')
+       .classed('search-edge-lit', d => litLinkSet.has(d))
+       .classed('search-edge-fade', d => !litLinkSet.has(d) && (
+         adjacentNodeSet.has((d.source && d.source.id) || d.source) ||
+         adjacentNodeSet.has((d.target && d.target.id) || d.target)
+       ))
+       .classed('search-edge-dimmed', d => {{
+         if (litLinkSet.has(d)) return false;
+         const s = (d.source && d.source.id) || d.source;
+         const t = (d.target && d.target.id) || d.target;
+         return !adjacentNodeSet.has(s) && !adjacentNodeSet.has(t);
+       }});
+  }}
+
+  function clearLensSelection() {{
+    // Per Decision 5: clear lens entirely. Update hash and dropdown.
+    const currentNode = (function() {{
+      const hash = window.location.hash;
+      if (!hash) return null;
+      const params = hash.slice(1).split('&');
+      for (const p of params) {{
+        if (p.startsWith('node=')) {{
+          return decodeURIComponent(p.substring(5));
+        }}
+      }}
+      return null;
+    }})();
+
+    let newHash = '';
+    if (currentNode) newHash = 'node=' + encodeURIComponent(currentNode);
+    if (newHash) {{
+      window.location.hash = newHash;
+    }} else if (window.location.hash) {{
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
+    }}
+  }}
+
+  function activateSearchResult(idx) {{
+    const result = __searchCurrentResults[idx];
+    if (!result) return;
+
+    const pageId = result.chunk.page_id;
+
+    // Step 1: close the modal
+    closeSearchModal();
+
+    // Step 2: clear lens (Decision 5)
+    clearLensSelection();
+
+    // Step 3: select the node (opens panel via existing hash-driven flow)
+    selectNode(pageId);
+
+    // Step 4: apply search highlight to graph (Decision 6)
+    // Wait one frame so D3 has rendered the node-selected state first
+    requestAnimationFrame(() => {{
+      applySearchHighlight(pageId);
+    }});
+  }}
+
+  // ─── T7.3: Combobox keyboard navigation (Decision 9) ─────────
+  function setActiveSearchResult(idx) {{
+    const items = document.querySelectorAll('.kg-search-result');
+    if (items.length === 0) return;
+
+    // Bound idx to valid range
+    if (idx < 0) idx = items.length - 1;
+    if (idx >= items.length) idx = 0;
+
+    items.forEach((el, i) => {{
+      el.classList.toggle('is-active', i === idx);
+      el.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+    }});
+
+    __searchActiveResultIndex = idx;
+
+    const inputEl = document.getElementById('kg-search-input');
+    if (inputEl) {{
+      inputEl.setAttribute('aria-activedescendant', 'kg-search-result-' + idx);
+    }}
+
+    // Scroll the active item into view inside the listbox
+    items[idx].scrollIntoView({{ block: 'nearest' }});
+  }}
+
+  function handleSearchKeydown(event) {{
+    const items = document.querySelectorAll('.kg-search-result');
+    if (items.length === 0) return;  // no results, no nav
+
+    if (event.key === 'ArrowDown') {{
+      event.preventDefault();
+      setActiveSearchResult(__searchActiveResultIndex + 1);
+    }} else if (event.key === 'ArrowUp') {{
+      event.preventDefault();
+      setActiveSearchResult(__searchActiveResultIndex - 1);
+    }} else if (event.key === 'Home') {{
+      event.preventDefault();
+      setActiveSearchResult(0);
+    }} else if (event.key === 'End') {{
+      event.preventDefault();
+      setActiveSearchResult(items.length - 1);
+    }} else if (event.key === 'Enter') {{
+      if (__searchActiveResultIndex >= 0) {{
+        event.preventDefault();
+        activateSearchResult(__searchActiveResultIndex);
+      }}
+      // If no active result, Enter is a no-op (don't submit form, don't close modal)
+    }}
+    // Escape is handled by existing modal-internal keydown listener at line 9198
+  }}
+
+  // ─── T7.3: Wire input + keydown listeners ────────────────────
+  (function() {{
+    const inputEl = document.getElementById('kg-search-input');
+    if (!inputEl) return;
+
+    // ARIA: input is the combobox controller; listbox is its target
+    inputEl.setAttribute('role', 'combobox');
+    inputEl.setAttribute('aria-controls', 'kg-search-results');
+    inputEl.setAttribute('aria-autocomplete', 'list');
+    inputEl.setAttribute('aria-expanded', 'true');
+
+    inputEl.addEventListener('input', (event) => {{
+      handleSearchInput(event.target.value);
+    }});
+
+    inputEl.addEventListener('keydown', handleSearchKeydown);
+  }})();
+
+  // T7.2 + T7.3 will use this. T7.1 just defines the contract.
+  async function embedSearchQuery(text) {{
+    const pipeline = await ensureSearchModelLoaded();
+    const output = await pipeline(text, {{ pooling: 'mean', normalize: true }});
+    return output.data;
+  }}
+
+  // ─── Wire up modal interactions ─────────────────────────────
+
+  const __searchTrigger = document.getElementById('kg-search-trigger');
+  if (__searchTrigger) {{
+    __searchTrigger.addEventListener('click', openSearchModal);
+  }}
+
+  const __searchClose = document.getElementById('kg-search-close');
+  if (__searchClose) {{
+    __searchClose.addEventListener('click', closeSearchModal);
+  }}
+  const __searchBackdrop = document.getElementById('kg-search-backdrop');
+  if (__searchBackdrop) {{
+    __searchBackdrop.addEventListener('click', closeSearchModal);
+  }}
+
+  const __searchModalEl = document.getElementById('kg-search-modal');
+  if (__searchModalEl) {{
+    __searchModalEl.addEventListener('keydown', (event) => {{
+      if (event.key === 'Escape') {{
+        event.stopPropagation();
+        closeSearchModal();
+      }}
+    }});
+  }}
 
   // On load, render whatever the hash says (handles deep linking)
   renderSelection();
