@@ -8006,6 +8006,15 @@ def gen_knowledge_graph_page(graph_data, out_root):
       tx.env.allowRemoteModels = true;
       tx.env.useBrowserCache = true;
       tx.env.useFSCache = false;
+      // T7.5 hotfix: explicitly pin remoteHost to HuggingFace.
+      // Transformers.js v2.x defaults remoteHost to current origin
+      // when not set; in production this caused model file fetches
+      // to hit ascendion.engineering/... and 403 against S3 instead
+      // of huggingface.co/... where the BGE model actually lives.
+      // Cache Storage masked this in dev because the very first model
+      // load (before this config existed) cached under huggingface.co
+      // URLs, and subsequent loads were cache hits.
+      tx.env.remoteHost = 'https://huggingface.co/';
       return tx;
     }})();
     return window.__transformersImportPromise;
