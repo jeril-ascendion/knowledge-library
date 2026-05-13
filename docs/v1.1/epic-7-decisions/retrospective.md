@@ -167,3 +167,91 @@ Direct inputs to the v1.2 specification, derived from EPIC-7 work:
 ### Commits in EPIC-7
 - `c0f875a` decisions doc · `c6d83aa` T7.1 · `12a1ba0` T7.2 · `7481787` T7.3
 - `a124595` T7.4a · `e907266` architecture doc · `781bba1` T7.4b
+
+---
+
+## 9 — Production incident postmortem (added after section 8)
+
+The retrospective above was written at EPIC-7 close, after `c8420a3` shipped to the feature branch and before the EPIC-7 PR (#18) merged to main. A production incident surfaced within hours of the EPIC-7 deploy and resolved within five hours. This section documents the incident honestly because the lessons it produced are more durable than the EPIC-7 work itself.
+
+### 9.1 What happened
+
+EPIC-7 PR #18 squash-merged to main and deployed to `ascendion.engineering` via the standard GitHub Actions workflow. Build succeeded. Deploy succeeded. CloudFront invalidation succeeded. The first production visitor to `/knowledge-graph/` pressed `/`, the search modal opened, and the model load failed with three `403 Forbidden` responses from S3 for `config.json`, `tokenizer.json`, and `tokenizer_config.json` under the path `ascendion.engineering/models/Xenova/bge-small-en-v1.5/...`.
+
+Search was completely broken on first cold visit for every user.
+
+### 9.2 Why it broke
+
+Transformers.js v2.17.2 defaults `allowLocalModels = true` with `localModelPath = '/models/'`. When `allowLocalModels` is true, the library constructs URLs as `${origin}${localModelPath}${modelId}/...` and tries to fetch from the current origin first. Only if that fetch fails does it fall back to `remoteHost`. But the library treats a same-origin 403 as a hard failure rather than as "not local, try remote" — so the fallback never fired. Production was therefore trying to fetch BGE model files from its own S3 bucket, which doesn't host them, returning 403.
+
+The configuration in EPIC-7 set `allowRemoteModels = true` but did not set `remoteHost` and did not set `allowLocalModels = false`. Both were required for fetches to actually go to HuggingFace.
+
+### 9.3 Why it wasn't caught in development
+
+This is the most important lesson. Throughout T7.1, T7.2, T7.3, T7.4a, T7.4b — every local smoke test and every performance characterization run — Cache Storage masked the bug.
+
+The first time the BGE model was fetched during early T7.1 development, the configuration happened to be in a state that successfully routed to `huggingface.co`. Those files were cached in browser Cache Storage under their `huggingface.co` URLs. Every subsequent local test was a cache hit on those URLs. The library never re-resolved the URL construction logic because it never needed to fetch the files again.
+
+Production was the first session anywhere with a clean cache against a production origin. That session surfaced the misconfiguration immediately.
+
+### 9.4 The remediation arc
+
+Three hotfix attempts were required:
+
+**Hotfix #1 (PR #19, merged):** Set `tx.env.remoteHost = 'https://huggingface.co/'`. Necessary but not sufficient. After deploy, the 403s persisted. Diagnosis was based on the assumption that setting `remoteHost` would override the URL construction. The Transformers.js v2.17.2 source was not consulted before patching.
+
+**Hotfix attempt on the same branch (PR #20, closed without merging):** Added `tx.env.allowLocalModels = false` on top of the merged branch. Because PR #19's commit was already on main as a squash-merge, the branch's two-commit history conflicted with main and PR #20 was permanently un-mergeable.
+
+**Hotfix #2 (new branch, separate PR, merged):** Created a fresh branch `hotfix/search-allow-local-models` from current main, applied only the `allowLocalModels = false` change, opened a clean PR, CI passed, squash-merged, deployed. Production smoke test confirmed model fetches now resolve to `huggingface.co/Xenova/...` with 200 status. Search works on cold-cache first visits.
+
+Total time from incident detection to resolution: approximately five hours. Most of that time was deploy cycles (~6-8 minutes each) and the diagnostic loops that bracketed them.
+
+### 9.5 Lessons — pre-deploy gates that would have prevented this
+
+**Cold-cache smoke testing is mandatory before any deploy of code that touches Cache Storage or external resource fetching.** The procedure takes 30 seconds: DevTools → Application → Clear site data → hard reload → exercise the feature. Every EPIC that ships features touching external resources should include this as an explicit gate in the playbook, not as a vague recommendation.
+
+The EPIC-7 playbook already had the perf characterization tier methodology. It should have had a cold-cache validation step too. This is now logged as a v1.2 playbook addition.
+
+### 9.6 Lessons — diagnostic discipline under production pressure
+
+**Read the actual library source before patching third-party library behavior.** Hotfix #1 was diagnosed in roughly fifteen minutes, patched, and deployed. The diagnosis was wrong. Reading the v2.17.2 `env.js` source — a two-minute task — would have produced the correct two-line patch on the first attempt instead of the four hours of diagnostic ping-pong that actually occurred.
+
+Production pressure creates a bias toward "ship the fix fast" that competes against "verify the fix is correct." In this incident, the fast path was wrong, the deploy cycle is expensive (~8 minutes wall-clock), and three incorrect deploys cost more time than a careful read-the-source diagnosis would have.
+
+The discipline is: when a production-broken state pressures you toward speed, slow down for the diagnostic step specifically. The deploy step can move fast safely; the diagnostic step cannot.
+
+### 9.7 Lessons — Git workflow
+
+**After a PR merges, the next change against the same target lives on a NEW branch from current main, not as added commits to the now-merged branch.** Adding commits to the original branch leaves it with history that conflicts with main's squash-merge of itself. PR #20 spent its lifetime in a permanently-conflicting state because of this.
+
+The recovery procedure (create new branch from current main, cherry-pick or re-apply the new change only, push, open fresh PR) is straightforward, but it has to be recognized as the right move rather than discovered through trial and error. Documenting this here so future EPIC closes don't repeat the duplicate-PR confusion.
+
+### 9.8 Lessons — Python f-string escape audits
+
+The corrective hotfix introduced a transient build failure because the comment text contained `${origin}` (intended as literal JS template literal syntax) inside a Python f-string. Python parsed `${origin}` as an f-string interpolation expression and raised `NameError: name 'origin' is not defined`. Caught locally because the build was tested before push.
+
+**Any f-string in `tools/generate.py` that emits JS containing template literals, or shell containing variable expansion, needs explicit `{{` `}}` escape discipline.** The patch script needs to escape literal braces consistently — `${{origin}}` in Python source renders to `${origin}` in the generated HTML.
+
+The local-build-before-push discipline caught this in two minutes. Without it, the corrective hotfix would have been a CI failure and a re-roll.
+
+### 9.9 What this means for v1.2
+
+Three additions to the v1.2 playbook:
+
+1. **Cold-cache smoke test** is a pre-deploy gate for any change touching Cache Storage or external resource fetching. Procedure documented in the playbook with the 30-second protocol.
+
+2. **Third-party library config patches** require reading the library's documented config keys or source before patching. A 5-minute time budget for this is cheaper than any incorrect deploy cycle.
+
+3. **F12 (self-host model files)** moves from "nice-to-have for FSI" to "required for v1.2." Self-hosting from CloudFront ap-southeast-2 eliminates the entire class of "remote host URL construction" bugs because there's no remote host to route to. It also reduces cold-load p95 variance materially. The cost is ~33 MB of additional S3 storage and one extra build step.
+
+### 9.10 What this does not change
+
+EPIC-7 ships. The architectural pivot to brute-force kNN was sound. The performance characterization holds. The F-registry stands. The 12 locked decisions held through implementation. The retrospective sections 1-8 above are accurate as of EPIC-7 close.
+
+This incident was a delivery-discipline gap, not a design gap. The remediation is procedural (pre-deploy gates, diagnostic discipline, Git workflow clarity) rather than architectural.
+
+The honest reading is: **EPIC-7 was technically correct and operationally underprepared.** The fix for that is documented above and lives in the v1.2 playbook from this point forward.
+
+---
+
+*End of section 9 addendum. The retrospective document is complete as of this addition.*
