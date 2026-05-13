@@ -8006,14 +8006,17 @@ def gen_knowledge_graph_page(graph_data, out_root):
       tx.env.allowRemoteModels = true;
       tx.env.useBrowserCache = true;
       tx.env.useFSCache = false;
-      // T7.5 hotfix: explicitly pin remoteHost to HuggingFace.
-      // Transformers.js v2.x defaults remoteHost to current origin
-      // when not set; in production this caused model file fetches
-      // to hit ascendion.engineering/... and 403 against S3 instead
-      // of huggingface.co/... where the BGE model actually lives.
-      // Cache Storage masked this in dev because the very first model
-      // load (before this config existed) cached under huggingface.co
-      // URLs, and subsequent loads were cache hits.
+      // T7.5 hotfix sequence — corrected diagnosis after PR #19:
+      // setting remoteHost alone is not sufficient. Transformers.js
+      // v2.17.2 defaults: allowLocalModels=true with localModelPath=
+      // '/models/'. The library tries local first
+      // (${{origin}}/models/Xenova/...) and a 403 from same-origin S3
+      // is treated as a hard failure rather than "not local, try
+      // remote." Setting allowLocalModels=false forces the library to
+      // skip the local-first check and go directly to remoteHost.
+      // Both lines are required; see Transformers.js v2.17.2 env.js
+      // source for the URL construction logic.
+      tx.env.allowLocalModels = false;
       tx.env.remoteHost = 'https://huggingface.co/';
       return tx;
     }})();
