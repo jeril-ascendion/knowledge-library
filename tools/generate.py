@@ -2486,30 +2486,27 @@ SVGS = {
 
 "mobile_quality": """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
 <style>
-@keyframes pyramidRise{from{transform:scaleY(0);opacity:0}to{transform:scaleY(1);opacity:1}}
-@keyframes pyramidRepeat{0%,70%{opacity:1}80%,100%{opacity:0}}
-@keyframes checkPop{0%,90%,100%{r:3}95%{r:5}}
-.rep{animation:pyramidRepeat 4.5s ease-in-out infinite}
-.l1{transform-origin:130px 188px;animation:pyramidRise 0.5s 0.2s ease forwards}
-.l2{transform-origin:130px 162px;animation:pyramidRise 0.5s 0.8s ease forwards}
-.l3{transform-origin:130px 136px;animation:pyramidRise 0.5s 1.4s ease forwards}
-.l4{transform-origin:130px 110px;animation:pyramidRise 0.5s 2.0s ease forwards}
-.l5{transform-origin:130px 80px;animation:pyramidRise 0.5s 2.6s ease forwards}
-.ck{animation:checkPop 4.5s ease-in-out infinite}
+@keyframes layerRise{0%{transform:scaleY(0);opacity:0}100%{transform:scaleY(1);opacity:1}}
+@keyframes cycle{0%,70%{opacity:1}85%,100%{opacity:0}}
+.cyc{animation:cycle 4s ease-in-out infinite}
+.l1{transform-origin:130px 184px;animation:layerRise 0.5s 0.1s ease forwards}
+.l2{transform-origin:130px 160px;animation:layerRise 0.5s 0.7s ease forwards}
+.l3{transform-origin:130px 136px;animation:layerRise 0.5s 1.3s ease forwards}
+.l4{transform-origin:130px 112px;animation:layerRise 0.5s 1.9s ease forwards}
+.l5{transform-origin:130px 84px;animation:layerRise 0.5s 2.5s ease forwards}
 </style>
-<g class="rep">
-<polygon class="l1" points="14,196 246,196 226,170 34,170" stroke="#0D47A1" stroke-width="1.5" fill="#E3F2FD"/>
-<text x="130" y="186" text-anchor="middle" font-size="8" fill="#0D47A1" font-family="IBM Plex Sans">Unit Tests — JUnit5 · XCTest · Turbine</text>
-<polygon class="l2" points="34,168 226,168 208,142 52,142" stroke="#1B5E20" stroke-width="1.5" fill="#E8F5E9"/>
-<text x="130" y="158" text-anchor="middle" font-size="8" fill="#1B5E20" font-family="IBM Plex Sans">Snapshot — Paparazzi · iOSSnapshot</text>
-<polygon class="l3" points="52,140 208,140 188,114 72,114" stroke="#E65100" stroke-width="1.5" fill="#FFF3E0"/>
-<text x="130" y="130" text-anchor="middle" font-size="8" fill="#E65100" font-family="IBM Plex Sans">Integration Tests</text>
-<polygon class="l4" points="72,112 188,112 164,86 96,86" stroke="#C62828" stroke-width="1.5" fill="#FFEBEE"/>
-<text x="130" y="102" text-anchor="middle" font-size="8" fill="#C62828" font-family="IBM Plex Sans">UI — Espresso · Maestro</text>
-<polygon class="l5" points="96,84 164,84 148,58 112,58" stroke="#4A148C" stroke-width="1.5" fill="#EDE7F6"/>
-<text x="130" y="75" text-anchor="middle" font-size="8" fill="#4A148C" font-family="IBM Plex Sans">E2E Tests</text>
+<g class="cyc">
+<polygon class="l1" points="18,192 242,192 222,168 38,168" stroke="#0D47A1" stroke-width="1.5" fill="#E3F2FD"/>
+<text x="130" y="183" text-anchor="middle" font-size="8" fill="#0D47A1" font-family="IBM Plex Sans">Unit Tests — JUnit5 · XCTest · Turbine</text>
+<polygon class="l2" points="38,166 222,166 204,142 56,142" stroke="#1B5E20" stroke-width="1.5" fill="#E8F5E9"/>
+<text x="130" y="157" text-anchor="middle" font-size="8" fill="#1B5E20" font-family="IBM Plex Sans">Snapshot — Paparazzi · iOSSnapshotTestCase</text>
+<polygon class="l3" points="56,140 204,140 184,116 76,116" stroke="#E65100" stroke-width="1.5" fill="#FFF3E0"/>
+<text x="130" y="131" text-anchor="middle" font-size="8" fill="#E65100" font-family="IBM Plex Sans">Integration Tests</text>
+<polygon class="l4" points="76,114 184,114 160,90 100,90" stroke="#C62828" stroke-width="1.5" fill="#FFEBEE"/>
+<text x="130" y="105" text-anchor="middle" font-size="8" fill="#C62828" font-family="IBM Plex Sans">UI — Espresso · Maestro</text>
+<polygon class="l5" points="100,88 160,88 144,62 116,62" stroke="#4A148C" stroke-width="1.5" fill="#EDE7F6"/>
+<text x="130" y="79" text-anchor="middle" font-size="8" fill="#4A148C" font-family="IBM Plex Sans">E2E Tests</text>
 </g>
-<circle class="ck" cx="240" cy="60" r="3" fill="#C96330"/>
 </svg>""",
 
 "mobile_security": """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2563,46 +2560,47 @@ SVGS = {
 
 "mobile_delivery": """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
 <style>
-@keyframes stageLight{0%,100%{fill:#F5F5F5;stroke:#CCCCCC}16%{fill:#C96330;stroke:#C96330}}
-@keyframes stageText{0%,100%{fill:#888888}16%{fill:#FFFFFF}}
-@keyframes lineFlow{from{stroke-dashoffset:20}to{stroke-dashoffset:0}}
-.s1{animation:stageLight 4.2s 0.0s ease-in-out infinite}
-.s2{animation:stageLight 4.2s 0.6s ease-in-out infinite}
-.s3{animation:stageLight 4.2s 1.2s ease-in-out infinite}
-.s4{animation:stageLight 4.2s 1.8s ease-in-out infinite}
-.s5{animation:stageLight 4.2s 2.4s ease-in-out infinite}
-.s6{animation:stageLight 4.2s 3.0s ease-in-out infinite}
-.t1{animation:stageText 4.2s 0.0s ease-in-out infinite}
-.t2{animation:stageText 4.2s 0.6s ease-in-out infinite}
-.t3{animation:stageText 4.2s 1.2s ease-in-out infinite}
-.t4{animation:stageText 4.2s 1.8s ease-in-out infinite}
-.t5{animation:stageText 4.2s 2.4s ease-in-out infinite}
-.t6{animation:stageText 4.2s 3.0s ease-in-out infinite}
-.lf{stroke-dasharray:20;animation:lineFlow 0.6s linear infinite}
+@keyframes stLight{0%,100%{fill:#1a1a1a;stroke:#333}16.6%{fill:#C96330;stroke:#C96330}}
+@keyframes stText{0%,100%{fill:#555}16.6%{fill:#ffffff}}
+@keyframes arrowPulse{from{stroke-dashoffset:20}to{stroke-dashoffset:0}}
+.b1{animation:stLight 4.2s 0.0s ease-in-out infinite}
+.b2{animation:stLight 4.2s 0.7s ease-in-out infinite}
+.b3{animation:stLight 4.2s 1.4s ease-in-out infinite}
+.b4{animation:stLight 4.2s 2.1s ease-in-out infinite}
+.b5{animation:stLight 4.2s 2.8s ease-in-out infinite}
+.b6{animation:stLight 4.2s 3.5s ease-in-out infinite}
+.t1{animation:stText 4.2s 0.0s ease-in-out infinite}
+.t2{animation:stText 4.2s 0.7s ease-in-out infinite}
+.t3{animation:stText 4.2s 1.4s ease-in-out infinite}
+.t4{animation:stText 4.2s 2.1s ease-in-out infinite}
+.t5{animation:stText 4.2s 2.8s ease-in-out infinite}
+.t6{animation:stText 4.2s 3.5s ease-in-out infinite}
+.ar{stroke-dasharray:20;animation:arrowPulse 0.6s linear infinite}
 </style>
-<rect class="s1" x="6" y="82" width="36" height="36" rx="4" stroke-width="1.5"/>
-<text class="t1" x="24" y="97" text-anchor="middle" font-size="7" font-family="IBM Plex Mono">push</text>
-<text class="t1" x="24" y="108" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">git</text>
-<rect class="s2" x="50" y="82" width="36" height="36" rx="4" stroke-width="1.5"/>
-<text class="t2" x="68" y="97" text-anchor="middle" font-size="7" font-family="IBM Plex Mono">build</text>
-<text class="t2" x="68" y="108" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">gradle</text>
-<rect class="s3" x="94" y="82" width="36" height="36" rx="4" stroke-width="1.5"/>
-<text class="t3" x="112" y="97" text-anchor="middle" font-size="7" font-family="IBM Plex Mono">test</text>
-<text class="t3" x="112" y="108" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">gate</text>
-<rect class="s4" x="138" y="82" width="36" height="36" rx="4" stroke-width="1.5"/>
-<text class="t4" x="156" y="97" text-anchor="middle" font-size="7" font-family="IBM Plex Mono">sign</text>
-<text class="t4" x="156" y="108" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">match</text>
-<rect class="s5" x="182" y="82" width="36" height="36" rx="4" stroke-width="1.5"/>
-<text class="t5" x="200" y="97" text-anchor="middle" font-size="7" font-family="IBM Plex Mono">dist</text>
-<text class="t5" x="200" y="108" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">QA</text>
-<rect class="s6" x="218" y="82" width="36" height="36" rx="4" stroke-width="1.5"/>
-<text class="t6" x="236" y="97" text-anchor="middle" font-size="7" font-family="IBM Plex Mono">ship</text>
-<text class="t6" x="236" y="108" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">store</text>
-<line class="lf" x1="42" y1="100" x2="50" y2="100" stroke="#CCCCCC" stroke-width="1.2"/>
-<line class="lf" x1="86" y1="100" x2="94" y2="100" stroke="#CCCCCC" stroke-width="1.2"/>
-<line class="lf" x1="130" y1="100" x2="138" y2="100" stroke="#CCCCCC" stroke-width="1.2"/>
-<line class="lf" x1="174" y1="100" x2="182" y2="100" stroke="#CCCCCC" stroke-width="1.2"/>
-<line class="lf" x1="218" y1="100" x2="218" y2="100" stroke="#CCCCCC" stroke-width="1.2"/>
+<rect class="b1" x="4" y="76" width="36" height="36" rx="5" stroke-width="1.5"/>
+<text class="t1" x="22" y="91" text-anchor="middle" font-size="7" font-family="IBM Plex Mono">push</text>
+<text class="t1" x="22" y="103" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">git</text>
+<rect class="b2" x="48" y="76" width="36" height="36" rx="5" stroke-width="1.5"/>
+<text class="t2" x="66" y="91" text-anchor="middle" font-size="7" font-family="IBM Plex Mono">build</text>
+<text class="t2" x="66" y="103" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">gradle</text>
+<rect class="b3" x="92" y="76" width="36" height="36" rx="5" stroke-width="1.5"/>
+<text class="t3" x="110" y="91" text-anchor="middle" font-size="7" font-family="IBM Plex Mono">test</text>
+<text class="t3" x="110" y="103" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">gates</text>
+<rect class="b4" x="136" y="76" width="36" height="36" rx="5" stroke-width="1.5"/>
+<text class="t4" x="154" y="91" text-anchor="middle" font-size="7" font-family="IBM Plex Mono">sign</text>
+<text class="t4" x="154" y="103" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">match</text>
+<rect class="b5" x="180" y="76" width="36" height="36" rx="5" stroke-width="1.5"/>
+<text class="t5" x="198" y="91" text-anchor="middle" font-size="7" font-family="IBM Plex Mono">dist</text>
+<text class="t5" x="198" y="103" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">QA</text>
+<rect class="b6" x="220" y="76" width="36" height="36" rx="5" stroke-width="1.5"/>
+<text class="t6" x="238" y="91" text-anchor="middle" font-size="7" font-family="IBM Plex Mono">ship</text>
+<text class="t6" x="238" y="103" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">store</text>
+<line class="ar" x1="40" y1="94" x2="48" y2="94" stroke="#C96330" stroke-width="1.5"/>
+<line class="ar" x1="84" y1="94" x2="92" y2="94" stroke="#C96330" stroke-width="1.5"/>
+<line class="ar" x1="128" y1="94" x2="136" y2="94" stroke="#C96330" stroke-width="1.5"/>
+<line class="ar" x1="172" y1="94" x2="180" y2="94" stroke="#C96330" stroke-width="1.5"/>
+<line class="ar" x1="216" y1="94" x2="220" y2="94" stroke="#C96330" stroke-width="1.5"/>
+<text x="130" y="150" text-anchor="middle" font-size="9" fill="#555" font-family="IBM Plex Sans">git → build → test → sign → QA → store</text>
 </svg>""",
 
 "mobile_enterprise": """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -8033,6 +8031,40 @@ def gen_section(slug, src_dir, out_dir):
     print(f"  ✓ {slug}/index.html")
 
 
+def _short_hero_desc(text, max_chars=220):
+    """Trim a description down to the first 1-2 sentences and at most
+    `max_chars` characters, breaking on a word boundary. Used for hub +
+    nested-article hero text so dense paragraphs do not bury the title."""
+    if not text:
+        return ""
+    text = text.strip()
+    sentences = re.split(r'(?<=[.!?])\s+', text)
+    short = ' '.join(sentences[:2]) if sentences else text
+    if len(short) > max_chars:
+        short = short[:max_chars].rsplit(' ', 1)[0] + '…'
+    return short
+
+
+def _short_breadcrumb_title(title):
+    """Compress a long article title into a short breadcrumb label.
+    Splits on em-dash / ampersand / ' and ' and keeps the leading phrase.
+    Falls back to the first two words if the leading phrase is still long."""
+    if not title:
+        return ""
+    short = re.split(r'\s[—&]\s|\s+and\s+', title)[0]
+    words = short.strip().split()
+    if len(short) > 20 and len(words) > 2:
+        short = ' '.join(words[:2])
+    return short.strip()
+
+
+# Hub-slug → short breadcrumb label override. Lets the article-page
+# breadcrumb read "Mobile" instead of the longer hub title.
+HUB_BREADCRUMB_LABEL = {
+    "mobile": "Mobile",
+}
+
+
 def gen_hub(slug, hub_slug, src_dir, out_dir):
     """Render a hub page that groups multiple articles under a single
     parent subsection (e.g. technology/mobile/index.html). Path depth is
@@ -8050,6 +8082,9 @@ def gen_hub(slug, hub_slug, src_dir, out_dir):
     else:
         hub_title = TAXONOMY.get(slug, {}).get(hub_slug, hub_slug.title())
         hub_desc = ""
+    # Shorten the hub-hero description to 1-2 sentences / ~220 chars so
+    # the hero stays readable instead of becoming a wall of prose.
+    hub_desc = _short_hero_desc(hub_desc)
 
     found_dirs = sorted(d.name for d in src_dir.iterdir() if d.is_dir())
     orphans = [name for name in found_dirs if name not in registered]
@@ -8082,7 +8117,13 @@ def gen_hub(slug, hub_slug, src_dir, out_dir):
         )
 
     words = hub_title.split()
-    h1 = f"<strong>{words[0]}</strong><br>{'  '.join(words[1:])}" if len(words) > 1 else f"<strong>{hub_title}</strong>"
+    # For specific hubs (mobile) keep the title on a single line — the
+    # default <br>-split heading stacks the words and produces an
+    # awkward two-line hero. Other hubs keep the legacy stacked weight.
+    if hub_slug in {"mobile"}:
+        h1 = f"<strong>{words[0]}</strong> {' '.join(words[1:])}" if len(words) > 1 else f"<strong>{hub_title}</strong>"
+    else:
+        h1 = f"<strong>{words[0]}</strong><br>{'  '.join(words[1:])}" if len(words) > 1 else f"<strong>{hub_title}</strong>"
     svg_art = SVGS.get(hub_slug, "")
 
     html = (
@@ -8267,10 +8308,17 @@ def gen_nested_article(slug, hub_slug, sub_slug, sub_dir, out_sub, referenced_by
     hero_svg_file = sub_dir / "hero.svg"
     md_text = readme.read_text(encoding="utf-8")
     title, desc = extract_title_desc(md_text)
+    # Hero desc trimmed to 1-2 sentences so the headline stays scannable.
+    desc = _short_hero_desc(desc)
     tags = extract_tags(md_text)
     body = md_to_html(md_text)
     sec_title = SECTIONS.get(slug, (slug.title(),))[0]
     hub_title = NESTED_TAXONOMY.get(f"{slug}/{hub_slug}") and TAXONOMY.get(slug, {}).get(hub_slug, hub_slug.title()) or hub_slug.title()
+    # Short label for the hub crumb (e.g. "Mobile" instead of
+    # "Mobile Development") and a short label for the leaf crumb derived
+    # from the article title.
+    hub_breadcrumb_label = HUB_BREADCRUMB_LABEL.get(hub_slug, hub_title)
+    leaf_breadcrumb_label = _short_breadcrumb_title(title)
     has_d = diagram.exists()
     has_hero_art = hero_svg_file.exists()
 
@@ -8300,9 +8348,9 @@ def gen_nested_article(slug, hub_slug, sub_slug, sub_dir, out_sub, referenced_by
         f'<span class="sep">›</span>'
         f'<a href="../../index.html">{sec_title}</a>'
         f'<span class="sep">›</span>'
-        f'<a href="../index.html">{hub_title}</a>'
+        f'<a href="../index.html">{hub_breadcrumb_label}</a>'
         f'<span class="sep">›</span>'
-        f'<span class="curr">{title}</span></div>\n'
+        f'<span class="curr">{leaf_breadcrumb_label}</span></div>\n'
         f'    <h1>{title}</h1>\n'
         f'    <p class="hero-desc">{desc}</p>\n'
         f'    {tag_html}\n'

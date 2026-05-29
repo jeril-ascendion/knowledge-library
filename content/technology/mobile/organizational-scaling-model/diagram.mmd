@@ -1,0 +1,40 @@
+%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px'},'flowchart':{'curve':'orthogonal','padding':20}}}%%
+flowchart TD
+    subgraph C1["Config 1: Founding 3–8 Eng"]
+        FT2["Single Cross-Functional Team
+ADR discipline
+Full codebase visibility"]
+    end
+    subgraph C2["Config 2: Feature Teams 8–20 Eng"]
+        FT3["2–4 Feature Teams
+Platform Team 2–3 eng
+Weekly arch sync"]
+    end
+    subgraph C3["Config 3: Product Streams 20–60 Eng"]
+        PS["Stream Leads (architect-level)
+Platform Engineering 4–6 eng
+Architecture Guild fortnightly"]
+    end
+    subgraph C4["Config 4: Platform Model 60+ Eng"]
+        PE2["Platform Team 8–12 eng
+Product Line Architects
+Inner source model
+Office hours"]
+    end
+    subgraph KM["📚 Knowledge Management — All Configs"]
+        ADR2["Architecture Decision Records
+In repository not wiki"]
+        DIAG["Architecture Diagrams
+Living documentation"]
+        TALKS["Monthly Tech Talks
+Rotating presenters"]
+        DOCS["Onboarding Docs
+New engineer productive in 5 days"]
+    end
+    C1 --> C2 --> C3 --> C4
+    C1 & C2 & C3 & C4 --> KM
+    style C1 fill:#E8F5E9,stroke:#1B5E20
+    style C2 fill:#E3F2FD,stroke:#1565C0
+    style C3 fill:#FFF3E0,stroke:#E65100
+    style C4 fill:#F3E5F5,stroke:#6A1B9A
+    style KM fill:#ECEFF1,stroke:#546E7A

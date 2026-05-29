@@ -1,0 +1,53 @@
+%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px'},'flowchart':{'curve':'orthogonal','padding':20}}}%%
+flowchart TD
+    subgraph Startup["🚀 Startup Performance"]
+        CS2["Cold Start Target
+< 2.0s median device"]
+        BP["Baseline Profiles
+30% improvement
+Pre-compiled hot paths"]
+        ASL["App Startup Lib
+Parallel init
+Lazy loading"]
+    end
+    subgraph Frames["🎬 Frame Performance"]
+        FB["Frame Budget
+60fps = 16.67ms
+120fps = 8.33ms"]
+        RC["Recomposition
+remember() · derivedStateOf
+key() in LazyColumn"]
+        SM["StrictMode
+Main thread I/O → Exception
+Debug builds only"]
+    end
+    subgraph Memory["💾 Memory"]
+        HD["Heap Dumps
+Android Profiler
+Xcode Memory Graph"]
+        LC["LeakCanary
+Retained object detection
+Retain cycle visualization"]
+    end
+    subgraph Battery["🔋 Battery"]
+        WM2["WorkManager
+Batched background work
+Constraint-based"]
+        LOCN["Significant Change
+Location API
+No continuous GPS"]
+    end
+    subgraph Measure["📏 Measurement"]
+        FBP2["Firebase Perf
+P50·P75·P90·P95"]
+        MK["MetricKit iOS
+24hr diagnostic reports"]
+        GBP["Google Benchmark
+Cold start regression CI"]
+    end
+    Startup & Frames & Memory & Battery --> Measure
+    style Startup fill:#E3F2FD,stroke:#1565C0
+    style Frames fill:#E8F5E9,stroke:#1B5E20
+    style Memory fill:#FFF3E0,stroke:#E65100
+    style Battery fill:#E8EAF6,stroke:#3949AB
+    style Measure fill:#F3E5F5,stroke:#6A1B9A

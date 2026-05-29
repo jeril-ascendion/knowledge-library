@@ -1,0 +1,49 @@
+%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px'},'flowchart':{'curve':'orthogonal','padding':20}}}%%
+flowchart LR
+    GIT["git push
+to main"] --> VAL
+    subgraph VAL["1️⃣ Validate ~8min"]
+        LINT["Detekt · SwiftLint"]
+        UNIT["Unit Tests
+90% Use Case gate
+80% ViewModel gate"]
+        SNAP["Snapshot Diff
+Zero pixel regression"]
+        SEC2["OWASP Dep Check
+GitLeaks scan"]
+    end
+    VAL --> BUILD
+    subgraph BUILD["2️⃣ Build ~15min"]
+        AND2["Android: Gradle
+R8 Release AAB
+Parallel matrix"]
+        IOS2["iOS: Xcode Archive
+Release config
+macOS runner"]
+    end
+    BUILD --> SIGN
+    subgraph SIGN["3️⃣ Sign"]
+        AKS2["Android Keystore
+Base64 secret decode"]
+        FMK["fastlane match
+Encrypted Git repo
+iOS Distribution cert"]
+    end
+    SIGN --> DIST["4️⃣ Distribute
+Firebase App Distribution
+TestFlight internal"]
+    DIST --> QA{"5️⃣ QA Gate
+Manual approval
+Environment protection"}
+    QA -->|"Approved"| REL
+    subgraph REL["6️⃣ Release"]
+        PLAY["Google Play
+Staged: 1%→5%→20%→100%"]
+        STORE["App Store
+Expedited review available"]
+    end
+    style VAL fill:#E8F5E9,stroke:#1B5E20
+    style BUILD fill:#E3F2FD,stroke:#1565C0
+    style SIGN fill:#FFEBEE,stroke:#B71C1C
+    style QA fill:#FFF3E0,stroke:#E65100
+    style REL fill:#F3E5F5,stroke:#6A1B9A

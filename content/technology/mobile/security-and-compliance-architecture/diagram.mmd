@@ -1,0 +1,38 @@
+%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px'},'flowchart':{'curve':'orthogonal','padding':20}}}%%
+flowchart TD
+    subgraph Transport["🌐 Transport Security"]
+        TLS["TLS 1.3 Minimum
+Cleartext Blocked"]
+        PIN["SPKI Hash Pinning
+OkHttp CertificatePinner
+URLSession Challenge Handler"]
+    end
+    subgraph Auth["🔑 Authentication"]
+        PKCE["OAuth 2.0 + PKCE
+AppAuth Library
+No client_secret in binary"]
+        BIO["Biometric MFA
+BiometricPrompt · LocalAuthentication
+Hardware-backed keys"]
+    end
+    subgraph Storage["🗄 Secure Storage"]
+        AKS["Android Keystore
+AES-256 Hardware-Backed"]
+        IOK["iOS Keychain
+kSecAttrAccessibleWhenUnlockedThisDeviceOnly"]
+        ENC["Encrypted Database
+SQLCipher · EncryptedSharedPrefs"]
+    end
+    subgraph Binary["🛡 Binary Protection"]
+        R8["R8 Full Mode
+debugable: false"]
+        PI["Play Integrity API
+MEETS_STRONG_INTEGRITY"]
+        AA["Apple AppAttest
+SecureEnclave Key"]
+    end
+    Transport --> Auth --> Storage --> Binary
+    style Transport fill:#E8F5E9,stroke:#1B5E20
+    style Auth fill:#E3F2FD,stroke:#1565C0
+    style Storage fill:#FFF3E0,stroke:#E65100
+    style Binary fill:#FFEBEE,stroke:#B71C1C

@@ -1,0 +1,43 @@
+%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px'},'flowchart':{'curve':'orthogonal','padding':20}}}%%
+flowchart TD
+    subgraph OnDevice["📱 On-Device Inference — Privacy First"]
+        CML["Core ML (iOS)
+Apple Neural Engine
+ANE 15-38 TOPS
+.mlmodel format"]
+        TFL["TensorFlow Lite (Android)
+GPU delegate
+NNAPI delegate
+Int8 quantisation"]
+        MLKIT["Google ML Kit
+Pre-built models
+OCR · Face · Barcode
+Zero model management"]
+        GN["Gemini Nano
+Pixel 8+ · iPhone 15 Pro+
+On-device LLM
+Apple Intelligence"]
+    end
+    subgraph Cloud["☁ Cloud Inference — Complex Models"]
+        BFF2["Mobile BFF
+ML Request routing
+Data minimisation
+Transient processing"]
+        ML["ML Service
+Large model inference
+Returns structured result"]
+    end
+    subgraph Privacy["🔒 Privacy Principles"]
+        P1["Minimise data
+leaving device"]
+        P2["On-device for
+PII · Biometrics · PHI"]
+        P3["Cloud: explicit consent
+Transient storage only"]
+    end
+    CML & TFL & MLKIT & GN --> Privacy
+    BFF2 --> ML
+    Privacy -.- BFF2
+    style OnDevice fill:#E3F2FD,stroke:#1565C0
+    style Cloud fill:#FFF3E0,stroke:#E65100
+    style Privacy fill:#FFEBEE,stroke:#B71C1C

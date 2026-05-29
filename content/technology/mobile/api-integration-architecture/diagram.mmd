@@ -1,0 +1,34 @@
+%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px'},'flowchart':{'curve':'orthogonal','padding':20}}}%%
+flowchart LR
+    subgraph Mobile["📱 Mobile App"]
+        REPO2["Repository
+Interface"]
+        GQL["Apollo Client
+GraphQL / REST"]
+    end
+    subgraph BFF["⚡ Mobile BFF"]
+        GW["API Gateway
+Field Selection
+Mobile Auth (PKCE)"]
+        AGG["Aggregation Layer
+Compose responses
+Delta sync support"]
+        CACHE["Response Cache
+ETag / If-None-Match
+Brotli compression"]
+    end
+    subgraph Services["🏗 Backend Microservices"]
+        US["User Service"]
+        TS["Transaction Service"]
+        PS["Product Service"]
+        PUSH["Push Service
+APNs / FCM"]
+    end
+    REPO2 --> GQL --> GW
+    GW --> AGG --> US & TS & PS
+    AGG --> CACHE
+    PUSH -->|"Silent push
+notification_id only"| Mobile
+    style Mobile fill:#E3F2FD,stroke:#1565C0
+    style BFF fill:#FFF8E1,stroke:#F57F17
+    style Services fill:#E8F5E9,stroke:#1B5E20

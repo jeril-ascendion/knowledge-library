@@ -1,0 +1,39 @@
+%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px'},'flowchart':{'curve':'orthogonal','padding':20}}}%%
+flowchart LR
+    subgraph P1["1️⃣ Security Requirements"]
+        SR["Data Classification
+Regulatory Frameworks
+MAVS Level Selection
+Threat Model"]
+    end
+    subgraph P2["2️⃣ Secure Design"]
+        SD["STRIDE Threat Model
+C4 Data Flow Review
+Security Architect Sign-off"]
+    end
+    subgraph P3["3️⃣ Secure Coding"]
+        SC["GitLeaks Pre-commit
+Parameterised Queries
+PII Annotation
+Sec Code Review"]
+    end
+    subgraph P4["4️⃣ Security Testing"]
+        ST["OWASP Dep Check
+Detekt Security Rules
+Penetration Test (L2)"]
+    end
+    subgraph P5["5️⃣ Release Hardening"]
+        SH["Binary Hardening Check
+Privacy Label Verify
+SBOM Generation"]
+    end
+    subgraph P6["6️⃣ Post-Release Ops"]
+        SO["Dependabot Continuous
+VDP Published
+Anomalous Auth Alerts"]
+    end
+    P1 --> P2 --> P3 --> P4 --> P5 --> P6
+    style P1 fill:#E8F5E9,stroke:#1B5E20
+    style P3 fill:#E3F2FD,stroke:#1565C0
+    style P4 fill:#FFF3E0,stroke:#E65100
+    style P5 fill:#FFEBEE,stroke:#B71C1C

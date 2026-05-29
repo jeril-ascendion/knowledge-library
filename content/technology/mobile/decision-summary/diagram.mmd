@@ -1,0 +1,47 @@
+%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px'},'flowchart':{'curve':'orthogonal','padding':20}}}%%
+flowchart TD
+    subgraph Decisions["📋 Key Architecture Decisions"]
+        D1["D-001: Clean Architecture + MVVM
+ADR-MOB-001
+All native apps"]
+        D2["D-002: Platform Selection Framework
+ADR-MOB-002
+Flutter default · Native when required"]
+        D3["D-003: Fastlane + GitHub Actions
+ADR-MOB-003
+Code signing + Pipeline"]
+        D4["D-004: OWASP MASVS Baseline
+ADR-SEC-011
+L1 all · L2 regulated"]
+        D5["D-005: BFF Pattern + GraphQL
+ADR-INT-005
+No shared web/mobile API"]
+        D6["D-006: OAuth 2.0 + PKCE
+No client_secret in binary"]
+        D7["D-007: Feature Module Strategy
+Conway's Law aligned"]
+        D8["D-008: Offline-First Local DB
+Room / SwiftData as SoT"]
+    end
+    subgraph Principles2["🏛 Seven Architecture Principles"]
+        P1["Security is structural
+not additive"]
+        P2["Test at lowest
+effective layer"]
+        P3["Module boundaries
+align with teams"]
+        P4["Explicit state machines
+not implicit lifecycle"]
+        P5["Measure everything
+that matters"]
+        P6["Evolve incrementally
+never rewrite"]
+        P7["Document decisions
+where code lives"]
+    end
+    Decisions --> Principles2
+    style Decisions fill:#E3F2FD,stroke:#1565C0
+    style Principles2 fill:#E8F5E9,stroke:#1B5E20
+    style D1 fill:#E8F4FD,stroke:#0078D4
+    style D4 fill:#FFEBEE,stroke:#B71C1C
+    style D5 fill:#FFF3E0,stroke:#E65100

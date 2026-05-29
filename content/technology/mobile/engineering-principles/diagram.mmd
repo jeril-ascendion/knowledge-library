@@ -1,0 +1,36 @@
+%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px','clusterBkg':'#F8F9FA','clusterBorder':'#CED4DA'},'flowchart':{'curve':'orthogonal','padding':20}}}%%
+flowchart TD
+    subgraph Principles["🏛 Eight Engineering Principles"]
+        SRP["Single Responsibility
+One class · One reason to change"]
+        DI["Dependency Inversion
+Depend on abstractions"]
+        PA["Platform Agnosticism
+Domain has no platform imports"]
+        IMM["Immutability as Default
+val over var · data class"]
+        EXP["Explicit over Implicit
+Visible side effects"]
+        FF["Fail Fast in Dev
+StrictMode · ThreadSanitizer"]
+        TRL["Test at Right Layer
+Unit → Snapshot → UI → E2E"]
+        PFC["Performance First-Class
+Measured in CI · Not afterthought"]
+    end
+    subgraph Enforcement["⚙ Enforcement Mechanisms"]
+        CR["Code Review
+Checklist per principle"]
+        SA["Static Analysis
+Detekt · SwiftLint"]
+        AFF["Architecture Fitness Functions
+CI layer-boundary tests"]
+        ADR["Architecture Decision Records
+Why documented with the code"]
+    end
+    SRP & DI & PA & IMM --> CR
+    EXP & FF & TRL & PFC --> SA
+    CR --> AFF
+    SA --> ADR
+    style Principles fill:#E8F4FD,stroke:#0078D4
+    style Enforcement fill:#E8F5E9,stroke:#1B5E20

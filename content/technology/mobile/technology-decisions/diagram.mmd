@@ -1,0 +1,35 @@
+%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px'},'flowchart':{'curve':'orthogonal','padding':24}}}%%
+flowchart TD
+    START([Mobile Platform Decision]) --> Q1{Frame rate SLA
+< 16ms OR deep
+device API?}
+    Q1 -->|Yes| NATIVE["🟢 Pure Native
+Kotlin + Swift
+Maximum performance
+100% platform APIs"]
+    Q1 -->|No| Q2{Existing JS/TS
+mobile team?}
+    Q2 -->|Yes| RN["🔵 React Native
+New Architecture
+JSI + Fabric
+Expo recommended"]
+    Q2 -->|No| Q3{Existing .NET
+codebase?}
+    Q3 -->|Yes| MAUI["⚫ MAUI
+C# / .NET
+Only for existing
+.NET investment"]
+    Q3 -->|No| Q4{Complex shared
+domain logic?}
+    Q4 -->|Yes + native UI| KMP["🟣 Kotlin Multiplatform
+Shared Use Cases
+Native UI per platform"]
+    Q4 -->|No| FLUTTER["🔷 Flutter — DEFAULT
+Dart · Impeller
+95% native performance
+0.58× TCO vs Native"]
+    style NATIVE fill:#E8F5E9,stroke:#1B5E20
+    style FLUTTER fill:#E3F2FD,stroke:#0D47A1
+    style RN fill:#E8EAF6,stroke:#3949AB
+    style MAUI fill:#ECEFF1,stroke:#546E7A
+    style KMP fill:#F3E5F5,stroke:#6A1B9A

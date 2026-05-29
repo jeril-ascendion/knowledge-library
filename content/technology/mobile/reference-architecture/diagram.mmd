@@ -1,0 +1,53 @@
+%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px'},'flowchart':{'curve':'orthogonal','padding':20}}}%%
+flowchart TD
+    subgraph Client["📱 Mobile Application"]
+        subgraph PL["Presentation Layer"]
+            UI3["Compose UI / SwiftUI"]
+            VM4["ViewModel · StateFlow / @Observable"]
+        end
+        subgraph DL["Domain Layer"]
+            UC2["Use Cases
+Pure Kotlin / Swift"]
+            DM2["Domain Models
+Repository Interfaces"]
+        end
+        subgraph DAL["Data Layer"]
+            RIMPL2["Repository Implementations"]
+            RDS2["Remote: Apollo / Retrofit
+GraphQL / REST"]
+            LDS2["Local: Room / SwiftData
+Encrypted Storage"]
+            CRED["Credentials
+Keystore / Keychain"]
+        end
+    end
+    subgraph Backend["☁ Backend Services"]
+        MBFF["Mobile BFF
+GraphQL · Field Selection
+Delta Sync · Aggregation"]
+        IDP["Identity Provider
+Okta · Azure AD
+OAuth 2.0 Server"]
+        MSVC["Microservices
+Account · Payment · Profile"]
+        PUSH2["Push Service
+APNs / FCM"]
+    end
+    subgraph Ops["⚙ Operations"]
+        CICD["CI/CD
+fastlane · GitHub Actions
+Parallel Android + iOS"]
+        OBS["Observability
+Crashlytics · Firebase Perf
+Mixpanel · MetricKit"]
+    end
+    UI3 --> VM4 --> UC2 --> DM2 --> RIMPL2
+    RIMPL2 --> RDS2 --> MBFF
+    RIMPL2 --> LDS2
+    RIMPL2 --> CRED
+    MBFF --> IDP & MSVC
+    PUSH2 -->|"Silent push"| Client
+    Client --> CICD & OBS
+    style Client fill:#E3F2FD,stroke:#1565C0
+    style Backend fill:#E8F5E9,stroke:#1B5E20
+    style Ops fill:#FFF3E0,stroke:#E65100

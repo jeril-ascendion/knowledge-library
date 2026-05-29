@@ -1,0 +1,35 @@
+%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px'},'flowchart':{'curve':'orthogonal','padding':20}}}%%
+flowchart TD
+    E2E["🔺 E2E Tests — Apex
+Firebase Test Lab · Physical devices
+Top 5 critical journeys
+Per release candidate only"]
+    UI2["UI Tests
+Espresso · XCUITest · Maestro
+Top 10 user journeys
+Emulator / Simulator"]
+    INTG2["Integration Tests
+Room in-memory · URLProtocol stub
+Repository + DataSource layer
+No device required"]
+    SNAP2["Snapshot Tests
+Paparazzi · iOSSnapshotTestCase
+All components · All themes
+Dark · Light · All Dynamic Type sizes"]
+    UNIT2["Unit Tests — Foundation
+JUnit5 + Mockk + Turbine
+XCTest + Swift Testing
+90% Use Cases · 80% ViewModels
+Milliseconds per test"]
+    CONTRACT["Consumer Contract
+Pact Framework
+Mobile defines API contract
+Backend CI verifies"]
+    E2E --- UI2 --- INTG2 --- SNAP2 --- UNIT2
+    CONTRACT -.- INTG2
+    style E2E fill:#FFEBEE,stroke:#B71C1C
+    style UI2 fill:#FFF3E0,stroke:#E65100
+    style INTG2 fill:#FFF9C4,stroke:#F57F17
+    style SNAP2 fill:#E8F5E9,stroke:#1B5E20
+    style UNIT2 fill:#E3F2FD,stroke:#1565C0
+    style CONTRACT fill:#F3E5F5,stroke:#6A1B9A
