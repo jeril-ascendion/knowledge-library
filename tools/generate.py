@@ -9047,11 +9047,18 @@ def gen_section(slug, src_dir, out_dir):
 
     rows = ""
     for sub_slug, sub_title, sub_desc in subs:
+        # Section-aware listing title prefix. ADR listing entries read
+        # better with an explicit "ADR: " prefix; other sections keep
+        # the raw subsection title.
+        if slug == "adrs" and not sub_title.startswith("ADR:"):
+            display_sub_title = f"ADR: {sub_title}"
+        else:
+            display_sub_title = sub_title
         rows += (
             f'  <a href="{sub_slug}/index.html" class="article-row">\n'
             f'    <div>\n'
             f'      <div class="ar-label">{slug}/{sub_slug}/</div>\n'
-            f'      <div class="ar-title">{sub_title}</div>\n'
+            f'      <div class="ar-title">{display_sub_title}</div>\n'
             f'      <div class="ar-desc">{sub_desc or "&nbsp;"}</div>\n'
             f'    </div>\n'
             f'    <div class="ar-arrow">&#8594;</div>\n'

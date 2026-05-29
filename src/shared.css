@@ -2275,10 +2275,10 @@ body.kg-search-modal-open {
   border-left: 3px solid var(--accent);
 }
 .antipattern-back {
-  background: var(--nav-bg, #1a2840);
+  background: var(--bg-subtle);
   border-left: 3px solid var(--accent);
   transform: rotateY(180deg);
-  color: rgba(255,255,255,0.85);
+  color: var(--ink-2);
 }
 .antipattern-front .ap-title {
   font-family: var(--mono);
@@ -2299,12 +2299,12 @@ body.kg-search-modal-open {
   font-size: 0.7rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.45);
+  color: var(--accent);
   margin-bottom: 0.5rem;
 }
 .antipattern-back .ap-back-body {
   font-size: 0.88rem;
-  color: rgba(255,255,255,0.82);
+  color: var(--ink-2);
   line-height: 1.65;
 }
 .antipattern-hint {
