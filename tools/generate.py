@@ -2912,99 +2912,10 @@ SVGS = {
 </svg>""",
 }
 
-# ─────────────────────────────────────────────────────────────────────────────
-# CARD_BACKS — flip-card back content keyed by section path.
-# When a card on a section index or hub page has an entry here, the article
-# row is upgraded to a flip card (front: title/desc/svg; back: KEY TECH
-# rows + stat line). The same key drives the mobile card on the Technology
-# index and the per-section cards on the Mobile hub.
-# ─────────────────────────────────────────────────────────────────────────────
-CARD_BACKS = {
-    "technology/mobile": {
-        "label": "KEY TECHNOLOGIES",
-        "rows": [
-            ("Platforms",     "Android · iOS · Flutter · React Native · KMP"),
-            ("Languages",     "Kotlin · Swift · Dart · TypeScript"),
-            ("Frameworks",    "Jetpack · SwiftUI · Compose · Expo"),
-            ("Decision Tool", "Platform Selection Matrix"),
-        ],
-        "stat": "5 platform models evaluated",
-    },
-    "technology/mobile/platforms": {
-        "label": "KEY TECHNOLOGIES",
-        "rows": [
-            ("Platforms",     "Android · iOS · Flutter · React Native · KMP"),
-            ("Languages",     "Kotlin · Swift · Dart · TypeScript"),
-            ("Frameworks",    "Jetpack · SwiftUI · Compose · Expo"),
-            ("Decision Tool", "Platform Selection Matrix"),
-        ],
-        "stat": "5 platform models evaluated",
-    },
-    "technology/mobile/architecture": {
-        "label": "KEY PATTERNS",
-        "rows": [
-            ("Patterns", "MVVM · MVI · Clean Architecture · TCA · VIPER"),
-            ("Android",  "ViewModel · StateFlow · Hilt · Compose"),
-            ("iOS",      "@Observable · SwiftUI · Factory · Navigation"),
-            ("Design",   "Material 3 · HIG · Design Tokens"),
-        ],
-        "stat": "Industry standard since Google MAD 2022",
-    },
-    "technology/mobile/quality": {
-        "label": "QUALITY TOOLS",
-        "rows": [
-            ("Unit Testing", "JUnit5 · Mockk · XCTest · Swift Testing · Turbine"),
-            ("Snapshot",     "Paparazzi · iOSSnapshotTestCase · Roborazzi"),
-            ("UI Testing",   "Espresso · Maestro · XCUITest"),
-            ("Performance",  "Macrobenchmark · Instruments · Firebase Perf"),
-        ],
-        "stat": "90% Use Case coverage · 80% ViewModel coverage",
-    },
-    "technology/mobile/security": {
-        "label": "SECURITY STANDARDS",
-        "rows": [
-            ("Framework",   "OWASP MASVS 2.0 · NIST SP 800-163"),
-            ("Auth",        "OAuth 2.0 + PKCE · AppAuth · BiometricPrompt"),
-            ("Storage",     "Android Keystore · iOS Keychain · SQLCipher"),
-            ("Attestation", "Play Integrity · AppAttest · RootBeer"),
-        ],
-        "stat": "OWASP Mobile Top 10 (2024) fully covered",
-    },
-    "technology/mobile/backend-data": {
-        "label": "INTEGRATION PATTERNS",
-        "rows": [
-            ("API Styles", "REST · GraphQL · gRPC · WebSocket"),
-            ("BFF",        "Mobile BFF · Field Selection · Cursor Pagination"),
-            ("Offline",    "SQLite SoT · Optimistic Updates · Delta Sync"),
-            ("Push",       "APNs · FCM · Silent Push · Token Rotation"),
-        ],
-        "stat": "40–70% payload reduction with BFF pattern",
-    },
-    "technology/mobile/delivery": {
-        "label": "DELIVERY TOOLS",
-        "rows": [
-            ("CI/CD",         "Fastlane · GitHub Actions · Xcode Cloud"),
-            ("Signing",       "Match · Android Keystore · Google Play Signing"),
-            ("Distribution",  "TestFlight · Firebase App Distribution"),
-            ("Observability", "Crashlytics · Firebase Perf · Sentry"),
-        ],
-        "stat": "DORA elite: deploy freq multiple/week",
-    },
-    "technology/mobile/enterprise": {
-        "label": "ENTERPRISE STACK",
-        "rows": [
-            ("MDM/MAM",      "Jamf Pro · Microsoft Intune · Workspace ONE"),
-            ("Zero Trust",   "Conditional Access · AppConfig · mTLS"),
-            ("On-Device AI", "Core ML · TensorFlow Lite · ML Kit · Gemini Nano"),
-            ("Emerging",     "watchOS · Wear OS · WindowSizeClass · visionOS"),
-        ],
-        "stat": "TCO: Flutter saves 35–45% vs pure native",
-    },
-}
-
 # Hero-animation SVG override for nested mobile article pages — maps the
 # page's full path to a key in SVGS. Pages without an entry fall back to
-# the default hero (no animated SVG).
+# the default hero (no animated SVG). The override SVG is placed inside
+# the standard .hero-article-art container so no new CSS is required.
 HERO_SVG_OVERRIDE = {
     "technology/mobile/platforms":    "mobile_platforms",
     "technology/mobile/architecture": "mobile_architecture",
@@ -3014,29 +2925,6 @@ HERO_SVG_OVERRIDE = {
     "technology/mobile/delivery":     "mobile_delivery",
     "technology/mobile/enterprise":   "mobile_enterprise",
 }
-
-
-def render_card_back(key):
-    """Render the card-back HTML for a section path that has a CARD_BACKS
-    entry. Returns empty string for paths without an entry."""
-    cfg = CARD_BACKS.get(key)
-    if not cfg:
-        return ""
-    rows_html = ""
-    for row_label, row_value in cfg["rows"]:
-        rows_html += (
-            f'      <div class="card-back-row">\n'
-            f'        <div class="card-back-row-label">{row_label}</div>\n'
-            f'        <div class="card-back-row-value">{row_value}</div>\n'
-            f'      </div>\n'
-        )
-    return (
-        f'    <div class="card-back">\n'
-        f'      <div class="card-back-label">{cfg["label"]}</div>\n'
-        f'{rows_html}'
-        f'      <div class="card-back-stat">{cfg["stat"]}</div>\n'
-        f'    </div>\n'
-    )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -7953,35 +7841,16 @@ def gen_section(slug, src_dir, out_dir):
 
     rows = ""
     for sub_slug, sub_title, sub_desc in subs:
-        back_key = f"{slug}/{sub_slug}"
-        card_back = render_card_back(back_key)
-        if card_back:
-            sub_svg = SVGS.get(sub_slug, SVGS.get(f"mobile_{sub_slug.replace('-', '_')}", ""))
-            rows += (
-                f'  <a href="{sub_slug}/index.html" class="section-card is-flip">\n'
-                f'    <div class="card-inner">\n'
-                f'    <div class="card-front">\n'
-                f'      <div class="sc-illustration">{sub_svg}</div>\n'
-                f'      <div class="sc-path">{slug}/{sub_slug}/</div>\n'
-                f'      <div class="sc-title">{sub_title}</div>\n'
-                f'      <div class="sc-desc">{sub_desc or "&nbsp;"}</div>\n'
-                f'      <div class="sc-footer"><span class="sc-arrow">&#8594;</span></div>\n'
-                f'    </div>\n'
-                f'{card_back}'
-                f'    </div>\n'
-                f'  </a>\n'
-            )
-        else:
-            rows += (
-                f'  <a href="{sub_slug}/index.html" class="article-row">\n'
-                f'    <div>\n'
-                f'      <div class="ar-label">{slug}/{sub_slug}/</div>\n'
-                f'      <div class="ar-title">{sub_title}</div>\n'
-                f'      <div class="ar-desc">{sub_desc or "&nbsp;"}</div>\n'
-                f'    </div>\n'
-                f'    <div class="ar-arrow">&#8594;</div>\n'
-                f'  </a>\n'
-            )
+        rows += (
+            f'  <a href="{sub_slug}/index.html" class="article-row">\n'
+            f'    <div>\n'
+            f'      <div class="ar-label">{slug}/{sub_slug}/</div>\n'
+            f'      <div class="ar-title">{sub_title}</div>\n'
+            f'      <div class="ar-desc">{sub_desc or "&nbsp;"}</div>\n'
+            f'    </div>\n'
+            f'    <div class="ar-arrow">&#8594;</div>\n'
+            f'  </a>\n'
+        )
 
     # Title weight contrast
     words = title.split()
@@ -8056,36 +7925,16 @@ def gen_hub(slug, hub_slug, src_dir, out_dir):
 
     rows = ""
     for sub_slug, sub_title, sub_desc in subs:
-        back_key = f"{slug}/{hub_slug}/{sub_slug}"
-        card_back = render_card_back(back_key)
-        if card_back:
-            svg_key = HERO_SVG_OVERRIDE.get(back_key, f"{hub_slug}_{sub_slug.replace('-', '_')}")
-            sub_svg = SVGS.get(svg_key, "")
-            rows += (
-                f'  <a href="{sub_slug}/index.html" class="section-card is-flip">\n'
-                f'    <div class="card-inner">\n'
-                f'    <div class="card-front">\n'
-                f'      <div class="sc-illustration">{sub_svg}</div>\n'
-                f'      <div class="sc-path">{slug}/{hub_slug}/{sub_slug}/</div>\n'
-                f'      <div class="sc-title">{sub_title}</div>\n'
-                f'      <div class="sc-desc">{sub_desc or "&nbsp;"}</div>\n'
-                f'      <div class="sc-footer"><span class="sc-arrow">&#8594;</span></div>\n'
-                f'    </div>\n'
-                f'{card_back}'
-                f'    </div>\n'
-                f'  </a>\n'
-            )
-        else:
-            rows += (
-                f'  <a href="{sub_slug}/index.html" class="article-row">\n'
-                f'    <div>\n'
-                f'      <div class="ar-label">{slug}/{hub_slug}/{sub_slug}/</div>\n'
-                f'      <div class="ar-title">{sub_title}</div>\n'
-                f'      <div class="ar-desc">{sub_desc or "&nbsp;"}</div>\n'
-                f'    </div>\n'
-                f'    <div class="ar-arrow">&#8594;</div>\n'
-                f'  </a>\n'
-            )
+        rows += (
+            f'  <a href="{sub_slug}/index.html" class="article-row">\n'
+            f'    <div>\n'
+            f'      <div class="ar-label">{slug}/{hub_slug}/{sub_slug}/</div>\n'
+            f'      <div class="ar-title">{sub_title}</div>\n'
+            f'      <div class="ar-desc">{sub_desc or "&nbsp;"}</div>\n'
+            f'    </div>\n'
+            f'    <div class="ar-arrow">&#8594;</div>\n'
+            f'  </a>\n'
+        )
 
     words = hub_title.split()
     h1 = f"<strong>{words[0]}</strong><br>{'  '.join(words[1:])}" if len(words) > 1 else f"<strong>{hub_title}</strong>"
@@ -8337,7 +8186,7 @@ def gen_nested_article(slug, hub_slug, sub_slug, sub_dir, out_sub, referenced_by
             f'    <div class="hero-article-inner">\n'
             f'      <div class="hero-article-text">\n{hero_text}'
             f'      </div>\n'
-            f'      <div class="hero-animation">{override_svg}</div>\n'
+            f'      <div class="hero-article-art">{override_svg}</div>\n'
             f'    </div>\n'
             f'  </div>\n</section>\n\n'
         )
