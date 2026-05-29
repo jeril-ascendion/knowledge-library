@@ -102,25 +102,6 @@ TAXONOMY = {
         "resilience": "Infrastructure Resilience",
         "security":   "Infrastructure Security",
     },
-    "mobile": {
-        "platform-landscape":   "Mobile Platform Landscape",
-        "android":              "Android Architecture",
-        "ios":                  "iOS Architecture",
-        "cross-platform":       "Cross-Platform Frameworks",
-        "architecture-patterns":"Mobile Architecture Patterns",
-        "ui-design-systems":    "Mobile UI & Design Systems",
-        "offline-first":        "Offline-First Architecture",
-        "security":             "Mobile Security",
-        "performance":          "Mobile Performance",
-        "testing":              "Mobile Testing",
-        "accessibility":        "Mobile Accessibility",
-        "backend-integration":  "Backend Integration for Mobile",
-        "ci-cd":                "Mobile CI / CD",
-        "observability":        "Mobile Observability",
-        "release-management":   "Release Management",
-        "enterprise-mobile":    "Enterprise Mobile (MDM / MAM)",
-        "cost-optimization":    "Mobile Cost Optimization",
-    },
     "integration": {
         "api":       "API Integration",
         "event":     "Event-Driven Integration",
@@ -233,6 +214,7 @@ TAXONOMY = {
         "databases":         "Databases",
         "cloud":             "Cloud",
         "devops":            "DevOps",
+        "mobile":            "Mobile Development",
         "practice-circles":  "Practice Circles",
         "engagement-models": "Engagement Models",
     },
@@ -253,6 +235,35 @@ TAXONOMY = {
         "physical":   "Physical View",
         "process":    "Process View",
         "scenario":   "Scenario View",
+    },
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# NESTED_TAXONOMY — sub-sub-subsections for hubs that group multiple articles
+# under a single parent subsection (e.g. technology/mobile/<topic>). The key
+# is the path "section/subsection"; the value is {leaf_slug: pretty_title}.
+# A subsection appearing here is rendered as a HUB page with its own article
+# list rather than as a single article page.
+# ─────────────────────────────────────────────────────────────────────────────
+NESTED_TAXONOMY = {
+    "technology/mobile": {
+        "platform-landscape":    "Mobile Platform Landscape",
+        "android":               "Android Architecture",
+        "ios":                   "iOS Architecture",
+        "cross-platform":        "Cross-Platform Frameworks",
+        "architecture-patterns": "Mobile Architecture Patterns",
+        "ui-design-systems":     "Mobile UI & Design Systems",
+        "offline-first":         "Offline-First Architecture",
+        "security":              "Mobile Security",
+        "performance":           "Mobile Performance",
+        "testing":               "Mobile Testing",
+        "accessibility":         "Mobile Accessibility",
+        "backend-integration":   "Backend Integration for Mobile",
+        "ci-cd":                 "Mobile CI / CD",
+        "observability":         "Mobile Observability",
+        "release-management":    "Release Management",
+        "enterprise-mobile":     "Enterprise Mobile (MDM / MAM)",
+        "cost-optimization":     "Mobile Cost Optimization",
     },
 }
 

@@ -2091,7 +2091,7 @@ from pathlib import Path
 # `vulnerability-management/`. Strictness here makes the TAXONOMY the
 # single source of truth.
 sys.path.insert(0, str(Path(__file__).parent))
-from seed_content import TAXONOMY, CONCEPT_LENSES
+from seed_content import TAXONOMY, CONCEPT_LENSES, NESTED_TAXONOMY
 
 try:
     import markdown
@@ -2109,10 +2109,8 @@ GROUPS = [
      ["principles", "patterns", "anti-patterns", "adrs", "views"]),
     ("Architecture",   "System design, DDD, frameworks, and design practices",
      ["system-design", "design", "ddd", "frameworks"]),
-    ("Technology",     "UI/UX, backend, data, cloud, DevOps, and engagement models",
+    ("Technology",     "UI/UX, backend, data, cloud, DevOps, mobile, and engagement models",
      ["technology", "cloud", "infra", "data", "integration"]),
-    ("Mobile",         "Android, iOS, and cross-platform mobile architecture",
-     ["mobile"]),
     ("Quality & Risk", "Security, compliance, governance, and non-functional requirements",
      ["security", "compliance", "governance", "nfr"]),
     ("Operations",     "Observability, runbooks, checklists, and tooling",
@@ -2134,7 +2132,6 @@ SECTIONS = {
     "tech":          ("Technology Stack Best Practices",      "AWS, Azure, GCP, Java, Angular, DevOps, and AI/ML best practices."),
     "technology":    ("Technology",                            "Frontend, backend, data, cloud, DevOps, practice circles, and engagement models — how we deliver across the stack."),
     "infra":         ("Infrastructure Architecture",          "IaC, networking, CI/CD, and operational excellence practices."),
-    "mobile":        ("Mobile Development",                    "Android, iOS, and cross-platform architecture — design patterns, security, performance, testing, CI/CD, accessibility, and enterprise mobile."),
     "cloud":         ("Cloud Architecture",                   "Multi-cloud reference architectures across AWS, Azure, and GCP."),
     "ai":            ("AI-Native Architecture",               "AI-native patterns, LLMOps, RAG, agentic systems, and governance."),
     "ai-native":     ("AI-Native",                             "Production-grade AI systems: architecture, responsible-AI engineering, observability, retrieval, and the AI-specific threat surface."),
@@ -2403,20 +2400,20 @@ SVGS = {
 
 "mobile": """<svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
 <style>
-@keyframes sigpulse{0%,100%{r:2.2;opacity:1}50%{r:5;opacity:0.35}}
-@keyframes ringpulse{0%{r:6;opacity:0.7}100%{r:18;opacity:0}}
-.dot{animation:sigpulse 1.6s ease-in-out infinite;transform-origin:60px 16px}
-.ring{animation:ringpulse 1.6s ease-out infinite;transform-origin:60px 16px}
+@keyframes signal{0%,100%{opacity:0.2;r:4}50%{opacity:1;r:7}}
+@keyframes signal2{0%,100%{opacity:0.2;r:8}50%{opacity:0.7;r:12}}
+@keyframes signal3{0%,100%{opacity:0.1;r:12}50%{opacity:0.4;r:18}}
+.s1{animation:signal 2s 0s ease-in-out infinite}
+.s2{animation:signal2 2s 0.3s ease-in-out infinite}
+.s3{animation:signal3 2s 0.6s ease-in-out infinite}
 </style>
-<rect x="40" y="10" width="40" height="70" rx="6" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
-<rect x="44" y="20" width="32" height="50" rx="2" stroke="#CCCCCC" stroke-width="1" fill="none"/>
-<line x1="54" y1="75" x2="66" y2="75" stroke="#CCCCCC" stroke-width="1.5" stroke-linecap="round"/>
-<line x1="50" y1="30" x2="70" y2="30" stroke="#CCCCCC" stroke-width="0.8"/>
-<line x1="50" y1="40" x2="66" y2="40" stroke="#CCCCCC" stroke-width="0.8"/>
-<line x1="50" y1="50" x2="68" y2="50" stroke="#CCCCCC" stroke-width="0.8"/>
-<line x1="50" y1="60" x2="62" y2="60" stroke="#CCCCCC" stroke-width="0.8"/>
-<circle class="ring" cx="60" cy="16" r="6" stroke="#C96330" stroke-width="1.2" fill="none"/>
-<circle class="dot" cx="60" cy="16" r="2.2" fill="#C96330"/>
+<rect x="38" y="10" width="44" height="70" rx="6" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
+<rect x="44" y="16" width="32" height="48" rx="2" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<circle cx="60" cy="73" r="2.5" stroke="#CCCCCC" stroke-width="1" fill="none"/>
+<line x1="52" y1="13" x2="68" y2="13" stroke="#CCCCCC" stroke-width="1.5" stroke-linecap="round"/>
+<circle class="s3" cx="93" cy="22" r="12" stroke="#C96330" stroke-width="0.8" fill="none"/>
+<circle class="s2" cx="93" cy="22" r="8" stroke="#C96330" stroke-width="1" fill="none"/>
+<circle class="s1" cx="93" cy="22" r="4" fill="#C96330"/>
 </svg>""",
 
 "cloud": """<svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -7360,6 +7357,33 @@ def collect_site_metadata(content_root):
                 ],
                 "description": _short_description(text),
             }
+            # Hubs (registered in NESTED_TAXONOMY) carry an additional
+            # third level of leaf pages — walk them too so the knowledge
+            # graph and referenced-by injectors can resolve them.
+            nested_key = f"{section_slug}/{sub_dir.name}"
+            nested_subs = NESTED_TAXONOMY.get(nested_key, {})
+            if nested_subs:
+                for leaf_dir in sorted(sub_dir.iterdir()):
+                    if not leaf_dir.is_dir():
+                        continue
+                    if leaf_dir.name not in nested_subs:
+                        continue
+                    leaf_readme = leaf_dir / "README.md"
+                    if not leaf_readme.exists():
+                        continue
+                    leaf_text = leaf_readme.read_text(encoding="utf-8")
+                    leaf_title, _ = extract_title_desc(leaf_text)
+                    metadata[f"{nested_key}/{leaf_dir.name}"] = {
+                        "section": section_slug,
+                        "subsection": f"{sub_dir.name}/{leaf_dir.name}",
+                        "title": leaf_title or leaf_dir.name.replace("-", " ").title(),
+                        "is_substantive": is_substantive_readme(leaf_text),
+                        "alignments": _extract_alignment_list(leaf_text),
+                        "related_links": [
+                            p.strip() for p in _extract_related_paths(leaf_text)
+                        ],
+                        "description": _short_description(leaf_text),
+                    }
     return metadata
 
 
@@ -7672,6 +7696,90 @@ def gen_section(slug, src_dir, out_dir):
     print(f"  ✓ {slug}/index.html")
 
 
+def gen_hub(slug, hub_slug, src_dir, out_dir):
+    """Render a hub page that groups multiple articles under a single
+    parent subsection (e.g. technology/mobile/index.html). Path depth is
+    two levels (../../). Behaves like gen_section but lives one level
+    deeper and uses the parent section's nav highlight."""
+    sec_title, _ = SECTIONS.get(slug, (slug.title(), ""))
+    nested_key = f"{slug}/{hub_slug}"
+    registered = NESTED_TAXONOMY.get(nested_key, {})
+
+    # Title and description come from the hub README itself.
+    hub_readme = src_dir / "README.md"
+    if hub_readme.exists():
+        md_text = hub_readme.read_text(encoding="utf-8")
+        hub_title, hub_desc = extract_title_desc(md_text)
+    else:
+        hub_title = TAXONOMY.get(slug, {}).get(hub_slug, hub_slug.title())
+        hub_desc = ""
+
+    found_dirs = sorted(d.name for d in src_dir.iterdir() if d.is_dir())
+    orphans = [name for name in found_dirs if name not in registered]
+    if orphans:
+        for name in orphans:
+            print(f"  ⚠ orphan directory skipped: content/{slug}/{hub_slug}/{name}/ (not in NESTED_TAXONOMY)")
+
+    subs = []
+    for d in sorted(src_dir.iterdir()):
+        if not d.is_dir():
+            continue
+        if d.name not in registered:
+            continue
+        if not (d / "README.md").exists():
+            continue
+        t, de = extract_title_desc((d / "README.md").read_text(encoding="utf-8"))
+        subs.append((d.name, t, de))
+
+    rows = ""
+    for sub_slug, sub_title, sub_desc in subs:
+        rows += (
+            f'  <a href="{sub_slug}/index.html" class="article-row">\n'
+            f'    <div>\n'
+            f'      <div class="ar-label">{slug}/{hub_slug}/{sub_slug}/</div>\n'
+            f'      <div class="ar-title">{sub_title}</div>\n'
+            f'      <div class="ar-desc">{sub_desc or "&nbsp;"}</div>\n'
+            f'    </div>\n'
+            f'    <div class="ar-arrow">&#8594;</div>\n'
+            f'  </a>\n'
+        )
+
+    words = hub_title.split()
+    h1 = f"<strong>{words[0]}</strong><br>{'  '.join(words[1:])}" if len(words) > 1 else f"<strong>{hub_title}</strong>"
+    svg_art = SVGS.get(hub_slug, "")
+
+    html = (
+        f'{head(f"{hub_title} — {sec_title} · Ascendion Engineering", "../../")}\n\n'
+        f'{nav_html("../../", slug)}\n\n'
+        f'<main id="main">\n'
+        f'<section class="hero-section">\n  <div class="shell">\n'
+        f'    <div class="hero-section-inner">\n'
+        f'      <div class="hero-section-text">\n'
+        f'        <div class="breadcrumb"><a href="../../index.html">Home</a>'
+        f'<span class="sep">›</span>'
+        f'<a href="../index.html">{sec_title}</a>'
+        f'<span class="sep">›</span>'
+        f'<span class="curr">{hub_title}</span></div>\n'
+        f'        <div class="hero-label">{slug}/{hub_slug}/</div>\n'
+        f'        <h1>{h1}</h1>\n'
+        f'        <p class="hero-desc">{hub_desc}</p>\n'
+        f'      </div>\n'
+        f'      <div class="hero-section-art">{svg_art}</div>\n'
+        f'    </div>\n'
+        f'  </div>\n</section>\n\n'
+        f'<div class="shell">\n'
+        f'  <div class="article-list">\n'
+        f'    <div class="list-label">{len(subs)} topics in this hub</div>\n'
+        f'{rows}  </div>\n</div>\n'
+        f'</main>\n\n'
+        f'{footer_html(f"{slug}/{hub_slug}/", prefix="../../")}\n\n'
+        f'{WORDMARK_JS}\n</body>\n</html>'
+    )
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / "index.html").write_text(html, encoding="utf-8")
+    print(f"  ✓ {slug}/{hub_slug}/index.html")
+
+
 def gen_article(slug, sub_slug, sub_dir, out_sub, referenced_by=None, metadata=None):
     readme = sub_dir / "README.md"
     diagram = sub_dir / "diagram.mmd"
@@ -7811,6 +7919,134 @@ def gen_article(slug, sub_slug, sub_dir, out_sub, referenced_by=None, metadata=N
     out_sub.mkdir(parents=True, exist_ok=True)
     (out_sub / "index.html").write_text(html, encoding="utf-8")
     print(f"  ✓ {slug}/{sub_slug}/index.html")
+
+
+def gen_nested_article(slug, hub_slug, sub_slug, sub_dir, out_sub, referenced_by=None, metadata=None):
+    """Render an article page nested under a hub (e.g.
+    technology/mobile/android/index.html). Path depth is three levels
+    (../../../). Breadcrumb includes the hub between section and title."""
+    readme = sub_dir / "README.md"
+    diagram = sub_dir / "diagram.mmd"
+    hero_svg_file = sub_dir / "hero.svg"
+    md_text = readme.read_text(encoding="utf-8")
+    title, desc = extract_title_desc(md_text)
+    tags = extract_tags(md_text)
+    body = md_to_html(md_text)
+    sec_title = SECTIONS.get(slug, (slug.title(),))[0]
+    hub_title = NESTED_TAXONOMY.get(f"{slug}/{hub_slug}") and TAXONOMY.get(slug, {}).get(hub_slug, hub_slug.title()) or hub_slug.title()
+    has_d = diagram.exists()
+    has_hero_art = hero_svg_file.exists()
+
+    prefix = "../../../"
+
+    tag_html = ""
+    if tags:
+        tag_items = []
+        for t in tags:
+            url, external = tag_url(t, prefix=prefix)
+            if url:
+                tgt = ' target="_blank" rel="noopener noreferrer"' if external else ''
+                tag_items.append(f'<a class="hero-tag" href="{url}"{tgt}>{t}</a>')
+            else:
+                tag_items.append(f'<span class="hero-tag hero-tag-static">{t}</span>')
+        tag_html = '<div class="hero-tags">' + "".join(tag_items) + "</div>"
+
+    diag_wrap_html = ""
+    if has_d:
+        mmd = diagram.read_text(encoding="utf-8").replace("&", "&amp;")
+        diag_wrap_html = (
+            f'<div class="diagram-wrap"><div class="mermaid">\n{mmd}\n  </div></div>\n'
+        )
+
+    hero_text = (
+        f'    <div class="breadcrumb"><a href="{prefix}index.html">Home</a>'
+        f'<span class="sep">›</span>'
+        f'<a href="../../index.html">{sec_title}</a>'
+        f'<span class="sep">›</span>'
+        f'<a href="../index.html">{hub_title}</a>'
+        f'<span class="sep">›</span>'
+        f'<span class="curr">{title}</span></div>\n'
+        f'    <h1>{title}</h1>\n'
+        f'    <p class="hero-desc">{desc}</p>\n'
+        f'    {tag_html}\n'
+    )
+
+    if has_hero_art:
+        hero_svg = hero_svg_file.read_text(encoding="utf-8")
+        hero_block = (
+            f'<section class="hero-article">\n  <div class="shell">\n'
+            f'    <div class="hero-article-inner">\n'
+            f'      <div class="hero-article-text">\n{hero_text}'
+            f'      </div>\n'
+            f'      <div class="hero-article-art">{hero_svg}</div>\n'
+            f'    </div>\n'
+            f'  </div>\n</section>\n\n'
+        )
+    else:
+        hero_block = (
+            f'<section class="hero-article">\n  <div class="shell">\n'
+            f'{hero_text}'
+            f'  </div>\n</section>\n\n'
+        )
+
+    if diag_wrap_html:
+        diagram_title = _diagram_type_to_title(mmd)
+        any_diagram_h2_re = re.compile(
+            r'<h2[^>]*>\s*(' +
+            '|'.join(re.escape(t) for t in _ALL_DIAGRAM_SECTION_TITLES) +
+            r')\s*</h2>',
+            re.IGNORECASE)
+        m = any_diagram_h2_re.search(body)
+        if m:
+            new_h2 = f'<h2>{diagram_title}</h2>'
+            body = body[:m.start()] + new_h2 + body[m.end():]
+            insert_at = m.start() + len(new_h2)
+            body = body[:insert_at] + '\n' + diag_wrap_html + body[insert_at:]
+        else:
+            full_block = f'<h2>{diagram_title}</h2>\n' + diag_wrap_html
+            body = _insert_before_heading(
+                body, full_block,
+                ['Related Sections', 'Related', 'References'])
+
+    html = (
+        f'{head(f"{title} — {hub_title} · Ascendion Engineering", prefix, has_d)}\n\n'
+        f'{nav_html(prefix, slug)}\n\n'
+        f'<main id="main">\n'
+        f'{hero_block}'
+        f'<div class="shell">\n'
+        f'  <div class="article-body">\n{body}\n'
+        f'  </div>\n'
+        f'</div>\n'
+        f'</main>\n\n'
+        f'{footer_html(f"{slug}/{hub_slug}/{sub_slug}/", prefix=prefix)}\n\n'
+        f'{WORDMARK_JS}\n</body>\n</html>'
+    )
+
+    if referenced_by and metadata:
+        chips = []
+        for ref_id in sorted(referenced_by):
+            if ref_id not in metadata:
+                continue
+            ref_title = metadata[ref_id]["title"]
+            chips.append(
+                f'<a class="related-chip" href="{prefix}{ref_id}/">{ref_title}</a>'
+            )
+        if chips:
+            section = (
+                '<hr>\n<h2 id="referenced-by">Referenced by</h2>\n'
+                '<p class="referenced-by-intro">'
+                'Other substantive pages in the library that link here:'
+                '</p>\n'
+                '<div class="related-chips-row referenced-by-chips">'
+                + "".join(chips)
+                + '</div>\n'
+            )
+            new_body = _insert_before_heading(body, section, ["References"])
+            html = html.replace(body, new_body)
+
+    out_sub.mkdir(parents=True, exist_ok=True)
+    (out_sub / "index.html").write_text(html, encoding="utf-8")
+    print(f"  ✓ {slug}/{hub_slug}/{sub_slug}/index.html")
 
 
 def _insert_before_heading(body, insert_html, heading_titles):
@@ -9860,11 +10096,31 @@ def main():
             if not (sub / "README.md").exists():
                 continue
             page_id = f"{slug}/{sub.name}"
-            gen_article(
-                slug, sub.name, sub, out_sec / sub.name,
-                referenced_by=referenced_by.get(page_id, []),
-                metadata=site_metadata,
-            )
+            # If this subsection is a registered hub, render a hub index
+            # page and iterate its nested leaves as 3-level article pages.
+            if page_id in NESTED_TAXONOMY:
+                gen_hub(slug, sub.name, sub, out_sec / sub.name)
+                nested_subs = NESTED_TAXONOMY[page_id]
+                for leaf in sorted(sub.iterdir()):
+                    if not leaf.is_dir():
+                        continue
+                    if leaf.name not in nested_subs:
+                        continue
+                    if not (leaf / "README.md").exists():
+                        continue
+                    leaf_page_id = f"{page_id}/{leaf.name}"
+                    gen_nested_article(
+                        slug, sub.name, leaf.name, leaf,
+                        out_sec / sub.name / leaf.name,
+                        referenced_by=referenced_by.get(leaf_page_id, []),
+                        metadata=site_metadata,
+                    )
+            else:
+                gen_article(
+                    slug, sub.name, sub, out_sec / sub.name,
+                    referenced_by=referenced_by.get(page_id, []),
+                    metadata=site_metadata,
+                )
 
     # Phase 2: Generate the Knowledge Graph page from collected metadata.
     print(f"\n[knowledge-graph/]")
