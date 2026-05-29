@@ -1,0 +1,37 @@
+flowchart LR
+    subgraph LEVERS["Cost Levers"]
+        L1[Team structure — dual native vs single cross-platform]
+        L2[Framework choice — Flutter / RN / KMP / MAUI / Native]
+        L3[Build infrastructure — hosted vs self-hosted]
+        L4[Device testing — Firebase TL / BrowserStack / Lab]
+        L5[Store fees — Apple / Google take rate]
+        L6[AI coding assistants productivity]
+    end
+
+    subgraph SAVINGS["Measured Savings"]
+        S1[Single team — 40-60% overhead reduction]
+        S2[Flutter / RN — 30-45% lower vs native]
+        S3[Mac Mini self-host — saves $70-200 / project / month]
+        S4[Gradle Build Cache — 40-60% warm build time]
+        S5[Copilot / Cursor — 20-30% boilerplate time]
+    end
+
+    subgraph TCO["5-Year TCO Model"]
+        T1[Year 1 — salaries dominate 60-75%]
+        T2[Year 2-3 — accumulated debt rises]
+        T3[Year 4-5 — framework migration risk]
+        T4[Quarterly review]
+    end
+
+    L1 --> S1
+    L2 --> S2
+    L3 --> S3
+    L3 --> S4
+    L6 --> S5
+
+    SAVINGS --> TCO
+    T4 -.adjusts.-> LEVERS
+
+    style L2 fill:#C96330,color:#fff
+    style S2 fill:#DCEAFC,stroke:#3D6395,stroke-width:2px
+    style T4 fill:#FBEDE0,stroke:#C96330,stroke-width:2px

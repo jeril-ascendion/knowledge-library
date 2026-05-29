@@ -1,0 +1,48 @@
+flowchart TD
+    subgraph DEVICE["Device-side"]
+        D1[App with Crashlytics / Sentry SDK]
+        D2[Firebase Performance / Datadog SDK]
+        D3[Analytics SDK — Mixpanel / Amplitude]
+        D4[Session Replay — FullStory / Heap]
+        D5[MetricKit subscriber — iOS]
+    end
+
+    subgraph PII["PII Filter Layer"]
+        PF[Redact / Mask / Hash]
+    end
+
+    subgraph CLOUD["Observability Backends"]
+        C1[Crashlytics / Sentry — crashes]
+        C2[Firebase Performance / Datadog — traces]
+        C3[Mixpanel / Amplitude — events]
+        C4[Session Replay storage]
+        C5[Android Vitals — Play Console]
+    end
+
+    subgraph SLO["SLO Layer"]
+        S1[Crash-free users &gt; 99.5%]
+        S2[Cold-start P95 &lt; 4 s]
+        S3[ANR rate &lt; 0.1%]
+        S4[Release-gating CI check]
+    end
+
+    D1 --> PF
+    D2 --> PF
+    D3 --> PF
+    D4 --> PF
+    D5 --> PF
+    PF --> C1
+    PF --> C2
+    PF --> C3
+    PF --> C4
+    C5 -.aggregates.-> S1
+    C1 --> S1
+    C2 --> S2
+    C5 --> S3
+    S1 --> S4
+    S2 --> S4
+    S3 --> S4
+
+    style PF fill:#C96330,color:#fff
+    style S4 fill:#DCEAFC,stroke:#3D6395,stroke-width:2px
+    style C1 fill:#FBEDE0,stroke:#C96330

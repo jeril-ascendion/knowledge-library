@@ -1,0 +1,51 @@
+flowchart TD
+    subgraph UI["UI Layer (SwiftUI)"]
+        A1[SwiftUI View]
+        A2[@State / @Bindable]
+        A3[enum State: loading/content/error]
+    end
+
+    subgraph VM["Presentation Layer"]
+        B1[@Observable ViewModel]
+        B2[Task / TaskGroup async-await]
+    end
+
+    subgraph DOMAIN["Domain Layer"]
+        C1[Use Case async throws]
+        C2[Domain Entities Sendable]
+    end
+
+    subgraph DATA["Data Layer"]
+        D1[Repository protocol]
+        D2[URLSession + Codable / Swift OpenAPI]
+        D3[SwiftData @Model]
+        D4[Keychain — kSecAttrAccessibleWhenUnlockedThisDeviceOnly]
+    end
+
+    subgraph PLATFORM["Platform"]
+        E1[Factory / Resolver DI]
+        E2[Instruments Time Profiler]
+        E3[Swift 6 Strict Concurrency]
+        E4[App Attest]
+    end
+
+    A1 --> A2
+    A1 --> A3
+    A1 -.observation tracking.-> B1
+    B1 --> B2
+    B2 --> C1
+    C1 --> C2
+    C1 --> D1
+    D1 --> D2
+    D1 --> D3
+    D1 --> D4
+
+    E1 -.injects.-> B1
+    E1 -.injects.-> D1
+    E3 -.checks Sendable.-> B1
+    E4 -.attests.-> D2
+
+    style A1 fill:#C96330,color:#fff
+    style B1 fill:#DCEAFC,stroke:#3D6395,stroke-width:2px
+    style D1 fill:#DCEAFC,stroke:#3D6395,stroke-width:2px
+    style D4 fill:#FBEDE0,stroke:#C96330,stroke-width:2px

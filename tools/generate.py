@@ -2111,6 +2111,8 @@ GROUPS = [
      ["system-design", "design", "ddd", "frameworks"]),
     ("Technology",     "UI/UX, backend, data, cloud, DevOps, and engagement models",
      ["technology", "cloud", "infra", "data", "integration"]),
+    ("Mobile",         "Android, iOS, and cross-platform mobile architecture",
+     ["mobile"]),
     ("Quality & Risk", "Security, compliance, governance, and non-functional requirements",
      ["security", "compliance", "governance", "nfr"]),
     ("Operations",     "Observability, runbooks, checklists, and tooling",
@@ -2132,6 +2134,7 @@ SECTIONS = {
     "tech":          ("Technology Stack Best Practices",      "AWS, Azure, GCP, Java, Angular, DevOps, and AI/ML best practices."),
     "technology":    ("Technology",                            "Frontend, backend, data, cloud, DevOps, practice circles, and engagement models — how we deliver across the stack."),
     "infra":         ("Infrastructure Architecture",          "IaC, networking, CI/CD, and operational excellence practices."),
+    "mobile":        ("Mobile Development",                    "Android, iOS, and cross-platform architecture — design patterns, security, performance, testing, CI/CD, accessibility, and enterprise mobile."),
     "cloud":         ("Cloud Architecture",                   "Multi-cloud reference architectures across AWS, Azure, and GCP."),
     "ai":            ("AI-Native Architecture",               "AI-native patterns, LLMOps, RAG, agentic systems, and governance."),
     "ai-native":     ("AI-Native",                             "Production-grade AI systems: architecture, responsible-AI engineering, observability, retrieval, and the AI-specific threat surface."),
@@ -2396,6 +2399,24 @@ SVGS = {
 <circle class="b3" cx="96" cy="67" r="3.5" fill="#AAAAAA"/>
 <line x1="24" y1="23" x2="82" y2="23" stroke="#DDDDDD" stroke-width="1"/>
 <line x1="24" y1="45" x2="76" y2="45" stroke="#DDDDDD" stroke-width="1"/>
+</svg>""",
+
+"mobile": """<svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes sigpulse{0%,100%{r:2.2;opacity:1}50%{r:5;opacity:0.35}}
+@keyframes ringpulse{0%{r:6;opacity:0.7}100%{r:18;opacity:0}}
+.dot{animation:sigpulse 1.6s ease-in-out infinite;transform-origin:60px 16px}
+.ring{animation:ringpulse 1.6s ease-out infinite;transform-origin:60px 16px}
+</style>
+<rect x="40" y="10" width="40" height="70" rx="6" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
+<rect x="44" y="20" width="32" height="50" rx="2" stroke="#CCCCCC" stroke-width="1" fill="none"/>
+<line x1="54" y1="75" x2="66" y2="75" stroke="#CCCCCC" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="50" y1="30" x2="70" y2="30" stroke="#CCCCCC" stroke-width="0.8"/>
+<line x1="50" y1="40" x2="66" y2="40" stroke="#CCCCCC" stroke-width="0.8"/>
+<line x1="50" y1="50" x2="68" y2="50" stroke="#CCCCCC" stroke-width="0.8"/>
+<line x1="50" y1="60" x2="62" y2="60" stroke="#CCCCCC" stroke-width="0.8"/>
+<circle class="ring" cx="60" cy="16" r="6" stroke="#C96330" stroke-width="1.2" fill="none"/>
+<circle class="dot" cx="60" cy="16" r="2.2" fill="#C96330"/>
 </svg>""",
 
 "cloud": """<svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">

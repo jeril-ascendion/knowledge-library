@@ -1,0 +1,24 @@
+flowchart TD
+    E2E[E2E — Physical device smoke tests<br/>~5 tests · critical path only]
+    UI[UI Tests — Espresso / XCUITest / Maestro<br/>~50 tests · key user journeys]
+    INT[Integration — Robolectric + DB + API mock<br/>~100 tests · cross-layer contracts]
+    SNAP[Snapshot — Paparazzi / iOS Snapshot<br/>~1,000 tests · every component variant]
+    UNIT[Unit — JUnit5 + Turbine / Swift Testing<br/>~10,000 tests · ViewModel / UseCase / Repository]
+
+    UNIT --> SNAP
+    SNAP --> INT
+    INT --> UI
+    UI --> E2E
+
+    UNIT -.runs on.-> JVM[JVM — milliseconds per test]
+    SNAP -.runs on.-> JVM
+    INT -.runs on.-> JVM
+    UI -.runs on.-> EMU[Emulator / Simulator]
+    E2E -.runs on.-> LAB[Firebase Test Lab — physical devices]
+
+    PACT[Pact Contracts] -.guards.-> INT
+
+    style UNIT fill:#C96330,color:#fff
+    style SNAP fill:#DCEAFC,stroke:#3D6395,stroke-width:2px
+    style PACT fill:#FBEDE0,stroke:#C96330,stroke-width:2px
+    style E2E fill:#FBEDE0,stroke:#C96330

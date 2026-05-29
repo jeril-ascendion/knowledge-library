@@ -1,0 +1,41 @@
+flowchart TD
+    subgraph STANDARDS["Standards & Law"]
+        S1[WCAG 2.2 Level AA]
+        S2[ADA Title III — US]
+        S3[EN 301 549 / EAA — EU]
+        S4[RA 10524 — Philippines]
+    end
+
+    subgraph SEMANTICS["Platform Semantics"]
+        P1[Android — TalkBack via Semantics modifier]
+        P2[iOS — VoiceOver via accessibilityLabel]
+        P3[Live regions / announcements]
+        P4[Focus order — traversalBefore/After]
+    end
+
+    subgraph TARGETS["Measurable Targets"]
+        T1[Touch 48 dp Android / 44 pt iOS]
+        T2[Contrast 4.5:1 normal / 3:1 large]
+        T3[Dynamic Type all 12 sizes]
+        T4[sp units · no hardcoded text size]
+    end
+
+    subgraph VALIDATION["Validation"]
+        V1[Accessibility Scanner — Android]
+        V2[Accessibility Inspector — iOS]
+        V3[Espresso a11y checks in CI]
+        V4[XCUITest performAccessibilityAudit]
+        V5[Real screen-reader user test]
+    end
+
+    STANDARDS --> SEMANTICS
+    STANDARDS --> TARGETS
+    SEMANTICS --> VALIDATION
+    TARGETS --> VALIDATION
+    V5 -.catches what scanners miss.-> SEMANTICS
+
+    style S1 fill:#C96330,color:#fff
+    style V5 fill:#C96330,color:#fff
+    style T1 fill:#DCEAFC,stroke:#3D6395,stroke-width:2px
+    style P1 fill:#FBEDE0,stroke:#C96330
+    style P2 fill:#FBEDE0,stroke:#C96330

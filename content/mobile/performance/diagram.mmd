@@ -1,0 +1,38 @@
+flowchart TD
+    subgraph BUDGETS["Performance Budgets"]
+        BG1[Cold start &lt; 2 s tier-2]
+        BG2[Frame budget 16.67 ms 60 fps]
+        BG3[Heap &lt; 100 MB Android · 80 MB iOS]
+        BG4[Binary &lt; 25 MB AAB · 35 MB IPA]
+    end
+
+    subgraph MEASURE["Measurement"]
+        M1[Macrobenchmark + Firebase Test Lab]
+        M2[Xcode Instruments — Time Profiler / Hitches]
+        M3[Perfetto trace]
+        M4[MetricKit + Android Vitals]
+    end
+
+    subgraph OPTIMIZE["Optimisation Techniques"]
+        O1[Baseline Profile — 30% cold start win]
+        O2[App Startup library — deferred init]
+        O3[Compose remember / derivedStateOf]
+        O4[SwiftUI @Observable access-tracking]
+        O5[StrictMode penaltyDeath debug]
+        O6[iOS dynamic→static framework conversion]
+    end
+
+    subgraph GATES["CI / Release Gates"]
+        G1[Per-PR Macrobenchmark on touched screens]
+        G2[Hitch budget 0 hitches &gt; 500 ms]
+        G3[Cold-start P95 alert]
+    end
+
+    BUDGETS --> MEASURE
+    MEASURE --> OPTIMIZE
+    OPTIMIZE --> GATES
+    GATES -.regressions block release.-> BUDGETS
+
+    style BG1 fill:#C96330,color:#fff
+    style O1 fill:#DCEAFC,stroke:#3D6395,stroke-width:2px
+    style G1 fill:#FBEDE0,stroke:#C96330,stroke-width:2px
