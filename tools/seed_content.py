@@ -247,23 +247,13 @@ TAXONOMY = {
 # ─────────────────────────────────────────────────────────────────────────────
 NESTED_TAXONOMY = {
     "technology/mobile": {
-        "platform-landscape":    "Mobile Platform Landscape",
-        "android":               "Android Architecture",
-        "ios":                   "iOS Architecture",
-        "cross-platform":        "Cross-Platform Frameworks",
-        "architecture-patterns": "Mobile Architecture Patterns",
-        "ui-design-systems":     "Mobile UI & Design Systems",
-        "offline-first":         "Offline-First Architecture",
-        "security":              "Mobile Security",
-        "performance":           "Mobile Performance",
-        "testing":               "Mobile Testing",
-        "accessibility":         "Mobile Accessibility",
-        "backend-integration":   "Backend Integration for Mobile",
-        "ci-cd":                 "Mobile CI / CD",
-        "observability":         "Mobile Observability",
-        "release-management":    "Release Management",
-        "enterprise-mobile":     "Enterprise Mobile (MDM / MAM)",
-        "cost-optimization":     "Mobile Cost Optimization",
+        "platforms":     "Platform Foundations & Technology Decisions",
+        "architecture":  "Architecture Patterns & Design Systems",
+        "quality":       "Quality Engineering — Testing, Performance & Accessibility",
+        "security":      "Security Architecture & Compliance",
+        "backend-data":  "Backend Integration & Data Architecture",
+        "delivery":      "DevOps, CI/CD & Release Management",
+        "enterprise":    "Enterprise Mobile, Strategy & Emerging Technology",
     },
 }
 

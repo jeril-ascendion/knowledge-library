@@ -1,0 +1,20 @@
+flowchart TD
+  subgraph UILayer["UI Layer"]
+    direction LR
+    C[Compose UI / SwiftUI] -->|Events| VM[ViewModel / Observable]
+    VM -->|UiState| C
+  end
+  subgraph DomainLayer["Domain Layer (optional)"]
+    UC[Use Cases]
+  end
+  subgraph DataLayer["Data Layer"]
+    direction LR
+    R[Repository] --> RDS[Remote DataSource — Retrofit / URLSession]
+    R --> LDS[Local DataSource — Room / SwiftData]
+  end
+  VM --> UC
+  UC --> R
+  VM --> R
+  style UILayer fill:#E3F2FD,stroke:#1565C0
+  style DomainLayer fill:#E8F5E9,stroke:#2E7D32
+  style DataLayer fill:#FFF3E0,stroke:#E65100

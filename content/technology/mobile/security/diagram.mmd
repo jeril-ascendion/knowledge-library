@@ -1,44 +1,27 @@
 flowchart TD
-    subgraph TRANSPORT["Transport Layer"]
-        T1[TLS 1.3 minimum]
-        T2[SPKI Hash Pinning + 2 backup pins]
-        T3[Network Security Config / ATS]
-        T4[Certificate Transparency Monitoring]
-    end
-
-    subgraph AUTH["Authentication & Authorization"]
-        A1[OAuth 2.0 + PKCE — no client_secret]
-        A2[Refresh Token Rotation RFC 6819]
-        A3[Biometric reauth for sensitive ops]
-        A4[Play Integrity / App Attest]
-    end
-
-    subgraph STORAGE["Data at Rest"]
-        S1[EncryptedSharedPreferences / Keychain]
-        S2[Hardware-backed Keystore — StrongBox / Secure Enclave]
-        S3[SQLCipher / SwiftData Data Protection]
-        S4[FLAG_SECURE / Background blur]
-    end
-
-    subgraph BINARY["Binary Hardening"]
-        B1[R8 / Bitcode]
-        B2[allowBackup false / debuggable false]
-        B3[Root / Jailbreak detection signal]
-        B4[Anti-tampering for MASVS-R]
-    end
-
-    subgraph SUPPLY["Supply Chain"]
-        SC1[SBOM per release]
-        SC2[Snyk / Dependabot scans]
-        SC3[Lockfile pinned transitive deps]
-    end
-
-    T1 --> AUTH
-    AUTH --> STORAGE
-    STORAGE --> BINARY
-    BINARY -.audited by.-> SUPPLY
-
-    style A1 fill:#C96330,color:#fff
-    style S2 fill:#C96330,color:#fff
-    style A4 fill:#DCEAFC,stroke:#3D6395,stroke-width:2px
-    style T2 fill:#FBEDE0,stroke:#C96330,stroke-width:2px
+  subgraph Network["Transport Security"]
+    TLS[TLS 1.3 Minimum]
+    PIN[SPKI Certificate Pinning]
+    NSC[Network Security Config / ATS]
+  end
+  subgraph Auth["Authentication & Authorisation"]
+    PKCE[OAuth 2.0 + PKCE — AppAuth Library]
+    BIO[Biometric — BiometricPrompt / LocalAuthentication]
+    JWT[JWT Validation — Short-lived Access Tokens]
+  end
+  subgraph Storage["Secure Storage"]
+    KS[Android Keystore — Hardware-Backed AES-256]
+    KC[iOS Keychain — kSecAttrAccessibleWhenUnlockedThisDeviceOnly]
+    EDB[Encrypted SQLite — SQLCipher / EncryptedSharedPrefs]
+  end
+  subgraph Attestation["Runtime & Binary Protection"]
+    PI[Play Integrity API]
+    AA[Apple AppAttest]
+    RD[Root / Jailbreak Detection]
+    R8[R8 ProGuard · debuggable=false]
+  end
+  Network --> Auth --> Storage --> Attestation
+  style Network fill:#E8F5E9,stroke:#1B5E20
+  style Auth fill:#E3F2FD,stroke:#0D47A1
+  style Storage fill:#FFF3E0,stroke:#E65100
+  style Attestation fill:#FCE4EC,stroke:#880E4F

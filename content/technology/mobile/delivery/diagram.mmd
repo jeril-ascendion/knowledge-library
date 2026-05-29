@@ -1,0 +1,19 @@
+flowchart LR
+  GIT[Git Push to main] --> LINT[Lint & Unit Tests]
+  LINT --> BUILD{Parallel Build}
+  BUILD --> AND[Android Gradle Build]
+  BUILD --> IOS[iOS Xcode Build]
+  AND --> ATEST[Android Test Suite]
+  IOS --> ITEST[iOS Test Suite]
+  ATEST & ITEST --> SIGN[Code Signing]
+  SIGN --> DIST[Internal Distribution]
+  DIST --> QA{QA Sign-off}
+  QA -->|Approved| STAGED[Staged Production Rollout]
+  STAGED --> PLAY[Google Play — 1% → 5% → 20% → 100%]
+  STAGED --> STORE[App Store — Review → Release]
+  QA -->|Rejected| FIX[Fix & Re-run]
+  style GIT fill:#E3F2FD,stroke:#0D47A1
+  style SIGN fill:#FCE4EC,stroke:#880E4F
+  style QA fill:#FFF3E0,stroke:#E65100
+  style PLAY fill:#E8F5E9,stroke:#1B5E20
+  style STORE fill:#E8F5E9,stroke:#1B5E20

@@ -1,0 +1,12 @@
+flowchart TD
+  E2E["E2E Tests — Firebase Test Lab — Physical Devices — Top 5 Critical Journeys Only"]
+  UI["UI Tests — Espresso · XCUITest · Maestro — Top 10 User Journeys"]
+  INTG["Integration Tests — Room In-Memory · URLProtocol Stub — Repository + DataSource Layer"]
+  SNAP["Snapshot Tests — Paparazzi · iOSSnapshotTestCase — All Components · All Themes"]
+  UNIT["Unit Tests — Foundation — JUnit5 + Mockk · XCTest + Swift Testing + Turbine — 90% Use Cases · 80% ViewModels"]
+  E2E --- UI --- INTG --- SNAP --- UNIT
+  style E2E fill:#FFEBEE,stroke:#B71C1C
+  style UI fill:#FFF3E0,stroke:#E65100
+  style INTG fill:#FFF9C4,stroke:#F57F17
+  style SNAP fill:#E8F5E9,stroke:#1B5E20
+  style UNIT fill:#E3F2FD,stroke:#0D47A1

@@ -1,0 +1,31 @@
+flowchart TD
+  subgraph Device["Managed Device"]
+    APP[Enterprise App]
+    SDK[MAM SDK / App Wrapping]
+    CERT[Client Certificate — MDM Provisioned]
+  end
+  subgraph MDM["Enterprise Mobility Management"]
+    JAMF[Jamf Pro / Intune]
+    APPCFG[AppConfig — Managed Configuration]
+    POLICY[MAM Policies — Pin · Encryption · DLP]
+  end
+  subgraph ZeroTrust["Zero Trust Gateway"]
+    CA[Conditional Access — Azure AD / Okta]
+    HEALTH[Device Health Check]
+    MTLS[mTLS Verification]
+  end
+  subgraph Backend2["Corporate Backend"]
+    API2[Internal APIs]
+    DATA[Corporate Data]
+  end
+  APP --> SDK --> CA
+  JAMF --> APPCFG --> APP
+  JAMF --> POLICY --> APP
+  CA --> HEALTH
+  HEALTH --> MTLS
+  MTLS --> API2 --> DATA
+  CERT --> MTLS
+  style Device fill:#E3F2FD,stroke:#0D47A1
+  style MDM fill:#FFF3E0,stroke:#E65100
+  style ZeroTrust fill:#FCE4EC,stroke:#880E4F
+  style Backend2 fill:#E8F5E9,stroke:#1B5E20

@@ -1,0 +1,33 @@
+flowchart TD
+  subgraph Entities["Entities — Enterprise Business Rules"]
+    DM[Domain Models]
+    RI[Repository Interfaces]
+  end
+  subgraph UseCases["Use Cases — Application Business Rules"]
+    UC1[GetUserProfileUseCase]
+    UC2[PlaceOrderUseCase]
+    UC3[AuthenticateUseCase]
+  end
+  subgraph Adapters["Interface Adapters"]
+    VM[ViewModel]
+    RIMPL[Repository Implementations]
+    API[API Client / Retrofit]
+    DAO[Room DAO / SwiftData]
+  end
+  subgraph Frameworks["Frameworks & Drivers"]
+    UI[Compose UI / SwiftUI]
+    NET[OkHttp / URLSession]
+    DB[SQLite / Core Data]
+    DI[Hilt / Factory]
+  end
+  UI --> VM
+  VM --> UC1 & UC2 & UC3
+  UC1 & UC2 & UC3 --> RI
+  RI --> RIMPL
+  RIMPL --> API & DAO
+  API --> NET
+  DAO --> DB
+  style Entities fill:#FCE4EC,stroke:#880E4F
+  style UseCases fill:#F3E5F5,stroke:#4A148C
+  style Adapters fill:#E8EAF6,stroke:#1A237E
+  style Frameworks fill:#E3F2FD,stroke:#0D47A1

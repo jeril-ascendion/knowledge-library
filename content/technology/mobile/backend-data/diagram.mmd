@@ -1,0 +1,28 @@
+flowchart LR
+  subgraph Mobile["Mobile App"]
+    UI2[UI Layer]
+    VM2[ViewModel]
+    REPO[Repository]
+    LDB[Local DB — Room / SwiftData]
+    WM[WorkManager / BGTaskScheduler]
+  end
+  subgraph BFF["Mobile BFF"]
+    GW[API Gateway]
+    AGG[Aggregation Layer]
+    CACHE[Response Cache]
+  end
+  subgraph Backend["Microservices"]
+    US[User Service]
+    PS[Product Service]
+    OS[Order Service]
+    PUSH[Push Service — APNs / FCM]
+  end
+  UI2 --> VM2 --> REPO
+  REPO --> LDB
+  REPO <-->|REST / GraphQL| GW
+  GW --> AGG --> US & PS & OS
+  PUSH -->|Silent Push| Mobile
+  WM -->|Background Sync| REPO
+  style Mobile fill:#E3F2FD,stroke:#0D47A1
+  style BFF fill:#E8F5E9,stroke:#1B5E20
+  style Backend fill:#FFF3E0,stroke:#E65100

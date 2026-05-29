@@ -2416,6 +2416,183 @@ SVGS = {
 <circle class="s1" cx="93" cy="22" r="4" fill="#C96330"/>
 </svg>""",
 
+"mobile_platforms": """<svg viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes rot{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+@keyframes fade1{0%,100%{opacity:1}33%{opacity:0.3}66%{opacity:0.6}}
+@keyframes fade2{0%{opacity:0.6}33%{opacity:1}66%{opacity:0.3}100%{opacity:0.6}}
+@keyframes fade3{0%{opacity:0.3}33%{opacity:0.6}66%{opacity:1}100%{opacity:0.3}}
+.p1{animation:fade1 3s ease-in-out infinite}
+.p2{animation:fade2 3s ease-in-out infinite}
+.p3{animation:fade3 3s ease-in-out infinite}
+.arr{animation:rot 3s ease-in-out infinite;transform-origin:120px 90px}
+</style>
+<g class="p1">
+<rect x="30" y="55" width="48" height="76" rx="6" stroke="#C96330" stroke-width="2" fill="none"/>
+<text x="54" y="97" text-anchor="middle" font-size="10" fill="#C96330" font-family="IBM Plex Mono">Android</text>
+</g>
+<g class="p2">
+<rect x="96" y="42" width="48" height="76" rx="6" stroke="#CCCCCC" stroke-width="2" fill="none"/>
+<rect x="102" y="48" width="36" height="58" rx="2" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<text x="120" y="95" text-anchor="middle" font-size="10" fill="#CCCCCC" font-family="IBM Plex Mono">iOS</text>
+</g>
+<g class="p3">
+<rect x="162" y="55" width="48" height="76" rx="6" stroke="#AAAAAA" stroke-width="2" fill="none"/>
+<text x="186" y="97" text-anchor="middle" font-size="10" fill="#AAAAAA" font-family="IBM Plex Mono">Flutter</text>
+</g>
+<g class="arr">
+<line x1="80" y1="90" x2="94" y2="90" stroke="#C96330" stroke-width="1.5" stroke-dasharray="3,2"/>
+<line x1="146" y1="90" x2="160" y2="90" stroke="#C96330" stroke-width="1.5" stroke-dasharray="3,2"/>
+</g>
+</svg>""",
+
+"mobile_architecture": """<svg viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes flow{0%,100%{stroke-dashoffset:40}50%{stroke-dashoffset:0}}
+@keyframes pulse{0%,100%{opacity:0.4}50%{opacity:1}}
+.a1{stroke-dasharray:40;animation:flow 2s 0s linear infinite}
+.a2{stroke-dasharray:40;animation:flow 2s 0.5s linear infinite}
+.a3{stroke-dasharray:40;animation:flow 2s 1s linear infinite}
+.a4{stroke-dasharray:40;animation:flow 2s 1.5s linear infinite}
+.b1{animation:pulse 2s 0s ease-in-out infinite}
+.b2{animation:pulse 2s 0.5s ease-in-out infinite}
+.b3{animation:pulse 2s 1s ease-in-out infinite}
+.b4{animation:pulse 2s 1.5s ease-in-out infinite}
+</style>
+<rect class="b1" x="8" y="74" width="52" height="32" rx="4" stroke="#C96330" stroke-width="1.5" fill="none"/>
+<text x="34" y="94" text-anchor="middle" font-size="9" fill="#C96330" font-family="IBM Plex Sans">View</text>
+<rect class="b2" x="74" y="74" width="52" height="32" rx="4" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
+<text x="100" y="94" text-anchor="middle" font-size="9" fill="#CCCCCC" font-family="IBM Plex Sans">ViewModel</text>
+<rect class="b3" x="140" y="74" width="52" height="32" rx="4" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
+<text x="166" y="88" text-anchor="middle" font-size="8" fill="#CCCCCC" font-family="IBM Plex Sans">Use</text>
+<text x="166" y="99" text-anchor="middle" font-size="8" fill="#CCCCCC" font-family="IBM Plex Sans">Case</text>
+<rect class="b4" x="206" y="74" width="28" height="32" rx="4" stroke="#AAAAAA" stroke-width="1.2" fill="none"/>
+<text x="220" y="94" text-anchor="middle" font-size="7" fill="#AAAAAA" font-family="IBM Plex Sans">Repo</text>
+<line class="a1" x1="60" y1="87" x2="74" y2="87" stroke="#C96330" stroke-width="1.5" stroke-linecap="round"/>
+<line class="a2" x1="34" y1="74" x2="34" y2="48" stroke="#CCCCCC" stroke-width="1" stroke-linecap="round"/>
+<line x1="34" y1="48" x2="100" y2="48" stroke="#CCCCCC" stroke-width="1"/>
+<line class="a3" x1="100" y1="48" x2="100" y2="74" stroke="#CCCCCC" stroke-width="1" stroke-linecap="round"/>
+<line class="a4" x1="126" y1="87" x2="140" y2="87" stroke="#CCCCCC" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="192" y1="87" x2="206" y2="87" stroke="#AAAAAA" stroke-width="1"/>
+</svg>""",
+
+"mobile_quality": """<svg viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes rise{from{transform:scaleY(0);opacity:0}to{transform:scaleY(1);opacity:1}}
+@keyframes rep{0%,75%{opacity:1}85%,100%{opacity:0}}
+.rep{animation:rep 4s ease-in-out infinite}
+.l1{transform-origin:120px 162px;animation:rise 0.4s 0.2s ease forwards}
+.l2{transform-origin:120px 138px;animation:rise 0.4s 0.7s ease forwards}
+.l3{transform-origin:120px 118px;animation:rise 0.4s 1.2s ease forwards}
+.l4{transform-origin:120px 100px;animation:rise 0.4s 1.7s ease forwards}
+.l5{transform-origin:120px 78px;animation:rise 0.4s 2.2s ease forwards}
+</style>
+<g class="rep">
+<polygon class="l1" points="20,170 220,170 200,148 40,148" stroke="#0D47A1" stroke-width="1.2" fill="#E3F2FD"/>
+<text x="120" y="162" text-anchor="middle" font-size="9" fill="#0D47A1" font-family="IBM Plex Sans">Unit Tests — JUnit5 · XCTest · Turbine</text>
+<polygon class="l2" points="40,146 200,146 184,124 56,124" stroke="#1B5E20" stroke-width="1.2" fill="#E8F5E9"/>
+<text x="120" y="138" text-anchor="middle" font-size="9" fill="#1B5E20" font-family="IBM Plex Sans">Snapshot — Paparazzi · iOSSnapshot</text>
+<polygon class="l3" points="56,122 184,122 168,100 72,100" stroke="#F57F17" stroke-width="1.2" fill="#FFF9C4"/>
+<text x="120" y="114" text-anchor="middle" font-size="9" fill="#E65100" font-family="IBM Plex Sans">Integration Tests</text>
+<polygon class="l4" points="72,98 168,98 148,76 92,76" stroke="#E65100" stroke-width="1.2" fill="#FFF3E0"/>
+<text x="120" y="90" text-anchor="middle" font-size="9" fill="#E65100" font-family="IBM Plex Sans">UI — Espresso · Maestro</text>
+<polygon class="l5" points="92,74 148,74 132,54 108,54" stroke="#B71C1C" stroke-width="1.2" fill="#FFEBEE"/>
+<text x="120" y="68" text-anchor="middle" font-size="8" fill="#B71C1C" font-family="IBM Plex Sans">E2E</text>
+</g>
+</svg>""",
+
+"mobile_security": """<svg viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes draw{from{stroke-dashoffset:400}to{stroke-dashoffset:0}}
+@keyframes lock{0%,40%{transform:translateY(6px)}60%,100%{transform:translateY(0)}}
+.r1{stroke-dasharray:400;animation:draw 1.5s 0.2s ease forwards}
+.r2{stroke-dasharray:400;animation:draw 1.5s 0.8s ease forwards}
+.r3{stroke-dasharray:400;animation:draw 1.5s 1.4s ease forwards}
+.lk{animation:lock 2s 2s ease-in-out infinite;transform-origin:120px 95px}
+</style>
+<path class="r1" d="M120 18 L175 38 L175 95 Q175 148 120 168 Q65 148 65 95 L65 38 Z" stroke="#C96330" stroke-width="2.5" fill="none"/>
+<path class="r2" d="M120 35 L160 50 L160 95 Q160 135 120 152 Q80 135 80 95 L80 50 Z" stroke="#AAAAAA" stroke-width="1.5" fill="none"/>
+<path class="r3" d="M120 52 L148 63 L148 95 Q148 122 120 136 Q92 122 92 95 L92 63 Z" stroke="#CCCCCC" stroke-width="1" fill="none"/>
+<g class="lk">
+<rect x="108" y="92" width="24" height="18" rx="3" stroke="#C96330" stroke-width="1.8" fill="none"/>
+<path d="M112 92 Q112 84 120 84 Q128 84 128 92" stroke="#C96330" stroke-width="1.8" fill="none"/>
+<circle cx="120" cy="101" r="2.5" fill="#C96330"/>
+</g>
+</svg>""",
+
+"mobile_backend_data": """<svg viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes packet{0%{transform:translateX(0);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateX(100px);opacity:0}}
+@keyframes packet2{0%{transform:translateX(100px);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateX(0);opacity:0}}
+.p1{animation:packet 2s 0s ease-in-out infinite}
+.p2{animation:packet 2s 0.7s ease-in-out infinite}
+.p3{animation:packet2 2s 0.35s ease-in-out infinite}
+</style>
+<rect x="20" y="60" width="56" height="88" rx="6" stroke="#C96330" stroke-width="2" fill="none"/>
+<rect x="28" y="68" width="40" height="66" rx="2" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<ellipse cx="170" cy="75" rx="42" ry="22" stroke="#CCCCCC" stroke-width="1.8" fill="none"/>
+<ellipse cx="155" cy="82" rx="28" ry="16" stroke="#AAAAAA" stroke-width="1.2" fill="none"/>
+<ellipse cx="142" cy="88" rx="16" ry="10" stroke="#BBBBBB" stroke-width="1" fill="none"/>
+<line x1="76" y1="100" x2="126" y2="86" stroke="#E0E0E0" stroke-width="1" stroke-dasharray="4,3"/>
+<circle class="p1" cx="80" cy="98" r="4" fill="#C96330"/>
+<circle class="p2" cx="80" cy="98" r="4" fill="#C96330"/>
+<circle class="p3" cx="126" cy="86" r="4" fill="#AAAAAA"/>
+</svg>""",
+
+"mobile_delivery": """<svg viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes light{0%,100%{opacity:0.2;fill:#F5F5F5}16%{opacity:1;fill:#C96330}}
+.s1{animation:light 3.6s 0s ease-in-out infinite}
+.s2{animation:light 3.6s 0.5s ease-in-out infinite}
+.s3{animation:light 3.6s 1.0s ease-in-out infinite}
+.s4{animation:light 3.6s 1.5s ease-in-out infinite}
+.s5{animation:light 3.6s 2.0s ease-in-out infinite}
+.s6{animation:light 3.6s 2.5s ease-in-out infinite}
+</style>
+<rect class="s1" x="8" y="78" width="30" height="24" rx="3" stroke="#CCCCCC" stroke-width="1"/>
+<text x="23" y="94" text-anchor="middle" font-size="7" fill="#555" font-family="IBM Plex Mono">push</text>
+<rect class="s2" x="46" y="78" width="30" height="24" rx="3" stroke="#CCCCCC" stroke-width="1"/>
+<text x="61" y="94" text-anchor="middle" font-size="7" fill="#555" font-family="IBM Plex Mono">build</text>
+<rect class="s3" x="84" y="78" width="30" height="24" rx="3" stroke="#CCCCCC" stroke-width="1"/>
+<text x="99" y="94" text-anchor="middle" font-size="7" fill="#555" font-family="IBM Plex Mono">test</text>
+<rect class="s4" x="122" y="78" width="30" height="24" rx="3" stroke="#CCCCCC" stroke-width="1"/>
+<text x="137" y="94" text-anchor="middle" font-size="7" fill="#555" font-family="IBM Plex Mono">sign</text>
+<rect class="s5" x="160" y="78" width="30" height="24" rx="3" stroke="#CCCCCC" stroke-width="1"/>
+<text x="175" y="94" text-anchor="middle" font-size="7" fill="#555" font-family="IBM Plex Mono">dist</text>
+<rect class="s6" x="198" y="78" width="34" height="24" rx="3" stroke="#CCCCCC" stroke-width="1"/>
+<text x="215" y="94" text-anchor="middle" font-size="7" fill="#555" font-family="IBM Plex Mono">release</text>
+<line x1="38" y1="90" x2="46" y2="90" stroke="#CCCCCC" stroke-width="1"/>
+<line x1="76" y1="90" x2="84" y2="90" stroke="#CCCCCC" stroke-width="1"/>
+<line x1="114" y1="90" x2="122" y2="90" stroke="#CCCCCC" stroke-width="1"/>
+<line x1="152" y1="90" x2="160" y2="90" stroke="#CCCCCC" stroke-width="1"/>
+<line x1="190" y1="90" x2="198" y2="90" stroke="#CCCCCC" stroke-width="1"/>
+</svg>""",
+
+"mobile_enterprise": """<svg viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes connect{0%,100%{stroke-dashoffset:60;opacity:0.3}50%{stroke-dashoffset:0;opacity:1}}
+.c1{stroke-dasharray:60;animation:connect 2s 0s ease-in-out infinite}
+.c2{stroke-dasharray:60;animation:connect 2s 0.5s ease-in-out infinite}
+.c3{stroke-dasharray:60;animation:connect 2s 1.0s ease-in-out infinite}
+</style>
+<rect x="92" y="40" width="56" height="100" rx="2" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
+<rect x="98" y="46" width="10" height="12" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<rect x="115" y="46" width="10" height="12" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<rect x="132" y="46" width="10" height="12" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<rect x="98" y="64" width="10" height="12" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<rect x="115" y="64" width="10" height="12" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<rect x="132" y="64" width="10" height="12" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<rect x="109" y="118" width="22" height="22" rx="1" stroke="#CCCCCC" stroke-width="1" fill="none"/>
+<rect x="18" y="80" width="32" height="52" rx="5" stroke="#C96330" stroke-width="1.8" fill="none"/>
+<rect x="24" y="86" width="20" height="38" rx="2" stroke="#AAAAAA" stroke-width="0.7" fill="none"/>
+<rect x="190" y="80" width="32" height="52" rx="5" stroke="#C96330" stroke-width="1.8" fill="none"/>
+<rect x="196" y="86" width="20" height="38" rx="2" stroke="#AAAAAA" stroke-width="0.7" fill="none"/>
+<rect x="18" y="140" width="32" height="20" rx="3" stroke="#AAAAAA" stroke-width="1" fill="none"/>
+<line class="c1" x1="50" y1="106" x2="92" y2="90" stroke="#C96330" stroke-width="1.5" stroke-linecap="round"/>
+<line class="c2" x1="190" y1="106" x2="148" y2="90" stroke="#C96330" stroke-width="1.5" stroke-linecap="round"/>
+<line class="c3" x1="34" y1="140" x2="92" y2="120" stroke="#AAAAAA" stroke-width="1" stroke-linecap="round"/>
+</svg>""",
+
 "cloud": """<svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
 <style>
 @keyframes float{0%{transform:translateY(0);opacity:0}50%{opacity:0.7}100%{transform:translateY(-20px);opacity:0}}
@@ -2734,6 +2911,133 @@ SVGS = {
 </g>
 </svg>""",
 }
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CARD_BACKS — flip-card back content keyed by section path.
+# When a card on a section index or hub page has an entry here, the article
+# row is upgraded to a flip card (front: title/desc/svg; back: KEY TECH
+# rows + stat line). The same key drives the mobile card on the Technology
+# index and the per-section cards on the Mobile hub.
+# ─────────────────────────────────────────────────────────────────────────────
+CARD_BACKS = {
+    "technology/mobile": {
+        "label": "KEY TECHNOLOGIES",
+        "rows": [
+            ("Platforms",     "Android · iOS · Flutter · React Native · KMP"),
+            ("Languages",     "Kotlin · Swift · Dart · TypeScript"),
+            ("Frameworks",    "Jetpack · SwiftUI · Compose · Expo"),
+            ("Decision Tool", "Platform Selection Matrix"),
+        ],
+        "stat": "5 platform models evaluated",
+    },
+    "technology/mobile/platforms": {
+        "label": "KEY TECHNOLOGIES",
+        "rows": [
+            ("Platforms",     "Android · iOS · Flutter · React Native · KMP"),
+            ("Languages",     "Kotlin · Swift · Dart · TypeScript"),
+            ("Frameworks",    "Jetpack · SwiftUI · Compose · Expo"),
+            ("Decision Tool", "Platform Selection Matrix"),
+        ],
+        "stat": "5 platform models evaluated",
+    },
+    "technology/mobile/architecture": {
+        "label": "KEY PATTERNS",
+        "rows": [
+            ("Patterns", "MVVM · MVI · Clean Architecture · TCA · VIPER"),
+            ("Android",  "ViewModel · StateFlow · Hilt · Compose"),
+            ("iOS",      "@Observable · SwiftUI · Factory · Navigation"),
+            ("Design",   "Material 3 · HIG · Design Tokens"),
+        ],
+        "stat": "Industry standard since Google MAD 2022",
+    },
+    "technology/mobile/quality": {
+        "label": "QUALITY TOOLS",
+        "rows": [
+            ("Unit Testing", "JUnit5 · Mockk · XCTest · Swift Testing · Turbine"),
+            ("Snapshot",     "Paparazzi · iOSSnapshotTestCase · Roborazzi"),
+            ("UI Testing",   "Espresso · Maestro · XCUITest"),
+            ("Performance",  "Macrobenchmark · Instruments · Firebase Perf"),
+        ],
+        "stat": "90% Use Case coverage · 80% ViewModel coverage",
+    },
+    "technology/mobile/security": {
+        "label": "SECURITY STANDARDS",
+        "rows": [
+            ("Framework",   "OWASP MASVS 2.0 · NIST SP 800-163"),
+            ("Auth",        "OAuth 2.0 + PKCE · AppAuth · BiometricPrompt"),
+            ("Storage",     "Android Keystore · iOS Keychain · SQLCipher"),
+            ("Attestation", "Play Integrity · AppAttest · RootBeer"),
+        ],
+        "stat": "OWASP Mobile Top 10 (2024) fully covered",
+    },
+    "technology/mobile/backend-data": {
+        "label": "INTEGRATION PATTERNS",
+        "rows": [
+            ("API Styles", "REST · GraphQL · gRPC · WebSocket"),
+            ("BFF",        "Mobile BFF · Field Selection · Cursor Pagination"),
+            ("Offline",    "SQLite SoT · Optimistic Updates · Delta Sync"),
+            ("Push",       "APNs · FCM · Silent Push · Token Rotation"),
+        ],
+        "stat": "40–70% payload reduction with BFF pattern",
+    },
+    "technology/mobile/delivery": {
+        "label": "DELIVERY TOOLS",
+        "rows": [
+            ("CI/CD",         "Fastlane · GitHub Actions · Xcode Cloud"),
+            ("Signing",       "Match · Android Keystore · Google Play Signing"),
+            ("Distribution",  "TestFlight · Firebase App Distribution"),
+            ("Observability", "Crashlytics · Firebase Perf · Sentry"),
+        ],
+        "stat": "DORA elite: deploy freq multiple/week",
+    },
+    "technology/mobile/enterprise": {
+        "label": "ENTERPRISE STACK",
+        "rows": [
+            ("MDM/MAM",      "Jamf Pro · Microsoft Intune · Workspace ONE"),
+            ("Zero Trust",   "Conditional Access · AppConfig · mTLS"),
+            ("On-Device AI", "Core ML · TensorFlow Lite · ML Kit · Gemini Nano"),
+            ("Emerging",     "watchOS · Wear OS · WindowSizeClass · visionOS"),
+        ],
+        "stat": "TCO: Flutter saves 35–45% vs pure native",
+    },
+}
+
+# Hero-animation SVG override for nested mobile article pages — maps the
+# page's full path to a key in SVGS. Pages without an entry fall back to
+# the default hero (no animated SVG).
+HERO_SVG_OVERRIDE = {
+    "technology/mobile/platforms":    "mobile_platforms",
+    "technology/mobile/architecture": "mobile_architecture",
+    "technology/mobile/quality":      "mobile_quality",
+    "technology/mobile/security":     "mobile_security",
+    "technology/mobile/backend-data": "mobile_backend_data",
+    "technology/mobile/delivery":     "mobile_delivery",
+    "technology/mobile/enterprise":   "mobile_enterprise",
+}
+
+
+def render_card_back(key):
+    """Render the card-back HTML for a section path that has a CARD_BACKS
+    entry. Returns empty string for paths without an entry."""
+    cfg = CARD_BACKS.get(key)
+    if not cfg:
+        return ""
+    rows_html = ""
+    for row_label, row_value in cfg["rows"]:
+        rows_html += (
+            f'      <div class="card-back-row">\n'
+            f'        <div class="card-back-row-label">{row_label}</div>\n'
+            f'        <div class="card-back-row-value">{row_value}</div>\n'
+            f'      </div>\n'
+        )
+    return (
+        f'    <div class="card-back">\n'
+        f'      <div class="card-back-label">{cfg["label"]}</div>\n'
+        f'{rows_html}'
+        f'      <div class="card-back-stat">{cfg["stat"]}</div>\n'
+        f'    </div>\n'
+    )
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # MARKDOWN HELPERS
@@ -7649,16 +7953,35 @@ def gen_section(slug, src_dir, out_dir):
 
     rows = ""
     for sub_slug, sub_title, sub_desc in subs:
-        rows += (
-            f'  <a href="{sub_slug}/index.html" class="article-row">\n'
-            f'    <div>\n'
-            f'      <div class="ar-label">{slug}/{sub_slug}/</div>\n'
-            f'      <div class="ar-title">{sub_title}</div>\n'
-            f'      <div class="ar-desc">{sub_desc or "&nbsp;"}</div>\n'
-            f'    </div>\n'
-            f'    <div class="ar-arrow">&#8594;</div>\n'
-            f'  </a>\n'
-        )
+        back_key = f"{slug}/{sub_slug}"
+        card_back = render_card_back(back_key)
+        if card_back:
+            sub_svg = SVGS.get(sub_slug, SVGS.get(f"mobile_{sub_slug.replace('-', '_')}", ""))
+            rows += (
+                f'  <a href="{sub_slug}/index.html" class="section-card is-flip">\n'
+                f'    <div class="card-inner">\n'
+                f'    <div class="card-front">\n'
+                f'      <div class="sc-illustration">{sub_svg}</div>\n'
+                f'      <div class="sc-path">{slug}/{sub_slug}/</div>\n'
+                f'      <div class="sc-title">{sub_title}</div>\n'
+                f'      <div class="sc-desc">{sub_desc or "&nbsp;"}</div>\n'
+                f'      <div class="sc-footer"><span class="sc-arrow">&#8594;</span></div>\n'
+                f'    </div>\n'
+                f'{card_back}'
+                f'    </div>\n'
+                f'  </a>\n'
+            )
+        else:
+            rows += (
+                f'  <a href="{sub_slug}/index.html" class="article-row">\n'
+                f'    <div>\n'
+                f'      <div class="ar-label">{slug}/{sub_slug}/</div>\n'
+                f'      <div class="ar-title">{sub_title}</div>\n'
+                f'      <div class="ar-desc">{sub_desc or "&nbsp;"}</div>\n'
+                f'    </div>\n'
+                f'    <div class="ar-arrow">&#8594;</div>\n'
+                f'  </a>\n'
+            )
 
     # Title weight contrast
     words = title.split()
@@ -7733,16 +8056,36 @@ def gen_hub(slug, hub_slug, src_dir, out_dir):
 
     rows = ""
     for sub_slug, sub_title, sub_desc in subs:
-        rows += (
-            f'  <a href="{sub_slug}/index.html" class="article-row">\n'
-            f'    <div>\n'
-            f'      <div class="ar-label">{slug}/{hub_slug}/{sub_slug}/</div>\n'
-            f'      <div class="ar-title">{sub_title}</div>\n'
-            f'      <div class="ar-desc">{sub_desc or "&nbsp;"}</div>\n'
-            f'    </div>\n'
-            f'    <div class="ar-arrow">&#8594;</div>\n'
-            f'  </a>\n'
-        )
+        back_key = f"{slug}/{hub_slug}/{sub_slug}"
+        card_back = render_card_back(back_key)
+        if card_back:
+            svg_key = HERO_SVG_OVERRIDE.get(back_key, f"{hub_slug}_{sub_slug.replace('-', '_')}")
+            sub_svg = SVGS.get(svg_key, "")
+            rows += (
+                f'  <a href="{sub_slug}/index.html" class="section-card is-flip">\n'
+                f'    <div class="card-inner">\n'
+                f'    <div class="card-front">\n'
+                f'      <div class="sc-illustration">{sub_svg}</div>\n'
+                f'      <div class="sc-path">{slug}/{hub_slug}/{sub_slug}/</div>\n'
+                f'      <div class="sc-title">{sub_title}</div>\n'
+                f'      <div class="sc-desc">{sub_desc or "&nbsp;"}</div>\n'
+                f'      <div class="sc-footer"><span class="sc-arrow">&#8594;</span></div>\n'
+                f'    </div>\n'
+                f'{card_back}'
+                f'    </div>\n'
+                f'  </a>\n'
+            )
+        else:
+            rows += (
+                f'  <a href="{sub_slug}/index.html" class="article-row">\n'
+                f'    <div>\n'
+                f'      <div class="ar-label">{slug}/{hub_slug}/{sub_slug}/</div>\n'
+                f'      <div class="ar-title">{sub_title}</div>\n'
+                f'      <div class="ar-desc">{sub_desc or "&nbsp;"}</div>\n'
+                f'    </div>\n'
+                f'    <div class="ar-arrow">&#8594;</div>\n'
+                f'  </a>\n'
+            )
 
     words = hub_title.split()
     h1 = f"<strong>{words[0]}</strong><br>{'  '.join(words[1:])}" if len(words) > 1 else f"<strong>{hub_title}</strong>"
@@ -7971,6 +8314,12 @@ def gen_nested_article(slug, hub_slug, sub_slug, sub_dir, out_sub, referenced_by
         f'    {tag_html}\n'
     )
 
+    # Page-specific hero animation: prefer a hero.svg file if present, then
+    # the HERO_SVG_OVERRIDE map (used for the mobile section pages so that
+    # each topic has its own distinctive 240×180 animation), and finally
+    # no animated SVG at all.
+    override_key = HERO_SVG_OVERRIDE.get(f"{slug}/{hub_slug}/{sub_slug}")
+    override_svg = SVGS.get(override_key) if override_key else None
     if has_hero_art:
         hero_svg = hero_svg_file.read_text(encoding="utf-8")
         hero_block = (
@@ -7979,6 +8328,16 @@ def gen_nested_article(slug, hub_slug, sub_slug, sub_dir, out_sub, referenced_by
             f'      <div class="hero-article-text">\n{hero_text}'
             f'      </div>\n'
             f'      <div class="hero-article-art">{hero_svg}</div>\n'
+            f'    </div>\n'
+            f'  </div>\n</section>\n\n'
+        )
+    elif override_svg:
+        hero_block = (
+            f'<section class="hero-article">\n  <div class="shell">\n'
+            f'    <div class="hero-article-inner">\n'
+            f'      <div class="hero-article-text">\n{hero_text}'
+            f'      </div>\n'
+            f'      <div class="hero-animation">{override_svg}</div>\n'
             f'    </div>\n'
             f'  </div>\n</section>\n\n'
         )
