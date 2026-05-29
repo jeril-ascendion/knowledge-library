@@ -2399,197 +2399,243 @@ SVGS = {
 
 "mobile": """<svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
 <style>
-@keyframes signal{0%,100%{opacity:0.2;r:4}50%{opacity:1;r:7}}
-@keyframes signal2{0%,100%{opacity:0.2;r:8}50%{opacity:0.7;r:12}}
-@keyframes signal3{0%,100%{opacity:0.1;r:12}50%{opacity:0.4;r:18}}
-.s1{animation:signal 2s 0s ease-in-out infinite}
-.s2{animation:signal2 2s 0.3s ease-in-out infinite}
-.s3{animation:signal3 2s 0.6s ease-in-out infinite}
+@keyframes ping1{0%,100%{opacity:0.2;r:4}50%{opacity:1;r:6.5}}
+@keyframes ping2{0%,100%{opacity:0.15;r:9}50%{opacity:0.65;r:12}}
+@keyframes ping3{0%,100%{opacity:0.08;r:14}50%{opacity:0.35;r:18}}
+@keyframes screenFlash{0%,100%{fill:none}50%{fill:rgba(201,99,48,0.08)}}
+.s1{animation:ping1 2s 0s ease-in-out infinite}
+.s2{animation:ping2 2s 0.25s ease-in-out infinite}
+.s3{animation:ping3 2s 0.5s ease-in-out infinite}
+.sc{animation:screenFlash 2s ease-in-out infinite}
 </style>
-<rect x="38" y="10" width="44" height="70" rx="6" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
-<rect x="44" y="16" width="32" height="48" rx="2" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
-<circle cx="60" cy="73" r="2.5" stroke="#CCCCCC" stroke-width="1" fill="none"/>
-<line x1="52" y1="13" x2="68" y2="13" stroke="#CCCCCC" stroke-width="1.5" stroke-linecap="round"/>
-<circle class="s3" cx="93" cy="22" r="12" stroke="#C96330" stroke-width="0.8" fill="none"/>
-<circle class="s2" cx="93" cy="22" r="8" stroke="#C96330" stroke-width="1" fill="none"/>
-<circle class="s1" cx="93" cy="22" r="4" fill="#C96330"/>
+<rect x="36" y="8" width="48" height="76" rx="7" stroke="#CCCCCC" stroke-width="1.8" fill="none"/>
+<rect class="sc" x="43" y="16" width="34" height="52" rx="3" stroke="#AAAAAA" stroke-width="0.9"/>
+<circle cx="60" cy="78" r="3" stroke="#CCCCCC" stroke-width="1.2" fill="none"/>
+<line x1="50" y1="12" x2="70" y2="12" stroke="#CCCCCC" stroke-width="1.8" stroke-linecap="round"/>
+<circle class="s3" cx="95" cy="22" r="14" stroke="#C96330" stroke-width="0.9" fill="none"/>
+<circle class="s2" cx="95" cy="22" r="9" stroke="#C96330" stroke-width="1.2" fill="none"/>
+<circle class="s1" cx="95" cy="22" r="4" fill="#C96330"/>
 </svg>""",
 
-"mobile_platforms": """<svg viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+"mobile_platforms": """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
 <style>
-@keyframes rot{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
-@keyframes fade1{0%,100%{opacity:1}33%{opacity:0.3}66%{opacity:0.6}}
-@keyframes fade2{0%{opacity:0.6}33%{opacity:1}66%{opacity:0.3}100%{opacity:0.6}}
-@keyframes fade3{0%{opacity:0.3}33%{opacity:0.6}66%{opacity:1}100%{opacity:0.3}}
-.p1{animation:fade1 3s ease-in-out infinite}
-.p2{animation:fade2 3s ease-in-out infinite}
-.p3{animation:fade3 3s ease-in-out infinite}
-.arr{animation:rot 3s ease-in-out infinite;transform-origin:120px 90px}
+@keyframes platformPulse{0%,100%{opacity:0.3}50%{opacity:1}}
+@keyframes platformSlide{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes connectFlow{from{stroke-dashoffset:60}to{stroke-dashoffset:0}}
+.pl1{animation:platformSlide 2.8s 0s ease-in-out infinite}
+.pl2{animation:platformSlide 2.8s 0.9s ease-in-out infinite}
+.pl3{animation:platformSlide 2.8s 1.8s ease-in-out infinite}
+.con{stroke-dasharray:60;animation:connectFlow 1.8s linear infinite}
+.lbl{animation:platformPulse 2.8s ease-in-out infinite}
 </style>
-<g class="p1">
-<rect x="30" y="55" width="48" height="76" rx="6" stroke="#C96330" stroke-width="2" fill="none"/>
-<text x="54" y="97" text-anchor="middle" font-size="10" fill="#C96330" font-family="IBM Plex Mono">Android</text>
+<g class="pl1">
+  <rect x="14" y="60" width="58" height="96" rx="8" stroke="#C96330" stroke-width="2" fill="none"/>
+  <rect x="22" y="70" width="42" height="72" rx="4" stroke="#AAAAAA" stroke-width="1" fill="none"/>
+  <circle cx="43" cy="150" r="3" stroke="#C96330" stroke-width="1.2" fill="none"/>
+  <line x1="32" y1="66" x2="54" y2="66" stroke="#C96330" stroke-width="1.8" stroke-linecap="round"/>
+  <text x="43" y="112" text-anchor="middle" font-size="9" fill="#C96330" font-family="IBM Plex Mono">Android</text>
 </g>
-<g class="p2">
-<rect x="96" y="42" width="48" height="76" rx="6" stroke="#CCCCCC" stroke-width="2" fill="none"/>
-<rect x="102" y="48" width="36" height="58" rx="2" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
-<text x="120" y="95" text-anchor="middle" font-size="10" fill="#CCCCCC" font-family="IBM Plex Mono">iOS</text>
+<g class="pl2">
+  <rect x="101" y="46" width="58" height="96" rx="8" stroke="#CCCCCC" stroke-width="2" fill="none"/>
+  <rect x="109" y="56" width="42" height="72" rx="4" stroke="#AAAAAA" stroke-width="1" fill="none"/>
+  <circle cx="130" cy="136" r="3" stroke="#CCCCCC" stroke-width="1.2" fill="none"/>
+  <line x1="119" y1="52" x2="141" y2="52" stroke="#CCCCCC" stroke-width="1.8" stroke-linecap="round"/>
+  <text x="130" y="96" text-anchor="middle" font-size="9" fill="#CCCCCC" font-family="IBM Plex Mono">iOS</text>
 </g>
-<g class="p3">
-<rect x="162" y="55" width="48" height="76" rx="6" stroke="#AAAAAA" stroke-width="2" fill="none"/>
-<text x="186" y="97" text-anchor="middle" font-size="10" fill="#AAAAAA" font-family="IBM Plex Mono">Flutter</text>
+<g class="pl3">
+  <rect x="188" y="60" width="58" height="96" rx="8" stroke="#AAAAAA" stroke-width="2" fill="none"/>
+  <rect x="196" y="70" width="42" height="72" rx="4" stroke="#888888" stroke-width="1" fill="none"/>
+  <circle cx="217" cy="150" r="3" stroke="#AAAAAA" stroke-width="1.2" fill="none"/>
+  <line x1="206" y1="66" x2="228" y2="66" stroke="#AAAAAA" stroke-width="1.8" stroke-linecap="round"/>
+  <text x="217" y="112" text-anchor="middle" font-size="9" fill="#AAAAAA" font-family="IBM Plex Mono">Flutter</text>
 </g>
-<g class="arr">
-<line x1="80" y1="90" x2="94" y2="90" stroke="#C96330" stroke-width="1.5" stroke-dasharray="3,2"/>
-<line x1="146" y1="90" x2="160" y2="90" stroke="#C96330" stroke-width="1.5" stroke-dasharray="3,2"/>
-</g>
+<line class="con" x1="72" y1="108" x2="101" y2="108" stroke="#C96330" stroke-width="1.5" stroke-linecap="round"/>
+<line class="con" x1="159" y1="108" x2="188" y2="108" stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round"/>
 </svg>""",
 
-"mobile_architecture": """<svg viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+"mobile_architecture": """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
 <style>
-@keyframes flow{0%,100%{stroke-dashoffset:40}50%{stroke-dashoffset:0}}
-@keyframes pulse{0%,100%{opacity:0.4}50%{opacity:1}}
-.a1{stroke-dasharray:40;animation:flow 2s 0s linear infinite}
-.a2{stroke-dasharray:40;animation:flow 2s 0.5s linear infinite}
-.a3{stroke-dasharray:40;animation:flow 2s 1s linear infinite}
-.a4{stroke-dasharray:40;animation:flow 2s 1.5s linear infinite}
-.b1{animation:pulse 2s 0s ease-in-out infinite}
-.b2{animation:pulse 2s 0.5s ease-in-out infinite}
-.b3{animation:pulse 2s 1s ease-in-out infinite}
-.b4{animation:pulse 2s 1.5s ease-in-out infinite}
+@keyframes layerFlow{from{stroke-dashoffset:80}to{stroke-dashoffset:0}}
+@keyframes layerPulse{0%,100%{opacity:0.35}50%{opacity:1}}
+@keyframes boxGlow{0%,100%{stroke-width:1.5}50%{stroke-width:2.5}}
+.f1{stroke-dasharray:80;animation:layerFlow 2s 0s linear infinite}
+.f2{stroke-dasharray:80;animation:layerFlow 2s 0.5s linear infinite}
+.f3{stroke-dasharray:80;animation:layerFlow 2s 1s linear infinite}
+.b1{animation:boxGlow 2s 0s ease-in-out infinite}
+.b2{animation:boxGlow 2s 0.5s ease-in-out infinite}
+.b3{animation:boxGlow 2s 1s ease-in-out infinite}
+.b4{animation:boxGlow 2s 1.5s ease-in-out infinite}
 </style>
-<rect class="b1" x="8" y="74" width="52" height="32" rx="4" stroke="#C96330" stroke-width="1.5" fill="none"/>
-<text x="34" y="94" text-anchor="middle" font-size="9" fill="#C96330" font-family="IBM Plex Sans">View</text>
-<rect class="b2" x="74" y="74" width="52" height="32" rx="4" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
-<text x="100" y="94" text-anchor="middle" font-size="9" fill="#CCCCCC" font-family="IBM Plex Sans">ViewModel</text>
-<rect class="b3" x="140" y="74" width="52" height="32" rx="4" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
-<text x="166" y="88" text-anchor="middle" font-size="8" fill="#CCCCCC" font-family="IBM Plex Sans">Use</text>
-<text x="166" y="99" text-anchor="middle" font-size="8" fill="#CCCCCC" font-family="IBM Plex Sans">Case</text>
-<rect class="b4" x="206" y="74" width="28" height="32" rx="4" stroke="#AAAAAA" stroke-width="1.2" fill="none"/>
-<text x="220" y="94" text-anchor="middle" font-size="7" fill="#AAAAAA" font-family="IBM Plex Sans">Repo</text>
-<line class="a1" x1="60" y1="87" x2="74" y2="87" stroke="#C96330" stroke-width="1.5" stroke-linecap="round"/>
-<line class="a2" x1="34" y1="74" x2="34" y2="48" stroke="#CCCCCC" stroke-width="1" stroke-linecap="round"/>
-<line x1="34" y1="48" x2="100" y2="48" stroke="#CCCCCC" stroke-width="1"/>
-<line class="a3" x1="100" y1="48" x2="100" y2="74" stroke="#CCCCCC" stroke-width="1" stroke-linecap="round"/>
-<line class="a4" x1="126" y1="87" x2="140" y2="87" stroke="#CCCCCC" stroke-width="1.5" stroke-linecap="round"/>
-<line x1="192" y1="87" x2="206" y2="87" stroke="#AAAAAA" stroke-width="1"/>
+<rect class="b1" x="10" y="24" width="72" height="34" rx="5" stroke="#C96330" stroke-width="1.5" fill="none"/>
+<text x="46" y="45" text-anchor="middle" font-size="9" fill="#C96330" font-family="IBM Plex Sans">View</text>
+<rect class="b2" x="94" y="24" width="72" height="34" rx="5" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
+<text x="130" y="45" text-anchor="middle" font-size="9" fill="#CCCCCC" font-family="IBM Plex Sans">ViewModel</text>
+<rect class="b3" x="94" y="100" width="72" height="34" rx="5" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
+<text x="130" y="121" text-anchor="middle" font-size="9" fill="#CCCCCC" font-family="IBM Plex Sans">Use Case</text>
+<rect class="b4" x="178" y="100" width="72" height="34" rx="5" stroke="#AAAAAA" stroke-width="1.5" fill="none"/>
+<text x="214" y="115" text-anchor="middle" font-size="8" fill="#AAAAAA" font-family="IBM Plex Sans">Repository</text>
+<text x="214" y="128" text-anchor="middle" font-size="7" fill="#888888" font-family="IBM Plex Mono">interface</text>
+<rect x="178" y="158" width="72" height="28" rx="5" stroke="#777777" stroke-width="1" fill="none"/>
+<text x="214" y="176" text-anchor="middle" font-size="8" fill="#777777" font-family="IBM Plex Sans">Data Source</text>
+<line class="f1" x1="82" y1="41" x2="94" y2="41" stroke="#C96330" stroke-width="1.5" stroke-linecap="round"/>
+<line class="f2" x1="130" y1="58" x2="130" y2="100" stroke="#CCCCCC" stroke-width="1.5" stroke-linecap="round"/>
+<line class="f3" x1="166" y1="117" x2="178" y2="117" stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="214" y1="134" x2="214" y2="158" stroke="#777777" stroke-width="1" stroke-linecap="round"/>
+<text x="46" y="172" text-anchor="middle" font-size="8" fill="#555555" font-family="IBM Plex Mono">Events ↑  State ↓</text>
 </svg>""",
 
-"mobile_quality": """<svg viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+"mobile_quality": """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
 <style>
-@keyframes rise{from{transform:scaleY(0);opacity:0}to{transform:scaleY(1);opacity:1}}
-@keyframes rep{0%,75%{opacity:1}85%,100%{opacity:0}}
-.rep{animation:rep 4s ease-in-out infinite}
-.l1{transform-origin:120px 162px;animation:rise 0.4s 0.2s ease forwards}
-.l2{transform-origin:120px 138px;animation:rise 0.4s 0.7s ease forwards}
-.l3{transform-origin:120px 118px;animation:rise 0.4s 1.2s ease forwards}
-.l4{transform-origin:120px 100px;animation:rise 0.4s 1.7s ease forwards}
-.l5{transform-origin:120px 78px;animation:rise 0.4s 2.2s ease forwards}
+@keyframes pyramidRise{from{transform:scaleY(0);opacity:0}to{transform:scaleY(1);opacity:1}}
+@keyframes pyramidRepeat{0%,70%{opacity:1}80%,100%{opacity:0}}
+@keyframes checkPop{0%,90%,100%{r:3}95%{r:5}}
+.rep{animation:pyramidRepeat 4.5s ease-in-out infinite}
+.l1{transform-origin:130px 188px;animation:pyramidRise 0.5s 0.2s ease forwards}
+.l2{transform-origin:130px 162px;animation:pyramidRise 0.5s 0.8s ease forwards}
+.l3{transform-origin:130px 136px;animation:pyramidRise 0.5s 1.4s ease forwards}
+.l4{transform-origin:130px 110px;animation:pyramidRise 0.5s 2.0s ease forwards}
+.l5{transform-origin:130px 80px;animation:pyramidRise 0.5s 2.6s ease forwards}
+.ck{animation:checkPop 4.5s ease-in-out infinite}
 </style>
 <g class="rep">
-<polygon class="l1" points="20,170 220,170 200,148 40,148" stroke="#0D47A1" stroke-width="1.2" fill="#E3F2FD"/>
-<text x="120" y="162" text-anchor="middle" font-size="9" fill="#0D47A1" font-family="IBM Plex Sans">Unit Tests — JUnit5 · XCTest · Turbine</text>
-<polygon class="l2" points="40,146 200,146 184,124 56,124" stroke="#1B5E20" stroke-width="1.2" fill="#E8F5E9"/>
-<text x="120" y="138" text-anchor="middle" font-size="9" fill="#1B5E20" font-family="IBM Plex Sans">Snapshot — Paparazzi · iOSSnapshot</text>
-<polygon class="l3" points="56,122 184,122 168,100 72,100" stroke="#F57F17" stroke-width="1.2" fill="#FFF9C4"/>
-<text x="120" y="114" text-anchor="middle" font-size="9" fill="#E65100" font-family="IBM Plex Sans">Integration Tests</text>
-<polygon class="l4" points="72,98 168,98 148,76 92,76" stroke="#E65100" stroke-width="1.2" fill="#FFF3E0"/>
-<text x="120" y="90" text-anchor="middle" font-size="9" fill="#E65100" font-family="IBM Plex Sans">UI — Espresso · Maestro</text>
-<polygon class="l5" points="92,74 148,74 132,54 108,54" stroke="#B71C1C" stroke-width="1.2" fill="#FFEBEE"/>
-<text x="120" y="68" text-anchor="middle" font-size="8" fill="#B71C1C" font-family="IBM Plex Sans">E2E</text>
+<polygon class="l1" points="14,196 246,196 226,170 34,170" stroke="#0D47A1" stroke-width="1.5" fill="#E3F2FD"/>
+<text x="130" y="186" text-anchor="middle" font-size="8" fill="#0D47A1" font-family="IBM Plex Sans">Unit Tests — JUnit5 · XCTest · Turbine</text>
+<polygon class="l2" points="34,168 226,168 208,142 52,142" stroke="#1B5E20" stroke-width="1.5" fill="#E8F5E9"/>
+<text x="130" y="158" text-anchor="middle" font-size="8" fill="#1B5E20" font-family="IBM Plex Sans">Snapshot — Paparazzi · iOSSnapshot</text>
+<polygon class="l3" points="52,140 208,140 188,114 72,114" stroke="#E65100" stroke-width="1.5" fill="#FFF3E0"/>
+<text x="130" y="130" text-anchor="middle" font-size="8" fill="#E65100" font-family="IBM Plex Sans">Integration Tests</text>
+<polygon class="l4" points="72,112 188,112 164,86 96,86" stroke="#C62828" stroke-width="1.5" fill="#FFEBEE"/>
+<text x="130" y="102" text-anchor="middle" font-size="8" fill="#C62828" font-family="IBM Plex Sans">UI — Espresso · Maestro</text>
+<polygon class="l5" points="96,84 164,84 148,58 112,58" stroke="#4A148C" stroke-width="1.5" fill="#EDE7F6"/>
+<text x="130" y="75" text-anchor="middle" font-size="8" fill="#4A148C" font-family="IBM Plex Sans">E2E Tests</text>
 </g>
+<circle class="ck" cx="240" cy="60" r="3" fill="#C96330"/>
 </svg>""",
 
-"mobile_security": """<svg viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+"mobile_security": """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
 <style>
-@keyframes draw{from{stroke-dashoffset:400}to{stroke-dashoffset:0}}
-@keyframes lock{0%,40%{transform:translateY(6px)}60%,100%{transform:translateY(0)}}
-.r1{stroke-dasharray:400;animation:draw 1.5s 0.2s ease forwards}
-.r2{stroke-dasharray:400;animation:draw 1.5s 0.8s ease forwards}
-.r3{stroke-dasharray:400;animation:draw 1.5s 1.4s ease forwards}
-.lk{animation:lock 2s 2s ease-in-out infinite;transform-origin:120px 95px}
+@keyframes shieldPulse{0%,100%{stroke-width:2}50%{stroke-width:3.5}}
+@keyframes ringDraw{from{stroke-dashoffset:500}to{stroke-dashoffset:0}}
+@keyframes lockBounce{0%,40%{transform:translateY(7px)}60%,100%{transform:translateY(0)}}
+@keyframes ringFade{0%,100%{opacity:0.2}50%{opacity:0.8}}
+.sh{animation:shieldPulse 2.5s ease-in-out infinite}
+.r1{stroke-dasharray:500;animation:ringDraw 2s 0s ease forwards}
+.r2{stroke-dasharray:500;animation:ringDraw 2s 0.6s ease forwards}
+.r3{stroke-dasharray:500;animation:ringDraw 2s 1.2s ease forwards}
+.lk{animation:lockBounce 2.5s 2s ease-in-out infinite;transform-origin:130px 110px}
 </style>
-<path class="r1" d="M120 18 L175 38 L175 95 Q175 148 120 168 Q65 148 65 95 L65 38 Z" stroke="#C96330" stroke-width="2.5" fill="none"/>
-<path class="r2" d="M120 35 L160 50 L160 95 Q160 135 120 152 Q80 135 80 95 L80 50 Z" stroke="#AAAAAA" stroke-width="1.5" fill="none"/>
-<path class="r3" d="M120 52 L148 63 L148 95 Q148 122 120 136 Q92 122 92 95 L92 63 Z" stroke="#CCCCCC" stroke-width="1" fill="none"/>
+<path class="r1" d="M130 12 L196 36 L196 104 Q196 162 130 188 Q64 162 64 104 L64 36 Z" stroke="#C96330" stroke-width="2.5" fill="none"/>
+<path class="r2" d="M130 34 L176 52 L176 104 Q176 148 130 168 Q84 148 84 104 L84 52 Z" stroke="#AAAAAA" stroke-width="1.5" fill="none"/>
+<path class="r3" d="M130 56 L158 68 L158 104 Q158 134 130 148 Q102 134 102 104 L102 68 Z" stroke="#CCCCCC" stroke-width="1" fill="none"/>
 <g class="lk">
-<rect x="108" y="92" width="24" height="18" rx="3" stroke="#C96330" stroke-width="1.8" fill="none"/>
-<path d="M112 92 Q112 84 120 84 Q128 84 128 92" stroke="#C96330" stroke-width="1.8" fill="none"/>
-<circle cx="120" cy="101" r="2.5" fill="#C96330"/>
+  <rect x="114" y="106" width="32" height="22" rx="4" stroke="#C96330" stroke-width="2" fill="none"/>
+  <path d="M119 106 Q119 94 130 94 Q141 94 141 106" stroke="#C96330" stroke-width="2" fill="none"/>
+  <circle cx="130" cy="118" r="3" fill="#C96330"/>
 </g>
 </svg>""",
 
-"mobile_backend_data": """<svg viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+"mobile_backend_data": """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
 <style>
-@keyframes packet{0%{transform:translateX(0);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateX(100px);opacity:0}}
-@keyframes packet2{0%{transform:translateX(100px);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateX(0);opacity:0}}
-.p1{animation:packet 2s 0s ease-in-out infinite}
-.p2{animation:packet 2s 0.7s ease-in-out infinite}
-.p3{animation:packet2 2s 0.35s ease-in-out infinite}
+@keyframes packetUp{0%{transform:translate(0,0);opacity:0}15%{opacity:1}85%{opacity:1}100%{transform:translate(86px,-28px);opacity:0}}
+@keyframes packetDown{0%{transform:translate(86px,-28px);opacity:0}15%{opacity:1}85%{opacity:1}100%{transform:translate(0,0);opacity:0}}
+@keyframes cloudBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.pk1{animation:packetUp 2s 0s ease-in-out infinite}
+.pk2{animation:packetUp 2s 0.7s ease-in-out infinite}
+.pk3{animation:packetDown 2s 0.35s ease-in-out infinite}
+.cloud{animation:cloudBob 3s ease-in-out infinite}
 </style>
-<rect x="20" y="60" width="56" height="88" rx="6" stroke="#C96330" stroke-width="2" fill="none"/>
-<rect x="28" y="68" width="40" height="66" rx="2" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
-<ellipse cx="170" cy="75" rx="42" ry="22" stroke="#CCCCCC" stroke-width="1.8" fill="none"/>
-<ellipse cx="155" cy="82" rx="28" ry="16" stroke="#AAAAAA" stroke-width="1.2" fill="none"/>
-<ellipse cx="142" cy="88" rx="16" ry="10" stroke="#BBBBBB" stroke-width="1" fill="none"/>
-<line x1="76" y1="100" x2="126" y2="86" stroke="#E0E0E0" stroke-width="1" stroke-dasharray="4,3"/>
-<circle class="p1" cx="80" cy="98" r="4" fill="#C96330"/>
-<circle class="p2" cx="80" cy="98" r="4" fill="#C96330"/>
-<circle class="p3" cx="126" cy="86" r="4" fill="#AAAAAA"/>
+<rect x="14" y="64" width="64" height="104" rx="8" stroke="#C96330" stroke-width="2" fill="none"/>
+<rect x="24" y="76" width="44" height="76" rx="4" stroke="#AAAAAA" stroke-width="1" fill="none"/>
+<circle cx="46" cy="162" r="3.5" stroke="#C96330" stroke-width="1.2" fill="none"/>
+<line x1="34" y1="70" x2="58" y2="70" stroke="#C96330" stroke-width="2" stroke-linecap="round"/>
+<g class="cloud">
+  <ellipse cx="200" cy="72" rx="46" ry="24" stroke="#CCCCCC" stroke-width="1.8" fill="none"/>
+  <ellipse cx="180" cy="82" rx="30" ry="18" stroke="#AAAAAA" stroke-width="1.4" fill="none"/>
+  <ellipse cx="162" cy="86" rx="18" ry="12" stroke="#BBBBBB" stroke-width="1" fill="none"/>
+  <rect x="185" y="96" width="36" height="48" rx="4" stroke="#AAAAAA" stroke-width="1" fill="none"/>
+  <text x="203" y="126" text-anchor="middle" font-size="8" fill="#888888" font-family="IBM Plex Mono">BFF</text>
+</g>
+<line x1="78" y1="108" x2="154" y2="86" stroke="#E0E0E0" stroke-width="1" stroke-dasharray="4,3"/>
+<circle class="pk1" cx="80" cy="108" r="5" fill="#C96330"/>
+<circle class="pk2" cx="80" cy="122" r="5" fill="#C96330"/>
+<circle class="pk3" cx="154" cy="86" r="5" fill="#AAAAAA"/>
 </svg>""",
 
-"mobile_delivery": """<svg viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+"mobile_delivery": """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
 <style>
-@keyframes light{0%,100%{opacity:0.2;fill:#F5F5F5}16%{opacity:1;fill:#C96330}}
-.s1{animation:light 3.6s 0s ease-in-out infinite}
-.s2{animation:light 3.6s 0.5s ease-in-out infinite}
-.s3{animation:light 3.6s 1.0s ease-in-out infinite}
-.s4{animation:light 3.6s 1.5s ease-in-out infinite}
-.s5{animation:light 3.6s 2.0s ease-in-out infinite}
-.s6{animation:light 3.6s 2.5s ease-in-out infinite}
+@keyframes stageLight{0%,100%{fill:#F5F5F5;stroke:#CCCCCC}16%{fill:#C96330;stroke:#C96330}}
+@keyframes stageText{0%,100%{fill:#888888}16%{fill:#FFFFFF}}
+@keyframes lineFlow{from{stroke-dashoffset:20}to{stroke-dashoffset:0}}
+.s1{animation:stageLight 4.2s 0.0s ease-in-out infinite}
+.s2{animation:stageLight 4.2s 0.6s ease-in-out infinite}
+.s3{animation:stageLight 4.2s 1.2s ease-in-out infinite}
+.s4{animation:stageLight 4.2s 1.8s ease-in-out infinite}
+.s5{animation:stageLight 4.2s 2.4s ease-in-out infinite}
+.s6{animation:stageLight 4.2s 3.0s ease-in-out infinite}
+.t1{animation:stageText 4.2s 0.0s ease-in-out infinite}
+.t2{animation:stageText 4.2s 0.6s ease-in-out infinite}
+.t3{animation:stageText 4.2s 1.2s ease-in-out infinite}
+.t4{animation:stageText 4.2s 1.8s ease-in-out infinite}
+.t5{animation:stageText 4.2s 2.4s ease-in-out infinite}
+.t6{animation:stageText 4.2s 3.0s ease-in-out infinite}
+.lf{stroke-dasharray:20;animation:lineFlow 0.6s linear infinite}
 </style>
-<rect class="s1" x="8" y="78" width="30" height="24" rx="3" stroke="#CCCCCC" stroke-width="1"/>
-<text x="23" y="94" text-anchor="middle" font-size="7" fill="#555" font-family="IBM Plex Mono">push</text>
-<rect class="s2" x="46" y="78" width="30" height="24" rx="3" stroke="#CCCCCC" stroke-width="1"/>
-<text x="61" y="94" text-anchor="middle" font-size="7" fill="#555" font-family="IBM Plex Mono">build</text>
-<rect class="s3" x="84" y="78" width="30" height="24" rx="3" stroke="#CCCCCC" stroke-width="1"/>
-<text x="99" y="94" text-anchor="middle" font-size="7" fill="#555" font-family="IBM Plex Mono">test</text>
-<rect class="s4" x="122" y="78" width="30" height="24" rx="3" stroke="#CCCCCC" stroke-width="1"/>
-<text x="137" y="94" text-anchor="middle" font-size="7" fill="#555" font-family="IBM Plex Mono">sign</text>
-<rect class="s5" x="160" y="78" width="30" height="24" rx="3" stroke="#CCCCCC" stroke-width="1"/>
-<text x="175" y="94" text-anchor="middle" font-size="7" fill="#555" font-family="IBM Plex Mono">dist</text>
-<rect class="s6" x="198" y="78" width="34" height="24" rx="3" stroke="#CCCCCC" stroke-width="1"/>
-<text x="215" y="94" text-anchor="middle" font-size="7" fill="#555" font-family="IBM Plex Mono">release</text>
-<line x1="38" y1="90" x2="46" y2="90" stroke="#CCCCCC" stroke-width="1"/>
-<line x1="76" y1="90" x2="84" y2="90" stroke="#CCCCCC" stroke-width="1"/>
-<line x1="114" y1="90" x2="122" y2="90" stroke="#CCCCCC" stroke-width="1"/>
-<line x1="152" y1="90" x2="160" y2="90" stroke="#CCCCCC" stroke-width="1"/>
-<line x1="190" y1="90" x2="198" y2="90" stroke="#CCCCCC" stroke-width="1"/>
+<rect class="s1" x="6" y="82" width="36" height="36" rx="4" stroke-width="1.5"/>
+<text class="t1" x="24" y="97" text-anchor="middle" font-size="7" font-family="IBM Plex Mono">push</text>
+<text class="t1" x="24" y="108" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">git</text>
+<rect class="s2" x="50" y="82" width="36" height="36" rx="4" stroke-width="1.5"/>
+<text class="t2" x="68" y="97" text-anchor="middle" font-size="7" font-family="IBM Plex Mono">build</text>
+<text class="t2" x="68" y="108" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">gradle</text>
+<rect class="s3" x="94" y="82" width="36" height="36" rx="4" stroke-width="1.5"/>
+<text class="t3" x="112" y="97" text-anchor="middle" font-size="7" font-family="IBM Plex Mono">test</text>
+<text class="t3" x="112" y="108" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">gate</text>
+<rect class="s4" x="138" y="82" width="36" height="36" rx="4" stroke-width="1.5"/>
+<text class="t4" x="156" y="97" text-anchor="middle" font-size="7" font-family="IBM Plex Mono">sign</text>
+<text class="t4" x="156" y="108" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">match</text>
+<rect class="s5" x="182" y="82" width="36" height="36" rx="4" stroke-width="1.5"/>
+<text class="t5" x="200" y="97" text-anchor="middle" font-size="7" font-family="IBM Plex Mono">dist</text>
+<text class="t5" x="200" y="108" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">QA</text>
+<rect class="s6" x="218" y="82" width="36" height="36" rx="4" stroke-width="1.5"/>
+<text class="t6" x="236" y="97" text-anchor="middle" font-size="7" font-family="IBM Plex Mono">ship</text>
+<text class="t6" x="236" y="108" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">store</text>
+<line class="lf" x1="42" y1="100" x2="50" y2="100" stroke="#CCCCCC" stroke-width="1.2"/>
+<line class="lf" x1="86" y1="100" x2="94" y2="100" stroke="#CCCCCC" stroke-width="1.2"/>
+<line class="lf" x1="130" y1="100" x2="138" y2="100" stroke="#CCCCCC" stroke-width="1.2"/>
+<line class="lf" x1="174" y1="100" x2="182" y2="100" stroke="#CCCCCC" stroke-width="1.2"/>
+<line class="lf" x1="218" y1="100" x2="218" y2="100" stroke="#CCCCCC" stroke-width="1.2"/>
 </svg>""",
 
-"mobile_enterprise": """<svg viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+"mobile_enterprise": """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
 <style>
-@keyframes connect{0%,100%{stroke-dashoffset:60;opacity:0.3}50%{stroke-dashoffset:0;opacity:1}}
-.c1{stroke-dasharray:60;animation:connect 2s 0s ease-in-out infinite}
-.c2{stroke-dasharray:60;animation:connect 2s 0.5s ease-in-out infinite}
-.c3{stroke-dasharray:60;animation:connect 2s 1.0s ease-in-out infinite}
+@keyframes deviceConnect{0%,100%{stroke-dashoffset:70;opacity:0.3}50%{stroke-dashoffset:0;opacity:1}}
+@keyframes shieldPing{0%,100%{r:8}50%{r:11}}
+@keyframes buildingPulse{0%,100%{stroke-width:1.5}50%{stroke-width:2.5}}
+.c1{stroke-dasharray:70;animation:deviceConnect 2.2s 0s ease-in-out infinite}
+.c2{stroke-dasharray:70;animation:deviceConnect 2.2s 0.6s ease-in-out infinite}
+.c3{stroke-dasharray:70;animation:deviceConnect 2.2s 1.2s ease-in-out infinite}
+.sp{animation:shieldPing 2.2s ease-in-out infinite}
+.bld{animation:buildingPulse 2.2s ease-in-out infinite}
 </style>
-<rect x="92" y="40" width="56" height="100" rx="2" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
-<rect x="98" y="46" width="10" height="12" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
-<rect x="115" y="46" width="10" height="12" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
-<rect x="132" y="46" width="10" height="12" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
-<rect x="98" y="64" width="10" height="12" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
-<rect x="115" y="64" width="10" height="12" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
-<rect x="132" y="64" width="10" height="12" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
-<rect x="109" y="118" width="22" height="22" rx="1" stroke="#CCCCCC" stroke-width="1" fill="none"/>
-<rect x="18" y="80" width="32" height="52" rx="5" stroke="#C96330" stroke-width="1.8" fill="none"/>
-<rect x="24" y="86" width="20" height="38" rx="2" stroke="#AAAAAA" stroke-width="0.7" fill="none"/>
-<rect x="190" y="80" width="32" height="52" rx="5" stroke="#C96330" stroke-width="1.8" fill="none"/>
-<rect x="196" y="86" width="20" height="38" rx="2" stroke="#AAAAAA" stroke-width="0.7" fill="none"/>
-<rect x="18" y="140" width="32" height="20" rx="3" stroke="#AAAAAA" stroke-width="1" fill="none"/>
-<line class="c1" x1="50" y1="106" x2="92" y2="90" stroke="#C96330" stroke-width="1.5" stroke-linecap="round"/>
-<line class="c2" x1="190" y1="106" x2="148" y2="90" stroke="#C96330" stroke-width="1.5" stroke-linecap="round"/>
-<line class="c3" x1="34" y1="140" x2="92" y2="120" stroke="#AAAAAA" stroke-width="1" stroke-linecap="round"/>
+<rect class="bld" x="100" y="30" width="60" height="120" rx="3" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
+<rect x="108" y="38" width="12" height="14" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<rect x="126" y="38" width="12" height="14" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<rect x="144" y="38" width="10" height="14" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<rect x="108" y="60" width="12" height="14" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<rect x="126" y="60" width="12" height="14" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<rect x="144" y="60" width="10" height="14" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<rect x="108" y="82" width="12" height="14" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<rect x="126" y="82" width="12" height="14" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<rect x="120" y="126" width="20" height="24" rx="1" stroke="#CCCCCC" stroke-width="1" fill="none"/>
+<rect x="16" y="80" width="36" height="60" rx="6" stroke="#C96330" stroke-width="1.8" fill="none"/>
+<rect x="23" y="88" width="22" height="42" rx="2" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<circle cx="34" cy="136" r="2.5" stroke="#C96330" stroke-width="1" fill="none"/>
+<rect x="208" y="80" width="36" height="60" rx="6" stroke="#C96330" stroke-width="1.8" fill="none"/>
+<rect x="215" y="88" width="22" height="42" rx="2" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<circle cx="226" cy="136" r="2.5" stroke="#C96330" stroke-width="1" fill="none"/>
+<circle class="sp" cx="130" cy="12" r="8" stroke="#C96330" stroke-width="1.5" fill="none"/>
+<line class="c1" x1="52" y1="110" x2="100" y2="90" stroke="#C96330" stroke-width="1.5" stroke-linecap="round"/>
+<line class="c2" x1="208" y1="110" x2="160" y2="90" stroke="#C96330" stroke-width="1.5" stroke-linecap="round"/>
+<line class="c3" x1="130" y1="20" x2="130" y2="30" stroke="#C96330" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="3,2"/>
 </svg>""",
 
 "cloud": """<svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
