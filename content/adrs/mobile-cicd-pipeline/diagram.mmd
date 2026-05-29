@@ -1,0 +1,43 @@
+%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px','clusterBkg':'#F8F9FA','clusterBorder':'#CED4DA'},'flowchart':{'curve':'orthogonal','padding':24}}}%%
+flowchart LR
+    GIT["git push to main"] --> MATRIX
+    subgraph MATRIX["GitHub Actions Matrix — Parallel"]
+        subgraph AND_PIPE["Android — ubuntu-latest"]
+            A1["Detekt Lint<br/>unit tests 90%<br/>Snapshot diff"]
+            A2["Gradle assembleRelease<br/>R8 Full Mode"]
+            A3["Keystore Decode<br/>Base64 GitHub Secret"]
+            A4["Firebase App Distribution<br/>Play Internal Track"]
+        end
+        subgraph IOS_PIPE["iOS — macos-latest"]
+            I1["SwiftLint<br/>unit tests 90%<br/>Snapshot diff"]
+            I2["Xcode Archive<br/>Release Config"]
+            I3["fastlane Match<br/>Encrypted Git Repo<br/>Dist Certificate + Profile"]
+            I4["TestFlight Internal"]
+        end
+    end
+    A1 --> A2 --> A3 --> A4
+    I1 --> I2 --> I3 --> I4
+    A4 & I4 --> QA
+    subgraph QA["QA Gate"]
+        QA_GATE["GitHub Environment<br/>Protection Rule<br/>QA Lead Approval Required"]
+    end
+    QA_GATE --> RELEASE
+    subgraph RELEASE["Production Release"]
+        PLAY["Google Play<br/>Staged Rollout<br/>1%→5%→20%→100%"]
+        STORE["App Store<br/>Expedited Review<br/>Available if needed"]
+    end
+    subgraph GATES["Mandatory Quality Gates — All Block on Failure"]
+        G1["Use Case Coverage > 90%"]
+        G2["ViewModel Coverage > 80%"]
+        G3["Zero snapshot pixel regressions"]
+        G4["Zero Detekt/SwiftLint violations"]
+        G5["No P1/P2 CVEs — OWASP DC"]
+        G6["QA Lead sign-off"]
+    end
+    MATRIX -.->|"Enforces"| GATES
+    style MATRIX fill:#E3F2FD,stroke:#1565C0
+    style AND_PIPE fill:#E8F5E9,stroke:#1B5E20
+    style IOS_PIPE fill:#F3E5F5,stroke:#6A1B9A
+    style QA fill:#FFF3E0,stroke:#E65100
+    style RELEASE fill:#E8F5E9,stroke:#1B5E20
+    style GATES fill:#FFEBEE,stroke:#B71C1C

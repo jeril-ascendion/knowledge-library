@@ -27,6 +27,12 @@ TAXONOMY = {
         "data":     "Data Architecture Decisions",
         "platform": "Platform Architecture Decisions",
         "security": "Security Architecture Decisions",
+        "enterprise-mobile-banking":   "ADR-ENT-MOB-001 · Enterprise Mobile Banking",
+        "bff-api-design":              "ADR-INT-005 · BFF API Design for Mobile",
+        "mobile-architecture-pattern": "ADR-MOB-001 · Mobile Architecture Pattern",
+        "mobile-platform-selection":   "ADR-MOB-002 · Mobile Platform Selection",
+        "mobile-cicd-pipeline":        "ADR-MOB-003 · Mobile CI/CD Pipeline",
+        "mobile-security-controls":    "ADR-SEC-011 · Mobile Security Controls",
     },
     "ai": {
         "architecture": "AI System Architecture",

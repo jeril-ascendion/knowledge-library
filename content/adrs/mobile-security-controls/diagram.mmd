@@ -1,0 +1,32 @@
+%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px','clusterBkg':'#F8F9FA','clusterBorder':'#CED4DA'},'flowchart':{'curve':'orthogonal','padding':24}}}%%
+flowchart TD
+    subgraph Transport["Transport Security — Layer 1"]
+        TLS["TLS 1.3 Minimum<br/>Cleartext Blocked by Default<br/>Network Security Config (Android)<br/>App Transport Security (iOS)"]
+        PIN2["SPKI Hash Certificate Pinning<br/>OkHttp CertificatePinner<br/>iOS URLSession Challenge Handler<br/>Survives Certificate Renewal"]
+    end
+    subgraph Auth2["Authentication — Layer 2"]
+        PKCE2["OAuth 2.0 + PKCE Mandatory<br/>AppAuth-Android · AppAuth-iOS<br/>NO client_secret in binary<br/>NO Implicit Flow"]
+        BIO2["Biometric MFA<br/>BiometricPrompt BIOMETRIC_STRONG<br/>LocalAuthentication iOS<br/>SecureEnclave-bound Keys"]
+        JWT2["JWT Validation<br/>Short-lived Access Tokens 15min<br/>Refresh in Hardware Storage<br/>Immediate Revocation on Risk"]
+    end
+    subgraph Storage2["Secure Storage — Layer 3"]
+        AKS2["Android Keystore<br/>Hardware-Backed AES-256<br/>SetUserAuthenticationRequired<br/>StrongBox on Pixel/Samsung"]
+        IOK2["iOS Keychain<br/>kSecAttrAccessibleWhenUnlockedThisDeviceOnly<br/>Not backed up to iCloud<br/>Device-bound"]
+        EDB2["Encrypted Database<br/>SQLCipher · EncryptedSharedPrefs<br/>FileProtection .complete (iOS)<br/>NO plaintext sensitive data"]
+    end
+    subgraph Binary2["Binary Protection — Layer 4"]
+        R8_2["R8 Full Mode<br/>debugable:false<br/>Exported Activities restricted<br/>ProGuard @Pii rule for logs"]
+        PI2["Google Play Integrity API<br/>MEETS_STRONG_INTEGRITY<br/>Call on every transaction"]
+        AA2["Apple AppAttest<br/>SecureEnclave attestation key<br/>Server assertion verification"]
+    end
+    subgraph MASVS2["MASVS Compliance Levels"]
+        L1["MASVS Level 1<br/>All Applications<br/>Baseline OWASP controls"]
+        L2["MASVS Level 2<br/>Financial · Healthcare · Gov<br/>Full control set + attestation<br/>BSP Circular 982 / PCI-DSS"]
+    end
+    Transport --> Auth2 --> Storage2 --> Binary2
+    Binary2 --> MASVS2
+    style Transport fill:#E8F5E9,stroke:#1B5E20
+    style Auth2 fill:#E3F2FD,stroke:#1565C0
+    style Storage2 fill:#FFF3E0,stroke:#E65100
+    style Binary2 fill:#FFEBEE,stroke:#B71C1C
+    style MASVS2 fill:#F3E5F5,stroke:#6A1B9A

@@ -1,0 +1,34 @@
+%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px','clusterBkg':'#F8F9FA','clusterBorder':'#CED4DA'},'flowchart':{'curve':'orthogonal','padding':24}}}%%
+flowchart TD
+    subgraph Presentation["Presentation Layer — Outermost Ring"]
+        UI2["Compose UI / SwiftUI<br/>User Events · State Rendering<br/>No Business Logic"]
+        VM2["ViewModel<br/>UiState: StateFlow / @Observable<br/>Lifecycle-Aware<br/>No Platform imports in Domain"]
+    end
+    subgraph Domain["Domain Layer — Business Rules — Zero Platform Imports"]
+        UC2["Use Cases<br/>One per Business Operation<br/>Pure Kotlin / Swift<br/>Returns Result-T"]
+        RI2["Repository Interfaces<br/>Abstractions Only<br/>No Implementations Here"]
+        DM2["Domain Models<br/>data class / struct<br/>Zero Android/iOS imports"]
+    end
+    subgraph Data["Data Layer — Interface Adapters"]
+        RIMPL["Repository Implementations<br/>Coordinate Remote + Local"]
+        RDS2["Remote DataSource<br/>Retrofit / Apollo / URLSession<br/>DTO-to-Domain Mapping"]
+        LDS2["Local DataSource<br/>Room / SwiftData<br/>EncryptedSharedPrefs / Keychain"]
+    end
+    subgraph Coverage["Test Coverage Gates — CI Enforced"]
+        UC_COV["Use Cases<br/>>= 90% coverage<br/>JUnit5 + Mockk / XCTest"]
+        VM_COV["ViewModels<br/>>= 80% coverage<br/>Turbine / Combine"]
+        SNAP["Snapshot Tests<br/>Paparazzi / iOSSnapshotTestCase<br/>All themes · All Dynamic Type"]
+    end
+    UI2 -->|"User Events"| VM2
+    VM2 -->|"UiState"| UI2
+    VM2 --> UC2
+    UC2 --> RI2
+    RI2 --> RIMPL
+    RIMPL --> RDS2 & LDS2
+    UC2 -.->|"90% coverage"| UC_COV
+    VM2 -.->|"80% coverage"| VM_COV
+    UI2 -.->|"Snapshot"| SNAP
+    style Presentation fill:#E3F2FD,stroke:#1565C0
+    style Domain fill:#E8F5E9,stroke:#1B5E20
+    style Data fill:#FFF3E0,stroke:#E65100
+    style Coverage fill:#F3E5F5,stroke:#6A1B9A

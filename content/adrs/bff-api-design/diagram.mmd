@@ -1,0 +1,43 @@
+%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px','clusterBkg':'#F8F9FA','clusterBorder':'#CED4DA'},'flowchart':{'curve':'orthogonal','padding':24}}}%%
+flowchart LR
+    subgraph Mobile["Mobile Application"]
+        REPO2["Repository<br/>Interface"]
+        APOLLO["Apollo Client<br/>GraphQL"]
+        LDB["Local Database<br/>Single Source of Truth"]
+    end
+    subgraph BFF2["Mobile BFF Layer — MANDATORY"]
+        GW2["API Gateway<br/>Mobile Auth PKCE<br/>Rate Limiting"]
+        AGG["Aggregation Layer<br/>Field Selection<br/>Response Shaping"]
+        CACHE["Response Cache<br/>ETag · If-None-Match<br/>Brotli Compression"]
+        DELTA["Delta Sync<br/>?since=timestamp<br/>Tombstones 30 days"]
+    end
+    subgraph API["API Protocols"]
+        GQLP["GraphQL — PREFERRED<br/>Field Selection Native<br/>Subscriptions Real-time"]
+        RESTP["REST — PERMITTED<br/>Cursor Pagination<br/>Batch Endpoints"]
+        GRPCP["gRPC — SUPPLEMENTARY<br/>Protobuf Binary<br/>Bidirectional Streaming"]
+    end
+    subgraph Services["Backend Microservices"]
+        US["User Service"]
+        TS["Transaction Service"]
+        PS["Product Service"]
+        PUSH2["Push Service<br/>APNs / FCM"]
+    end
+    subgraph Contract["Contract Testing"]
+        PACT["Pact Consumer Tests<br/>Mobile defines contract"]
+        BROKER["Pact Broker<br/>CI verification gate"]
+    end
+    REPO2 --> APOLLO --> GW2
+    GW2 --> AGG
+    AGG --> CACHE
+    AGG --> DELTA
+    AGG --> GQLP & RESTP & GRPCP
+    GQLP & RESTP & GRPCP --> US & TS & PS
+    PUSH2 -->|"notification_id only NO sensitive data"| Mobile
+    DELTA --> LDB
+    PACT --> BROKER
+    BROKER -.->|"Blocks deploy on failure"| Services
+    style Mobile fill:#E3F2FD,stroke:#1565C0
+    style BFF2 fill:#FFF8E1,stroke:#F57F17
+    style API fill:#F3E5F5,stroke:#6A1B9A
+    style Services fill:#E8F5E9,stroke:#1B5E20
+    style Contract fill:#FFEBEE,stroke:#B71C1C

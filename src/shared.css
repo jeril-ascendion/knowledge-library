@@ -2343,3 +2343,64 @@ body.kg-search-modal-open {
   align-items: center;
   gap: 0.5rem;
 }
+
+/* ── ADR Page Specific Styles ────────────────────────────── */
+.adr-meta-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin: 1rem 0 2rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg-subtle);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+}
+.adr-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.adr-meta-label {
+  color: var(--ink-4, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.62rem;
+}
+.adr-meta-value {
+  color: var(--ink, #222);
+  font-weight: 600;
+}
+.adr-status-accepted {
+  display: inline-block;
+  background: #E8F5E9;
+  color: #1B5E20;
+  border: 1px solid #1B5E20;
+  padding: 0.1rem 0.6rem;
+  border-radius: 99px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  font-family: var(--mono);
+}
+.adr-decision-box {
+  background: var(--nav-bg, #1a2840);
+  color: rgba(255,255,255,0.88);
+  border-left: 3px solid var(--accent);
+  padding: 1.25rem 1.5rem;
+  border-radius: 0 8px 8px 0;
+  margin: 1.5rem 0 2rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+.adr-decision-box::before {
+  display: block;
+  content: "DECISION";
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+}
