@@ -9050,7 +9050,9 @@ def gen_section(slug, src_dir, out_dir):
         # Section-aware listing title prefix. ADR listing entries read
         # better with an explicit "ADR: " prefix; other sections keep
         # the raw subsection title.
-        if slug == "adrs" and not sub_title.startswith("ADR:"):
+        if (slug == "adrs"
+                and sub_slug in ADR_PREFIXED_SLUGS
+                and not sub_title.startswith("ADR:")):
             display_sub_title = f"ADR: {sub_title}"
         else:
             display_sub_title = sub_title
@@ -9139,6 +9141,18 @@ HUB_BREADCRUMB_LABEL = {
 # the full "Architecture Decision Records" section title.
 SECTION_BREADCRUMB_LABEL = {
     "adrs": "ADR",
+}
+
+# ADR slugs that receive the "ADR: " title prefix on listings, the
+# article H1, and the browser <title>. Scoped so the pre-existing
+# adrs entries (ai / data / platform / security) stay unprefixed.
+ADR_PREFIXED_SLUGS = {
+    "enterprise-mobile-banking",
+    "bff-api-design",
+    "mobile-architecture-pattern",
+    "mobile-platform-selection",
+    "mobile-cicd-pipeline",
+    "mobile-security-controls",
 }
 
 
@@ -9252,7 +9266,9 @@ def gen_article(slug, sub_slug, sub_dir, out_sub, referenced_by=None, metadata=N
     # "ADR: " title prefix; other sections keep the existing full section
     # title and bare article title.
     breadcrumb_section_label = SECTION_BREADCRUMB_LABEL.get(slug, sec_title)
-    if slug == "adrs" and not title.startswith("ADR:"):
+    if (slug == "adrs"
+            and sub_slug in ADR_PREFIXED_SLUGS
+            and not title.startswith("ADR:")):
         display_title = f"ADR: {title}"
     else:
         display_title = title
