@@ -2955,6 +2955,864 @@ SVGS = {
 </svg>""",
 }
 
+# ─────────────────────────────────────────────────────────────────────────────
+# MOBILE SUBSECTION SVGs — one per leaf page under technology/mobile/.
+# Keys follow the pattern "mobile_<slug>" with slug hyphens converted to
+# underscores. Looked up by gen_nested_article via _mobile_svg_key().
+# ─────────────────────────────────────────────────────────────────────────────
+SVGS["mobile_engineering_principles"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes gearSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes gearSpinR{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
+@keyframes layerBuild{0%,100%{opacity:0.2}50%{opacity:1}}
+.g1{animation:gearSpin 4s linear infinite;transform-origin:80px 100px}
+.g2{animation:gearSpinR 3s linear infinite;transform-origin:156px 100px}
+.l1{animation:layerBuild 2s 0s ease-in-out infinite}
+.l2{animation:layerBuild 2s 0.4s ease-in-out infinite}
+.l3{animation:layerBuild 2s 0.8s ease-in-out infinite}
+.l4{animation:layerBuild 2s 1.2s ease-in-out infinite}
+</style>
+<g class="g1">
+<circle cx="80" cy="100" r="28" stroke="#C96330" stroke-width="2" fill="none"/>
+<circle cx="80" cy="100" r="12" stroke="#C96330" stroke-width="1.5" fill="none"/>
+<line x1="80" y1="68" x2="80" y2="76" stroke="#C96330" stroke-width="3" stroke-linecap="round"/>
+<line x1="80" y1="124" x2="80" y2="132" stroke="#C96330" stroke-width="3" stroke-linecap="round"/>
+<line x1="48" y1="100" x2="56" y2="100" stroke="#C96330" stroke-width="3" stroke-linecap="round"/>
+<line x1="104" y1="100" x2="112" y2="100" stroke="#C96330" stroke-width="3" stroke-linecap="round"/>
+<line x1="57" y1="77" x2="63" y2="83" stroke="#C96330" stroke-width="3" stroke-linecap="round"/>
+<line x1="97" y1="117" x2="103" y2="123" stroke="#C96330" stroke-width="3" stroke-linecap="round"/>
+<line x1="103" y1="77" x2="97" y2="83" stroke="#C96330" stroke-width="3" stroke-linecap="round"/>
+<line x1="57" y1="123" x2="63" y2="117" stroke="#C96330" stroke-width="3" stroke-linecap="round"/>
+</g>
+<g class="g2">
+<circle cx="156" cy="100" r="20" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
+<circle cx="156" cy="100" r="8" stroke="#CCCCCC" stroke-width="1" fill="none"/>
+<line x1="156" y1="78" x2="156" y2="84" stroke="#CCCCCC" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="156" y1="116" x2="156" y2="122" stroke="#CCCCCC" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="134" y1="100" x2="140" y2="100" stroke="#CCCCCC" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="172" y1="100" x2="178" y2="100" stroke="#CCCCCC" stroke-width="2.5" stroke-linecap="round"/>
+</g>
+<rect class="l1" x="196" y="60" width="48" height="10" rx="2" fill="#C96330" opacity="0.2"/>
+<rect class="l2" x="196" y="78" width="48" height="10" rx="2" fill="#CCCCCC" opacity="0.2"/>
+<rect class="l3" x="196" y="96" width="48" height="10" rx="2" fill="#CCCCCC" opacity="0.2"/>
+<rect class="l4" x="196" y="114" width="48" height="10" rx="2" fill="#CCCCCC" opacity="0.2"/>
+</svg>"""
+
+SVGS["mobile_non_functional_requirements"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes needleSweep{0%,100%{transform:rotate(-70deg)}50%{transform:rotate(40deg)}}
+@keyframes dialPulse{0%,100%{opacity:0.3}50%{opacity:1}}
+.nd{animation:needleSweep 3s ease-in-out infinite;transform-origin:130px 130px}
+.d1{animation:dialPulse 3s 0s ease-in-out infinite}
+.d2{animation:dialPulse 3s 0.3s ease-in-out infinite}
+.d3{animation:dialPulse 3s 0.6s ease-in-out infinite}
+</style>
+<path d="M50 140 A80 80 0 0 1 210 140" stroke="#333333" stroke-width="2" fill="none"/>
+<path class="d1" d="M50 140 A80 80 0 0 1 90 75" stroke="#E53935" stroke-width="6" fill="none" stroke-linecap="round"/>
+<path class="d2" d="M90 75 A80 80 0 0 1 170 75" stroke="#FFA726" stroke-width="6" fill="none" stroke-linecap="round"/>
+<path class="d3" d="M170 75 A80 80 0 0 1 210 140" stroke="#43A047" stroke-width="6" fill="none" stroke-linecap="round"/>
+<g class="nd">
+<line x1="130" y1="130" x2="130" y2="62" stroke="#C96330" stroke-width="2.5" stroke-linecap="round"/>
+<circle cx="130" cy="130" r="5" fill="#C96330"/>
+</g>
+<text x="64" y="160" font-size="8" fill="#888" font-family="IBM Plex Mono">SLOW</text>
+<text x="118" y="52" font-size="8" fill="#888" font-family="IBM Plex Mono">OK</text>
+<text x="188" y="160" font-size="8" fill="#888" font-family="IBM Plex Mono">FAST</text>
+<text x="130" y="175" text-anchor="middle" font-size="9" fill="#555" font-family="IBM Plex Sans">NFR Measurement</text>
+</svg>"""
+
+SVGS["mobile_core_architecture_goals"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes ringPulse{0%,100%{opacity:0.15}50%{opacity:0.7}}
+@keyframes targetPop{0%,100%{r:6}50%{r:9}}
+.r1{animation:ringPulse 2.5s 0s ease-in-out infinite}
+.r2{animation:ringPulse 2.5s 0.4s ease-in-out infinite}
+.r3{animation:ringPulse 2.5s 0.8s ease-in-out infinite}
+.r4{animation:ringPulse 2.5s 1.2s ease-in-out infinite}
+.tc{animation:targetPop 2.5s ease-in-out infinite}
+</style>
+<circle class="r4" cx="130" cy="100" r="80" stroke="#AAAAAA" stroke-width="1" fill="none"/>
+<circle class="r3" cx="130" cy="100" r="60" stroke="#AAAAAA" stroke-width="1.2" fill="none"/>
+<circle class="r2" cx="130" cy="100" r="40" stroke="#C96330" stroke-width="1.5" fill="none"/>
+<circle class="r1" cx="130" cy="100" r="20" stroke="#C96330" stroke-width="2" fill="none"/>
+<circle class="tc" cx="130" cy="100" r="6" fill="#C96330"/>
+<text x="52" y="104" font-size="7" fill="#888" font-family="IBM Plex Mono">Evolvability</text>
+<text x="74" y="104" font-size="7" fill="#888" font-family="IBM Plex Mono" x="80">Obs.</text>
+<text x="92" y="104" font-size="7" fill="#777" font-family="IBM Plex Mono">Mod.</text>
+<text x="107" y="104" font-size="7" fill="#C96330" font-family="IBM Plex Sans" font-weight="bold">Security</text>
+</svg>"""
+
+SVGS["mobile_technology_decisions"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes nodeAppear{0%,80%,100%{opacity:0}10%,70%{opacity:1}}
+@keyframes lineFlow{from{stroke-dashoffset:40}to{stroke-dashoffset:0}}
+.n1{animation:nodeAppear 4s 0s ease-in-out infinite}
+.n2{animation:nodeAppear 4s 0.6s ease-in-out infinite}
+.n3{animation:nodeAppear 4s 1.2s ease-in-out infinite}
+.n4{animation:nodeAppear 4s 1.8s ease-in-out infinite}
+.lf{stroke-dasharray:40;animation:lineFlow 1.2s linear infinite}
+</style>
+<rect x="90" y="14" width="80" height="30" rx="6" stroke="#C96330" stroke-width="2" fill="none"/>
+<text x="130" y="34" text-anchor="middle" font-size="9" fill="#C96330" font-family="IBM Plex Sans">Platform Decision</text>
+<line class="lf" x1="130" y1="44" x2="130" y2="64" stroke="#CCCCCC" stroke-width="1.5"/>
+<polygon points="130,60 122,48 138,48" fill="#CCCCCC"/>
+<rect class="n1" x="4" y="84" width="58" height="26" rx="5" stroke="#43A047" stroke-width="1.5" fill="#E8F5E9"/>
+<text class="n1" x="33" y="101" text-anchor="middle" font-size="8" fill="#1B5E20" font-family="IBM Plex Mono">Native</text>
+<rect class="n2" x="68" y="84" width="58" height="26" rx="5" stroke="#1565C0" stroke-width="1.5" fill="#E3F2FD"/>
+<text class="n2" x="97" y="101" text-anchor="middle" font-size="8" fill="#0D47A1" font-family="IBM Plex Mono">Flutter</text>
+<rect class="n3" x="134" y="84" width="58" height="26" rx="5" stroke="#6A1B9A" stroke-width="1.5" fill="#F3E5F5"/>
+<text class="n3" x="163" y="101" text-anchor="middle" font-size="8" fill="#4A148C" font-family="IBM Plex Mono">React Native</text>
+<rect class="n4" x="198" y="84" width="58" height="26" rx="5" stroke="#E65100" stroke-width="1.5" fill="#FFF3E0"/>
+<text class="n4" x="227" y="101" text-anchor="middle" font-size="8" fill="#BF360C" font-family="IBM Plex Mono">KMP</text>
+</svg>"""
+
+SVGS["mobile_architecture_style_and_layering"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes layerSlide{0%{transform:translateY(20px);opacity:0}30%,70%{transform:translateY(0);opacity:1}100%{transform:translateY(0);opacity:0}}
+@keyframes arrowFlow{from{stroke-dashoffset:30}to{stroke-dashoffset:0}}
+.la{animation:layerSlide 3.6s 0s ease-in-out infinite}
+.lb{animation:layerSlide 3.6s 0.5s ease-in-out infinite}
+.lc{animation:layerSlide 3.6s 1s ease-in-out infinite}
+.ld{animation:layerSlide 3.6s 1.5s ease-in-out infinite}
+.af{stroke-dasharray:30;animation:arrowFlow 1s linear infinite}
+</style>
+<rect class="la" x="40" y="28" width="180" height="28" rx="5" stroke="#C96330" stroke-width="1.8" fill="none"/>
+<text class="la" x="130" y="46" text-anchor="middle" font-size="9" fill="#C96330" font-family="IBM Plex Sans">Presentation · Compose / SwiftUI</text>
+<rect class="lb" x="40" y="74" width="180" height="28" rx="5" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
+<text class="lb" x="130" y="92" text-anchor="middle" font-size="9" fill="#CCCCCC" font-family="IBM Plex Sans">ViewModel · StateFlow / @Observable</text>
+<rect class="lc" x="40" y="120" width="180" height="28" rx="5" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
+<text class="lc" x="130" y="138" text-anchor="middle" font-size="9" fill="#CCCCCC" font-family="IBM Plex Sans">Domain · Use Cases · Repository Interfaces</text>
+<rect class="ld" x="40" y="166" width="180" height="28" rx="5" stroke="#AAAAAA" stroke-width="1.2" fill="none"/>
+<text class="ld" x="130" y="184" text-anchor="middle" font-size="9" fill="#AAAAAA" font-family="IBM Plex Sans">Data · Repository Impl · Room / SwiftData</text>
+<line class="af" x1="130" y1="56" x2="130" y2="74" stroke="#C96330" stroke-width="1.5" stroke-linecap="round"/>
+<line class="af" x1="130" y1="102" x2="130" y2="120" stroke="#CCCCCC" stroke-width="1.5" stroke-linecap="round"/>
+<line class="af" x1="130" y1="148" x2="130" y2="166" stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round"/>
+</svg>"""
+
+SVGS["mobile_mobile_state_management"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes stateCycle{0%{fill:#C96330}33%{fill:#1565C0}66%{fill:#1B5E20}100%{fill:#C96330}}
+@keyframes arrowCycle{from{stroke-dashoffset:50}to{stroke-dashoffset:0}}
+.sc{animation:stateCycle 3s linear infinite}
+.ac{stroke-dasharray:50;animation:arrowCycle 1.5s linear infinite}
+</style>
+<rect x="88" y="16" width="84" height="30" rx="6" stroke="#C96330" stroke-width="2" fill="none"/>
+<text x="130" y="36" text-anchor="middle" font-size="9" fill="#C96330" font-family="IBM Plex Sans">View</text>
+<rect x="18" y="130" width="84" height="30" rx="6" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
+<text x="60" y="150" text-anchor="middle" font-size="9" fill="#CCCCCC" font-family="IBM Plex Sans">ViewModel</text>
+<rect x="158" y="130" width="84" height="30" rx="6" stroke="#AAAAAA" stroke-width="1.5" fill="none"/>
+<text x="200" y="150" text-anchor="middle" font-size="9" fill="#AAAAAA" font-family="IBM Plex Sans">Use Case</text>
+<circle class="sc" cx="130" cy="100" r="8" fill="#C96330"/>
+<line class="ac" x1="102" y1="46" x2="70" y2="130" stroke="#C96330" stroke-width="1.5" stroke-linecap="round"/>
+<line class="ac" x1="102" y1="130" x2="114" y2="46" stroke="#CCCCCC" stroke-width="1.5" stroke-linecap="round"/>
+<line class="ac" x1="102" y1="145" x2="158" y2="145" stroke="#AAAAAA" stroke-width="1.5" stroke-linecap="round"/>
+<text x="130" y="185" text-anchor="middle" font-size="8" fill="#555" font-family="IBM Plex Mono">Events ↑  State ↓</text>
+</svg>"""
+
+SVGS["mobile_security_and_compliance_architecture"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes shieldDraw{from{stroke-dashoffset:600}to{stroke-dashoffset:0}}
+@keyframes ringPop{0%,100%{stroke-width:1}50%{stroke-width:2.5}}
+@keyframes lockDrop{0%,40%{transform:translateY(8px)}60%,100%{transform:translateY(0)}}
+.sh{stroke-dasharray:600;animation:shieldDraw 2.5s ease forwards}
+.rr{animation:ringPop 2s ease-in-out infinite}
+.lk{animation:lockDrop 2.5s 2.5s ease-in-out infinite;transform-origin:130px 95px}
+</style>
+<path class="sh" d="M130 18 L192 40 L192 96 Q192 150 130 175 Q68 150 68 96 L68 40 Z" stroke="#C96330" stroke-width="2.5" fill="none"/>
+<circle class="rr" cx="130" cy="96" r="36" stroke="#AAAAAA" stroke-width="1" fill="none"/>
+<circle class="rr" cx="130" cy="96" r="22" stroke="#CCCCCC" stroke-width="1.2" fill="none"/>
+<g class="lk">
+<rect x="116" y="94" width="28" height="20" rx="3" stroke="#C96330" stroke-width="1.8" fill="none"/>
+<path d="M120 94 Q120 84 130 84 Q140 84 140 94" stroke="#C96330" stroke-width="1.8" fill="none"/>
+<circle cx="130" cy="104" r="2.5" fill="#C96330"/>
+</g>
+</svg>"""
+
+SVGS["mobile_ssdlc"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes phaseLight{0%,100%{fill:#111;stroke:#333}14%{fill:#C96330;stroke:#C96330}}
+@keyframes phaseText{0%,100%{fill:#555}14%{fill:#fff}}
+.p1{animation:phaseLight 4.2s 0s ease-in-out infinite}
+.p2{animation:phaseLight 4.2s 0.6s ease-in-out infinite}
+.p3{animation:phaseLight 4.2s 1.2s ease-in-out infinite}
+.p4{animation:phaseLight 4.2s 1.8s ease-in-out infinite}
+.p5{animation:phaseLight 4.2s 2.4s ease-in-out infinite}
+.p6{animation:phaseLight 4.2s 3.0s ease-in-out infinite}
+.t1{animation:phaseText 4.2s 0s ease-in-out infinite}
+.t2{animation:phaseText 4.2s 0.6s ease-in-out infinite}
+.t3{animation:phaseText 4.2s 1.2s ease-in-out infinite}
+.t4{animation:phaseText 4.2s 1.8s ease-in-out infinite}
+.t5{animation:phaseText 4.2s 2.4s ease-in-out infinite}
+.t6{animation:phaseText 4.2s 3.0s ease-in-out infinite}
+</style>
+<rect class="p1" x="8" y="80" width="34" height="40" rx="4" stroke-width="1.5"/>
+<text class="t1" x="25" y="96" text-anchor="middle" font-size="6.5" font-family="IBM Plex Mono">Req</text>
+<text class="t1" x="25" y="108" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">Threat</text>
+<rect class="p2" x="50" y="80" width="34" height="40" rx="4" stroke-width="1.5"/>
+<text class="t2" x="67" y="96" text-anchor="middle" font-size="6.5" font-family="IBM Plex Mono">Design</text>
+<text class="t2" x="67" y="108" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">STRIDE</text>
+<rect class="p3" x="92" y="80" width="34" height="40" rx="4" stroke-width="1.5"/>
+<text class="t3" x="109" y="96" text-anchor="middle" font-size="6.5" font-family="IBM Plex Mono">Code</text>
+<text class="t3" x="109" y="108" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">Review</text>
+<rect class="p4" x="134" y="80" width="34" height="40" rx="4" stroke-width="1.5"/>
+<text class="t4" x="151" y="96" text-anchor="middle" font-size="6.5" font-family="IBM Plex Mono">Test</text>
+<text class="t4" x="151" y="108" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">PenTest</text>
+<rect class="p5" x="176" y="80" width="34" height="40" rx="4" stroke-width="1.5"/>
+<text class="t5" x="193" y="96" text-anchor="middle" font-size="6.5" font-family="IBM Plex Mono">Harden</text>
+<text class="t5" x="193" y="108" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">SBOM</text>
+<rect class="p6" x="218" y="80" width="34" height="40" rx="4" stroke-width="1.5"/>
+<text class="t6" x="235" y="96" text-anchor="middle" font-size="6.5" font-family="IBM Plex Mono">Monitor</text>
+<text class="t6" x="235" y="108" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">Dep.Bot</text>
+</svg>"""
+
+SVGS["mobile_offline_reliability"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes cloudDisconnect{0%,100%{opacity:1}40%,60%{opacity:0.2}}
+@keyframes dbPulse{0%,100%{stroke-width:1.5}50%{stroke-width:3}}
+@keyframes syncArrow{from{stroke-dashoffset:60}to{stroke-dashoffset:0}}
+.cl{animation:cloudDisconnect 3s ease-in-out infinite}
+.db{animation:dbPulse 3s ease-in-out infinite}
+.sa{stroke-dasharray:60;animation:syncArrow 2s linear infinite}
+.sa2{stroke-dasharray:60;animation:syncArrow 2s 1s linear infinite}
+</style>
+<rect x="12" y="70" width="64" height="88" rx="8" stroke="#C96330" stroke-width="2" fill="none"/>
+<rect x="22" y="80" width="44" height="68" rx="3" stroke="#AAAAAA" stroke-width="1" fill="none"/>
+<circle cx="44" cy="150" r="3" stroke="#C96330" stroke-width="1.2" fill="none"/>
+<line x1="32" y1="76" x2="56" y2="76" stroke="#C96330" stroke-width="2" stroke-linecap="round"/>
+<ellipse class="db" cx="130" cy="100" rx="36" ry="18" stroke="#1565C0" stroke-width="1.5" fill="none"/>
+<ellipse class="db" cx="130" cy="112" rx="36" ry="18" stroke="#1565C0" stroke-width="1.2" fill="none"/>
+<line x1="94" y1="100" x2="94" y2="112" stroke="#1565C0" stroke-width="1.2"/>
+<line x1="166" y1="100" x2="166" y2="112" stroke="#1565C0" stroke-width="1.2"/>
+<text x="130" y="103" text-anchor="middle" font-size="8" fill="#1565C0" font-family="IBM Plex Mono">Local DB</text>
+<text x="130" y="118" text-anchor="middle" font-size="7" fill="#888" font-family="IBM Plex Mono">Source of Truth</text>
+<g class="cl">
+<ellipse cx="210" cy="80" rx="38" ry="20" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
+<text x="210" y="84" text-anchor="middle" font-size="8" fill="#AAAAAA" font-family="IBM Plex Sans">Cloud BFF</text>
+</g>
+<line class="sa" x1="76" y1="100" x2="94" y2="100" stroke="#C96330" stroke-width="1.5" stroke-linecap="round"/>
+<line class="sa2" x1="166" y1="88" x2="172" y2="80" stroke="#CCCCCC" stroke-width="1" stroke-linecap="round" stroke-dasharray="4,3"/>
+</svg>"""
+
+SVGS["mobile_api_integration_architecture"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes dataFlow{0%{transform:translateX(0);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateX(70px);opacity:0}}
+@keyframes dataReturn{0%{transform:translateX(70px);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateX(0);opacity:0}}
+@keyframes bffPulse{0%,100%{fill:#FFF8E1}50%{fill:#FFE082}}
+.df1{animation:dataFlow 2s 0s ease-in-out infinite}
+.df2{animation:dataFlow 2s 0.7s ease-in-out infinite}
+.dr1{animation:dataReturn 2s 0.35s ease-in-out infinite}
+.bp{animation:bffPulse 2s ease-in-out infinite}
+</style>
+<rect x="8" y="70" width="56" height="80" rx="7" stroke="#C96330" stroke-width="2" fill="none"/>
+<rect x="16" y="78" width="40" height="62" rx="3" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<circle cx="36" cy="144" r="3" stroke="#C96330" stroke-width="1" fill="none"/>
+<line x1="24" y1="74" x2="48" y2="74" stroke="#C96330" stroke-width="2" stroke-linecap="round"/>
+<rect class="bp" x="102" y="76" width="56" height="68" rx="6" stroke="#F57F17" stroke-width="2"/>
+<text x="130" y="108" text-anchor="middle" font-size="9" fill="#E65100" font-family="IBM Plex Sans">Mobile</text>
+<text x="130" y="122" text-anchor="middle" font-size="9" fill="#E65100" font-family="IBM Plex Sans">BFF</text>
+<rect x="196" y="54" width="56" height="24" rx="4" stroke="#CCCCCC" stroke-width="1.2" fill="none"/>
+<rect x="196" y="86" width="56" height="24" rx="4" stroke="#CCCCCC" stroke-width="1.2" fill="none"/>
+<rect x="196" y="118" width="56" height="24" rx="4" stroke="#CCCCCC" stroke-width="1.2" fill="none"/>
+<text x="224" y="70" text-anchor="middle" font-size="7" fill="#888" font-family="IBM Plex Mono">User Svc</text>
+<text x="224" y="102" text-anchor="middle" font-size="7" fill="#888" font-family="IBM Plex Mono">Txn Svc</text>
+<text x="224" y="134" text-anchor="middle" font-size="7" fill="#888" font-family="IBM Plex Mono">Push Svc</text>
+<circle class="df1" cx="72" cy="100" r="5" fill="#C96330"/>
+<circle class="df2" cx="72" cy="114" r="5" fill="#C96330"/>
+<circle class="dr1" cx="166" cy="107" r="5" fill="#AAAAAA"/>
+<line x1="64" y1="100" x2="102" y2="100" stroke="#E0E0E0" stroke-width="1" stroke-dasharray="4,3"/>
+<line x1="158" y1="96" x2="196" y2="80" stroke="#E0E0E0" stroke-width="1" stroke-dasharray="4,3"/>
+<line x1="158" y1="110" x2="196" y2="98" stroke="#E0E0E0" stroke-width="1" stroke-dasharray="4,3"/>
+</svg>"""
+
+SVGS["mobile_scalability_modularization"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes blockAppear{0%,90%,100%{opacity:0;transform:scale(0.8)}10%,80%{opacity:1;transform:scale(1)}}
+@keyframes connFlow{from{stroke-dashoffset:40}to{stroke-dashoffset:0}}
+.m1{animation:blockAppear 4s 0s ease-in-out infinite;transform-origin:130px 36px}
+.m2{animation:blockAppear 4s 0.5s ease-in-out infinite;transform-origin:50px 100px}
+.m3{animation:blockAppear 4s 1s ease-in-out infinite;transform-origin:130px 100px}
+.m4{animation:blockAppear 4s 1.5s ease-in-out infinite;transform-origin:210px 100px}
+.m5{animation:blockAppear 4s 2s ease-in-out infinite;transform-origin:90px 160px}
+.m6{animation:blockAppear 4s 2.5s ease-in-out infinite;transform-origin:170px 160px}
+.cf{stroke-dasharray:40;animation:connFlow 1.2s linear infinite}
+</style>
+<rect class="m1" x="96" y="16" width="68" height="26" rx="4" stroke="#C96330" stroke-width="2" fill="none"/>
+<text class="m1" x="130" y="33" text-anchor="middle" font-size="8" fill="#C96330" font-family="IBM Plex Mono">:app</text>
+<rect class="m2" x="14" y="84" width="72" height="26" rx="4" stroke="#1565C0" stroke-width="1.5" fill="none"/>
+<text class="m2" x="50" y="101" text-anchor="middle" font-size="7" fill="#1565C0" font-family="IBM Plex Mono">:feature:account</text>
+<rect class="m3" x="94" y="84" width="72" height="26" rx="4" stroke="#1565C0" stroke-width="1.5" fill="none"/>
+<text class="m3" x="130" y="101" text-anchor="middle" font-size="7" fill="#1565C0" font-family="IBM Plex Mono">:feature:transfer</text>
+<rect class="m4" x="174" y="84" width="72" height="26" rx="4" stroke="#1565C0" stroke-width="1.5" fill="none"/>
+<text class="m4" x="210" y="101" text-anchor="middle" font-size="7" fill="#1565C0" font-family="IBM Plex Mono">:feature:onboarding</text>
+<rect class="m5" x="44" y="148" width="92" height="26" rx="4" stroke="#1B5E20" stroke-width="1.5" fill="none"/>
+<text class="m5" x="90" y="165" text-anchor="middle" font-size="7" fill="#1B5E20" font-family="IBM Plex Mono">:core:domain</text>
+<rect class="m6" x="144" y="148" width="92" height="26" rx="4" stroke="#1B5E20" stroke-width="1.5" fill="none"/>
+<text class="m6" x="190" y="165" text-anchor="middle" font-size="7" fill="#1B5E20" font-family="IBM Plex Mono">:core:network</text>
+<line class="cf" x1="130" y1="42" x2="50" y2="84" stroke="#CCCCCC" stroke-width="1"/>
+<line class="cf" x1="130" y1="42" x2="130" y2="84" stroke="#CCCCCC" stroke-width="1"/>
+<line class="cf" x1="130" y1="42" x2="210" y2="84" stroke="#CCCCCC" stroke-width="1"/>
+<line class="cf" x1="50" y1="110" x2="90" y2="148" stroke="#AAAAAA" stroke-width="1"/>
+<line class="cf" x1="210" y1="110" x2="190" y2="148" stroke="#AAAAAA" stroke-width="1"/>
+</svg>"""
+
+SVGS["mobile_scalability_evolution_model"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes stageGrow{0%,100%{transform:scaleY(0.2);opacity:0.3}50%{transform:scaleY(1);opacity:1}}
+@keyframes labelFade{0%,100%{opacity:0.2}50%{opacity:1}}
+.s1{animation:stageGrow 4s 0s ease-in-out infinite;transform-origin:34px 160px}
+.s2{animation:stageGrow 4s 0.6s ease-in-out infinite;transform-origin:86px 160px}
+.s3{animation:stageGrow 4s 1.2s ease-in-out infinite;transform-origin:138px 160px}
+.s4{animation:stageGrow 4s 1.8s ease-in-out infinite;transform-origin:190px 160px}
+.s5{animation:stageGrow 4s 2.4s ease-in-out infinite;transform-origin:242px 160px}
+.l1{animation:labelFade 4s 0s ease-in-out infinite}
+.l2{animation:labelFade 4s 0.6s ease-in-out infinite}
+.l3{animation:labelFade 4s 1.2s ease-in-out infinite}
+.l4{animation:labelFade 4s 1.8s ease-in-out infinite}
+.l5{animation:labelFade 4s 2.4s ease-in-out infinite}
+</style>
+<rect class="s1" x="14" y="120" width="40" height="60" rx="3" fill="#E8F5E9" stroke="#1B5E20" stroke-width="1.5"/>
+<rect class="s2" x="66" y="100" width="40" height="80" rx="3" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5"/>
+<rect class="s3" x="118" y="76" width="40" height="104" rx="3" fill="#FFF3E0" stroke="#E65100" stroke-width="1.5"/>
+<rect class="s4" x="170" y="52" width="40" height="128" rx="3" fill="#F3E5F5" stroke="#6A1B9A" stroke-width="1.5"/>
+<rect class="s5" x="222" y="28" width="30" height="152" rx="3" fill="#FFEBEE" stroke="#B71C1C" stroke-width="1.5"/>
+<text class="l1" x="34" y="188" text-anchor="middle" font-size="7" fill="#1B5E20" font-family="IBM Plex Mono">MVP</text>
+<text class="l2" x="86" y="188" text-anchor="middle" font-size="7" fill="#1565C0" font-family="IBM Plex Mono">Growth</text>
+<text class="l3" x="138" y="188" text-anchor="middle" font-size="7" fill="#E65100" font-family="IBM Plex Mono">Scale</text>
+<text class="l4" x="190" y="188" text-anchor="middle" font-size="7" fill="#6A1B9A" font-family="IBM Plex Mono">Enterprise</text>
+<text class="l5" x="237" y="188" text-anchor="middle" font-size="7" fill="#B71C1C" font-family="IBM Plex Mono">Platform</text>
+</svg>"""
+
+SVGS["mobile_platform_engineering_strategy"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes hubPulse{0%,100%{r:18}50%{r:22}}
+@keyframes spoke{from{stroke-dashoffset:50}to{stroke-dashoffset:0}}
+@keyframes teamLight{0%,100%{opacity:0.3}50%{opacity:1}}
+.hp{animation:hubPulse 2.5s ease-in-out infinite}
+.sp{stroke-dasharray:50;animation:spoke 1.5s linear infinite}
+.t1{animation:teamLight 2.5s 0s ease-in-out infinite}
+.t2{animation:teamLight 2.5s 0.5s ease-in-out infinite}
+.t3{animation:teamLight 2.5s 1s ease-in-out infinite}
+.t4{animation:teamLight 2.5s 1.5s ease-in-out infinite}
+</style>
+<circle class="hp" cx="130" cy="100" r="18" stroke="#C96330" stroke-width="2.5" fill="none"/>
+<text x="130" y="97" text-anchor="middle" font-size="7" fill="#C96330" font-family="IBM Plex Mono">Platform</text>
+<text x="130" y="108" text-anchor="middle" font-size="7" fill="#C96330" font-family="IBM Plex Mono">Team</text>
+<circle class="t1" cx="50" cy="44" r="20" stroke="#1565C0" stroke-width="1.5" fill="none"/>
+<text class="t1" x="50" y="41" text-anchor="middle" font-size="7" fill="#1565C0" font-family="IBM Plex Mono">Account</text>
+<text class="t1" x="50" y="52" text-anchor="middle" font-size="7" fill="#1565C0" font-family="IBM Plex Mono">Team</text>
+<circle class="t2" cx="210" cy="44" r="20" stroke="#1B5E20" stroke-width="1.5" fill="none"/>
+<text class="t2" x="210" y="41" text-anchor="middle" font-size="7" fill="#1B5E20" font-family="IBM Plex Mono">Payments</text>
+<text class="t2" x="210" y="52" text-anchor="middle" font-size="7" fill="#1B5E20" font-family="IBM Plex Mono">Team</text>
+<circle class="t3" cx="50" cy="156" r="20" stroke="#E65100" stroke-width="1.5" fill="none"/>
+<text class="t3" x="50" y="153" text-anchor="middle" font-size="7" fill="#E65100" font-family="IBM Plex Mono">Growth</text>
+<text class="t3" x="50" y="164" text-anchor="middle" font-size="7" fill="#E65100" font-family="IBM Plex Mono">Team</text>
+<circle class="t4" cx="210" cy="156" r="20" stroke="#6A1B9A" stroke-width="1.5" fill="none"/>
+<text class="t4" x="210" y="153" text-anchor="middle" font-size="7" fill="#6A1B9A" font-family="IBM Plex Mono">Settings</text>
+<text class="t4" x="210" y="164" text-anchor="middle" font-size="7" fill="#6A1B9A" font-family="IBM Plex Mono">Team</text>
+<line class="sp" x1="113" y1="87" x2="68" y2="60" stroke="#C96330" stroke-width="1.5"/>
+<line class="sp" x1="147" y1="87" x2="192" y2="60" stroke="#C96330" stroke-width="1.5"/>
+<line class="sp" x1="113" y1="113" x2="68" y2="140" stroke="#C96330" stroke-width="1.5"/>
+<line class="sp" x1="147" y1="113" x2="192" y2="140" stroke="#C96330" stroke-width="1.5"/>
+</svg>"""
+
+SVGS["mobile_dependency_governance"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes scanLine{0%{transform:translateY(-60px);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateY(60px);opacity:0}}
+@keyframes nodeLight{0%,100%{fill:#111;stroke:#333}50%{fill:#C96330;stroke:#C96330}}
+.sl{animation:scanLine 2.5s ease-in-out infinite;transform-origin:130px 100px}
+.nd{animation:nodeLight 2.5s ease-in-out infinite}
+</style>
+<rect x="50" y="30" width="160" height="140" rx="6" stroke="#333" stroke-width="1.5" fill="none"/>
+<text x="130" y="22" text-anchor="middle" font-size="9" fill="#888" font-family="IBM Plex Mono">Dependency Tree</text>
+<rect x="96" y="46" width="68" height="22" rx="3" stroke="#CCCCCC" stroke-width="1" fill="none"/>
+<text x="130" y="61" text-anchor="middle" font-size="8" fill="#AAAAAA" font-family="IBM Plex Mono">app</text>
+<rect x="60" y="88" width="58" height="20" rx="3" stroke="#CCCCCC" stroke-width="1" fill="none"/>
+<text x="89" y="102" text-anchor="middle" font-size="7" fill="#AAAAAA" font-family="IBM Plex Mono">retrofit</text>
+<rect x="142" y="88" width="58" height="20" rx="3" stroke="#CCCCCC" stroke-width="1" fill="none"/>
+<text x="171" y="102" text-anchor="middle" font-size="7" fill="#AAAAAA" font-family="IBM Plex Mono">room</text>
+<rect class="nd" x="66" y="126" width="50" height="20" rx="3" stroke-width="1.5"/>
+<text x="91" y="140" text-anchor="middle" font-size="7" fill="#999" font-family="IBM Plex Mono">okhttp</text>
+<rect x="148" y="126" width="50" height="20" rx="3" stroke="#CCCCCC" stroke-width="1" fill="none"/>
+<text x="173" y="140" text-anchor="middle" font-size="7" fill="#AAAAAA" font-family="IBM Plex Mono">sqlite</text>
+<line x1="130" y1="68" x2="89" y2="88" stroke="#555" stroke-width="1"/>
+<line x1="130" y1="68" x2="171" y2="88" stroke="#555" stroke-width="1"/>
+<line x1="89" y1="108" x2="91" y2="126" stroke="#555" stroke-width="1"/>
+<line x1="171" y1="108" x2="173" y2="126" stroke="#555" stroke-width="1"/>
+<rect class="sl" x="52" y="96" width="156" height="3" rx="1" fill="#C96330" opacity="0.6"/>
+</svg>"""
+
+SVGS["mobile_performance_engineering"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes needle{0%,100%{transform:rotate(-60deg)}50%{transform:rotate(50deg)}}
+@keyframes barGrow{0%,100%{transform:scaleY(0.1)}50%{transform:scaleY(1)}}
+@keyframes greenFlash{0%,100%{stroke:#555}50%{stroke:#43A047}}
+.nd{animation:needle 3s ease-in-out infinite;transform-origin:90px 120px}
+.b1{animation:barGrow 3s 0s ease-in-out infinite;transform-origin:160px 154px}
+.b2{animation:barGrow 3s 0.5s ease-in-out infinite;transform-origin:176px 154px}
+.b3{animation:barGrow 3s 1s ease-in-out infinite;transform-origin:192px 154px}
+.b4{animation:barGrow 3s 1.5s ease-in-out infinite;transform-origin:208px 154px}
+.gf{animation:greenFlash 3s ease-in-out infinite}
+</style>
+<path d="M30 120 A60 60 0 0 1 150 120" stroke="#333" stroke-width="2" fill="none"/>
+<path d="M30 120 A60 60 0 0 1 60 68" stroke="#E53935" stroke-width="5" fill="none" stroke-linecap="round"/>
+<path d="M60 68 A60 60 0 0 1 120 62" stroke="#FFA726" stroke-width="5" fill="none" stroke-linecap="round"/>
+<path class="gf" d="M120 62 A60 60 0 0 1 150 120" stroke-width="5" fill="none" stroke-linecap="round"/>
+<g class="nd">
+<line x1="90" y1="120" x2="90" y2="68" stroke="#C96330" stroke-width="2.5" stroke-linecap="round"/>
+<circle cx="90" cy="120" r="4" fill="#C96330"/>
+</g>
+<text x="28" y="138" font-size="7" fill="#888" font-family="IBM Plex Mono">SLOW</text>
+<text x="80" y="52" font-size="7" fill="#888" font-family="IBM Plex Mono">OK</text>
+<text x="136" y="138" font-size="7" fill="#888" font-family="IBM Plex Mono">FAST</text>
+<rect class="b1" x="152" y="114" width="12" height="56" rx="2" fill="#E53935"/>
+<rect class="b2" x="168" y="114" width="12" height="56" rx="2" fill="#FFA726"/>
+<rect class="b3" x="184" y="114" width="12" height="56" rx="2" fill="#43A047"/>
+<rect class="b4" x="200" y="114" width="12" height="56" rx="2" fill="#1565C0"/>
+<text x="175" y="182" text-anchor="middle" font-size="7" fill="#888" font-family="IBM Plex Mono">P50·P75·P90·P95</text>
+</svg>"""
+
+SVGS["mobile_observability_operational_excellence"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes ecgDraw{from{stroke-dashoffset:500}to{stroke-dashoffset:0}}
+@keyframes dotBlink{0%,100%{opacity:0}50%{opacity:1}}
+.ecg{stroke-dasharray:500;animation:ecgDraw 3s linear infinite}
+.d1{animation:dotBlink 1s 0s ease-in-out infinite}
+.d2{animation:dotBlink 1s 0.3s ease-in-out infinite}
+.d3{animation:dotBlink 1s 0.6s ease-in-out infinite}
+</style>
+<rect x="8" y="30" width="244" height="130" rx="6" stroke="#1B5E20" stroke-width="1.5" fill="none"/>
+<text x="130" y="22" text-anchor="middle" font-size="9" fill="#1B5E20" font-family="IBM Plex Mono">Live Observability Dashboard</text>
+<path class="ecg" d="M16 100 L50 100 L65 58 L80 142 L95 100 L244 100" stroke="#C96330" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="30" y="50" font-size="8" fill="#888" font-family="IBM Plex Mono">Crash-free</text>
+<text x="30" y="62" font-size="9" fill="#43A047" font-family="IBM Plex Mono" font-weight="bold">99.7%</text>
+<text x="110" y="50" font-size="8" fill="#888" font-family="IBM Plex Mono">ANR Rate</text>
+<text x="110" y="62" font-size="9" fill="#43A047" font-family="IBM Plex Mono" font-weight="bold">0.08%</text>
+<text x="190" y="50" font-size="8" fill="#888" font-family="IBM Plex Mono">Cold Start</text>
+<text x="190" y="62" font-size="9" fill="#FFA726" font-family="IBM Plex Mono" font-weight="bold">1.8s</text>
+<circle class="d1" cx="60" cy="100" r="4" fill="#C96330"/>
+<circle class="d2" cx="100" cy="100" r="4" fill="#C96330"/>
+<circle class="d3" cx="140" cy="100" r="4" fill="#C96330"/>
+</svg>"""
+
+SVGS["mobile_mobile_reliability_engineering"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes sloArc{from{stroke-dashoffset:220}to{stroke-dashoffset:0}}
+.sa2{stroke-dasharray:220;animation:sloArc 3s ease-in-out infinite}
+</style>
+<path d="M50 140 A90 90 0 0 1 210 140" stroke="#333" stroke-width="3" fill="none"/>
+<path class="sa2" d="M50 140 A90 90 0 0 1 130 52" stroke="#43A047" stroke-width="8" fill="none" stroke-linecap="round"/>
+<path d="M130 52 A90 90 0 0 1 210 140" stroke="#E53935" stroke-width="3" fill="none" opacity="0.3"/>
+<text x="130" y="120" text-anchor="middle" font-size="22" fill="#C96330" font-family="IBM Plex Mono" font-weight="bold">99.5%</text>
+<text x="130" y="142" text-anchor="middle" font-size="9" fill="#888" font-family="IBM Plex Sans">Crash-Free Users SLO</text>
+<text x="46" y="162" font-size="8" fill="#888" font-family="IBM Plex Mono">Error Budget</text>
+<rect x="46" y="168" width="140" height="10" rx="3" fill="#333"/>
+<rect x="46" y="168" width="98" height="10" rx="3" fill="#43A047"/>
+<text x="196" y="178" font-size="8" fill="#43A047" font-family="IBM Plex Mono">70%</text>
+</svg>"""
+
+SVGS["mobile_cicd_engineering_operations"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes opLight{0%,100%{fill:#111;stroke:#333}14%{fill:#C96330;stroke:#C96330}}
+@keyframes opText{0%,100%{fill:#555}14%{fill:#fff}}
+@keyframes connFlow{from{stroke-dashoffset:18}to{stroke-dashoffset:0}}
+.o1{animation:opLight 5.6s 0s ease-in-out infinite}
+.o2{animation:opLight 5.6s 0.7s ease-in-out infinite}
+.o3{animation:opLight 5.6s 1.4s ease-in-out infinite}
+.o4{animation:opLight 5.6s 2.1s ease-in-out infinite}
+.o5{animation:opLight 5.6s 2.8s ease-in-out infinite}
+.o6{animation:opLight 5.6s 3.5s ease-in-out infinite}
+.o7{animation:opLight 5.6s 4.2s ease-in-out infinite}
+.t1{animation:opText 5.6s 0s ease-in-out infinite}
+.t2{animation:opText 5.6s 0.7s ease-in-out infinite}
+.t3{animation:opText 5.6s 1.4s ease-in-out infinite}
+.t4{animation:opText 5.6s 2.1s ease-in-out infinite}
+.t5{animation:opText 5.6s 2.8s ease-in-out infinite}
+.t6{animation:opText 5.6s 3.5s ease-in-out infinite}
+.t7{animation:opText 5.6s 4.2s ease-in-out infinite}
+.cf2{stroke-dasharray:18;animation:connFlow 0.6s linear infinite}
+</style>
+<rect class="o1" x="2" y="86" width="30" height="28" rx="4" stroke-width="1.5"/>
+<text class="t1" x="17" y="98" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">commit</text>
+<text class="t1" x="17" y="108" text-anchor="middle" font-size="5.5" font-family="IBM Plex Mono">git</text>
+<rect class="o2" x="38" y="86" width="30" height="28" rx="4" stroke-width="1.5"/>
+<text class="t2" x="53" y="98" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">build</text>
+<text class="t2" x="53" y="108" text-anchor="middle" font-size="5.5" font-family="IBM Plex Mono">gradle</text>
+<rect class="o3" x="74" y="86" width="30" height="28" rx="4" stroke-width="1.5"/>
+<text class="t3" x="89" y="98" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">unit</text>
+<text class="t3" x="89" y="108" text-anchor="middle" font-size="5.5" font-family="IBM Plex Mono">test</text>
+<rect class="o4" x="110" y="86" width="30" height="28" rx="4" stroke-width="1.5"/>
+<text class="t4" x="125" y="98" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">snap</text>
+<text class="t4" x="125" y="108" text-anchor="middle" font-size="5.5" font-family="IBM Plex Mono">test</text>
+<rect class="o5" x="146" y="86" width="30" height="28" rx="4" stroke-width="1.5"/>
+<text class="t5" x="161" y="98" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">sign</text>
+<text class="t5" x="161" y="108" text-anchor="middle" font-size="5.5" font-family="IBM Plex Mono">match</text>
+<rect class="o6" x="182" y="86" width="30" height="28" rx="4" stroke-width="1.5"/>
+<text class="t6" x="197" y="98" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">QA</text>
+<text class="t6" x="197" y="108" text-anchor="middle" font-size="5.5" font-family="IBM Plex Mono">gate</text>
+<rect class="o7" x="218" y="86" width="38" height="28" rx="4" stroke-width="1.5"/>
+<text class="t7" x="237" y="98" text-anchor="middle" font-size="6" font-family="IBM Plex Mono">release</text>
+<text class="t7" x="237" y="108" text-anchor="middle" font-size="5.5" font-family="IBM Plex Mono">Play+Store</text>
+<line class="cf2" x1="32" y1="100" x2="38" y2="100" stroke="#C96330" stroke-width="1.5"/>
+<line class="cf2" x1="68" y1="100" x2="74" y2="100" stroke="#C96330" stroke-width="1.5"/>
+<line class="cf2" x1="104" y1="100" x2="110" y2="100" stroke="#C96330" stroke-width="1.5"/>
+<line class="cf2" x1="140" y1="100" x2="146" y2="100" stroke="#C96330" stroke-width="1.5"/>
+<line class="cf2" x1="176" y1="100" x2="182" y2="100" stroke="#C96330" stroke-width="1.5"/>
+<line class="cf2" x1="212" y1="100" x2="218" y2="100" stroke="#C96330" stroke-width="1.5"/>
+</svg>"""
+
+SVGS["mobile_testing_strategy"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes pyramidBuild{0%,70%,100%{transform:scaleY(0);opacity:0}15%,60%{transform:scaleY(1);opacity:1}}
+.l1p{transform-origin:130px 186px;animation:pyramidBuild 5s 0s ease-in-out infinite}
+.l2p{transform-origin:130px 162px;animation:pyramidBuild 5s 0.6s ease-in-out infinite}
+.l3p{transform-origin:130px 138px;animation:pyramidBuild 5s 1.2s ease-in-out infinite}
+.l4p{transform-origin:130px 112px;animation:pyramidBuild 5s 1.8s ease-in-out infinite}
+.l5p{transform-origin:130px 82px;animation:pyramidBuild 5s 2.4s ease-in-out infinite}
+</style>
+<polygon class="l1p" points="14,194 246,194 226,170 34,170" stroke="#0D47A1" stroke-width="1.5" fill="#E3F2FD"/>
+<text class="l1p" x="130" y="185" text-anchor="middle" font-size="8" fill="#0D47A1" font-family="IBM Plex Sans">Unit — JUnit5 · XCTest · Turbine</text>
+<polygon class="l2p" points="34,168 226,168 206,144 54,144" stroke="#1B5E20" stroke-width="1.5" fill="#E8F5E9"/>
+<text class="l2p" x="130" y="159" text-anchor="middle" font-size="8" fill="#1B5E20" font-family="IBM Plex Sans">Snapshot — Paparazzi · iOSSnapshot</text>
+<polygon class="l3p" points="54,142 206,142 184,118 76,118" stroke="#E65100" stroke-width="1.5" fill="#FFF3E0"/>
+<text class="l3p" x="130" y="133" text-anchor="middle" font-size="8" fill="#E65100" font-family="IBM Plex Sans">Integration Tests</text>
+<polygon class="l4p" points="76,116 184,116 158,92 102,92" stroke="#C62828" stroke-width="1.5" fill="#FFEBEE"/>
+<text class="l4p" x="130" y="107" text-anchor="middle" font-size="8" fill="#C62828" font-family="IBM Plex Sans">UI — Espresso · Maestro</text>
+<polygon class="l5p" points="102,90 158,90 140,66 120,66" stroke="#4A148C" stroke-width="1.5" fill="#EDE7F6"/>
+<text class="l5p" x="130" y="82" text-anchor="middle" font-size="7" fill="#4A148C" font-family="IBM Plex Sans">E2E</text>
+</svg>"""
+
+SVGS["mobile_ux_mobile_platform"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes screenFill{0%,100%{fill:none}50%{fill:rgba(201,99,48,0.06)}}
+@keyframes elementAppear{0%,80%,100%{opacity:0;transform:translateY(8px)}20%,70%{opacity:1;transform:translateY(0)}}
+.sf{animation:screenFill 3s ease-in-out infinite}
+.e1{animation:elementAppear 3s 0s ease-in-out infinite;transform-origin:130px 72px}
+.e2{animation:elementAppear 3s 0.4s ease-in-out infinite;transform-origin:130px 96px}
+.e3{animation:elementAppear 3s 0.8s ease-in-out infinite;transform-origin:130px 120px}
+.e4{animation:elementAppear 3s 1.2s ease-in-out infinite;transform-origin:130px 142px}
+</style>
+<rect x="80" y="20" width="100" height="160" rx="10" stroke="#CCCCCC" stroke-width="2" fill="none"/>
+<rect class="sf" x="88" y="30" width="84" height="140" rx="6"/>
+<rect x="88" y="30" width="84" height="140" rx="6" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<line x1="103" y1="26" x2="137" y2="26" stroke="#CCCCCC" stroke-width="2" stroke-linecap="round"/>
+<circle cx="152" cy="26" r="2" stroke="#CCCCCC" stroke-width="1.2" fill="none"/>
+<rect class="e1" x="96" y="44" width="68" height="14" rx="3" stroke="#C96330" stroke-width="1.2" fill="none"/>
+<text class="e1" x="130" y="54" text-anchor="middle" font-size="7" fill="#C96330" font-family="IBM Plex Sans">Navigation Bar</text>
+<rect class="e2" x="96" y="64" width="68" height="20" rx="3" fill="#E3F2FD" stroke="#1565C0" stroke-width="1"/>
+<text class="e2" x="130" y="78" text-anchor="middle" font-size="7" fill="#1565C0" font-family="IBM Plex Sans">Card Component</text>
+<rect class="e3" x="96" y="90" width="68" height="14" rx="2" fill="#E8F5E9" stroke="#1B5E20" stroke-width="0.8"/>
+<text class="e3" x="130" y="100" text-anchor="middle" font-size="7" fill="#1B5E20" font-family="IBM Plex Sans">List Item</text>
+<rect class="e4" x="96" y="110" width="68" height="14" rx="2" fill="#E8F5E9" stroke="#1B5E20" stroke-width="0.8"/>
+<text class="e4" x="130" y="120" text-anchor="middle" font-size="7" fill="#1B5E20" font-family="IBM Plex Sans">List Item</text>
+<rect class="e4" x="96" y="148" width="68" height="18" rx="9" fill="#C96330" stroke="none"/>
+<text class="e4" x="130" y="161" text-anchor="middle" font-size="8" fill="#fff" font-family="IBM Plex Sans">Primary Action</text>
+</svg>"""
+
+SVGS["mobile_runtime_architecture_flows"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes stateFlow{0%{fill:#111;stroke:#333}20%{fill:#C96330;stroke:#C96330}40%{fill:#111;stroke:#333}}
+@keyframes arrowMove{from{stroke-dashoffset:30}to{stroke-dashoffset:0}}
+.s1{animation:stateFlow 4s 0s ease-in-out infinite}
+.s2{animation:stateFlow 4s 0.7s ease-in-out infinite}
+.s3{animation:stateFlow 4s 1.4s ease-in-out infinite}
+.s4{animation:stateFlow 4s 2.1s ease-in-out infinite}
+.s5{animation:stateFlow 4s 2.8s ease-in-out infinite}
+.am{stroke-dasharray:30;animation:arrowMove 1s linear infinite}
+</style>
+<rect class="s1" x="96" y="10" width="68" height="22" rx="4" stroke-width="1.5"/>
+<text x="130" y="25" text-anchor="middle" font-size="8" fill="#888" font-family="IBM Plex Mono">Created</text>
+<rect class="s2" x="96" y="50" width="68" height="22" rx="4" stroke-width="1.5"/>
+<text x="130" y="65" text-anchor="middle" font-size="8" fill="#888" font-family="IBM Plex Mono">Started</text>
+<rect class="s3" x="96" y="90" width="68" height="22" rx="4" stroke-width="1.5"/>
+<text x="130" y="105" text-anchor="middle" font-size="8" fill="#888" font-family="IBM Plex Mono">Resumed</text>
+<rect class="s4" x="96" y="130" width="68" height="22" rx="4" stroke-width="1.5"/>
+<text x="130" y="145" text-anchor="middle" font-size="8" fill="#888" font-family="IBM Plex Mono">Stopped</text>
+<rect class="s5" x="96" y="170" width="68" height="22" rx="4" stroke-width="1.5"/>
+<text x="130" y="185" text-anchor="middle" font-size="8" fill="#888" font-family="IBM Plex Mono">Destroyed</text>
+<line class="am" x1="130" y1="32" x2="130" y2="50" stroke="#C96330" stroke-width="1.5" stroke-linecap="round"/>
+<line class="am" x1="130" y1="72" x2="130" y2="90" stroke="#C96330" stroke-width="1.5" stroke-linecap="round"/>
+<line class="am" x1="130" y1="112" x2="130" y2="130" stroke="#CCCCCC" stroke-width="1.5" stroke-linecap="round"/>
+<line class="am" x1="130" y1="152" x2="130" y2="170" stroke="#CCCCCC" stroke-width="1.5" stroke-linecap="round"/>
+<text x="172" y="100" font-size="7" fill="#888" font-family="IBM Plex Mono">ViewModel</text>
+<text x="172" y="112" font-size="7" fill="#C96330" font-family="IBM Plex Mono">survives</text>
+<line x1="164" y1="101" x2="164" y2="112" stroke="#C96330" stroke-width="1" stroke-dasharray="3,2"/>
+</svg>"""
+
+SVGS["mobile_lifecycle_evolution_governance"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes timelineMove{from{stroke-dashoffset:300}to{stroke-dashoffset:0}}
+@keyframes milestoneLight{0%,100%{fill:#111;r:6}50%{fill:#C96330;r:8}}
+.tl{stroke-dasharray:300;animation:timelineMove 4s linear infinite}
+.m1{animation:milestoneLight 4s 0s ease-in-out infinite}
+.m2{animation:milestoneLight 4s 0.8s ease-in-out infinite}
+.m3{animation:milestoneLight 4s 1.6s ease-in-out infinite}
+.m4{animation:milestoneLight 4s 2.4s ease-in-out infinite}
+</style>
+<line class="tl" x1="20" y1="100" x2="240" y2="100" stroke="#C96330" stroke-width="2.5" stroke-linecap="round"/>
+<circle class="m1" cx="50" cy="100" r="6" fill="#111" stroke="#333" stroke-width="1"/>
+<circle class="m2" cx="110" cy="100" r="6" fill="#111" stroke="#333" stroke-width="1"/>
+<circle class="m3" cx="170" cy="100" r="6" fill="#111" stroke="#333" stroke-width="1"/>
+<circle class="m4" cx="230" cy="100" r="6" fill="#111" stroke="#333" stroke-width="1"/>
+<text x="50" y="80" text-anchor="middle" font-size="7.5" fill="#888" font-family="IBM Plex Mono">v1.0</text>
+<text x="50" y="70" text-anchor="middle" font-size="6.5" fill="#555" font-family="IBM Plex Mono">Launch</text>
+<text x="110" y="125" text-anchor="middle" font-size="7.5" fill="#888" font-family="IBM Plex Mono">v2.0</text>
+<text x="110" y="135" text-anchor="middle" font-size="6.5" fill="#555" font-family="IBM Plex Mono">Modular</text>
+<text x="170" y="80" text-anchor="middle" font-size="7.5" fill="#888" font-family="IBM Plex Mono">v3.0</text>
+<text x="170" y="70" text-anchor="middle" font-size="6.5" fill="#555" font-family="IBM Plex Mono">Platform</text>
+<text x="230" y="125" text-anchor="middle" font-size="7.5" fill="#C96330" font-family="IBM Plex Mono">v4.0</text>
+<text x="230" y="135" text-anchor="middle" font-size="6.5" fill="#C96330" font-family="IBM Plex Mono">Next</text>
+<rect x="20" y="148" width="100" height="12" rx="3" fill="#E8F5E9" stroke="#1B5E20" stroke-width="1"/>
+<rect x="20" y="148" width="60" height="12" rx="3" fill="#1B5E20"/>
+<text x="130" y="158" font-size="7" fill="#888" font-family="IBM Plex Mono">Debt register: 60%</text>
+</svg>"""
+
+SVGS["mobile_build_vs_buy"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes scaleTip{0%,100%{transform:rotate(0deg)}40%{transform:rotate(-12deg)}60%{transform:rotate(12deg)}}
+@keyframes panLeft{0%,100%{transform:translateY(0)}40%{transform:translateY(-10px)}60%{transform:translateY(8px)}}
+@keyframes panRight{0%,100%{transform:translateY(0)}40%{transform:translateY(8px)}60%{transform:translateY(-10px)}}
+.sc{animation:scaleTip 4s ease-in-out infinite;transform-origin:130px 90px}
+.pl{animation:panLeft 4s ease-in-out infinite;transform-origin:64px 120px}
+.pr{animation:panRight 4s ease-in-out infinite;transform-origin:196px 120px}
+</style>
+<line x1="130" y1="30" x2="130" y2="90" stroke="#C96330" stroke-width="2" stroke-linecap="round"/>
+<circle cx="130" cy="30" r="5" fill="#C96330"/>
+<g class="sc">
+<line x1="60" y1="90" x2="200" y2="90" stroke="#CCCCCC" stroke-width="2" stroke-linecap="round"/>
+</g>
+<g class="pl">
+<line x1="64" y1="90" x2="64" y2="120" stroke="#AAAAAA" stroke-width="1.5"/>
+<rect x="30" y="120" width="68" height="32" rx="5" stroke="#1565C0" stroke-width="1.8" fill="none"/>
+<text x="64" y="134" text-anchor="middle" font-size="9" fill="#1565C0" font-family="IBM Plex Sans">BUILD</text>
+<text x="64" y="146" text-anchor="middle" font-size="7" fill="#888" font-family="IBM Plex Mono">Control · IP</text>
+</g>
+<g class="pr">
+<line x1="196" y1="90" x2="196" y2="120" stroke="#AAAAAA" stroke-width="1.5"/>
+<rect x="162" y="120" width="68" height="32" rx="5" stroke="#43A047" stroke-width="1.8" fill="none"/>
+<text x="196" y="134" text-anchor="middle" font-size="9" fill="#43A047" font-family="IBM Plex Sans">BUY</text>
+<text x="196" y="146" text-anchor="middle" font-size="7" fill="#888" font-family="IBM Plex Mono">Speed · Cost</text>
+</g>
+</svg>"""
+
+SVGS["mobile_aiml_integration"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes neuronFire{0%,100%{fill:#111;r:5}50%{fill:#C96330;r:7}}
+@keyframes synapseFlow{from{stroke-dashoffset:40}to{stroke-dashoffset:0}}
+@keyframes onDeviceGlow{0%,100%{stroke:#333}50%{stroke:#C96330}}
+.n1{animation:neuronFire 2s 0s ease-in-out infinite}
+.n2{animation:neuronFire 2s 0.3s ease-in-out infinite}
+.n3{animation:neuronFire 2s 0.6s ease-in-out infinite}
+.n4{animation:neuronFire 2s 0.9s ease-in-out infinite}
+.n5{animation:neuronFire 2s 1.2s ease-in-out infinite}
+.sf{stroke-dasharray:40;animation:synapseFlow 1s linear infinite}
+.od{animation:onDeviceGlow 2s ease-in-out infinite}
+</style>
+<rect class="od" x="8" y="50" width="56" height="100" rx="7" stroke-width="2" fill="none"/>
+<rect x="16" y="60" width="40" height="76" rx="3" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<text x="36" y="104" text-anchor="middle" font-size="7" fill="#C96330" font-family="IBM Plex Mono">On-Device</text>
+<text x="36" y="116" text-anchor="middle" font-size="6.5" fill="#888" font-family="IBM Plex Mono">Core ML</text>
+<text x="36" y="126" text-anchor="middle" font-size="6.5" fill="#888" font-family="IBM Plex Mono">TFLite</text>
+<circle class="n1" cx="100" cy="70" r="5" fill="#111"/>
+<circle class="n2" cx="100" cy="100" r="5" fill="#111"/>
+<circle class="n3" cx="100" cy="130" r="5" fill="#111"/>
+<circle class="n4" cx="148" cy="85" r="5" fill="#111"/>
+<circle class="n5" cx="148" cy="115" r="5" fill="#111"/>
+<circle cx="196" cy="100" r="7" stroke="#C96330" stroke-width="2" fill="none"/>
+<line class="sf" x1="105" y1="70" x2="143" y2="85" stroke="#C96330" stroke-width="1.2"/>
+<line class="sf" x1="105" y1="100" x2="143" y2="85" stroke="#C96330" stroke-width="1.2"/>
+<line class="sf" x1="105" y1="100" x2="143" y2="115" stroke="#C96330" stroke-width="1.2"/>
+<line class="sf" x1="105" y1="130" x2="143" y2="115" stroke="#C96330" stroke-width="1.2"/>
+<line class="sf" x1="153" y1="85" x2="189" y2="100" stroke="#C96330" stroke-width="1.5"/>
+<line class="sf" x1="153" y1="115" x2="189" y2="100" stroke="#C96330" stroke-width="1.5"/>
+<text x="196" y="128" text-anchor="middle" font-size="7" fill="#888" font-family="IBM Plex Mono">Result</text>
+<text x="36" y="158" text-anchor="middle" font-size="6.5" fill="#888" font-family="IBM Plex Mono">Privacy First</text>
+</svg>"""
+
+SVGS["mobile_organizational_scaling_model"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes nodeExpand{0%,80%,100%{opacity:0;transform:scale(0.5)}20%,60%{opacity:1;transform:scale(1)}}
+@keyframes orgFlow{from{stroke-dashoffset:40}to{stroke-dashoffset:0}}
+.r1{animation:nodeExpand 5s 0s ease-in-out infinite;transform-origin:130px 36px}
+.r2{animation:nodeExpand 5s 0.5s ease-in-out infinite;transform-origin:64px 90px}
+.r3{animation:nodeExpand 5s 0.5s ease-in-out infinite;transform-origin:196px 90px}
+.r4{animation:nodeExpand 5s 1.0s ease-in-out infinite;transform-origin:34px 150px}
+.r5{animation:nodeExpand 5s 1.0s ease-in-out infinite;transform-origin:100px 150px}
+.r6{animation:nodeExpand 5s 1.0s ease-in-out infinite;transform-origin:164px 150px}
+.r7{animation:nodeExpand 5s 1.0s ease-in-out infinite;transform-origin:226px 150px}
+.of{stroke-dasharray:40;animation:orgFlow 1.5s linear infinite}
+</style>
+<rect class="r1" x="96" y="20" width="68" height="24" rx="5" stroke="#C96330" stroke-width="2" fill="none"/>
+<text class="r1" x="130" y="36" text-anchor="middle" font-size="8" fill="#C96330" font-family="IBM Plex Mono">Platform Team</text>
+<rect class="r2" x="20" y="74" width="88" height="22" rx="4" stroke="#1565C0" stroke-width="1.5" fill="none"/>
+<text class="r2" x="64" y="89" text-anchor="middle" font-size="7.5" fill="#1565C0" font-family="IBM Plex Mono">Account Stream</text>
+<rect class="r3" x="152" y="74" width="88" height="22" rx="4" stroke="#1B5E20" stroke-width="1.5" fill="none"/>
+<text class="r3" x="196" y="89" text-anchor="middle" font-size="7.5" fill="#1B5E20" font-family="IBM Plex Mono">Payments Stream</text>
+<rect class="r4" x="4" y="134" width="60" height="20" rx="3" stroke="#6A1B9A" stroke-width="1.2" fill="none"/>
+<text class="r4" x="34" y="148" text-anchor="middle" font-size="6.5" fill="#6A1B9A" font-family="IBM Plex Mono">iOS Squad</text>
+<rect class="r5" x="70" y="134" width="60" height="20" rx="3" stroke="#6A1B9A" stroke-width="1.2" fill="none"/>
+<text class="r5" x="100" y="148" text-anchor="middle" font-size="6.5" fill="#6A1B9A" font-family="IBM Plex Mono">Android Squad</text>
+<rect class="r6" x="138" y="134" width="60" height="20" rx="3" stroke="#E65100" stroke-width="1.2" fill="none"/>
+<text class="r6" x="168" y="148" text-anchor="middle" font-size="6.5" fill="#E65100" font-family="IBM Plex Mono">iOS Squad</text>
+<rect class="r7" x="204" y="134" width="52" height="20" rx="3" stroke="#E65100" stroke-width="1.2" fill="none"/>
+<text class="r7" x="230" y="148" text-anchor="middle" font-size="6.5" fill="#E65100" font-family="IBM Plex Mono">Android</text>
+<line class="of" x1="130" y1="44" x2="64" y2="74" stroke="#CCCCCC" stroke-width="1.2"/>
+<line class="of" x1="130" y1="44" x2="196" y2="74" stroke="#CCCCCC" stroke-width="1.2"/>
+<line class="of" x1="64" y1="96" x2="34" y2="134" stroke="#AAAAAA" stroke-width="1"/>
+<line class="of" x1="64" y1="96" x2="100" y2="134" stroke="#AAAAAA" stroke-width="1"/>
+<line class="of" x1="196" y1="96" x2="168" y2="134" stroke="#AAAAAA" stroke-width="1"/>
+<line class="of" x1="196" y1="96" x2="230" y2="134" stroke="#AAAAAA" stroke-width="1"/>
+</svg>"""
+
+SVGS["mobile_anti_patterns_failure_scenarios"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes crossAppear{0%,100%{opacity:0;transform:scale(0.5)}30%,70%{opacity:1;transform:scale(1)}}
+@keyframes checkAppear{0%,100%{opacity:0;transform:scale(0.5)}40%,80%{opacity:1;transform:scale(1)}}
+.x1{animation:crossAppear 3s 0s ease-in-out infinite;transform-origin:64px 70px}
+.x2{animation:crossAppear 3s 0.5s ease-in-out infinite;transform-origin:64px 120px}
+.x3{animation:crossAppear 3s 1s ease-in-out infinite;transform-origin:64px 170px}
+.c1{animation:checkAppear 3s 0.4s ease-in-out infinite;transform-origin:196px 70px}
+.c2{animation:checkAppear 3s 0.9s ease-in-out infinite;transform-origin:196px 120px}
+.c3{animation:checkAppear 3s 1.4s ease-in-out infinite;transform-origin:196px 170px}
+</style>
+<text x="30" y="30" font-size="9" fill="#E53935" font-family="IBM Plex Mono">Anti-Patterns</text>
+<text x="156" y="30" font-size="9" fill="#43A047" font-family="IBM Plex Mono">Correct Approach</text>
+<g class="x1">
+<circle cx="64" cy="70" r="18" stroke="#E53935" stroke-width="2" fill="none"/>
+<line x1="54" y1="60" x2="74" y2="80" stroke="#E53935" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="74" y1="60" x2="54" y2="80" stroke="#E53935" stroke-width="2.5" stroke-linecap="round"/>
+<text x="64" y="103" text-anchor="middle" font-size="6.5" fill="#888" font-family="IBM Plex Mono">Plaintext Creds</text>
+</g>
+<g class="x2">
+<circle cx="64" cy="120" r="18" stroke="#E53935" stroke-width="2" fill="none"/>
+<line x1="54" y1="110" x2="74" y2="130" stroke="#E53935" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="74" y1="110" x2="54" y2="130" stroke="#E53935" stroke-width="2.5" stroke-linecap="round"/>
+<text x="64" y="153" text-anchor="middle" font-size="6.5" fill="#888" font-family="IBM Plex Mono">God ViewModel</text>
+</g>
+<g class="x3">
+<circle cx="64" cy="170" r="18" stroke="#E53935" stroke-width="2" fill="none"/>
+<line x1="54" y1="160" x2="74" y2="180" stroke="#E53935" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="74" y1="160" x2="54" y2="180" stroke="#E53935" stroke-width="2.5" stroke-linecap="round"/>
+</g>
+<g class="c1">
+<circle cx="196" cy="70" r="18" stroke="#43A047" stroke-width="2" fill="none"/>
+<polyline points="186,70 193,78 208,61" stroke="#43A047" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="196" y="103" text-anchor="middle" font-size="6.5" fill="#888" font-family="IBM Plex Mono">Keystore+PKCE</text>
+</g>
+<g class="c2">
+<circle cx="196" cy="120" r="18" stroke="#43A047" stroke-width="2" fill="none"/>
+<polyline points="186,120 193,128 208,111" stroke="#43A047" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="196" y="153" text-anchor="middle" font-size="6.5" fill="#888" font-family="IBM Plex Mono">Use Cases</text>
+</g>
+<g class="c3">
+<circle cx="196" cy="170" r="18" stroke="#43A047" stroke-width="2" fill="none"/>
+<polyline points="186,170 193,178 208,161" stroke="#43A047" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<line x1="130" y1="40" x2="130" y2="190" stroke="#444" stroke-width="1" stroke-dasharray="4,3"/>
+</svg>"""
+
+SVGS["mobile_migration_evolution_strategy"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes mig{from{stroke-dashoffset:200}to{stroke-dashoffset:0}}
+@keyframes legacyFade{0%,100%{opacity:1}50%{opacity:0.2}}
+@keyframes newGrow{0%,100%{opacity:0.2}50%{opacity:1}}
+.mg{stroke-dasharray:200;animation:mig 4s linear infinite}
+.lf{animation:legacyFade 4s ease-in-out infinite}
+.ng{animation:newGrow 4s ease-in-out infinite}
+</style>
+<rect class="lf" x="8" y="40" width="80" height="120" rx="6" stroke="#888" stroke-width="1.5" fill="none"/>
+<text class="lf" x="48" y="80" text-anchor="middle" font-size="8" fill="#888" font-family="IBM Plex Mono">Legacy</text>
+<text class="lf" x="48" y="94" text-anchor="middle" font-size="8" fill="#888" font-family="IBM Plex Mono">MVC</text>
+<text class="lf" x="48" y="108" text-anchor="middle" font-size="7.5" fill="#777" font-family="IBM Plex Mono">XML Views</text>
+<text class="lf" x="48" y="120" text-anchor="middle" font-size="7.5" fill="#777" font-family="IBM Plex Mono">No tests</text>
+<rect class="ng" x="172" y="40" width="80" height="120" rx="6" stroke="#C96330" stroke-width="2" fill="none"/>
+<text class="ng" x="212" y="80" text-anchor="middle" font-size="8" fill="#C96330" font-family="IBM Plex Mono">Modern</text>
+<text class="ng" x="212" y="94" text-anchor="middle" font-size="8" fill="#C96330" font-family="IBM Plex Mono">MVVM</text>
+<text class="ng" x="212" y="108" text-anchor="middle" font-size="7.5" fill="#AAAAAA" font-family="IBM Plex Mono">Compose</text>
+<text class="ng" x="212" y="120" text-anchor="middle" font-size="7.5" fill="#AAAAAA" font-family="IBM Plex Mono">90% coverage</text>
+<path class="mg" d="M88 70 Q130 30 172 70" stroke="#C96330" stroke-width="2" fill="none" stroke-linecap="round"/>
+<path class="mg" d="M88 100 Q130 60 172 100" stroke="#CCCCCC" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+<path class="mg" d="M88 130 Q130 90 172 130" stroke="#AAAAAA" stroke-width="1" fill="none" stroke-linecap="round"/>
+<text x="130" y="170" text-anchor="middle" font-size="8" fill="#888" font-family="IBM Plex Mono">Strangler Fig — feature by feature</text>
+</svg>"""
+
+SVGS["mobile_reference_architecture"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes sysAssemble{0%,80%,100%{opacity:0;transform:scale(0.8)}20%,60%{opacity:1;transform:scale(1)}}
+@keyframes dataFlowSys{from{stroke-dashoffset:50}to{stroke-dashoffset:0}}
+.sa1{animation:sysAssemble 5s 0s ease-in-out infinite;transform-origin:44px 100px}
+.sa2{animation:sysAssemble 5s 0.6s ease-in-out infinite;transform-origin:130px 100px}
+.sa3{animation:sysAssemble 5s 1.2s ease-in-out infinite;transform-origin:200px 70px}
+.sa4{animation:sysAssemble 5s 1.8s ease-in-out infinite;transform-origin:200px 100px}
+.sa5{animation:sysAssemble 5s 2.4s ease-in-out infinite;transform-origin:200px 130px}
+.dfs{stroke-dasharray:50;animation:dataFlowSys 1.5s linear infinite}
+</style>
+<rect class="sa1" x="8" y="64" width="72" height="72" rx="7" stroke="#C96330" stroke-width="2" fill="none"/>
+<text class="sa1" x="44" y="92" text-anchor="middle" font-size="7" fill="#C96330" font-family="IBM Plex Sans">Mobile App</text>
+<text class="sa1" x="44" y="104" text-anchor="middle" font-size="6.5" fill="#888" font-family="IBM Plex Mono">Compose/SwiftUI</text>
+<text class="sa1" x="44" y="116" text-anchor="middle" font-size="6.5" fill="#888" font-family="IBM Plex Mono">ViewModel</text>
+<text class="sa1" x="44" y="128" text-anchor="middle" font-size="6.5" fill="#888" font-family="IBM Plex Mono">Use Cases</text>
+<rect class="sa2" x="94" y="74" width="72" height="52" rx="6" stroke="#F57F17" stroke-width="1.8" fill="none"/>
+<text class="sa2" x="130" y="96" text-anchor="middle" font-size="7.5" fill="#E65100" font-family="IBM Plex Sans">Mobile BFF</text>
+<text class="sa2" x="130" y="108" text-anchor="middle" font-size="6.5" fill="#888" font-family="IBM Plex Mono">GraphQL</text>
+<text class="sa2" x="130" y="120" text-anchor="middle" font-size="6.5" fill="#888" font-family="IBM Plex Mono">Aggregation</text>
+<rect class="sa3" x="180" y="34" width="72" height="22" rx="4" stroke="#1B5E20" stroke-width="1.2" fill="none"/>
+<text class="sa3" x="216" y="49" text-anchor="middle" font-size="7" fill="#1B5E20" font-family="IBM Plex Mono">Identity Provider</text>
+<rect class="sa4" x="180" y="88" width="72" height="22" rx="4" stroke="#1565C0" stroke-width="1.2" fill="none"/>
+<text class="sa4" x="216" y="103" text-anchor="middle" font-size="7" fill="#1565C0" font-family="IBM Plex Mono">Microservices</text>
+<rect class="sa5" x="180" y="144" width="72" height="22" rx="4" stroke="#6A1B9A" stroke-width="1.2" fill="none"/>
+<text class="sa5" x="216" y="159" text-anchor="middle" font-size="7" fill="#6A1B9A" font-family="IBM Plex Mono">Push / APNs / FCM</text>
+<line class="dfs" x1="80" y1="100" x2="94" y2="100" stroke="#C96330" stroke-width="1.5" stroke-linecap="round"/>
+<line class="dfs" x1="166" y1="90" x2="180" y2="58" stroke="#AAAAAA" stroke-width="1"/>
+<line class="dfs" x1="166" y1="100" x2="180" y2="99" stroke="#AAAAAA" stroke-width="1"/>
+<line class="dfs" x1="166" y1="110" x2="180" y2="152" stroke="#AAAAAA" stroke-width="1"/>
+</svg>"""
+
+SVGS["mobile_decision_summary"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes checkOff{0%,90%,100%{opacity:0;transform:scale(0.5)}15%,80%{opacity:1;transform:scale(1)}}
+@keyframes lineIn{from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
+.ck1{animation:checkOff 6s 0s ease-in-out infinite;transform-origin:34px 50px}
+.ck2{animation:checkOff 6s 0.6s ease-in-out infinite;transform-origin:34px 80px}
+.ck3{animation:checkOff 6s 1.2s ease-in-out infinite;transform-origin:34px 110px}
+.ck4{animation:checkOff 6s 1.8s ease-in-out infinite;transform-origin:34px 140px}
+.ck5{animation:checkOff 6s 2.4s ease-in-out infinite;transform-origin:34px 170px}
+.li{stroke-dasharray:100;animation:lineIn 6s linear infinite}
+</style>
+<rect x="10" y="18" width="240" height="170" rx="6" stroke="#333" stroke-width="1.2" fill="none"/>
+<text x="130" y="12" text-anchor="middle" font-size="8" fill="#888" font-family="IBM Plex Mono">Decision Registry</text>
+<g class="ck1">
+<rect x="18" y="36" width="18" height="18" rx="3" stroke="#C96330" stroke-width="1.5" fill="none"/>
+<polyline points="21,45 27,51 35,39" stroke="#C96330" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="li" x1="44" y1="45" x2="240" y2="45" stroke="#333" stroke-width="0.8"/>
+<text x="46" y="49" font-size="7.5" fill="#AAAAAA" font-family="IBM Plex Mono">D-001: Clean Architecture + MVVM</text>
+</g>
+<g class="ck2">
+<rect x="18" y="66" width="18" height="18" rx="3" stroke="#1565C0" stroke-width="1.5" fill="none"/>
+<polyline points="21,75 27,81 35,69" stroke="#1565C0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="li" x1="44" y1="75" x2="240" y2="75" stroke="#333" stroke-width="0.8"/>
+<text x="46" y="79" font-size="7.5" fill="#AAAAAA" font-family="IBM Plex Mono">D-002: Flutter Default Platform</text>
+</g>
+<g class="ck3">
+<rect x="18" y="96" width="18" height="18" rx="3" stroke="#1B5E20" stroke-width="1.5" fill="none"/>
+<polyline points="21,105 27,111 35,99" stroke="#1B5E20" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="li" x1="44" y1="105" x2="240" y2="105" stroke="#333" stroke-width="0.8"/>
+<text x="46" y="109" font-size="7.5" fill="#AAAAAA" font-family="IBM Plex Mono">D-003: Fastlane + GitHub Actions</text>
+</g>
+<g class="ck4">
+<rect x="18" y="126" width="18" height="18" rx="3" stroke="#E53935" stroke-width="1.5" fill="none"/>
+<polyline points="21,135 27,141 35,129" stroke="#E53935" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="li" x1="44" y1="135" x2="240" y2="135" stroke="#333" stroke-width="0.8"/>
+<text x="46" y="139" font-size="7.5" fill="#AAAAAA" font-family="IBM Plex Mono">D-004: OWASP MASVS Baseline</text>
+</g>
+<g class="ck5">
+<rect x="18" y="156" width="18" height="18" rx="3" stroke="#F57F17" stroke-width="1.5" fill="none"/>
+<polyline points="21,165 27,171 35,159" stroke="#F57F17" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="li" x1="44" y1="165" x2="240" y2="165" stroke="#333" stroke-width="0.8"/>
+<text x="46" y="169" font-size="7.5" fill="#AAAAAA" font-family="IBM Plex Mono">D-005: BFF Pattern + GraphQL</text>
+</g>
+</svg>"""
+
+
 # Hero-animation SVG override for nested mobile article pages — maps the
 # page's full path to a key in SVGS. Pages without an entry fall back to
 # the default hero (no animated SVG). The override SVG is placed inside
@@ -8360,8 +9218,15 @@ def gen_nested_article(slug, hub_slug, sub_slug, sub_dir, out_sub, referenced_by
     # the HERO_SVG_OVERRIDE map (used for the mobile section pages so that
     # each topic has its own distinctive 240×180 animation), and finally
     # no animated SVG at all.
+    # Mobile pages derive the SVG key from the leaf slug
+    # (e.g. "engineering-principles" → "mobile_engineering_principles");
+    # other hubs fall back to the static HERO_SVG_OVERRIDE map.
     override_key = HERO_SVG_OVERRIDE.get(f"{slug}/{hub_slug}/{sub_slug}")
+    if not override_key and hub_slug == "mobile":
+        override_key = "mobile_" + sub_slug.replace("-", "_")
     override_svg = SVGS.get(override_key) if override_key else None
+    if not override_svg and hub_slug == "mobile":
+        override_svg = SVGS.get("mobile")
     if has_hero_art:
         hero_svg = hero_svg_file.read_text(encoding="utf-8")
         hero_block = (
