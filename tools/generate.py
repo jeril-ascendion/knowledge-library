@@ -9127,6 +9127,13 @@ HUB_BREADCRUMB_LABEL = {
     "mobile": "Mobile",
 }
 
+# Section-slug → short breadcrumb label override for gen_article.
+# Used on ADR article pages so the breadcrumb reads "ADR" instead of
+# the full "Architecture Decision Records" section title.
+SECTION_BREADCRUMB_LABEL = {
+    "adrs": "ADR",
+}
+
 
 def gen_hub(slug, hub_slug, src_dir, out_dir):
     """Render a hub page that groups multiple articles under a single
@@ -9233,6 +9240,16 @@ def gen_article(slug, sub_slug, sub_dir, out_sub, referenced_by=None, metadata=N
     has_d = diagram.exists()
     has_hero_art = hero_svg_file.exists()
 
+    # Section-specific breadcrumb shortening + per-section title prefix.
+    # ADR articles read better with a compact "ADR" crumb and an explicit
+    # "ADR: " title prefix; other sections keep the existing full section
+    # title and bare article title.
+    breadcrumb_section_label = SECTION_BREADCRUMB_LABEL.get(slug, sec_title)
+    if slug == "adrs" and not title.startswith("ADR:"):
+        display_title = f"ADR: {title}"
+    else:
+        display_title = title
+
     tag_html = ""
     if tags:
         tag_items = []
@@ -9259,10 +9276,10 @@ def gen_article(slug, sub_slug, sub_dir, out_sub, referenced_by=None, metadata=N
     hero_text = (
         f'    <div class="breadcrumb"><a href="../../index.html">Home</a>'
         f'<span class="sep">›</span>'
-        f'<a href="../index.html">{sec_title}</a>'
+        f'<a href="../index.html">{breadcrumb_section_label}</a>'
         f'<span class="sep">›</span>'
-        f'<span class="curr">{title}</span></div>\n'
-        f'    <h1>{title}</h1>\n'
+        f'<span class="curr">{display_title}</span></div>\n'
+        f'    <h1>{display_title}</h1>\n'
         f'    <p class="hero-desc">{desc}</p>\n'
         f'    {tag_html}\n'
     )
@@ -9335,7 +9352,7 @@ def gen_article(slug, sub_slug, sub_dir, out_sub, referenced_by=None, metadata=N
                 ['Related Sections', 'Related', 'References'])
 
     html = (
-        f'{head(f"{title} — {sec_title} · Ascendion Engineering", "../../", has_d)}\n\n'
+        f'{head(f"{display_title} — {sec_title} · Ascendion Engineering", "../../", has_d)}\n\n'
         f'{nav_html("../../", slug)}\n\n'
         f'<main id="main">\n'
         f'{hero_block}'
