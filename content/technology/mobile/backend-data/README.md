@@ -64,23 +64,33 @@ The **Repository decides cache strategy**. Cache-first for reference data (produ
 
 ### 1. Sharing the Web API with Mobile
 
-The team has one REST API for web and mobile. The web's needs dominate; mobile payloads bloat; users on tier-two devices and weak networks suffer. The fix is the mobile BFF.
+The team has one REST API for web and mobile. The web's needs dominate; mobile payloads bloat; users on tier-two devices and weak networks suffer.
+
+**CORRECT:** The fix is the mobile BFF.
 
 ### 2. Offset Pagination on Mobile Lists
 
-`?offset=20&limit=20` works in tests; in production the list grows during pagination and users see duplicates and gaps. The fix is cursor pagination from day one.
+`?offset=20&limit=20` works in tests; in production the list grows during pagination and users see duplicates and gaps.
+
+**CORRECT:** The fix is cursor pagination from day one.
 
 ### 3. Sensitive Data in Push Payloads
 
-Push notifications carry account balances and transaction amounts "for richer notifications." Apple, Google, and any local app on the device with the right permission can read them. The fix is content-by-fetch — the payload carries an ID, the app fetches the content through authenticated API.
+Push notifications carry account balances and transaction amounts "for richer notifications." Apple, Google, and any local app on the device with the right permission can read them.
+
+**CORRECT:** The fix is content-by-fetch — the payload carries an ID, the app fetches the content through authenticated API.
 
 ### 4. ViewModel Observing the API Directly
 
-The team wires the ViewModel to a `Flow` produced by Retrofit's `flow { emit(api.get()) }`. The UI breaks when offline. The fix is the Repository's `dao.observeAll()` flow as the only thing the ViewModel observes; `refresh()` is a separate concern.
+The team wires the ViewModel to a `Flow` produced by Retrofit's `flow { emit(api.get()) }`. The UI breaks when offline.
+
+**CORRECT:** The fix is the Repository's `dao.observeAll()` flow as the only thing the ViewModel observes; `refresh()` is a separate concern.
 
 ### 5. Forgetting Idempotency Keys
 
-The Outbox retries a transfer; the network blip masked an earlier success; the server processes both. The user is charged twice. The fix is the per-command idempotency key generated client-side and respected server-side.
+The Outbox retries a transfer; the network blip masked an earlier success; the server processes both. The user is charged twice.
+
+**CORRECT:** The fix is the per-command idempotency key generated client-side and respected server-side.
 
 ---
 

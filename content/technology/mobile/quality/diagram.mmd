@@ -1,12 +1,23 @@
 flowchart TD
-  E2E["E2E Tests — Firebase Test Lab — Physical Devices — Top 5 Critical Journeys Only"]
-  UI["UI Tests — Espresso · XCUITest · Maestro — Top 10 User Journeys"]
-  INTG["Integration Tests — Room In-Memory · URLProtocol Stub — Repository + DataSource Layer"]
-  SNAP["Snapshot Tests — Paparazzi · iOSSnapshotTestCase — All Components · All Themes"]
-  UNIT["Unit Tests — Foundation — JUnit5 + Mockk · XCTest + Swift Testing + Turbine — 90% Use Cases · 80% ViewModels"]
-  E2E --- UI --- INTG --- SNAP --- UNIT
-  style E2E fill:#FFEBEE,stroke:#B71C1C
-  style UI fill:#FFF3E0,stroke:#E65100
-  style INTG fill:#FFF9C4,stroke:#F57F17
-  style SNAP fill:#E8F5E9,stroke:#1B5E20
-  style UNIT fill:#E3F2FD,stroke:#0D47A1
+  E2E["E2E — Firebase Test Lab — Physical devices — Top 5 critical journeys"]
+  UI["UI — Espresso · XCUITest · Maestro — Top 10 user journeys"]
+  INTG["Integration — Robolectric · In-memory Room · URLProtocol stub"]
+  SNAP["Snapshot — Paparazzi · iOSSnapshotTestCase · Roborazzi"]
+  UNIT["Unit — JUnit5 + Mockk · XCTest + Swift Testing + Turbine — 90% Use Case · 80% ViewModel"]
+
+  E2E --- UI
+  UI --- INTG
+  INTG --- SNAP
+  SNAP --- UNIT
+
+  classDef e2e fill:#4A148C,stroke:#0D1117,color:#FFFFFF,stroke-width:1.4px
+  classDef ui fill:#C62828,stroke:#0D1117,color:#FFFFFF,stroke-width:1.4px
+  classDef intg fill:#E65100,stroke:#0D1117,color:#FFFFFF,stroke-width:1.4px
+  classDef snap fill:#2E7D32,stroke:#0D1117,color:#FFFFFF,stroke-width:1.4px
+  classDef unit fill:#1565C0,stroke:#0D1117,color:#FFFFFF,stroke-width:1.4px
+
+  class E2E e2e
+  class UI ui
+  class INTG intg
+  class SNAP snap
+  class UNIT unit

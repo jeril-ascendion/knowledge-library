@@ -2192,3 +2192,153 @@ body.kg-search-modal-open {
     stroke-opacity: 0.25;
     transition: stroke-opacity 250ms ease-in-out;
   }
+
+/* ─────────────────────────────────────────────────────────────
+   MOBILE PAGE READABILITY + ANTI-PATTERN CARDS + AWS DIAGRAM
+   Overrides for the mobile section. Scoped via id-less rules
+   that win on cascade order. None of these target .section-card.
+   ───────────────────────────────────────────────────────────── */
+
+/* FIX 3 — paragraph spacing, line-height, max-width */
+.article-body p {
+  font-size: 1rem;
+  color: var(--ink-2);
+  line-height: 1.85;
+  margin-bottom: 1.4rem;
+  max-width: 72ch;
+}
+.article-body h2 {
+  margin-top: 3rem;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.article-body h3 {
+  margin-top: 2.25rem;
+  margin-bottom: 0.65rem;
+}
+.article-body h4 {
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+.article-body pre {
+  margin: 1.5rem 0 2rem;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+.article-body ul,
+.article-body ol {
+  margin: 0.5rem 0 1.4rem 1.5rem;
+}
+.article-body li {
+  line-height: 1.75;
+  margin-bottom: 0.5rem;
+}
+.article-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2.5rem 0;
+}
+
+/* FIX 4 — ANTI-PATTERN FLIP CARDS (article pages only).
+   Scoped to .antipattern-card so it cannot affect navigation. */
+.antipattern-card {
+  perspective: 1000px;
+  min-height: 140px;
+  margin: 1.25rem 0;
+  cursor: default;
+}
+.antipattern-inner {
+  position: relative;
+  width: 100%;
+  min-height: 140px;
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+.antipattern-card:hover .antipattern-inner,
+.antipattern-card:focus-within .antipattern-inner {
+  transform: rotateY(180deg);
+}
+.antipattern-front,
+.antipattern-back {
+  position: absolute;
+  width: 100%;
+  min-height: 140px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  padding: 1rem 1.25rem;
+  border-radius: 6px;
+}
+.antipattern-front {
+  background: var(--bg-subtle);
+  border-left: 3px solid var(--accent);
+}
+.antipattern-back {
+  background: var(--nav-bg, #1a2840);
+  border-left: 3px solid var(--accent);
+  transform: rotateY(180deg);
+  color: rgba(255,255,255,0.85);
+}
+.antipattern-front .ap-title {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.5rem;
+}
+.antipattern-front .ap-body {
+  font-size: 0.9rem;
+  color: var(--ink-2);
+  line-height: 1.65;
+}
+.antipattern-back .ap-back-label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 0.5rem;
+}
+.antipattern-back .ap-back-body {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.82);
+  line-height: 1.65;
+}
+.antipattern-hint {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  color: var(--ink-4, #999);
+  letter-spacing: 0.05em;
+  margin-top: 0.6rem;
+  text-align: right;
+}
+
+/* FIX 5 — Diagram canvas: AWS documentation style */
+.diagram-wrap {
+  background: #F8F9FA;
+  border: 1px solid #DEE2E6;
+  border-radius: 10px;
+  padding: 2.5rem 2rem;
+  margin: 0 0 2.5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-x: auto;
+  min-height: 280px;
+}
+.diagram-label {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 2px solid var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}

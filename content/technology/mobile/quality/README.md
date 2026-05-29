@@ -4,8 +4,6 @@
 > **Alignment:** IEEE 829 Test Documentation | WCAG 2.2 AA | Google Android Vitals | Apple MetricKit | ISTQB Mobile Testing
 > **Audience:** QA Architects · Mobile Engineers · Accessibility Engineers · SREs
 
-Written by a Staff Engineer who has built testing infrastructure for apps serving fifty million users and passed WCAG 2.2 AA audits for regulated industries.
-
 ---
 
 ## Mobile Testing Pyramid
@@ -126,23 +124,33 @@ The single most effective catch-early tool for the entire class of "the app feel
 
 ### 1. The Inverted Pyramid
 
-30 Espresso tests, 50 unit tests, 0 snapshot tests, CI takes 45 minutes. Developers stop running tests locally. The fix is rebuilding the pyramid from the base.
+30 Espresso tests, 50 unit tests, 0 snapshot tests, CI takes 45 minutes. Developers stop running tests locally.
+
+**CORRECT:** The fix is rebuilding the pyramid from the base.
 
 ### 2. Flaky UI Tests That Get Disabled
 
-A UI test fails 1 in 20 runs. The team disables it "until we fix it." The disabled test rots; the regression it would have caught ships. The fix is the no-disable rule: a flaky test is fixed (proper IdlingResource / accessibility-identifier waits) or deleted (it wasn't pulling its weight).
+A UI test fails 1 in 20 runs. The team disables it "until we fix it." The disabled test rots; the regression it would have caught ships.
+
+**CORRECT:** The fix is the no-disable rule: a flaky test is fixed (proper IdlingResource / accessibility-identifier waits) or deleted (it wasn't pulling its weight).
 
 ### 3. Snapshot Tests Updated Without Review
 
-A small UI change updates 200 goldens; the engineer runs `--update-snapshots` and merges. A regression slips through unreviewed. The fix is the code-review discipline of reviewing every golden update plus a CI gate that surfaces the count of golden changes per PR.
+A small UI change updates 200 goldens; the engineer runs `--update-snapshots` and merges. A regression slips through unreviewed.
+
+**CORRECT:** The fix is the code-review discipline of reviewing every golden update plus a CI gate that surfaces the count of golden changes per PR.
 
 ### 4. Cold Start Optimisation Without Measurement
 
-The team adds five "optimisations" to cold start and ships. Nobody measured before; nobody measures after; the cold start is the same or worse. The fix is Macrobenchmark in CI and the per-PR cold-start gate.
+The team adds five "optimisations" to cold start and ships. Nobody measured before; nobody measures after; the cold start is the same or worse.
+
+**CORRECT:** The fix is Macrobenchmark in CI and the per-PR cold-start gate.
 
 ### 5. Accessibility as a Pre-Launch Audit
 
-The team treats accessibility as a checklist run two weeks before App Store submission. Hundreds of findings; nothing ships on time. The fix is accessibility designed in from day one — semantics in every design-system component, Dynamic Type in every screen, audit at PR not at release.
+The team treats accessibility as a checklist run two weeks before App Store submission. Hundreds of findings; nothing ships on time.
+
+**CORRECT:** The fix is accessibility designed in from day one — semantics in every design-system component, Dynamic Type in every screen, audit at PR not at release.
 
 ---
 

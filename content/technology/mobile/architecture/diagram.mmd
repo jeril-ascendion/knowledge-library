@@ -1,33 +1,50 @@
 flowchart TD
-  subgraph Entities["Entities — Enterprise Business Rules"]
+  subgraph Entities["ENTITIES — Enterprise Business Rules"]
     DM[Domain Models]
     RI[Repository Interfaces]
   end
-  subgraph UseCases["Use Cases — Application Business Rules"]
+  subgraph UseCases["USE CASES — Application Business Rules"]
     UC1[GetUserProfileUseCase]
     UC2[PlaceOrderUseCase]
     UC3[AuthenticateUseCase]
   end
-  subgraph Adapters["Interface Adapters"]
+  subgraph Adapters["INTERFACE ADAPTERS"]
     VM[ViewModel]
     RIMPL[Repository Implementations]
     API[API Client / Retrofit]
     DAO[Room DAO / SwiftData]
   end
-  subgraph Frameworks["Frameworks & Drivers"]
+  subgraph Frameworks["FRAMEWORKS & DRIVERS"]
     UI[Compose UI / SwiftUI]
     NET[OkHttp / URLSession]
     DB[SQLite / Core Data]
     DI[Hilt / Factory]
   end
-  UI --> VM
-  VM --> UC1 & UC2 & UC3
-  UC1 & UC2 & UC3 --> RI
-  RI --> RIMPL
-  RIMPL --> API & DAO
+
+  UI -- "Events" --> VM
+  VM -- "UiState" --> UI
+  VM -- "invoke" --> UC1
+  VM -- "invoke" --> UC2
+  VM -- "invoke" --> UC3
+  UC1 --> RI
+  UC2 --> RI
+  UC3 --> RI
+  RI -. "implemented by" .-> RIMPL
+  RIMPL -- "Result" --> API
+  RIMPL -- "Result" --> DAO
   API --> NET
   DAO --> DB
-  style Entities fill:#FCE4EC,stroke:#880E4F
-  style UseCases fill:#F3E5F5,stroke:#4A148C
-  style Adapters fill:#E8EAF6,stroke:#1A237E
-  style Frameworks fill:#E3F2FD,stroke:#0D47A1
+
+  classDef ui fill:#E8F4FD,stroke:#0078D4,color:#0D1117,stroke-width:1.2px
+  classDef domain fill:#F0FFF4,stroke:#2E7D32,color:#0D1117,stroke-width:1.2px
+  classDef data fill:#FFF4EC,stroke:#E65100,color:#0D1117,stroke-width:1.2px
+  classDef fw fill:#F5F5F5,stroke:#555,color:#0D1117,stroke-width:1px
+  class UI,VM ui
+  class DM,RI,UC1,UC2,UC3 domain
+  class RIMPL,API,DAO data
+  class NET,DB,DI fw
+
+  style Entities fill:#FCE4EC,stroke:#880E4F,color:#0D1117
+  style UseCases fill:#F3E5F5,stroke:#4A148C,color:#0D1117
+  style Adapters fill:#E8EAF6,stroke:#1A237E,color:#0D1117
+  style Frameworks fill:#E3F2FD,stroke:#0D47A1,color:#0D1117

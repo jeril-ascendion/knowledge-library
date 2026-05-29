@@ -4,7 +4,7 @@
 > **Alignment:** TOGAF Technology Architecture | Google MAD | Apple Platform Standards | CNCF Mobile | IEEE 730
 > **Audience:** Solutions Architects · Mobile Engineering Leads · CTOs · Technical Strategists
 
-The platform decision is the single most expensive choice a mobile programme makes. Get it wrong and the next five years are spent rewriting; get it right and the team compounds productivity release after release. Written by a Principal Mobile Architect who has evaluated platform choices for twenty enterprise clients and shipped production apps on Android, iOS, Flutter, React Native, and Kotlin Multiplatform.
+The platform decision is the single most expensive choice a mobile programme makes. Get it wrong and the next five years are spent rewriting; get it right and the team compounds productivity release after release. This reference covers the four serious deployment models — pure native, Flutter, React Native, and Kotlin Multiplatform — with weighted-criteria decision frameworks, honest five-year TCO comparison, and production-case evidence from Uber, Airbnb, Meta, Google, and Cash App.
 
 ---
 
@@ -99,23 +99,33 @@ Recommended combinations for four client archetypes: **Fintech startup** — Flu
 
 ### 1. Choosing platform by developer preference
 
-The CTO picks React Native because their existing web team can be redeployed without retraining. Six months later the team is fighting JSI bridge bugs they have no skills to debug. The fix is honesty: name the hiring constraint as a constraint in the ADR, accept the trade-offs, and budget for native specialists on the integration boundary.
+The CTO picks React Native because their existing web team can be redeployed without retraining. Six months later the team is fighting JSI bridge bugs they have no skills to debug.
+
+**CORRECT:** The fix is honesty: name the hiring constraint as a constraint in the ADR, accept the trade-offs, and budget for native specialists on the integration boundary.
 
 ### 2. Starting cross-platform then switching to native mid-project
 
-Airbnb's 2018 migration off React Native is the documented case study. The cross-platform saving never materialised because cross-team coordination cost exceeded the code-sharing benefit. The fix is the two-week framework spike before commitment and the ADR with explicit rejection criteria that would re-open the decision.
+Airbnb's 2018 migration off React Native is the documented case study. The cross-platform saving never materialised because cross-team coordination cost exceeded the code-sharing benefit.
+
+**CORRECT:** The fix is the two-week framework spike before commitment and the ADR with explicit rejection criteria that would re-open the decision.
 
 ### 3. Choosing React Native for a performance-critical real-time feature
 
-The team picks React Native for a live-trading or real-time-multiplayer app. The JavaScript runtime cost is the bottleneck. The fix is naming the performance SLA at decision time and pricing it into the framework comparison.
+The team picks React Native for a live-trading or real-time-multiplayer app. The JavaScript runtime cost is the bottleneck.
+
+**CORRECT:** The fix is naming the performance SLA at decision time and pricing it into the framework comparison.
 
 ### 4. Flutter app with a web team that has never used Dart
 
-The team's React and Vue muscle is genuine; their Dart muscle is zero. The first six months are spent learning Dart's syntax, the Widget tree mental model, and the platform-channel pattern. The fix is the two-week spike, honest skills mapping, and budgeted retraining time.
+The team's React and Vue muscle is genuine; their Dart muscle is zero. The first six months are spent learning Dart's syntax, the Widget tree mental model, and the platform-channel pattern.
+
+**CORRECT:** The fix is the two-week spike, honest skills mapping, and budgeted retraining time.
 
 ### 5. MAUI without an existing .NET mobile codebase
 
-MAUI is the right answer for organisations already deep in .NET — Microsoft-shop enterprises, internal tools where C# expertise exists. For everyone else the framework's strengths are inaccessible and the framework's quirks dominate. The fix is honest skills inventory before the framework choice.
+MAUI is the right answer for organisations already deep in .NET — Microsoft-shop enterprises, internal tools where C# expertise exists. For everyone else the framework's strengths are inaccessible and the framework's quirks dominate.
+
+**CORRECT:** The fix is honest skills inventory before the framework choice.
 
 ---
 

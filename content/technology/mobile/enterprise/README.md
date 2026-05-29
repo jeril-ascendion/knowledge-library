@@ -86,23 +86,33 @@ Five-year TCO comparison, normalised to pure native iOS plus Android at 100 perc
 
 ### 1. Full MDM Enrollment on Personal Devices
 
-The enterprise insists on MDM enrollment for BYOD; users refuse or accept under protest; usage drops; shadow IT proliferates. The fix is MAM-without-enrollment for BYOD.
+The enterprise insists on MDM enrollment for BYOD; users refuse or accept under protest; usage drops; shadow IT proliferates.
+
+**CORRECT:** The fix is MAM-without-enrollment for BYOD.
 
 ### 2. Per-Customer App Forks
 
-The mobile team maintains a fork per enterprise customer with branded URLs. The fork count grows; maintenance dominates engineering time within 18 months. The fix is managed app configuration — one binary, runtime configuration per enterprise.
+The mobile team maintains a fork per enterprise customer with branded URLs. The fork count grows; maintenance dominates engineering time within 18 months.
+
+**CORRECT:** The fix is managed app configuration — one binary, runtime configuration per enterprise.
 
 ### 3. Trusting the Corporate Network
 
-The backend API trusts requests from the corporate VPN; the API is unauthenticated within. A compromised endpoint anywhere on the corporate network becomes a path to all data. The fix is Zero Trust: every request authenticated, every device's health checked.
+The backend API trusts requests from the corporate VPN; the API is unauthenticated within. A compromised endpoint anywhere on the corporate network becomes a path to all data.
+
+**CORRECT:** The fix is Zero Trust: every request authenticated, every device's health checked.
 
 ### 4. Compliance Theatre
 
-Controls are documented but not implemented; the audit passes because the auditor does not probe. The next breach reveals the gap; the regulatory notification proceeds. The fix is continuous compliance validation, not annual self-attestation.
+Controls are documented but not implemented; the audit passes because the auditor does not probe. The next breach reveals the gap; the regulatory notification proceeds.
+
+**CORRECT:** The fix is continuous compliance validation, not annual self-attestation.
 
 ### 5. Wipe Without Backup
 
-Selective wipe removes corporate data including the user's locally-stored work-in-progress. Hours of work lost. The fix is the design ensuring work-in-progress syncs to the server before the wipe completes; offline draft state has documented backup mechanisms.
+Selective wipe removes corporate data including the user's locally-stored work-in-progress. Hours of work lost.
+
+**CORRECT:** The fix is the design ensuring work-in-progress syncs to the server before the wipe completes; offline draft state has documented backup mechanisms.
 
 ---
 

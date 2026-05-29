@@ -107,23 +107,33 @@ The symbol-upload step in CI is non-negotiable — without it, every stack trace
 
 ### 1. Manual Code Signing on Each Mac
 
-Engineers download certificates manually; the CI machine fails to sign because its certificate is different. The fix is Fastlane Match — every machine, including engineers' Macs, runs `match` to get the same signing identity.
+Engineers download certificates manually; the CI machine fails to sign because its certificate is different.
+
+**CORRECT:** The fix is Fastlane Match — every machine, including engineers' Macs, runs `match` to get the same signing identity.
 
 ### 2. Storing the Production Keystore in the Repo
 
-The Android Keystore is checked in "for convenience." The repo is forked or leaked; the Keystore is exfiltrated; anyone can sign apps as the organisation. The fix is base64-encoded GitHub Actions secret plus Play App Signing recovery path.
+The Android Keystore is checked in "for convenience." The repo is forked or leaked; the Keystore is exfiltrated; anyone can sign apps as the organisation.
+
+**CORRECT:** The fix is base64-encoded GitHub Actions secret plus Play App Signing recovery path.
 
 ### 3. Long-Lived Develop Branch
 
-A `develop` branch sits between `main` and feature branches; merges batch; conflicts accumulate; release traceability is lost. The fix is trunk-based development with feature flags.
+A `develop` branch sits between `main` and feature branches; merges batch; conflicts accumulate; release traceability is lost.
+
+**CORRECT:** The fix is trunk-based development with feature flags.
 
 ### 4. 100 Percent Rollout on Day One
 
-The release ships to all users immediately. A regression discovered hours later has already reached everyone. The fix is the staged-rollout discipline.
+The release ships to all users immediately. A regression discovered hours later has already reached everyone.
+
+**CORRECT:** The fix is the staged-rollout discipline.
 
 ### 5. Symbol Upload Skipped
 
-Crashlytics is integrated but symbol upload is not part of CI. Stack traces are obfuscated; the team cannot triage crashes. The fix is the CI step that uploads symbols on every release build and the gate that fails the build if upload fails.
+Crashlytics is integrated but symbol upload is not part of CI. Stack traces are obfuscated; the team cannot triage crashes.
+
+**CORRECT:** The fix is the CI step that uploads symbols on every release build and the gate that fails the build if upload fails.
 
 ---
 

@@ -1,27 +1,48 @@
 flowchart TD
-  subgraph Network["Transport Security"]
+  subgraph Transport["TRANSPORT SECURITY"]
     TLS[TLS 1.3 Minimum]
     PIN[SPKI Certificate Pinning]
     NSC[Network Security Config / ATS]
   end
-  subgraph Auth["Authentication & Authorisation"]
-    PKCE[OAuth 2.0 + PKCE — AppAuth Library]
-    BIO[Biometric — BiometricPrompt / LocalAuthentication]
-    JWT[JWT Validation — Short-lived Access Tokens]
+  subgraph Auth["AUTHENTICATION & AUTHORISATION"]
+    PKCE[OAuth 2.0 + PKCE — AppAuth]
+    BIO[Biometric — BiometricPrompt / LocalAuth]
+    JWT[Short-lived JWT — 15 min]
   end
-  subgraph Storage["Secure Storage"]
-    KS[Android Keystore — Hardware-Backed AES-256]
+  subgraph Storage["SECURE STORAGE"]
+    KS[Android Keystore — Hardware AES-256]
     KC[iOS Keychain — kSecAttrAccessibleWhenUnlockedThisDeviceOnly]
-    EDB[Encrypted SQLite — SQLCipher / EncryptedSharedPrefs]
+    EDB[SQLCipher / EncryptedSharedPrefs]
   end
-  subgraph Attestation["Runtime & Binary Protection"]
+  subgraph Attest["RUNTIME & BINARY PROTECTION"]
     PI[Play Integrity API]
     AA[Apple AppAttest]
     RD[Root / Jailbreak Detection]
     R8[R8 ProGuard · debuggable=false]
   end
-  Network --> Auth --> Storage --> Attestation
-  style Network fill:#E8F5E9,stroke:#1B5E20
-  style Auth fill:#E3F2FD,stroke:#0D47A1
-  style Storage fill:#FFF3E0,stroke:#E65100
-  style Attestation fill:#FCE4EC,stroke:#880E4F
+
+  TLS --> PKCE
+  PIN --> PKCE
+  NSC --> PKCE
+  PKCE --> KS
+  BIO --> KS
+  BIO --> KC
+  JWT --> EDB
+  KS --> PI
+  KC --> AA
+  EDB --> R8
+  RD --> R8
+
+  classDef transport fill:#E8F5E9,stroke:#1B5E20,color:#0D1117,stroke-width:1.2px
+  classDef auth fill:#E3F2FD,stroke:#0D47A1,color:#0D1117,stroke-width:1.2px
+  classDef storage fill:#FFF3E0,stroke:#E65100,color:#0D1117,stroke-width:1.2px
+  classDef attest fill:#FFEBEE,stroke:#B71C1C,color:#0D1117,stroke-width:1.2px
+  class TLS,PIN,NSC transport
+  class PKCE,BIO,JWT auth
+  class KS,KC,EDB storage
+  class PI,AA,RD,R8 attest
+
+  style Transport fill:#E8F5E9,stroke:#1B5E20,color:#0D1117
+  style Auth fill:#E3F2FD,stroke:#0D47A1,color:#0D1117
+  style Storage fill:#FFF3E0,stroke:#E65100,color:#0D1117
+  style Attest fill:#FFEBEE,stroke:#B71C1C,color:#0D1117

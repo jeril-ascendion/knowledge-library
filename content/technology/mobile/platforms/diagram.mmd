@@ -1,20 +1,39 @@
 flowchart TD
-  subgraph UILayer["UI Layer"]
-    direction LR
-    C[Compose UI / SwiftUI] -->|Events| VM[ViewModel / Observable]
-    VM -->|UiState| C
-  end
-  subgraph DomainLayer["Domain Layer (optional)"]
-    UC[Use Cases]
-  end
-  subgraph DataLayer["Data Layer"]
-    direction LR
-    R[Repository] --> RDS[Remote DataSource — Retrofit / URLSession]
-    R --> LDS[Local DataSource — Room / SwiftData]
-  end
-  VM --> UC
-  UC --> R
-  VM --> R
-  style UILayer fill:#E3F2FD,stroke:#1565C0
-  style DomainLayer fill:#E8F5E9,stroke:#2E7D32
-  style DataLayer fill:#FFF3E0,stroke:#E65100
+  START([Platform Decision]) --> Q1{Geography mix?}
+  Q1 -->|iOS-skewed enterprise| Q2{Team size + skills?}
+  Q1 -->|Android-skewed emerging| Q2
+  Q1 -->|Mixed 50/50| Q3{Time to market?}
+
+  Q2 -->|Two native teams| NATIVE[Pure Native — Kotlin + Swift]
+  Q2 -->|Single team| Q4{Platform-native UX required?}
+
+  Q3 -->|Critical &lt; 6 months| Q4
+  Q3 -->|Standard 9-18 months| Q4
+
+  Q4 -->|Hard requirement| NATIVE
+  Q4 -->|Soft preference| Q5{Custom-canvas UI OK?}
+
+  Q5 -->|Yes — branded| FLUTTER[Flutter — Dart + Impeller]
+  Q5 -->|No — must feel native| Q6{Existing skills?}
+
+  Q6 -->|JS / TS| RN[React Native — New Architecture]
+  Q6 -->|Kotlin + native| KMP[Kotlin Multiplatform]
+
+  NATIVE --> ADR([ADR + 18-month review])
+  FLUTTER --> ADR
+  RN --> ADR
+  KMP --> ADR
+
+  classDef decision fill:#E3F2FD,stroke:#0078D4,color:#0D1117,stroke-width:1.2px
+  classDef native fill:#232F3E,stroke:#0D1117,color:#FFFFFF,stroke-width:1.4px
+  classDef flutter fill:#0553B1,stroke:#0D1117,color:#FFFFFF,stroke-width:1.4px
+  classDef rn fill:#61DAFB,stroke:#0D47A1,color:#0D1117,stroke-width:1.4px
+  classDef kmp fill:#7F52FF,stroke:#0D1117,color:#FFFFFF,stroke-width:1.4px
+  classDef terminal fill:#1B5E20,stroke:#0D1117,color:#FFFFFF,stroke-width:1.4px
+
+  class Q1,Q2,Q3,Q4,Q5,Q6 decision
+  class NATIVE native
+  class FLUTTER flutter
+  class RN rn
+  class KMP kmp
+  class START,ADR terminal

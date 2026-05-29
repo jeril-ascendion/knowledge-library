@@ -4,8 +4,6 @@
 > **Alignment:** OWASP MASVS 2.0 | NIST SP 800-163 r1 | ISO 27001 | BSP Circular 982 | PCI DSS v4.0 Mobile | PDPA Philippines
 > **Audience:** Security Architects · Mobile Engineers · Compliance Officers · Penetration Testers
 
-Written by a Mobile Security Architect who has led MASVS L2 assessments for Philippine banking apps and passed PCI DSS mobile audits for payment processors.
-
 ---
 
 ## OWASP Mobile Top 10 (2024) — All Ten In Depth
@@ -82,23 +80,33 @@ Written by a Mobile Security Architect who has led MASVS L2 assessments for Phil
 
 ### 1. Embedded API Keys with Sensitive Scopes
 
-An AWS access key with S3 write access embedded "just for uploads." Within weeks the key is on GitHub via reverse engineering and an unrelated bucket is mining cryptocurrency. The fix is per-user STS tokens minted by the backend after authentication.
+An AWS access key with S3 write access embedded "just for uploads." Within weeks the key is on GitHub via reverse engineering and an unrelated bucket is mining cryptocurrency.
+
+**CORRECT:** The fix is per-user STS tokens minted by the backend after authentication.
 
 ### 2. Pinning a Specific Certificate
 
-The pinned certificate rotates; the app stops working overnight. Customer support floods. The fix is SPKI hash pinning with two backup pins.
+The pinned certificate rotates; the app stops working overnight. Customer support floods.
+
+**CORRECT:** The fix is SPKI hash pinning with two backup pins.
 
 ### 3. Trusting Root Detection Alone
 
-The app blocks rooted devices via SafetyNet (legacy) or `RootBeer`. A Magisk module bypasses it. The fix is server-side attestation via Play Integrity / App Attest with client-side detection as one signal among many.
+The app blocks rooted devices via SafetyNet (legacy) or `RootBeer`. A Magisk module bypasses it.
+
+**CORRECT:** The fix is server-side attestation via Play Integrity / App Attest with client-side detection as one signal among many.
 
 ### 4. AES-ECB Because "It Is Simpler"
 
-A developer picks AES-ECB because the API needs only a key, not an IV. ECB leaks structure. The fix is the cryptography review that bans ECB and prefers high-level libraries (CryptoKit on iOS, Tink on Android) where the wrong choice is hard to make.
+A developer picks AES-ECB because the API needs only a key, not an IV. ECB leaks structure.
+
+**CORRECT:** The fix is the cryptography review that bans ECB and prefers high-level libraries (CryptoKit on iOS, Tink on Android) where the wrong choice is hard to make.
 
 ### 5. Logging Refresh Tokens for "Troubleshooting"
 
-A debug logger prints the full token. The log ships in release. Crash reports leak tokens to the analytics provider. The fix is the logger abstraction that redacts by secret-name regex and the CI scan that fails the build on raw `Log.`/`print` of secret-tagged values.
+A debug logger prints the full token. The log ships in release. Crash reports leak tokens to the analytics provider.
+
+**CORRECT:** The fix is the logger abstraction that redacts by secret-name regex and the CI scan that fails the build on raw `Log.`/`print` of secret-tagged values.
 
 ---
 

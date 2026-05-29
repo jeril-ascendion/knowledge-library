@@ -1,28 +1,43 @@
 flowchart LR
-  subgraph Mobile["Mobile App"]
+  subgraph Mobile["MOBILE APP"]
     UI2[UI Layer]
     VM2[ViewModel]
     REPO[Repository]
     LDB[Local DB — Room / SwiftData]
     WM[WorkManager / BGTaskScheduler]
   end
-  subgraph BFF["Mobile BFF"]
+  subgraph BFF["MOBILE BFF"]
     GW[API Gateway]
     AGG[Aggregation Layer]
-    CACHE[Response Cache]
+    CACHE[Response Cache + ETag]
   end
-  subgraph Backend["Microservices"]
+  subgraph Backend["MICROSERVICES"]
     US[User Service]
     PS[Product Service]
     OS[Order Service]
     PUSH[Push Service — APNs / FCM]
   end
-  UI2 --> VM2 --> REPO
+
+  UI2 --> VM2
+  VM2 --> REPO
   REPO --> LDB
-  REPO <-->|REST / GraphQL| GW
-  GW --> AGG --> US & PS & OS
-  PUSH -->|Silent Push| Mobile
-  WM -->|Background Sync| REPO
-  style Mobile fill:#E3F2FD,stroke:#0D47A1
-  style BFF fill:#E8F5E9,stroke:#1B5E20
-  style Backend fill:#FFF3E0,stroke:#E65100
+  REPO -- "REST / GraphQL" --> GW
+  GW -- "Aggregated Response" --> REPO
+  GW --> AGG
+  AGG --> US
+  AGG --> PS
+  AGG --> OS
+  PUSH -- "Silent Push — notification_id" --> Mobile
+  WM -- "Delta Sync" --> REPO
+
+  classDef mobile fill:#E3F2FD,stroke:#0D47A1,color:#0D1117,stroke-width:1.2px
+  classDef bff fill:#FFF8E1,stroke:#F57F17,color:#0D1117,stroke-width:1.2px
+  classDef backend fill:#E8F5E9,stroke:#1B5E20,color:#0D1117,stroke-width:1.2px
+
+  class UI2,VM2,REPO,LDB,WM mobile
+  class GW,AGG,CACHE bff
+  class US,PS,OS,PUSH backend
+
+  style Mobile fill:#E3F2FD,stroke:#0D47A1,color:#0D1117
+  style BFF fill:#FFF8E1,stroke:#F57F17,color:#0D1117
+  style Backend fill:#E8F5E9,stroke:#1B5E20,color:#0D1117

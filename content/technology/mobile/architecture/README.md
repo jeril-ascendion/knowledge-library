@@ -4,8 +4,6 @@
 > **Alignment:** TOGAF Application Architecture | Google MAD Architecture Guide | Apple HIG 2024 | Clean Architecture (Martin) | SOLID Principles
 > **Audience:** Mobile Architects · Senior Engineers · Technical Leads
 
-Written by a Principal Mobile Architect who has reviewed and refactored the architecture of fifteen production apps for financial services, healthcare, and government clients.
-
 ---
 
 ## The Architecture Evolution
@@ -112,23 +110,33 @@ Child features compose into parents through `Scope` (extract a child state slice
 
 ### 1. The Massive ViewModel
 
-The ViewModel grows to 1,000 lines because the screen has six tabs and the team kept adding state to one class. Recomposition becomes unpredictable; testing requires mocking ten dependencies. The fix is splitting per logical sub-screen, sharing state through a parent ViewModel only where genuinely shared, and using sealed UiState to keep screen state explicit.
+The ViewModel grows to 1,000 lines because the screen has six tabs and the team kept adding state to one class. Recomposition becomes unpredictable; testing requires mocking ten dependencies.
+
+**CORRECT:** The fix is splitting per logical sub-screen, sharing state through a parent ViewModel only where genuinely shared, and using sealed UiState to keep screen state explicit.
 
 ### 2. The Two-Way Binding Trap
 
-The team uses two-way data binding because "it's less code." The ViewModel is mutated from the View; the source of truth becomes unclear; tests cannot reproduce the bug. The fix is unidirectional flow: the ViewModel owns state; the View renders state and sends events.
+The team uses two-way data binding because "it's less code." The ViewModel is mutated from the View; the source of truth becomes unclear; tests cannot reproduce the bug.
+
+**CORRECT:** The fix is unidirectional flow: the ViewModel owns state; the View renders state and sends events.
 
 ### 3. The Cargo-Cult Clean Architecture
 
-The five-engineer team building a simple CRUD app insists on Entities, Use Cases, Repositories, and Mappers for every screen. The Use Case is a one-line wrapper around the Repository. The team ships 30 percent slower than necessary. The fix is the decision matrix — Clean Architecture earns its place at scale, not as a default.
+The five-engineer team building a simple CRUD app insists on Entities, Use Cases, Repositories, and Mappers for every screen. The Use Case is a one-line wrapper around the Repository. The team ships 30 percent slower than necessary.
+
+**CORRECT:** The fix is the decision matrix — Clean Architecture earns its place at scale, not as a default.
 
 ### 4. The Mixed-Pattern Codebase
 
-Five engineers, five favourite patterns, one codebase. Every screen follows a different convention. New joiners cannot generalise from any one screen. The fix is the ADR plus a canonical exemplar plus code-review discipline.
+Five engineers, five favourite patterns, one codebase. Every screen follows a different convention. New joiners cannot generalise from any one screen.
+
+**CORRECT:** The fix is the ADR plus a canonical exemplar plus code-review discipline.
 
 ### 5. Navigation Logic in the View
 
-The View calls `navController.navigate(...)` based on a business condition. The condition is buried in the View; the test cannot reach it. The fix is moving navigation decisions into the ViewModel and exposing them as events the Coordinator (or NavHost wrapper) executes.
+The View calls `navController.navigate(...)` based on a business condition. The condition is buried in the View; the test cannot reach it.
+
+**CORRECT:** The fix is moving navigation decisions into the ViewModel and exposing them as events the Coordinator (or NavHost wrapper) executes.
 
 ---
 

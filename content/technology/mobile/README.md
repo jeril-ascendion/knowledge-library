@@ -1,6 +1,6 @@
 # Mobile Development
 
-A practitioner-grade reference for the seven disciplines that decide whether a mobile programme ships and survives — platform foundations, architecture, quality, security, backend integration, delivery, and enterprise strategy. Written by architects who have shipped production apps for financial services, healthcare, and government clients across Apple and Google's stores.
+A practitioner-grade reference for the seven disciplines that decide whether a mobile programme ships and survives — platform foundations, architecture, quality, security, backend integration, delivery, and enterprise strategy. Practitioner-grade architecture references for engineers, solutions architects, and technical leads delivering production mobile apps for financial services, healthcare, and government clients.
 
 **Section:** `technology/` | **Subsection:** `mobile/`
 **Alignment:** Google MAD | Apple HIG 2024 | OWASP MASVS 2.0 | WCAG 2.2 AA | NIST SP 800-163 | DORA Metrics

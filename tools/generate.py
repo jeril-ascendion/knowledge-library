@@ -2173,28 +2173,27 @@ MERMAID_INIT = """{
   flowchart: {
     useMaxWidth: true,
     htmlLabels: true,
-    curve: 'basis',
-    padding: 25,
-    nodeSpacing: 40,
-    rankSpacing: 50,
-    diagramPadding: 16
+    curve: 'orthogonal',
+    padding: 24,
+    nodeSpacing: 50,
+    rankSpacing: 60
   },
   themeVariables: {
-    background:          '#FFFFFF',
-    primaryColor:        '#DCEAFC',
-    primaryTextColor:    '#1A2840',
-    primaryBorderColor:  '#3D6395',
-    lineColor:           '#5079A8',
-    secondaryColor:      '#EAF1FB',
-    tertiaryColor:       '#FBEDE0',
-    edgeLabelBackground: '#FFFFFF',
-    clusterBkg:          '#F8F8F6',
-    clusterBorder:       '#A8C0DD',
-    titleColor:          '#1A2840',
-    fontFamily:          'IBM Plex Sans, system-ui, sans-serif',
-    fontSize:            '13px',
-    nodeBorder:          '#3D6395',
-    mainBkg:             '#DCEAFC'
+    background:           '#FFFFFF',
+    primaryColor:         '#E8F4FD',
+    primaryTextColor:     '#0D1117',
+    primaryBorderColor:   '#0078D4',
+    lineColor:            '#555555',
+    secondaryColor:       '#FFF4EC',
+    tertiaryColor:        '#F0FFF4',
+    edgeLabelBackground:  '#FFFFFF',
+    clusterBkg:           '#F8F9FA',
+    clusterBorder:        '#CED4DA',
+    titleColor:           '#0D1117',
+    fontFamily:           'IBM Plex Sans, system-ui, sans-serif',
+    fontSize:             '13px',
+    nodeBorder:           '#0078D4',
+    mainBkg:              '#E8F4FD'
   }
 }"""
 
@@ -2936,6 +2935,36 @@ def md_to_html(text):
     appears in the article hero (title, description, Section/Subsection/
     Alignment chips). Keeps READMEs readable as standalone files while
     avoiding duplication on the rendered page."""
+    # Pre-pass: strip the blockquote metadata block ("> **Section:** ...",
+    # "> **Subsection:** ...", "> **Alignment:** ...", "> **Audience:** ...")
+    # that the new mobile READMEs use. The block is a contiguous run of
+    # blockquote lines starting with one of the named metadata keys; we
+    # also drop blank/blockquote continuation lines that immediately follow.
+    # As a safety net, any line containing "Written by" is also dropped.
+    pre_lines = []
+    in_meta_block = False
+    meta_re = re.compile(r'^\s*>\s*\*\*(Section|Subsection|Alignment|Audience):\*\*')
+    for ln in text.split("\n"):
+        if meta_re.match(ln):
+            in_meta_block = True
+            continue
+        if in_meta_block:
+            stripped_ln = ln.strip()
+            if stripped_ln == "" or stripped_ln.startswith(">"):
+                # stay inside the block; drop the line
+                continue
+            in_meta_block = False
+            # fall through to normal processing of this line
+        if "Written by" in ln:
+            continue
+        # Strip the italicised footer credit lines (e.g.
+        # "*Last updated: 2026 | ...*" and "*Section: `...` | Aligned to ...*")
+        # that duplicate hero chips at the bottom of every page.
+        if re.match(r'^\s*\*(Last updated:|Section:)', ln):
+            continue
+        pre_lines.append(ln)
+    text = "\n".join(pre_lines)
+
     lines = text.split("\n")
     out = []
     state = "before_h1"
@@ -2959,12 +2988,13 @@ def md_to_html(text):
             continue
         if state == "after_desc_strip_meta":
             # Skip blank lines, **Section:**, **Subsection:**, **Alignment:**,
-            # and a single trailing --- separator.
+            # **Audience:**, and a single trailing --- separator.
             if not stripped:
                 continue
             if (stripped.startswith("**Section:**") or
                 stripped.startswith("**Subsection:**") or
-                stripped.startswith("**Alignment:**")):
+                stripped.startswith("**Alignment:**") or
+                stripped.startswith("**Audience:**")):
                 continue
             if stripped == "---":
                 state = "in_body"
@@ -2992,7 +3022,76 @@ def md_to_html(text):
                 p = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", p)
                 result.append(f"<p>{p}</p>")
         html = "\n".join(result)
+    html = _reshape_mobile_antipatterns(html)
     return enhance_html(html)
+
+
+def _reshape_mobile_antipatterns(html):
+    """Find the "Anti-Patterns" H2 section and reshape every numbered <h3>
+    inside it into a flip card with antipattern-card CSS. The front face
+    carries the anti-pattern title and the description that precedes the
+    "**CORRECT:**" marker; the back face carries the text after the marker
+    (the corrected approach). When no CORRECT marker is present, the back
+    falls back to "What to do instead" plus a brief restatement.
+
+    The reshape runs BEFORE enhance_html so PRINCIPLE_HEADING_RE does not
+    later wrap the same H3s as principle-cards. Only fires inside Anti-
+    Patterns sections so other pages are unaffected.
+    """
+    h2_re = re.compile(
+        r'(<h2[^>]*>\s*Anti-?Patterns[^<]*</h2>)(.*?)(?=<h2|<hr|$)',
+        re.IGNORECASE | re.DOTALL,
+    )
+
+    def reshape_section(section_match):
+        heading = section_match.group(1)
+        body = section_match.group(2)
+        # Split body on numbered H3 boundaries; each part has the H3 plus
+        # all following content until the next H3 or end.
+        block_re = re.compile(
+            r'<h3>\s*(\d+)\.\s+(.+?)</h3>(.*?)(?=<h3>|$)',
+            re.DOTALL,
+        )
+        rebuilt = []
+        cursor = 0
+        for m in block_re.finditer(body):
+            # Preserve any non-H3 markup between blocks (paragraphs intro etc.)
+            rebuilt.append(body[cursor:m.start()])
+            cursor = m.end()
+            num, title, inner = m.group(1), m.group(2).strip(), m.group(3)
+            # Split front / back on the CORRECT marker (paragraph form).
+            correct_split = re.split(
+                r'<p>\s*<strong>\s*CORRECT:\s*</strong>',
+                inner, maxsplit=1, flags=re.IGNORECASE,
+            )
+            if len(correct_split) == 2:
+                front_html = correct_split[0].strip()
+                back_inner = correct_split[1]
+                # The split consumed "<p><strong>CORRECT:</strong>"; the
+                # trailing "</p>" remains attached to back_inner — keep it.
+                back_html = back_inner.strip()
+            else:
+                front_html = inner.strip()
+                back_html = "<p>Consult the section deep-dive for the corrected approach.</p>"
+            rebuilt.append(
+                '<div class="antipattern-card" tabindex="0">\n'
+                '  <div class="antipattern-inner">\n'
+                '    <div class="antipattern-front">\n'
+                f'      <div class="ap-title">⚠ {num}. {title}</div>\n'
+                f'      <div class="ap-body">{front_html}</div>\n'
+                '      <div class="antipattern-hint">hover to see the fix →</div>\n'
+                '    </div>\n'
+                '    <div class="antipattern-back">\n'
+                '      <div class="ap-back-label">CORRECT APPROACH</div>\n'
+                f'      <div class="ap-back-body">{back_html}</div>\n'
+                '    </div>\n'
+                '  </div>\n'
+                '</div>\n'
+            )
+        rebuilt.append(body[cursor:])
+        return heading + "".join(rebuilt)
+
+    return h2_re.sub(reshape_section, html)
 
 
 # ─────────────────────────────────────────────────────────────────────────────

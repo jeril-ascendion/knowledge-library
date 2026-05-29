@@ -1,31 +1,47 @@
 flowchart TD
-  subgraph Device["Managed Device"]
+  subgraph Device["MANAGED DEVICE"]
     APP[Enterprise App]
     SDK[MAM SDK / App Wrapping]
-    CERT[Client Certificate — MDM Provisioned]
+    CERT[Client Certificate — MDM-provisioned]
   end
-  subgraph MDM["Enterprise Mobility Management"]
-    JAMF[Jamf Pro / Intune]
+  subgraph MDM["ENTERPRISE MOBILITY MANAGEMENT"]
+    JAMF[Jamf Pro / Intune / Workspace ONE]
     APPCFG[AppConfig — Managed Configuration]
-    POLICY[MAM Policies — Pin · Encryption · DLP]
+    POLICY[MAM Policies — PIN · Encryption · DLP]
   end
-  subgraph ZeroTrust["Zero Trust Gateway"]
+  subgraph ZeroTrust["ZERO TRUST GATEWAY"]
     CA[Conditional Access — Azure AD / Okta]
     HEALTH[Device Health Check]
     MTLS[mTLS Verification]
   end
-  subgraph Backend2["Corporate Backend"]
+  subgraph Backend2["CORPORATE BACKEND"]
     API2[Internal APIs]
     DATA[Corporate Data]
   end
-  APP --> SDK --> CA
-  JAMF --> APPCFG --> APP
-  JAMF --> POLICY --> APP
+
+  APP --> SDK
+  JAMF -- "AppConfig Push" --> APPCFG
+  APPCFG --> APP
+  JAMF -- "Policy Push" --> POLICY
+  POLICY --> APP
+  CERT -- "mTLS Handshake" --> MTLS
+  SDK -- "Auth Request" --> CA
   CA --> HEALTH
-  HEALTH --> MTLS
-  MTLS --> API2 --> DATA
-  CERT --> MTLS
-  style Device fill:#E3F2FD,stroke:#0D47A1
-  style MDM fill:#FFF3E0,stroke:#E65100
-  style ZeroTrust fill:#FCE4EC,stroke:#880E4F
-  style Backend2 fill:#E8F5E9,stroke:#1B5E20
+  HEALTH -- "Device Health Check" --> MTLS
+  MTLS --> API2
+  API2 --> DATA
+
+  classDef device fill:#E3F2FD,stroke:#0D47A1,color:#0D1117,stroke-width:1.2px
+  classDef mdm fill:#FFF3E0,stroke:#E65100,color:#0D1117,stroke-width:1.2px
+  classDef zt fill:#FFEBEE,stroke:#B71C1C,color:#0D1117,stroke-width:1.2px
+  classDef backend fill:#E8F5E9,stroke:#1B5E20,color:#0D1117,stroke-width:1.2px
+
+  class APP,SDK,CERT device
+  class JAMF,APPCFG,POLICY mdm
+  class CA,HEALTH,MTLS zt
+  class API2,DATA backend
+
+  style Device fill:#E3F2FD,stroke:#0D47A1,color:#0D1117
+  style MDM fill:#FFF3E0,stroke:#E65100,color:#0D1117
+  style ZeroTrust fill:#FFEBEE,stroke:#B71C1C,color:#0D1117
+  style Backend2 fill:#E8F5E9,stroke:#1B5E20,color:#0D1117

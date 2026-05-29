@@ -1,19 +1,32 @@
 flowchart LR
-  GIT[Git Push to main] --> LINT[Lint & Unit Tests]
+  GIT[Git Push to main] --> LINT[Lint + Unit Tests]
   LINT --> BUILD{Parallel Build}
   BUILD --> AND[Android Gradle Build]
   BUILD --> IOS[iOS Xcode Build]
   AND --> ATEST[Android Test Suite]
   IOS --> ITEST[iOS Test Suite]
-  ATEST & ITEST --> SIGN[Code Signing]
-  SIGN --> DIST[Internal Distribution]
+  ATEST --> SIGN[Code Signing — Fastlane Match]
+  ITEST --> SIGN
+  SIGN --> DIST[Internal Distribution — TestFlight / Firebase]
   DIST --> QA{QA Sign-off}
   QA -->|Approved| STAGED[Staged Production Rollout]
   STAGED --> PLAY[Google Play — 1% → 5% → 20% → 100%]
-  STAGED --> STORE[App Store — Review → Release]
-  QA -->|Rejected| FIX[Fix & Re-run]
-  style GIT fill:#E3F2FD,stroke:#0D47A1
-  style SIGN fill:#FCE4EC,stroke:#880E4F
-  style QA fill:#FFF3E0,stroke:#E65100
-  style PLAY fill:#E8F5E9,stroke:#1B5E20
-  style STORE fill:#E8F5E9,stroke:#1B5E20
+  STAGED --> STORE[App Store — Review → Phased Release]
+  QA -->|Rejected| FIX[Fix + Re-run]
+  FIX --> LINT
+
+  classDef src fill:#F3E5F5,stroke:#4A148C,color:#0D1117,stroke-width:1.2px
+  classDef build fill:#E3F2FD,stroke:#0D47A1,color:#0D1117,stroke-width:1.2px
+  classDef test fill:#E8F5E9,stroke:#1B5E20,color:#0D1117,stroke-width:1.2px
+  classDef sign fill:#FFF3E0,stroke:#E65100,color:#0D1117,stroke-width:1.2px
+  classDef dist fill:#E0F2F1,stroke:#00695C,color:#0D1117,stroke-width:1.2px
+  classDef prod fill:#FF9900,stroke:#9F4C00,color:#FFFFFF,stroke-width:1.6px
+  classDef gate fill:#FFF8E1,stroke:#F57F17,color:#0D1117,stroke-width:1.2px
+
+  class GIT src
+  class LINT,BUILD,AND,IOS build
+  class ATEST,ITEST test
+  class SIGN sign
+  class DIST dist
+  class STAGED,PLAY,STORE prod
+  class QA gate
