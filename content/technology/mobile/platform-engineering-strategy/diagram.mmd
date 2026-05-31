@@ -1,32 +1,21 @@
-%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px'},'flowchart':{'curve':'orthogonal','padding':20}}}%%
+%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans','primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#555555','clusterBkg':'#F8F9FA'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':60,'rankSpacing':70}}}%%
 flowchart TD
     subgraph PT["🏗 Platform Team — Self-Service Infrastructure"]
-        GP["Golden Path
-Project scaffolding CLI
-Feature module template
-Release pipeline template"]
-        SPC["Shared Platform Capabilities
-Auth SDK (PKCE)
-Analytics SDK (typed events)
-Crashlytics wrapper
-Push registration"]
-        DX["Developer Experience
-DORA Metrics Dashboard
-Onboarding docs
-Architecture ADR library"]
+        GP["Golden Path\nProject scaffolding · Module templates\nRelease pipeline template"]
+        SPC["Shared Platform SDK\nAuth (PKCE) · Analytics · Crashlytics\nPush notification registration"]
+        DX["Developer Experience\nDORA Metrics · ADR library\nOnboarding documentation"]
     end
     subgraph FT["⚡ Feature Teams — Consume Platform"]
-        T1["Account Team
-:feature:account"]
-        T2["Payments Team
-:feature:transfer"]
-        T3["Growth Team
-:feature:onboarding"]
+        T1["Account Team\n:feature:account"]
+        T2["Payments Team\n:feature:transfer"]
+        T3["Growth Team\n:feature:onboarding"]
     end
-    GP -->|"CLI generates new module"| T1 & T2 & T3
-    SPC -->|"Import platform SDK"| T1 & T2 & T3
+    GP -->|"CLI generates module"| T1 & T2 & T3
+    SPC -->|"Import Platform SDK"| T1 & T2 & T3
     DX -->|"ADRs guide decisions"| T1 & T2 & T3
-    T1 & T2 & T3 -->|"Inner source PR
-to platform"| PT
+    T1 & T2 & T3 -->|"Inner source PR"| PT
     style PT fill:#E3F2FD,stroke:#1565C0
     style FT fill:#E8F5E9,stroke:#1B5E20
+    style GP fill:#E3F2FD,stroke:#1565C0
+    style SPC fill:#E3F2FD,stroke:#1565C0
+    style DX fill:#E3F2FD,stroke:#1565C0

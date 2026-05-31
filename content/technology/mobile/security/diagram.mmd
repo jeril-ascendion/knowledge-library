@@ -1,48 +1,23 @@
+%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans','primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#555555','clusterBkg':'#F8F9FA'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':60,'rankSpacing':70}}}%%
 flowchart TD
-  subgraph Transport["TRANSPORT SECURITY"]
-    TLS[TLS 1.3 Minimum]
-    PIN[SPKI Certificate Pinning]
-    NSC[Network Security Config / ATS]
-  end
-  subgraph Auth["AUTHENTICATION & AUTHORISATION"]
-    PKCE[OAuth 2.0 + PKCE — AppAuth]
-    BIO[Biometric — BiometricPrompt / LocalAuth]
-    JWT[Short-lived JWT — 15 min]
-  end
-  subgraph Storage["SECURE STORAGE"]
-    KS[Android Keystore — Hardware AES-256]
-    KC[iOS Keychain — kSecAttrAccessibleWhenUnlockedThisDeviceOnly]
-    EDB[SQLCipher / EncryptedSharedPrefs]
-  end
-  subgraph Attest["RUNTIME & BINARY PROTECTION"]
-    PI[Play Integrity API]
-    AA[Apple AppAttest]
-    RD[Root / Jailbreak Detection]
-    R8[R8 ProGuard · debuggable=false]
-  end
-
-  TLS --> PKCE
-  PIN --> PKCE
-  NSC --> PKCE
-  PKCE --> KS
-  BIO --> KS
-  BIO --> KC
-  JWT --> EDB
-  KS --> PI
-  KC --> AA
-  EDB --> R8
-  RD --> R8
-
-  classDef transport fill:#E8F5E9,stroke:#1B5E20,color:#0D1117,stroke-width:1.2px
-  classDef auth fill:#E3F2FD,stroke:#0D47A1,color:#0D1117,stroke-width:1.2px
-  classDef storage fill:#FFF3E0,stroke:#E65100,color:#0D1117,stroke-width:1.2px
-  classDef attest fill:#FFEBEE,stroke:#B71C1C,color:#0D1117,stroke-width:1.2px
-  class TLS,PIN,NSC transport
-  class PKCE,BIO,JWT auth
-  class KS,KC,EDB storage
-  class PI,AA,RD,R8 attest
-
-  style Transport fill:#E8F5E9,stroke:#1B5E20,color:#0D1117
-  style Auth fill:#E3F2FD,stroke:#0D47A1,color:#0D1117
-  style Storage fill:#FFF3E0,stroke:#E65100,color:#0D1117
-  style Attest fill:#FFEBEE,stroke:#B71C1C,color:#0D1117
+    subgraph L1["🌐 Layer 1 — Transport Security"]
+        TLS["TLS 1.3 Minimum\nCleartext HTTP Blocked\nNetwork Security Config"]
+        SPKI["SPKI Hash Certificate Pinning\nOkHttp · URLSession Challenge\nSurvives Certificate Renewal"]
+    end
+    subgraph L2["🔑 Layer 2 — Authentication"]
+        PKCE["OAuth 2.0 + PKCE\nAppAuth-Android · AppAuth-iOS\nNo client_secret in binary"]
+        BIO["Biometric MFA\nBiometricPrompt BIOMETRIC_STRONG\nLocalAuthentication iOS"]
+    end
+    subgraph L3["🗄 Layer 3 — Secure Storage"]
+        AKS["Android Keystore\nHardware-Backed AES-256"]
+        IOK["iOS Keychain\nkSecAttrAccessibleWhenUnlockedThisDeviceOnly"]
+    end
+    subgraph L4["🛡 Layer 4 — Binary Protection"]
+        R8["R8 Full Mode\ndebugable:false in release"]
+        ATT["Play Integrity API\nApple AppAttest\nMEETS_STRONG_INTEGRITY"]
+    end
+    L1 --> L2 --> L3 --> L4
+    style L1 fill:#E8F5E9,stroke:#1B5E20
+    style L2 fill:#E3F2FD,stroke:#1565C0
+    style L3 fill:#FFF3E0,stroke:#E65100
+    style L4 fill:#FFEBEE,stroke:#B71C1C

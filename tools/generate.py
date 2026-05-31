@@ -2174,9 +2174,9 @@ MERMAID_INIT = """{
     useMaxWidth: true,
     htmlLabels: true,
     curve: 'orthogonal',
-    padding: 24,
-    nodeSpacing: 50,
-    rankSpacing: 60
+    padding: 28,
+    nodeSpacing: 60,
+    rankSpacing: 70
   },
   themeVariables: {
     background:           '#FFFFFF',
@@ -2191,7 +2191,7 @@ MERMAID_INIT = """{
     clusterBorder:        '#CED4DA',
     titleColor:           '#0D1117',
     fontFamily:           'IBM Plex Sans, system-ui, sans-serif',
-    fontSize:             '13px',
+    fontSize:             '14px',
     nodeBorder:           '#0078D4',
     mainBkg:              '#E8F4FD'
   }
@@ -4037,7 +4037,7 @@ HERO_SVG_OVERRIDE = {
 # MARKDOWN HELPERS
 # ─────────────────────────────────────────────────────────────────────────────
 
-def md_to_html(text):
+def md_to_html(text, current_path=""):
     """Render markdown to HTML, stripping duplicated metadata that already
     appears in the article hero (title, description, Section/Subsection/
     Alignment chips). Keeps READMEs readable as standalone files while
@@ -4130,7 +4130,7 @@ def md_to_html(text):
                 result.append(f"<p>{p}</p>")
         html = "\n".join(result)
     html = _reshape_mobile_antipatterns(html)
-    return enhance_html(html)
+    return enhance_html(html, current_path)
 
 
 def _reshape_mobile_antipatterns(html):
@@ -4186,19 +4186,87 @@ def _reshape_mobile_antipatterns(html):
                 '    <div class="antipattern-front">\n'
                 f'      <div class="ap-title">⚠ {num}. {title}</div>\n'
                 f'      <div class="ap-body">{front_html}</div>\n'
-                '      <div class="antipattern-hint">hover to see the fix →</div>\n'
+                '      <div class="antipattern-hint">Hover to see the fix ↻</div>\n'
                 '    </div>\n'
                 '    <div class="antipattern-back">\n'
-                '      <div class="ap-back-label">CORRECT APPROACH</div>\n'
+                '      <div class="ap-back-label">↺ Correct Approach</div>\n'
                 f'      <div class="ap-back-body">{back_html}</div>\n'
                 '    </div>\n'
                 '  </div>\n'
                 '</div>\n'
             )
         rebuilt.append(body[cursor:])
-        return heading + "".join(rebuilt)
+        # Also convert the blockquote anti-pattern format
+        # (> **⚠ name** — mistake / > **CORRECT:** fix) into flip cards.
+        return _reshape_blockquote_antipatterns(heading + "".join(rebuilt))
 
     return h2_re.sub(reshape_section, html)
+
+
+# Matches one blockquote-format anti-pattern paragraph:
+#   <p><strong>⚠ Title</strong> — front<br/><strong>CORRECT:</strong> back</p>
+_BQ_AP_PARA_RE = re.compile(
+    r'<p>\s*<strong>\s*⚠\s*(?P<title>.*?)\s*</strong>\s*(?P<front>.*?)'
+    r'<br\s*/?>\s*<strong>\s*CORRECT:\s*</strong>\s*(?P<back>.*?)</p>',
+    re.DOTALL | re.IGNORECASE,
+)
+
+
+def _antipattern_card(label, front_html, back_html):
+    """Build a single anti-pattern flip card. `label` is the front title
+    (already including its number/glyph)."""
+    return (
+        '<div class="antipattern-card" tabindex="0">\n'
+        '  <div class="antipattern-inner">\n'
+        '    <div class="antipattern-front">\n'
+        f'      <div class="ap-title">{label}</div>\n'
+        f'      <div class="ap-body">{front_html}</div>\n'
+        '      <div class="antipattern-hint">Hover to see the fix ↻</div>\n'
+        '    </div>\n'
+        '    <div class="antipattern-back">\n'
+        '      <div class="ap-back-label">↺ Correct Approach</div>\n'
+        f'      <div class="ap-back-body">{back_html}</div>\n'
+        '    </div>\n'
+        '  </div>\n'
+        '</div>\n'
+    )
+
+
+def _reshape_blockquote_antipatterns(section_html):
+    """Convert blockquote-format anti-patterns into flip cards. Each
+    qualifying <blockquote> holds one or more <p> paragraphs shaped as
+    '⚠ Title — mistake / CORRECT: fix'; every such paragraph becomes a card.
+    Blockquotes without the ⚠/CORRECT markers are left untouched."""
+    bq_re = re.compile(r'<blockquote>(.*?)</blockquote>', re.DOTALL)
+
+    def replace_bq(m):
+        inner = m.group(1)
+        if '⚠' not in inner or 'CORRECT:' not in inner:
+            return m.group(0)  # not an anti-pattern blockquote
+        cards = []
+        counter = [0]
+
+        def make_card(pm):
+            counter[0] += 1
+            title = pm.group('title').strip()
+            front = pm.group('front').strip().lstrip('—').strip()
+            back = pm.group('back').strip()
+            cards.append(_antipattern_card(
+                f'⚠ {counter[0]}. {title}',
+                f'<p>{front}</p>',
+                f'<p>{back}</p>',
+            ))
+            return ''
+
+        leftover = _BQ_AP_PARA_RE.sub(make_card, inner)
+        if not cards:
+            return m.group(0)  # nothing matched the paragraph shape
+        # Preserve any non-card paragraphs that remained in the blockquote.
+        leftover = leftover.strip()
+        tail = f'<blockquote>{leftover}</blockquote>' if leftover else ''
+        return "".join(cards) + tail
+
+    return bq_re.sub(replace_bq, section_html)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -4230,7 +4298,95 @@ PITFALL_ICON_SVG = (
 )
 
 
-def enhance_html(html):
+# ─────────────────────────────────────────────────────────────────────────────
+# Change 3 — auto-link bare URLs (e.g. in References lists) into anchors.
+# Change 7 — auto-link known cross-reference terms to their portal pages.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Splits out the regions we must NOT autolink into: existing anchors, inline
+# code, and preformatted blocks. Even-index segments are safe to transform.
+_PROTECTED_SPANS_RE = re.compile(
+    r'(<a\b[^>]*>.*?</a>|<code\b[^>]*>.*?</code>|<pre\b[^>]*>.*?</pre>)',
+    re.DOTALL,
+)
+
+
+def autolink_references(html):
+    """Wrap bare URLs in clickable anchors. Handles both scheme-prefixed URLs
+    (https://…) and the schemeless domain/path form used throughout the
+    reference lists (e.g. 'developer.android.com/topic/architecture'); the
+    latter requires a path segment so plain prose words with dots are not
+    mistaken for links. URLs already inside an <a>, <code>, or <pre> are left
+    untouched, and trailing sentence punctuation is kept outside the link.
+    Anchors get target/rel so step 4 need not re-touch them."""
+    parts = _PROTECTED_SPANS_RE.split(html)
+    # Markdown links and code are already isolated in the odd-index protected
+    # spans, so the even-index segments contain no anchors — one pass is safe.
+    url_re = re.compile(
+        r'(?P<scheme>https?://[^\s<>"\)\]]+)'
+        r'|(?P<bare>\b(?:www\.)?[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)+/[^\s<>"\)\]]*)',
+        re.IGNORECASE,
+    )
+
+    def repl(m):
+        raw = m.group('scheme') or m.group('bare')
+        trail = ''
+        while raw and raw[-1] in '.,;:':
+            trail = raw[-1] + trail
+            raw = raw[:-1]
+        href = raw if raw.lower().startswith(('http://', 'https://')) else 'https://' + raw
+        return (
+            f'<a href="{href}" target="_blank" rel="noopener noreferrer">'
+            f'{raw}</a>{trail}'
+        )
+
+    for k in range(0, len(parts), 2):  # even indices live outside protected spans
+        parts[k] = url_re.sub(repl, parts[k])
+    return ''.join(parts)
+
+
+# Change 7 — common cross-referenced terms → their portal URLs. Each term is
+# linked on its FIRST occurrence per page only, never inside an existing <a>,
+# <code>, or <pre>, and never to the page currently being rendered.
+INTERNAL_LINKS = {
+    "ADR-MOB-001": "/adrs/mobile-architecture-pattern/index.html",
+    "ADR-MOB-002": "/adrs/mobile-platform-selection/index.html",
+    "ADR-MOB-003": "/adrs/mobile-cicd-pipeline/index.html",
+    "ADR-SEC-011": "/adrs/mobile-security-controls/index.html",
+    "ADR-INT-005": "/adrs/bff-api-design/index.html",
+    "ADR-ENT-MOB-001": "/adrs/enterprise-mobile-banking/index.html",
+    "Clean Architecture": "/technology/mobile/architecture/index.html",
+    "Mobile State Management": "/technology/mobile/mobile-state-management/index.html",
+    "Testing Strategy": "/technology/mobile/testing-strategy/index.html",
+    "Security Architecture": "/technology/mobile/security-and-compliance-architecture/index.html",
+    "CI/CD": "/technology/mobile/cicd-engineering-operations/index.html",
+    "Performance Engineering": "/technology/mobile/performance-engineering/index.html",
+    "Offline": "/technology/mobile/offline-reliability/index.html",
+    "Platform Selection": "/technology/mobile/technology-decisions/index.html",
+}
+
+
+def add_internal_links(html, current_path=""):
+    """Auto-link known cross-reference terms to their portal pages. Only the
+    first occurrence of each term per page is linked, occurrences inside
+    existing anchors / code / pre are skipped, and a term is never linked to
+    the page currently being rendered."""
+    parts = _PROTECTED_SPANS_RE.split(html)
+    for term, url in INTERNAL_LINKS.items():
+        if current_path and url == current_path:
+            continue  # don't self-link the current page
+        replacement = f'<a href="{url}" class="internal-link">{term}</a>'
+        pattern = re.compile(r'\b' + re.escape(term) + r'\b')
+        # Walk only the safe (even-index) segments; link the first match found.
+        for k in range(0, len(parts), 2):
+            new_seg, n = pattern.subn(replacement, parts[k], count=1)
+            if n > 0:
+                parts[k] = new_seg
+                break
+    return ''.join(parts)
+
+
+def enhance_html(html, current_path=""):
     """Apply post-processing transforms that add UX-system wrappers."""
 
     # 1. Principle cards — flip-cards. Front: heading + first paragraph.
@@ -4275,6 +4431,15 @@ def enhance_html(html):
     #    Looks for <h2>Related[ Sections]</h2> followed by a <p> that contains
     #    only <a>...</a> | <a>...</a> | ... and rewrites to .related-chips.
     html = _stylize_related_links(html)
+
+    # 6. Change 3 — make bare reference URLs clickable. Runs AFTER step 4 so it
+    #    only touches plain-text URLs; existing anchors are skipped, no double
+    #    target/rel attributes.
+    html = autolink_references(html)
+
+    # 7. Change 7 — auto-link cross-reference terms to their portal pages
+    #    (first occurrence per page, outside anchors/code).
+    html = add_internal_links(html, current_path)
 
     return html
 
@@ -9103,18 +9268,32 @@ def gen_section(slug, src_dir, out_dir):
     print(f"  ✓ {slug}/index.html")
 
 
-def _short_hero_desc(text, max_chars=220):
-    """Trim a description down to the first 1-2 sentences and at most
-    `max_chars` characters, breaking on a word boundary. Used for hub +
-    nested-article hero text so dense paragraphs do not bury the title."""
+def _short_hero_desc(text, max_chars=400):
+    """Trim a description to the LAST complete sentence that fits within
+    `max_chars`. Never cuts mid-word and never appends an ellipsis — the
+    hero text always ends on a full sentence. Used for hub + nested-article
+    hero text so dense paragraphs do not bury the title."""
     if not text:
         return ""
-    text = text.strip()
-    sentences = re.split(r'(?<=[.!?])\s+', text)
-    short = ' '.join(sentences[:2]) if sentences else text
-    if len(short) > max_chars:
-        short = short[:max_chars].rsplit(' ', 1)[0] + '…'
-    return short
+    # Strip metadata lines (blockquotes, bylines, headings)
+    text = re.sub(r'^>.*$', '', text, flags=re.MULTILINE)
+    text = re.sub(r'^Written by.*$', '', text, flags=re.MULTILINE)
+    text = re.sub(r'^#+.*$', '', text, flags=re.MULTILINE)
+    text = ' '.join(text.split())
+
+    if len(text) <= max_chars:
+        return text
+
+    # Find last sentence boundary within max_chars
+    chunk = text[:max_chars]
+    last_period = max(
+        chunk.rfind('. '),
+        chunk.rfind('! '),
+        chunk.rfind('? ')
+    )
+    if last_period > 80:
+        return text[:last_period + 1]
+    return chunk  # fallback — still better than mid-word cut
 
 
 def _short_breadcrumb_title(title):
@@ -9256,7 +9435,7 @@ def gen_article(slug, sub_slug, sub_dir, out_sub, referenced_by=None, metadata=N
     md_text = readme.read_text(encoding="utf-8")
     title, desc = extract_title_desc(md_text)
     tags = extract_tags(md_text)
-    body = md_to_html(md_text)
+    body = md_to_html(md_text, current_path=f"/{slug}/{sub_slug}/index.html")
     sec_title = SECTIONS.get(slug, (slug.title(),))[0]
     has_d = diagram.exists()
     has_hero_art = hero_svg_file.exists()
@@ -9431,7 +9610,7 @@ def gen_nested_article(slug, hub_slug, sub_slug, sub_dir, out_sub, referenced_by
     # Hero desc trimmed to 1-2 sentences so the headline stays scannable.
     desc = _short_hero_desc(desc)
     tags = extract_tags(md_text)
-    body = md_to_html(md_text)
+    body = md_to_html(md_text, current_path=f"/{slug}/{hub_slug}/{sub_slug}/index.html")
     sec_title = SECTIONS.get(slug, (slug.title(),))[0]
     hub_title = NESTED_TAXONOMY.get(f"{slug}/{hub_slug}") and TAXONOMY.get(slug, {}).get(hub_slug, hub_slug.title()) or hub_slug.title()
     # Short label for the hub crumb (e.g. "Mobile" instead of
