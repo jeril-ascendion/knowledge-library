@@ -46,7 +46,7 @@
 
 /* ── RESET ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-padding-top: 88px; /* sticky nav 58px + breathing room */ }
 body {
   font-family: var(--font);
   font-size: 18px;                 /* FIX 6: raised from 17px */
@@ -2696,3 +2696,19 @@ body.kg-search-modal-open {
   transition: color 180ms ease;
 }
 .mobile-article-end-link:hover { color: var(--ink-1, var(--ink)); }
+
+/* ── Scroll offset for sticky nav — anchor navigation fix ── */
+.article-body h1[id],
+.article-body h2[id],
+.article-body h3[id],
+.article-body h4[id] {
+  scroll-margin-top: 88px;
+}
+.adr-toc,
+.article-toc {
+  scroll-margin-top: 88px;
+}
+.adr-toc-label,
+.article-toc-label {
+  scroll-margin-top: 88px;
+}
