@@ -8,6 +8,10 @@ Enterprise mobile is the discipline of running corporate apps on devices the ent
 
 ---
 
+## Overview
+
+This reference covers enterprise mobile management: MDM and MAM, Zero Trust mobile architecture, total cost of ownership, and on-device AI. It frames the governance, security, and cost decisions for running corporate apps on devices the enterprise does not fully own.
+
 ## MDM and MAM In Depth
 
 The Mobile Device Management and Mobile Application Management landscape consolidated through the last decade and three vendors hold most of the production market. **Jamf Pro** is the iOS specialist — approximately 75 percent of Fortune 500 Apple fleet management runs on Jamf, with deep Apple Business Manager integration via Automated Device Enrollment (the DEP-successor flow that ships devices pre-enrolled from Apple's distribution network). **Microsoft Intune** is the cross-platform leader for Microsoft-shop enterprises — native Azure AD Conditional Access integration, the Intune App SDK or app wrapping for MAM, integrated with Microsoft Defender for Endpoint, included in Microsoft 365 E3 and E5 bundles making it the cost-effective choice when the organisation already pays for the suite. **VMware Workspace ONE** (recently rebranded Omnissa after the Broadcom spin-off) is the breadth play for organisations needing iOS, Android, Windows, macOS, and ChromeOS managed from a single console.

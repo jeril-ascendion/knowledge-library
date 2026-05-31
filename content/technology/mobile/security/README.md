@@ -6,6 +6,10 @@
 
 ---
 
+## Overview
+
+This reference covers mobile security architecture: the OWASP Mobile Top 10, authentication, secure storage, and runtime attestation. It defines the MASVS compliance baseline and the layered, hardware-backed controls mandated for regulated applications.
+
 ## OWASP Mobile Top 10 (2024) — All Ten In Depth
 
 **M1 Improper Credential Usage**. Hardcoded API keys in source detectable in under 60 seconds with GitLeaks or TruffleHog. Keys in `BuildConfig` are visible in any decompiled APK — `jadx-gui` is the public-domain tool that exposes them in minutes. Credentials in the Android Manifest read by any app on a rooted device. **Correct:** secrets are fetched from the backend at runtime after authentication, stored in Android Keystore or iOS Keychain, never embedded in the binary. The mobile app's only embedded credential is a per-app public key used to verify the backend's signed response.

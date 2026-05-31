@@ -58,6 +58,14 @@ Anti-patterns are categorised by severity: Critical (produce security vulnerabil
 > **⚠ Magic Numbers in Domain Logic** — `if (account.balance > 50000) { applyPremiumTier() }` — business threshold embedded as a literal in source code.
 > **CORRECT:** Named constants in the domain model: `const val PREMIUM_TIER_THRESHOLD = 50_000`. Document the business rule in a comment. Ideally, fetch the threshold from configuration to enable adjustment without a release.
 
+## Anti-Patterns to Avoid
+
+> **⚠ Credentials in Plaintext Storage** — Session tokens or API keys written to SharedPreferences or UserDefaults, readable on any rooted or jailbroken device. A P1 finding that exposes every user's session.
+> **CORRECT:** Android Keystore + EncryptedSharedPreferences; iOS Keychain with kSecAttrAccessibleWhenUnlockedThisDeviceOnly. Hardware-backed, device-bound, never embedded in the binary.
+
+> **⚠ Network Call in the ViewModel** — apiService.get() invoked directly from a ViewModel, collapsing the data layer into presentation. Untestable without mocking the network stack and a standing security-boundary violation.
+> **CORRECT:** ViewModel → Use Case → Repository interface → data source. Each layer is independently testable and the network boundary stays in the data layer.
+
 ## References
 
 1. Fowler, Martin — Refactoring: Improving the Design of Existing Code. Addison-Wesley, 2018.

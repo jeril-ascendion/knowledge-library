@@ -1,23 +1,35 @@
-%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans','primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#555555','clusterBkg':'#F8F9FA'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':60,'rankSpacing':70}}}%%
+%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB','edgeLabelBackground':'#FFFFFF'},'flowchart':{'curve':'orthogonal','padding':30,'nodeSpacing':65,'rankSpacing':75,'useMaxWidth':true}}}%%
 flowchart TD
-    subgraph L1["🌐 Layer 1 — Transport Security"]
-        TLS["TLS 1.3 Minimum\nCleartext HTTP Blocked\nNetwork Security Config"]
-        SPKI["SPKI Hash Certificate Pinning\nOkHttp · URLSession Challenge\nSurvives Certificate Renewal"]
+    subgraph L1["🌐  Transport — Layer 1"]
+        direction LR
+        TLS["<b>TLS 1.3 Mandatory</b><br/>Cleartext blocked<br/>Network Security Config"]
+        SPKI["<b>SPKI Certificate Pinning</b><br/>Hash survives cert renewal<br/>OkHttp · URLSession"]
     end
-    subgraph L2["🔑 Layer 2 — Authentication"]
-        PKCE["OAuth 2.0 + PKCE\nAppAuth-Android · AppAuth-iOS\nNo client_secret in binary"]
-        BIO["Biometric MFA\nBiometricPrompt BIOMETRIC_STRONG\nLocalAuthentication iOS"]
+    subgraph L2["🔑  Authentication — Layer 2"]
+        direction LR
+        PKCE["<b>OAuth 2.0 + PKCE</b><br/>AppAuth libraries<br/>No client_secret in binary"]
+        BIO["<b>Biometric MFA</b><br/>BiometricPrompt · LocalAuthentication<br/>SecureEnclave-bound keys"]
     end
-    subgraph L3["🗄 Layer 3 — Secure Storage"]
-        AKS["Android Keystore\nHardware-Backed AES-256"]
-        IOK["iOS Keychain\nkSecAttrAccessibleWhenUnlockedThisDeviceOnly"]
+    subgraph L3["🗄  Storage — Layer 3"]
+        direction LR
+        AKS["<b>Android Keystore</b><br/>Hardware-backed AES-256<br/>EncryptedSharedPreferences"]
+        IOK["<b>iOS Keychain</b><br/>kSecAttrAccessibleWhenUnlockedThisDeviceOnly<br/>Not backed up · Device-bound"]
     end
-    subgraph L4["🛡 Layer 4 — Binary Protection"]
-        R8["R8 Full Mode\ndebugable:false in release"]
-        ATT["Play Integrity API\nApple AppAttest\nMEETS_STRONG_INTEGRITY"]
+    subgraph L4["🛡  Binary — Layer 4"]
+        direction LR
+        R8["<b>R8 Full Mode</b><br/>debuggable:false<br/>@Pii log stripping"]
+        ATT["<b>Device Attestation</b><br/>Play Integrity API<br/>Apple AppAttest"]
     end
     L1 --> L2 --> L3 --> L4
-    style L1 fill:#E8F5E9,stroke:#1B5E20
-    style L2 fill:#E3F2FD,stroke:#1565C0
-    style L3 fill:#FFF3E0,stroke:#E65100
-    style L4 fill:#FFEBEE,stroke:#B71C1C
+    style L1 fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+    style L2 fill:#DBEAFE,stroke:#2563EB,stroke-width:2px
+    style L3 fill:#FEF3C7,stroke:#D97706,stroke-width:2px
+    style L4 fill:#FEE2E2,stroke:#DC2626,stroke-width:2px
+    style TLS fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style SPKI fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style PKCE fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style BIO fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style AKS fill:#FDE68A,stroke:#D97706,color:#78350F
+    style IOK fill:#FDE68A,stroke:#D97706,color:#78350F
+    style R8 fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style ATT fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d

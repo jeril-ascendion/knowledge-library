@@ -6,6 +6,10 @@
 
 ---
 
+## Overview
+
+This reference covers mobile quality engineering: the testing pyramid, unit and snapshot testing, performance engineering, and accessibility. It defines the coverage targets, performance budgets, and WCAG 2.2 AA obligations that are enforced as release gates.
+
 ## Mobile Testing Pyramid
 
 Five layers from base to apex, with explicit population ratios and target durations per layer.

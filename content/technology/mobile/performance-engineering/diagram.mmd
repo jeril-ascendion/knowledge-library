@@ -1,53 +1,41 @@
-%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans','primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#555555','clusterBkg':'#F8F9FA','clusterBorder':'#CED4DA'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':60,'rankSpacing':70,'useMaxWidth':true}}}%%
+%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB','edgeLabelBackground':'#FFFFFF'},'flowchart':{'curve':'orthogonal','padding':30,'nodeSpacing':65,'rankSpacing':75,'useMaxWidth':true}}}%%
 flowchart TD
-    subgraph Startup["🚀 Startup Performance"]
-        CS2["Cold Start Target
-< 2.0s median device"]
-        BP["Baseline Profiles
-30% improvement
-Pre-compiled hot paths"]
-        ASL["App Startup Lib
-Parallel init
-Lazy loading"]
+    subgraph STARTUP["🚀  Startup Performance — Target &lt; 2.0s P50"]
+        direction LR
+        BP["<b>Baseline Profiles</b><br/>30% cold start improvement<br/>Pre-compiled hot paths<br/>Play Store AOT installation"]
+        ASL["<b>App Startup Library</b><br/>Parallel Initializer execution<br/>Deferred non-critical init<br/>Lazy DI singletons"]
+        INS["<b>Instruments (iOS)</b><br/>Pre-main timeline<br/>Static initializer audit<br/>dylib count reduction"]
     end
-    subgraph Frames["🎬 Frame Performance"]
-        FB["Frame Budget
-60fps = 16.67ms
-120fps = 8.33ms"]
-        RC["Recomposition
-remember() · derivedStateOf
-key() in LazyColumn"]
-        SM["StrictMode
-Main thread I/O → Exception
-Debug builds only"]
+    subgraph FRAME["🎬  Frame Performance — 60fps · 16.67ms Budget"]
+        direction LR
+        RC["<b>Recomposition Control</b><br/>remember() · derivedStateOf<br/>key() in LazyColumn<br/>stable annotations"]
+        SM["<b>StrictMode</b><br/>Main thread I/O → crash<br/>Debug builds only<br/>Zero tolerance policy"]
+        GPU["<b>GPU Profiling</b><br/>Offscreen rendering audit<br/>Blended layers check<br/>Core Animation instrument"]
     end
-    subgraph Memory["💾 Memory"]
-        HD["Heap Dumps
-Android Profiler
-Xcode Memory Graph"]
-        LC["LeakCanary
-Retained object detection
-Retain cycle visualization"]
+    subgraph MEMORY["💾  Memory — ≤ 150MB RSS"]
+        direction LR
+        LC["<b>LeakCanary</b><br/>Retained object detection<br/>Retain cycle visualization<br/>Every debug build run"]
+        HD["<b>Heap Dumps</b><br/>Android Studio Profiler<br/>Xcode Memory Graph<br/>Object allocation tracking"]
     end
-    subgraph Battery["🔋 Battery"]
-        WM2["WorkManager
-Batched background work
-Constraint-based"]
-        LOCN["Significant Change
-Location API
-No continuous GPS"]
+    subgraph MEASURE["📏  Measurement — CI Enforced"]
+        direction LR
+        FBP2["<b>Firebase Performance</b><br/>P50 · P75 · P90 · P95<br/>Production user base"]
+        MK["<b>MetricKit (iOS)</b><br/>24hr diagnostic reports<br/>Launch histogram · Hang duration"]
+        BENCH["<b>Jetpack Macrobenchmark</b><br/>Cold start regression in CI<br/>Blocks PR on regression"]
     end
-    subgraph Measure["📏 Measurement"]
-        FBP2["Firebase Perf
-P50·P75·P90·P95"]
-        MK["MetricKit iOS
-24hr diagnostic reports"]
-        GBP["Google Benchmark
-Cold start regression CI"]
-    end
-    Startup & Frames & Memory & Battery --> Measure
-    style Startup fill:#E3F2FD,stroke:#1565C0
-    style Frames fill:#E8F5E9,stroke:#1B5E20
-    style Memory fill:#FFF3E0,stroke:#E65100
-    style Battery fill:#E8EAF6,stroke:#3949AB
-    style Measure fill:#F3E5F5,stroke:#6A1B9A
+    STARTUP --> FRAME --> MEMORY --> MEASURE
+    style STARTUP fill:#DBEAFE,stroke:#2563EB,stroke-width:2px
+    style FRAME fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+    style MEMORY fill:#FEF3C7,stroke:#D97706,stroke-width:2px
+    style MEASURE fill:#F3E8FF,stroke:#7C3AED,stroke-width:2px
+    style BP fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style ASL fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style INS fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style RC fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style SM fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style GPU fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style LC fill:#FDE68A,stroke:#D97706,color:#78350F
+    style HD fill:#FDE68A,stroke:#D97706,color:#78350F
+    style FBP2 fill:#E9D5FF,stroke:#7C3AED,color:#4C1D95
+    style MK fill:#E9D5FF,stroke:#7C3AED,color:#4C1D95
+    style BENCH fill:#E9D5FF,stroke:#7C3AED,color:#4C1D95

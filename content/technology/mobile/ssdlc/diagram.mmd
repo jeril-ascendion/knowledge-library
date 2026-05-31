@@ -1,39 +1,33 @@
-%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans','primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#555555','clusterBkg':'#F8F9FA','clusterBorder':'#CED4DA'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':60,'rankSpacing':70,'useMaxWidth':true}}}%%
+%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB','edgeLabelBackground':'#FFFFFF'},'flowchart':{'curve':'orthogonal','padding':30,'nodeSpacing':65,'rankSpacing':75,'useMaxWidth':true}}}%%
 flowchart LR
-    subgraph P1["1️⃣ Security Requirements"]
-        SR["Data Classification
-Regulatory Frameworks
-MAVS Level Selection
-Threat Model"]
+    subgraph P1["1️⃣ Requirements"]
+        SR["<b>Security Requirements</b><br/>Data classification<br/>Regulatory frameworks<br/>MASVS level selection"]
     end
-    subgraph P2["2️⃣ Secure Design"]
-        SD["STRIDE Threat Model
-C4 Data Flow Review
-Security Architect Sign-off"]
+    subgraph P2["2️⃣ Design"]
+        SD["<b>Secure Design</b><br/>STRIDE threat model<br/>C4 data flow review<br/>Security Architect sign-off"]
     end
-    subgraph P3["3️⃣ Secure Coding"]
-        SC["GitLeaks Pre-commit
-Parameterised Queries
-PII Annotation
-Sec Code Review"]
+    subgraph P3["3️⃣ Coding"]
+        SC["<b>Secure Coding</b><br/>GitLeaks pre-commit<br/>Parameterised queries<br/>@Pii annotation"]
     end
-    subgraph P4["4️⃣ Security Testing"]
-        ST["OWASP Dep Check
-Detekt Security Rules
-Penetration Test (L2)"]
+    subgraph P4["4️⃣ Testing"]
+        ST["<b>Security Testing</b><br/>OWASP Dependency Check<br/>Detekt security rules<br/>Pentest for L2 apps"]
     end
-    subgraph P5["5️⃣ Release Hardening"]
-        SH["Binary Hardening Check
-Privacy Label Verify
-SBOM Generation"]
+    subgraph P5["5️⃣ Release"]
+        SH["<b>Hardening</b><br/>Binary hardening check<br/>Privacy label verify<br/>SBOM generation"]
     end
-    subgraph P6["6️⃣ Post-Release Ops"]
-        SO["Dependabot Continuous
-VDP Published
-Anomalous Auth Alerts"]
+    subgraph P6["6️⃣ Operations"]
+        SO["<b>Post-Release</b><br/>Dependabot continuous<br/>VDP published<br/>Anomalous auth alerts"]
     end
     P1 --> P2 --> P3 --> P4 --> P5 --> P6
-    style P1 fill:#E8F5E9,stroke:#1B5E20
-    style P3 fill:#E3F2FD,stroke:#1565C0
-    style P4 fill:#FFF3E0,stroke:#E65100
-    style P5 fill:#FFEBEE,stroke:#B71C1C
+    style P1 fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+    style P2 fill:#DBEAFE,stroke:#2563EB,stroke-width:2px
+    style P3 fill:#FEF9C3,stroke:#CA8A04,stroke-width:2px
+    style P4 fill:#FEF3C7,stroke:#D97706,stroke-width:2px
+    style P5 fill:#FEE2E2,stroke:#DC2626,stroke-width:2px
+    style P6 fill:#F3E8FF,stroke:#7C3AED,stroke-width:2px
+    style SR fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style SD fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style SC fill:#FDE68A,stroke:#CA8A04,color:#713f12
+    style ST fill:#FCD34D,stroke:#D97706,color:#78350F
+    style SH fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style SO fill:#E9D5FF,stroke:#7C3AED,color:#4C1D95

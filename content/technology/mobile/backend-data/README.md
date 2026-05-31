@@ -8,6 +8,10 @@ The mobile-backend boundary is where most production incidents originate. Write 
 
 ---
 
+## Overview
+
+This reference defines the mobile-backend contract: the Backend for Frontend pattern, offline-first data architecture, real-time data, and push notifications. It specifies the API conventions, delta-sync model, and payload rules that eliminate the majority of production integration incidents by design.
+
 ## The Backend for Frontend Pattern
 
 Mobile cannot share an API with web because the constraints are different in kind, not degree. Mobile returns from background expecting fresh data with one network request; web can comfortably make twelve parallel requests because the user is staring at the screen. Mobile is on cellular with 100-300 ms round-trip time; web is on fibre with 5-15 ms. Mobile battery penalises every wakeup measurable in mAh; web has unlimited power. Mobile clients ship across five platform versions, four screen sizes, and three release vintages simultaneously; web is one current build.

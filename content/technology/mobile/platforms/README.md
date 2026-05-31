@@ -8,6 +8,10 @@ The platform decision is the single most expensive choice a mobile programme mak
 
 ---
 
+## Overview
+
+This reference compares the four serious mobile deployment models — pure native, Flutter, React Native, and Kotlin Multiplatform — using weighted-criteria decision frameworks and an honest five-year TCO comparison. It grounds the platform choice in production evidence rather than preference.
+
 ## The Platform Landscape
 
 Four deployment models are credible in 2026 and each is the correct engineering answer for a specific kind of programme. **Pure Native** ships two separate codebases — Swift with SwiftUI on iOS, Kotlin with Jetpack Compose on Android — and accepts the staffing and coordination overhead in exchange for the highest UX fidelity and deepest platform-API access. **Cross-Platform Compiled** is Flutter's territory: Dart compiles ahead-of-time to native ARM, the Impeller engine paints every pixel, and the same binary widget tree renders identically on both platforms. **Cross-Platform Interpreted** is React Native's New Architecture — TypeScript bridging to actual UIKit and Android View widgets through JSI and Fabric, paying a runtime cost for ecosystem leverage. **Hybrid** wraps a WebView around an HTML/CSS/JavaScript application via Capacitor or the legacy Ionic framework, appropriate only when the team is web-native and the UX expectations match a website's.

@@ -1,49 +1,47 @@
-%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans','primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#555555','clusterBkg':'#F8F9FA','clusterBorder':'#CED4DA'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':60,'rankSpacing':70,'useMaxWidth':true}}}%%
+%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB','edgeLabelBackground':'#FFFFFF'},'flowchart':{'curve':'orthogonal','padding':30,'nodeSpacing':65,'rankSpacing':75,'useMaxWidth':true}}}%%
 flowchart LR
-    GIT["git push
-to main"] --> VAL
-    subgraph VAL["1️⃣ Validate ~8min"]
-        LINT["Detekt · SwiftLint"]
-        UNIT["Unit Tests
-90% Use Case gate
-80% ViewModel gate"]
-        SNAP["Snapshot Diff
-Zero pixel regression"]
-        SEC2["OWASP Dep Check
-GitLeaks scan"]
+    GIT["<b>git push</b><br/>to main"]
+    subgraph VAL["Validate · &lt;8min"]
+        direction TB
+        L["Detekt · SwiftLint<br/>Zero violations"]
+        U["Unit Tests<br/>90% Use Cases<br/>80% ViewModels"]
+        S["Snapshot Diff<br/>Zero regressions"]
+        SEC2["CVE Scan<br/>Block P1/P2"]
     end
-    VAL --> BUILD
-    subgraph BUILD["2️⃣ Build ~15min"]
-        AND2["Android: Gradle
-R8 Release AAB
-Parallel matrix"]
-        IOS2["iOS: Xcode Archive
-Release config
-macOS runner"]
+    subgraph BUILD["Parallel Build"]
+        direction TB
+        AND["Android<br/>ubuntu-latest<br/>Gradle · R8"]
+        IOS["iOS<br/>macos-latest<br/>Xcode Archive"]
     end
-    BUILD --> SIGN
-    subgraph SIGN["3️⃣ Sign"]
-        AKS2["Android Keystore
-Base64 secret decode"]
-        FMK["fastlane match
-Encrypted Git repo
-iOS Distribution cert"]
+    subgraph SIGN["Sign"]
+        direction TB
+        KS["Android Keystore<br/>Base64 secret"]
+        FM["fastlane Match<br/>Encrypted Git repo"]
     end
-    SIGN --> DIST["4️⃣ Distribute
-Firebase App Distribution
-TestFlight internal"]
-    DIST --> QA{"5️⃣ QA Gate
-Manual approval
-Environment protection"}
-    QA -->|"Approved"| REL
-    subgraph REL["6️⃣ Release"]
-        PLAY["Google Play
-Staged: 1%→5%→20%→100%"]
-        STORE["App Store
-Expedited review available"]
+    DIST["Distribute<br/>Firebase · TestFlight"]
+    QA{"QA Gate<br/>Manual approval"}
+    subgraph SHIP["Release"]
+        direction TB
+        PL["Google Play<br/>1%→5%→25%→50%→100%"]
+        AS["App Store<br/>Expedited review"]
     end
-    style VAL fill:#E8F5E9,stroke:#1B5E20
-    style BUILD fill:#E3F2FD,stroke:#1565C0
-    style SIGN fill:#FFEBEE,stroke:#B71C1C
-    style QA fill:#FFF3E0,stroke:#E65100
-    style REL fill:#F3E5F5,stroke:#6A1B9A
+    GIT --> VAL --> BUILD --> SIGN --> DIST --> QA
+    QA -->|"Approved"| SHIP
+    QA -->|"Rejected"| GIT
+    style GIT fill:#1D4ED8,stroke:#1e3a5f,color:#ffffff
+    style VAL fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+    style BUILD fill:#DBEAFE,stroke:#2563EB,stroke-width:2px
+    style SIGN fill:#FEE2E2,stroke:#DC2626,stroke-width:2px
+    style DIST fill:#FEF9C3,stroke:#CA8A04,stroke-width:2px
+    style QA fill:#FEF3C7,stroke:#D97706,stroke-width:2px
+    style SHIP fill:#F3E8FF,stroke:#7C3AED,stroke-width:2px
+    style L fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style U fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style S fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style SEC2 fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style AND fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style IOS fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style KS fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style FM fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style PL fill:#E9D5FF,stroke:#7C3AED,color:#4C1D95
+    style AS fill:#E9D5FF,stroke:#7C3AED,color:#4C1D95

@@ -1,47 +1,36 @@
-%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans','primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#555555','clusterBkg':'#F8F9FA','clusterBorder':'#CED4DA'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':60,'rankSpacing':70,'useMaxWidth':true}}}%%
+%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB','edgeLabelBackground':'#FFFFFF'},'flowchart':{'curve':'orthogonal','padding':30,'nodeSpacing':65,'rankSpacing':75,'useMaxWidth':true}}}%%
 flowchart TD
-    subgraph Decisions["📋 Key Architecture Decisions"]
-        D1["D-001: Clean Architecture + MVVM
-ADR-MOB-001
-All native apps"]
-        D2["D-002: Platform Selection Framework
-ADR-MOB-002
-Flutter default · Native when required"]
-        D3["D-003: Fastlane + GitHub Actions
-ADR-MOB-003
-Code signing + Pipeline"]
-        D4["D-004: OWASP MASVS Baseline
-ADR-SEC-011
-L1 all · L2 regulated"]
-        D5["D-005: BFF Pattern + GraphQL
-ADR-INT-005
-No shared web/mobile API"]
-        D6["D-006: OAuth 2.0 + PKCE
-No client_secret in binary"]
-        D7["D-007: Feature Module Strategy
-Conway's Law aligned"]
-        D8["D-008: Offline-First Local DB
-Room / SwiftData as SoT"]
+    subgraph ARCH["🏛  Architecture Decisions"]
+        D1["<b>D-001: Clean Architecture + MVVM</b><br/>ADR-MOB-001 · All native apps"]
+        D2["<b>D-002: Flutter Default Platform</b><br/>ADR-MOB-002 · Context-driven"]
+        D3["<b>D-003: Fastlane + GitHub Actions</b><br/>ADR-MOB-003 · CI/CD standard"]
     end
-    subgraph Principles2["🏛 Seven Architecture Principles"]
-        P1["Security is structural
-not additive"]
-        P2["Test at lowest
-effective layer"]
-        P3["Module boundaries
-align with teams"]
-        P4["Explicit state machines
-not implicit lifecycle"]
-        P5["Measure everything
-that matters"]
-        P6["Evolve incrementally
-never rewrite"]
-        P7["Document decisions
-where code lives"]
+    subgraph SEC["🛡  Security Decisions"]
+        D4["<b>D-004: OWASP MASVS Baseline</b><br/>ADR-SEC-011 · L1 all · L2 regulated"]
+        D5["<b>D-005: BFF Pattern + GraphQL</b><br/>ADR-INT-005 · No shared web API"]
+        D6["<b>D-006: OAuth 2.0 + PKCE</b><br/>No client_secret in binary"]
     end
-    Decisions --> Principles2
-    style Decisions fill:#E3F2FD,stroke:#1565C0
-    style Principles2 fill:#E8F5E9,stroke:#1B5E20
-    style D1 fill:#E8F4FD,stroke:#0078D4
-    style D4 fill:#FFEBEE,stroke:#B71C1C
-    style D5 fill:#FFF3E0,stroke:#E65100
+    subgraph ENG["⚙  Engineering Decisions"]
+        D7["<b>D-007: Feature Module Strategy</b><br/>Conway's Law aligned ownership"]
+        D8["<b>D-008: Offline-First Local DB</b><br/>Room · SwiftData as source of truth"]
+    end
+    subgraph PRINCIPLES["🏛  Seven Architecture Principles"]
+        P1["Security is structural · not additive"]
+        P2["Test at lowest effective layer"]
+        P3["Module boundaries align with teams"]
+        P4["Measure everything that matters"]
+        P5["Evolve incrementally · never rewrite"]
+    end
+    ARCH --> SEC --> ENG --> PRINCIPLES
+    style ARCH fill:#DBEAFE,stroke:#2563EB,stroke-width:2px
+    style SEC fill:#FEE2E2,stroke:#DC2626,stroke-width:2px
+    style ENG fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+    style PRINCIPLES fill:#FEF9C3,stroke:#CA8A04,stroke-width:2px
+    style D1 fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style D2 fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style D3 fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style D4 fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style D5 fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style D6 fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style D7 fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style D8 fill:#BBF7D0,stroke:#16A34A,color:#14532D

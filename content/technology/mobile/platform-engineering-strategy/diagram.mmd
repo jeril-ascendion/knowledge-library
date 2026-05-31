@@ -1,21 +1,24 @@
-%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans','primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#555555','clusterBkg':'#F8F9FA'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':60,'rankSpacing':70}}}%%
+%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB','edgeLabelBackground':'#FFFFFF'},'flowchart':{'curve':'orthogonal','padding':30,'nodeSpacing':65,'rankSpacing':75,'useMaxWidth':true}}}%%
 flowchart TD
-    subgraph PT["🏗 Platform Team — Self-Service Infrastructure"]
-        GP["Golden Path\nProject scaffolding · Module templates\nRelease pipeline template"]
-        SPC["Shared Platform SDK\nAuth (PKCE) · Analytics · Crashlytics\nPush notification registration"]
-        DX["Developer Experience\nDORA Metrics · ADR library\nOnboarding documentation"]
+    subgraph PT["🏗  Platform Team — Self-Service Infrastructure"]
+        GP["<b>Golden Path</b><br/>Project scaffold CLI<br/>Module template generator<br/>Release pipeline template"]
+        SPC["<b>Shared Platform SDK</b><br/>Auth (PKCE) · Analytics<br/>Crashlytics wrapper<br/>Push registration"]
+        DX["<b>Developer Experience</b><br/>DORA Metrics Dashboard<br/>ADR library · Onboarding docs<br/>Architecture review board"]
     end
-    subgraph FT["⚡ Feature Teams — Consume Platform"]
-        T1["Account Team\n:feature:account"]
-        T2["Payments Team\n:feature:transfer"]
-        T3["Growth Team\n:feature:onboarding"]
+    subgraph FT["⚡  Feature Teams — Consume Platform"]
+        T1["<b>Account Team</b><br/>:feature:account"]
+        T2["<b>Payments Team</b><br/>:feature:transfer"]
+        T3["<b>Growth Team</b><br/>:feature:onboarding"]
     end
     GP -->|"CLI generates module"| T1 & T2 & T3
     SPC -->|"Import Platform SDK"| T1 & T2 & T3
     DX -->|"ADRs guide decisions"| T1 & T2 & T3
     T1 & T2 & T3 -->|"Inner source PR"| PT
-    style PT fill:#E3F2FD,stroke:#1565C0
-    style FT fill:#E8F5E9,stroke:#1B5E20
-    style GP fill:#E3F2FD,stroke:#1565C0
-    style SPC fill:#E3F2FD,stroke:#1565C0
-    style DX fill:#E3F2FD,stroke:#1565C0
+    style PT fill:#DBEAFE,stroke:#2563EB,stroke-width:2px
+    style FT fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+    style GP fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style SPC fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style DX fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style T1 fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style T2 fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style T3 fill:#BBF7D0,stroke:#16A34A,color:#14532D

@@ -75,6 +75,14 @@ Architecture decisions have three properties: they are consequential (they const
 6. Evolve incrementally — never rewrite.
 7. Document decisions where they are made — in the repository, not in a wiki.
 
+## Anti-Patterns to Avoid
+
+> **⚠ Undocumented Architecture Decisions** — Choices made in chat threads or standups with no ADR, so the rationale is lost and the decision is silently relitigated every few months.
+> **CORRECT:** Every Tier 1/Tier 2 decision is captured as an ADR with context, options, and consequences, versioned alongside the code and reviewed by the Architecture Council.
+
+> **⚠ Decision Drift** — Teams quietly diverging from an accepted ADR without raising a superseding record, so the documented architecture and the shipped architecture disagree.
+> **CORRECT:** Deviations are raised as a new ADR that supersedes the prior one; fitness functions and code review enforce the accepted decision until it is formally changed.
+
 ## References
 
 1. All preceding 28 sections of the Mobile Development knowledge base.

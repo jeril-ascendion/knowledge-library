@@ -1,51 +1,41 @@
-%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans','primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#555555','clusterBkg':'#F8F9FA','clusterBorder':'#CED4DA'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':60,'rankSpacing':70,'useMaxWidth':true}}}%%
+%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB','edgeLabelBackground':'#FFFFFF'},'flowchart':{'curve':'orthogonal','padding':30,'nodeSpacing':65,'rankSpacing':75,'useMaxWidth':true}}}%%
 flowchart TD
-    subgraph Perf["⚡ Performance"]
-        CS["Cold Start < 2.0s
-median device"]
-        FPS["60fps · 16.67ms budget
-no jank"]
-        NET["Network payload
-per-session budget"]
+    subgraph PERF["⚡  Performance NFRs — CI Enforced"]
+        direction LR
+        CS["<b>Cold Start</b><br/>P50: ≤ 2.0s · P95: ≤ 3.5s<br/>Jetpack Macrobenchmark · Instruments"]
+        FPS["<b>Frame Rate</b><br/>60fps sustained<br/>Zero jank frames &gt; 16.67ms"]
+        MEM["<b>Memory</b><br/>≤ 150MB RSS at home screen<br/>LeakCanary · Instruments"]
     end
-    subgraph Rel["🛡 Reliability"]
-        CFU["Crash-Free Users
-> 99.5%"]
-        ANR["ANR Rate < 0.2%
-Android only"]
-        API["API Success Rate
-> 99.0%"]
+    subgraph REL["🛡  Reliability NFRs — Release Gates"]
+        direction LR
+        CFU["<b>Crash-Free Users</b><br/>≥ 99.5% on 28-day rolling<br/>Firebase Crashlytics"]
+        ANR["<b>ANR Rate (Android)</b><br/>≤ 0.2% active install base<br/>Google Play Android Vitals"]
+        API["<b>API Success Rate</b><br/>≥ 99.0% successful calls<br/>Repository error tracking"]
     end
-    subgraph Sec["🔒 Security"]
-        MASVS["OWASP MASVS L1
-All apps"]
-        MASVS2["OWASP MASVS L2
-Finance · Health · Gov"]
-        PKCE["OAuth 2.0 + PKCE
-Mandatory auth flow"]
+    subgraph ACC["♿  Accessibility NFRs — Legal Requirement"]
+        direction LR
+        WCAG["<b>WCAG 2.2 AA</b><br/>All customer-facing screens<br/>Accessibility Scanner · Inspector"]
+        DT["<b>Dynamic Type</b><br/>12 size categories supported<br/>Test AX1 through AX5"]
+        TT["<b>Touch Targets</b><br/>48×48dp Android · 44×44pt iOS<br/>No clipping at any size"]
     end
-    subgraph Acc["♿ Accessibility"]
-        WCAG["WCAG 2.2 AA
-All screens"]
-        DT["Dynamic Type
-12 size categories"]
-        TT["Touch Targets
-48×48dp · 44×44pt"]
+    subgraph SEC_NFR["🔒  Security NFRs — Mandatory"]
+        direction LR
+        MASVS_N["<b>OWASP MASVS</b><br/>Level 1: All apps<br/>Level 2: Finance · Health · Gov"]
+        PKCE_N["<b>OAuth 2.0 + PKCE</b><br/>No client_secret in binary<br/>Access token: memory only"]
     end
-    subgraph Tools["📊 Measurement Tools"]
-        FBP["Firebase Performance
-Crashlytics · Vitals"]
-        XCI["Jetpack Macrobenchmark
-MetricKit · Instruments"]
-        SOQ["SonarQube
-JaCoCo · Xcode Coverage"]
-    end
-    Perf --> FBP
-    Rel --> FBP
-    Sec --> SOQ
-    Acc --> XCI
-    style Perf fill:#E3F2FD,stroke:#1565C0
-    style Rel fill:#E8F5E9,stroke:#1B5E20
-    style Sec fill:#FFEBEE,stroke:#B71C1C
-    style Acc fill:#FFF3E0,stroke:#E65100
-    style Tools fill:#F3E5F5,stroke:#4A148C
+    PERF --> REL --> ACC --> SEC_NFR
+    style PERF fill:#DBEAFE,stroke:#2563EB,stroke-width:2px
+    style REL fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+    style ACC fill:#FEF9C3,stroke:#CA8A04,stroke-width:2px
+    style SEC_NFR fill:#FEE2E2,stroke:#DC2626,stroke-width:2px
+    style CS fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style FPS fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style MEM fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style CFU fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style ANR fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style API fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style WCAG fill:#FDE68A,stroke:#CA8A04,color:#713f12
+    style DT fill:#FDE68A,stroke:#CA8A04,color:#713f12
+    style TT fill:#FDE68A,stroke:#CA8A04,color:#713f12
+    style MASVS_N fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style PKCE_N fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d

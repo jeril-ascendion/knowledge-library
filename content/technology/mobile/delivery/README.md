@@ -8,6 +8,10 @@ The mobile delivery pipeline is where most architectural decisions cash out as e
 
 ---
 
+## Overview
+
+This reference covers the mobile delivery pipeline end to end: CI/CD design, code signing, Fastlane automation, feature flags, and trunk-based development. It defines the quality gates and staged-rollout discipline that let teams ship quickly and recover even faster.
+
 ## Mobile CI/CD Pipeline Design
 
 The complete pipeline from `git push` to the App Store:

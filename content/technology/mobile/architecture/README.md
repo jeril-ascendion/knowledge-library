@@ -6,6 +6,10 @@
 
 ---
 
+## Overview
+
+This reference traces mobile architecture from the Massive View Controller through MVVM, MVI, Clean Architecture, and TCA, and explains which pattern fits which team size and risk profile. It covers state management, design systems, and navigation, with the dependency rules and layer boundaries that keep business logic testable and security properties auditable.
+
 ## The Architecture Evolution
 
 **MVC and the Massive View Controller** is where every iOS architecture conversation begins. UIKit's original 2008 design coupled View and Controller at the framework level — `UIViewController` owned the view hierarchy, the lifecycle hooks (`viewDidLoad`, `viewWillAppear`, gesture handlers), and by accumulation the networking, business logic, UI configuration, and navigation. The result was the 3,000-line View Controller, untestable and impossible to review. Android's pre-2017 equivalent was the Massive Activity / Fragment. The industry's response over the next decade — MVVM, then MVP, then Clean Architecture, then MVI, then TCA — each pattern solved a specific problem the prior pattern left open. Patterns are not interchangeable; the right one for a five-engineer startup is not the right one for a hundred-engineer banking app.

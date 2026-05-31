@@ -9266,6 +9266,128 @@ ADR_TOC_SCRIPT = """
 """
 
 
+def generate_mobile_toc(html_body, label="On This Page"):
+    """Build a two-column "On This Page" TOC from the H2 headings (with ids)
+    in a rendered mobile article body. Returns '' when there are < 3 sections.
+    Mirrors generate_adr_toc but emits .article-toc / id=on-this-page so the
+    ADR floating button (which targets .adr-toc) and this mobile button stay
+    independent."""
+    headings = re.findall(
+        r'<h2[^>]*id="([^"]*)"[^>]*>(.*?)</h2>',
+        html_body, re.DOTALL
+    )
+    if len(headings) < 3:
+        return ""
+
+    def clean(t):
+        return re.sub(r'<[^>]+>', '', t).strip()
+
+    rows = []
+    for i in range(0, len(headings), 2):
+        lid, lt = headings[i]
+        left = (f'<td class="toc-num">{i+1}</td>'
+                f'<td><a href="#{lid}">{clean(lt)}</a></td>')
+        if i + 1 < len(headings):
+            rid, rt = headings[i + 1]
+            right = (f'<td class="toc-num">{i+2}</td>'
+                     f'<td><a href="#{rid}">{clean(rt)}</a></td>')
+        else:
+            right = '<td></td><td></td>'
+        rows.append(f'<tr>{left}{right}</tr>')
+    return (
+        f'<div class="article-toc" id="on-this-page">'
+        f'<div class="article-toc-label">{label}</div>'
+        f'<table class="adr-toc-table"><tbody>'
+        + ''.join(rows) +
+        '</tbody></table></div>'
+    )
+
+
+def inject_mobile_toc(html_body, label="On This Page"):
+    """Insert the mobile "On This Page" TOC before the first <h2>. The H1 lives
+    in the hero block (not the body) on this site, so we anchor on the first
+    section heading rather than </h1>."""
+    toc = generate_mobile_toc(html_body, label=label)
+    if not toc:
+        return html_body
+    m = re.search(r'<h2[^>]*>', html_body)
+    if not m:
+        return toc + html_body
+    return html_body[:m.start()] + toc + html_body[m.start():]
+
+
+# Lighter end-matter for mobile article pages: a typographic section closure
+# + link back to the mobile hub. No governance colophon (that is ADR-only).
+MOBILE_ARTICLE_FOOTER = """
+<div class="mobile-article-end">
+  <div class="mobile-article-end-rule" aria-hidden="true"></div>
+  <div class="mobile-article-end-content">
+    <div class="mobile-article-end-tag">Mobile Engineering Reference</div>
+    <a href="/technology/mobile/index.html"
+       class="mobile-article-end-link"
+       aria-label="Return to Mobile Development hub">
+      &#8592; Mobile Development
+    </a>
+  </div>
+</div>
+"""
+
+
+# Floating "On This Page" button + section tracker for mobile article pages.
+# \\u2026 is double-escaped so the emitted JS contains the literal escape
+# sequence (not a real ellipsis char) — keeps the page free of stray "…".
+MOBILE_TOC_SCRIPT = """
+<div class="toc-float-btn" id="tocFloatBtn" role="complementary"
+     aria-label="Return to page navigation">
+  <a href="#on-this-page" class="toc-float-inner"
+     id="tocFloatInner"
+     aria-label="Scroll back to page navigation">
+    <span class="toc-float-arrow" aria-hidden="true">&#8593;</span>
+    <span class="toc-float-label">On This Page</span>
+    <span class="toc-float-section" id="tocFloatSection"></span>
+  </a>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('tocFloatBtn');
+  var inner=document.getElementById('tocFloatInner');
+  var sec=document.getElementById('tocFloatSection');
+  var tocEl=document.querySelector('.article-toc');
+  var headings=Array.from(
+    document.querySelectorAll('.article-body h2[id]'));
+  if(!btn||!tocEl)return;
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      btn.classList.toggle('toc-float-btn--visible',
+                           !e.isIntersecting);
+    });
+  },{threshold:0});
+  obs.observe(tocEl);
+  var secObs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting&&sec){
+        var t=e.target.textContent.trim();
+        sec.textContent=t.length>30?t.slice(0,28)+'\\u2026':t;
+      }
+    });
+  },{threshold:0.3,rootMargin:'-10% 0px -60% 0px'});
+  headings.forEach(function(h){secObs.observe(h);});
+  inner.addEventListener('click',function(e){
+    e.preventDefault();
+    tocEl.scrollIntoView({behavior:'smooth',block:'start'});
+    var lbl=tocEl.querySelector('.article-toc-label');
+    if(lbl){lbl.setAttribute('tabindex','-1');
+             lbl.focus({preventScroll:true});}
+  });
+  inner.addEventListener('keydown',function(e){
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();
+                                      inner.click();}
+  });
+})();
+</script>
+"""
+
+
 def render_mermaid_blocks(html):
     """Convert ```mermaid ... ``` fenced blocks to Mermaid render divs.
 
@@ -9934,6 +10056,12 @@ def gen_nested_article(slug, hub_slug, sub_slug, sub_dir, out_sub, referenced_by
     if slug == "adrs":
         body = inject_adr_toc(body)
         body = body + ADR_DOC_FOOTER
+    # Mobile article enhancements: "On This Page" TOC + lightweight end-matter.
+    # Scoped to leaf articles under technology/mobile/ (NOT the hub page, which
+    # is generated by gen_hub).
+    if hub_slug == "mobile":
+        body = inject_mobile_toc(body)
+        body = body + MOBILE_ARTICLE_FOOTER
     html = (
         f'{head(f"{title} — {hub_title} · Ascendion Engineering", prefix, has_d)}\n\n'
         f'{nav_html(prefix, slug)}\n\n'
@@ -9947,6 +10075,9 @@ def gen_nested_article(slug, hub_slug, sub_slug, sub_dir, out_sub, referenced_by
         f'{footer_html(f"{slug}/{hub_slug}/{sub_slug}/", prefix=prefix)}\n\n'
         f'{WORDMARK_JS}\n</body>\n</html>'
     )
+    # Floating "On This Page" button — mobile article pages only.
+    if hub_slug == "mobile":
+        html = html.replace('</body>', MOBILE_TOC_SCRIPT + '\n</body>')
     if slug == "adrs":
         html = html.replace('</body>', ADR_TOC_SCRIPT + '\n</body>')
 
