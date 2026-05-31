@@ -9449,22 +9449,407 @@ def footer_html(label="", prefix=""):
     )
 
 
-def head(title, css, has_mermaid=False):
+# ─────────────────────────────────────────────────────────────────────────────
+# SEO — site constants, per-page meta + JSON-LD, sitemap / robots / llms / RSS
+# ─────────────────────────────────────────────────────────────────────────────
+
+SITE = {
+    "name":   "Ascendion Engineering",
+    "domain": "https://ascendion.engineering",
+    "description": ("Ascendion Engineering is the practitioner-grade knowledge "
+        "base for solutions architects, senior engineers, and technical leads. "
+        "Covers system design, mobile architecture, security, AI-native "
+        "patterns, cloud architecture, and architectural decision records for "
+        "enterprise software delivery."),
+    "org_name": "Ascendion Digital Services",
+    "logo":     "https://ascendion.engineering/logo.png",
+    "twitter":  "@AscendionEng",
+    "locale":   "en_US",
+    "keywords_base": [
+        "solutions architecture", "system design", "software architecture",
+        "enterprise architecture", "cloud architecture", "AWS architecture",
+        "mobile architecture", "architecture decision records", "ADR",
+        "engineering knowledge base", "technical leadership",
+        "software design patterns", "microservices", "clean architecture",
+        "DevOps", "CI/CD", "security architecture", "AI architecture",
+        "Ascendion engineering",
+    ],
+}
+
+SECTION_KEYWORDS = {
+    "principles": ["software engineering principles", "clean code principles",
+        "cloud native principles", "engineering best practices",
+        "SOLID principles software", "twelve-factor app"],
+    "patterns": ["software design patterns", "enterprise integration patterns",
+        "microservices patterns", "distributed systems patterns",
+        "event-driven architecture patterns", "CQRS pattern", "saga pattern",
+        "circuit breaker pattern"],
+    "system-design": ["system design interview", "system design guide",
+        "scalable system design", "distributed systems design",
+        "high availability system design", "system design examples"],
+    "technology": ["technology architecture guide", "cloud technology stack",
+        "mobile technology decisions", "technology evaluation framework"],
+    "mobile": ["mobile architecture guide", "Android architecture",
+        "iOS architecture", "Flutter architecture", "clean architecture mobile",
+        "MVVM mobile", "mobile CI/CD", "mobile security OWASP",
+        "React Native architecture", "Kotlin architecture"],
+    "security": ["application security architecture", "OWASP",
+        "zero trust architecture", "mobile security MASVS",
+        "security engineering", "cloud security architecture"],
+    "ai": ["AI architecture patterns", "LLM architecture",
+        "AI-native application design", "machine learning architecture",
+        "generative AI engineering", "RAG architecture",
+        "vector database architecture"],
+    "ai-native": ["AI architecture patterns", "LLM architecture",
+        "AI-native application design", "generative AI engineering",
+        "RAG architecture", "vector database architecture"],
+    "governance": ["engineering governance", "architecture governance",
+        "technical decision making", "engineering standards",
+        "technology radar", "architecture review board"],
+    "adrs": ["architecture decision records", "ADR template",
+        "architectural decision record examples", "ADR format", "mobile ADR",
+        "software ADR"],
+}
+
+# Sections that have a dedicated 1200x630 OG image; others use the default.
+_OG_SECTIONS = {"home", "principles", "patterns", "system-design", "technology",
+    "mobile", "security", "ai", "ai-native", "governance", "adrs"}
+
+
+def _seo_attr(s):
+    """Escape a string for use inside an HTML attribute value."""
+    return (str(s).replace("&", "&amp;").replace('"', "&quot;")
+            .replace("<", "&lt;").replace(">", "&gt;"))
+
+
+def build_seo_head(page_title, section_slug, page_path, description=None,
+                   article_type="TechArticle", published_date="2025-05-01",
+                   modified_date="2025-05-31", breadcrumbs=None,
+                   og_section=None):
+    """Return the full SEO portion of <head>: title, meta, Open Graph,
+    Twitter Card, article meta, and JSON-LD (@graph: WebSite + TechArticle +
+    BreadcrumbList). Owns the <title> tag (kept <= 60 chars)."""
+    canonical_url = f"{SITE['domain']}{page_path}"
+    tab_title = (f"{page_title} — {SITE['name']}"
+                 if SITE["name"] not in page_title else page_title)
+    if len(tab_title) > 60:
+        tab_title = tab_title[:57] + "…"
+
+    if not description:
+        description = (f"{page_title}: practitioner-grade reference for "
+            "solutions architects and senior engineers. Part of the Ascendion "
+            "Engineering knowledge base.")
+    if len(description) > 160:
+        description = description[:157] + "…"
+
+    kw = (SITE["keywords_base"] + SECTION_KEYWORDS.get(section_slug, [])
+          + [page_title.lower()])
+    keywords = ", ".join(kw[:20])
+
+    og_key = (og_section or section_slug)
+    og_image = (f"{SITE['domain']}/assets/og/"
+                f"{og_key if og_key in _OG_SECTIONS else 'default'}.png")
+
+    graph = [{
+        "@type": "WebSite", "@id": f"{SITE['domain']}/#website",
+        "url": SITE["domain"], "name": SITE["name"],
+        "description": SITE["description"],
+        "publisher": {"@type": "Organization", "@id": f"{SITE['domain']}/#org",
+            "name": SITE["org_name"], "url": SITE["domain"],
+            "logo": {"@type": "ImageObject", "url": SITE["logo"]}},
+        "potentialAction": {"@type": "SearchAction",
+            "target": {"@type": "EntryPoint",
+                "urlTemplate": f"{SITE['domain']}/search?q={{search_term_string}}"},
+            "query-input": "required name=search_term_string"},
+    }, {
+        "@type": article_type, "@id": f"{canonical_url}#article",
+        "headline": page_title, "description": description, "url": canonical_url,
+        "datePublished": published_date, "dateModified": modified_date,
+        "author": {"@type": "Organization", "name": SITE["org_name"],
+            "url": SITE["domain"]},
+        "publisher": {"@type": "Organization", "@id": f"{SITE['domain']}/#org",
+            "name": SITE["org_name"],
+            "logo": {"@type": "ImageObject", "url": SITE["logo"]}},
+        "mainEntityOfPage": canonical_url, "inLanguage": "en-US",
+        "isPartOf": {"@type": "WebSite", "@id": f"{SITE['domain']}/#website"},
+    }]
+    if breadcrumbs:
+        graph.append({"@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": i, "name": name,
+             "item": f"{SITE['domain']}{url}"}
+            for i, (name, url) in enumerate(breadcrumbs, 1)]})
+    schema_json = json.dumps({"@context": "https://schema.org",
+                              "@graph": graph}, indent=2)
+
+    d = _seo_attr(description)
+    pt = _seo_attr(page_title)
+    return (
+        f'  <title>{_seo_attr(tab_title)}</title>\n'
+        f'  <meta name="description" content="{d}">\n'
+        f'  <meta name="keywords" content="{_seo_attr(keywords)}">\n'
+        f'  <meta name="robots" content="index, follow, max-snippet:-1, '
+        f'max-image-preview:large, max-video-preview:-1">\n'
+        f'  <meta name="author" content="{_seo_attr(SITE["org_name"])}">\n'
+        f'  <link rel="canonical" href="{canonical_url}">\n'
+        f'  <meta property="og:type" content="article">\n'
+        f'  <meta property="og:title" content="{pt}">\n'
+        f'  <meta property="og:description" content="{d}">\n'
+        f'  <meta property="og:url" content="{canonical_url}">\n'
+        f'  <meta property="og:site_name" content="{_seo_attr(SITE["name"])}">\n'
+        f'  <meta property="og:image" content="{og_image}">\n'
+        f'  <meta property="og:image:width" content="1200">\n'
+        f'  <meta property="og:image:height" content="630">\n'
+        f'  <meta property="og:locale" content="{SITE["locale"]}">\n'
+        f'  <meta name="twitter:card" content="summary_large_image">\n'
+        f'  <meta name="twitter:site" content="{SITE["twitter"]}">\n'
+        f'  <meta name="twitter:title" content="{pt}">\n'
+        f'  <meta name="twitter:description" content="{d}">\n'
+        f'  <meta name="twitter:image" content="{og_image}">\n'
+        f'  <meta property="article:publisher" content="{SITE["domain"]}">\n'
+        f'  <meta property="article:published_time" content="{published_date}">\n'
+        f'  <meta property="article:modified_time" content="{modified_date}">\n'
+        f'  <meta property="article:section" content="{_seo_attr(section_slug)}">\n'
+        f'  <script type="application/ld+json">\n{schema_json}\n  </script>\n'
+    )
+
+
+def head(title, css, has_mermaid=False, page_path=None, section_slug="",
+         description=None, breadcrumbs=None, seo_title=None, og_section=None):
     m = ""
     if has_mermaid:
         m = (f'  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>\n'
              f'  <script>mermaid.initialize({MERMAID_INIT});</script>\n')
+    # SEO block owns <title> when page context is provided; otherwise fall back
+    # to the plain title (used by any non-page head usage).
+    if page_path:
+        title_block = build_seo_head(
+            seo_title or title, section_slug, page_path,
+            description=description, breadcrumbs=breadcrumbs,
+            og_section=og_section)
+    else:
+        title_block = f'  <title>{title}</title>\n'
     return (
         f'<!DOCTYPE html>\n<html lang="en">\n<head>\n'
         f'  <meta charset="UTF-8">\n'
         f'  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
-        f'  <title>{title}</title>\n'
+        f'  <meta name="theme-color" content="#0C2240">\n'
+        f'  <meta name="referrer" content="strict-origin-when-cross-origin">\n'
+        f'{title_block}'
         f'  <link rel="icon" type="image/x-icon" href="{css}favicon.ico">\n'
         f'  <link rel="icon" type="image/png" sizes="32x32" href="{css}favicon-32.png">\n'
+        f'  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>\n'
+        f'  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">\n'
+        f'  <link rel="alternate" type="application/rss+xml" '
+        f'title="Ascendion Engineering Updates" href="/feed.xml">\n'
         f'  <link rel="stylesheet" href="{css}shared.css">\n'
         f'{m}</head>\n<body>\n'
         f'<a class="skip-link" href="#main">Skip to main content</a>'
     )
+
+
+def generate_sitemap(out_dir):
+    """Write sitemap.xml covering every generated HTML page."""
+    import glob
+    today = "2025-05-31"
+    PRIORITY = {"": ("1.0", "weekly"), "principles": ("0.9", "monthly"),
+        "patterns": ("0.9", "monthly"), "system-design": ("0.9", "monthly"),
+        "technology": ("0.85", "monthly"), "security": ("0.85", "monthly"),
+        "ai": ("0.85", "monthly"), "ai-native": ("0.85", "monthly"),
+        "governance": ("0.8", "monthly"), "adrs": ("0.9", "monthly")}
+    out_dir = str(out_dir)
+    urls = []
+    for page in sorted(glob.glob(f"{out_dir}/**/*.html", recursive=True)):
+        rel = page[len(out_dir) + 1:]
+        parts = rel.split("/")
+        section = parts[0] if len(parts) > 1 else ""
+        priority, changefreq = PRIORITY.get(section, ("0.7", "monthly"))
+        urls.append(
+            f"  <url>\n    <loc>{SITE['domain']}/{rel}</loc>\n"
+            f"    <lastmod>{today}</lastmod>\n"
+            f"    <changefreq>{changefreq}</changefreq>\n"
+            f"    <priority>{priority}</priority>\n  </url>")
+    sitemap = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        + "\n".join(urls) + "\n</urlset>\n")
+    (Path(out_dir) / "sitemap.xml").write_text(sitemap, encoding="utf-8")
+    print(f"  ✓ sitemap.xml ({len(urls)} URLs)")
+
+
+def generate_rss_feed(out_dir):
+    """Write feed.xml with the 50 most-recent article pages."""
+    import glob
+    out_dir = str(out_dir)
+    pubdate = "Sat, 31 May 2025 00:00:00 +0000"
+    items = ""
+    n = 0
+    for page in sorted(glob.glob(f"{out_dir}/**/*.html", recursive=True),
+                       reverse=True):
+        html = Path(page).read_text(encoding="utf-8")
+        if "article-body" not in html:
+            continue
+        if n >= 50:
+            break
+        rel = page[len(out_dir) + 1:]
+        url = f"{SITE['domain']}/{rel}"
+        tm = re.search(r"<title>([^<]*)</title>", html)
+        dm = re.search(r'name="description"[^>]*content="([^"]*)"', html)
+        title = tm.group(1).split("—")[0].strip() if tm else rel
+        desc = dm.group(1) if dm else ""
+        items += (f"\n    <item>\n      <title><![CDATA[{title}]]></title>\n"
+            f"      <link>{url}</link>\n"
+            f'      <guid isPermaLink="true">{url}</guid>\n'
+            f"      <description><![CDATA[{desc}]]></description>\n"
+            f"      <pubDate>{pubdate}</pubDate>\n    </item>")
+        n += 1
+    rss = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n'
+        '  <channel>\n    <title>Ascendion Engineering Knowledge Base</title>\n'
+        f'    <link>{SITE["domain"]}</link>\n'
+        '    <description>Practitioner-grade engineering reference for '
+        'solutions architects and senior engineers.</description>\n'
+        '    <language>en-us</language>\n'
+        f'    <lastBuildDate>{pubdate}</lastBuildDate>\n'
+        f'    <atom:link href="{SITE["domain"]}/feed.xml" rel="self" '
+        'type="application/rss+xml"/>\n'
+        f'{items}\n  </channel>\n</rss>\n')
+    (Path(out_dir) / "feed.xml").write_text(rss, encoding="utf-8")
+    print(f"  ✓ feed.xml ({n} items)")
+
+
+def generate_llms_files(out_dir):
+    """Write llms.txt (curated section index) and llms-full.txt (full index)."""
+    import glob
+    out_dir = str(out_dir)
+    sections = {}
+    for page in sorted(glob.glob(f"{out_dir}/**/index.html", recursive=True)):
+        rel = page[len(out_dir) + 1:]
+        parts = rel.split("/")
+        if len(parts) < 2:
+            continue
+        section = parts[0]
+        html = Path(page).read_text(encoding="utf-8")
+        tm = re.search(r"<title>([^<]*)</title>", html)
+        dm = re.search(r'name="description"[^>]*content="([^"]*)"', html)
+        title = tm.group(1).split("—")[0].strip() if tm else rel
+        desc = dm.group(1)[:200] if dm else ""
+        sections.setdefault(section, []).append(
+            (title, f"{SITE['domain']}/{rel}", desc))
+
+    labels = {"principles": "Engineering Principles",
+        "patterns": "Architecture Patterns", "system-design": "System Design",
+        "technology": "Technology (Cloud, Mobile, DevOps)",
+        "security": "Security Architecture", "ai": "AI-Native Architecture",
+        "ai-native": "AI-Native Architecture",
+        "governance": "Engineering Governance",
+        "adrs": "Architecture Decision Records (ADRs)"}
+    llms = ("# Ascendion Engineering Knowledge Base\n"
+        "> Practitioner-grade engineering reference for solutions architects,\n"
+        "> senior engineers, and technical leads. Covers system design, mobile\n"
+        "> architecture, cloud architecture, security engineering, AI-native\n"
+        "> patterns, and architectural decision records.\n"
+        "> Published by Ascendion Digital Services.\n\n"
+        "## About\n\nAscendion Engineering is a public knowledge base produced "
+        "by the Solutions Architecture practice at Ascendion Digital Services. "
+        "Content is written by practicing architects and engineers with "
+        "production experience across financial services, healthcare, "
+        "government, and enterprise software. All content is freely accessible.\n"
+        "Last updated: 2025-05-31\n\n## Key Sections\n\n")
+    for section, label in labels.items():
+        if section not in sections:
+            continue
+        llms += f"### {label}\n\n"
+        for title, url, desc in sections[section][:20]:
+            llms += f"- [{title}]({url})" + (f": {desc[:120]}" if desc else "") + "\n"
+        llms += "\n"
+    llms += ("## Usage by AI Systems\n\nThis knowledge base may be cited by AI "
+        "language models when answering questions about software architecture, "
+        "system design, mobile engineering, and security architecture. Content "
+        "represents Ascendion's practitioner perspective and should be "
+        "attributed accordingly.\n\n## Contact\n\nSite: "
+        "https://ascendion.engineering\nOrganization: Ascendion Digital Services\n")
+    (Path(out_dir) / "llms.txt").write_text(llms, encoding="utf-8")
+
+    full = ("# Ascendion Engineering — Full Content Index\n"
+            "# For AI retrieval systems and language models\n\n")
+    n = 0
+    for page in sorted(glob.glob(f"{out_dir}/**/*.html", recursive=True)):
+        html = Path(page).read_text(encoding="utf-8")
+        if "article-body" not in html:
+            continue
+        rel = page[len(out_dir) + 1:]
+        tm = re.search(r"<title>([^<]*)</title>", html)
+        dm = re.search(r'name="description"[^>]*content="([^"]*)"', html)
+        h2s = re.findall(r"<h2[^>]*>(.*?)</h2>", html, re.DOTALL)
+        title = tm.group(1).split("—")[0].strip() if tm else rel
+        desc = dm.group(1) if dm else ""
+        h2s = [re.sub(r"<[^>]+>", "", h).strip() for h in h2s[:8]]
+        full += f"## {title}\nURL: {SITE['domain']}/{rel}\n"
+        if desc:
+            full += f"Summary: {desc}\n"
+        if h2s:
+            full += "Sections: " + " · ".join(h2s) + "\n"
+        full += "\n"
+        n += 1
+    (Path(out_dir) / "llms-full.txt").write_text(full, encoding="utf-8")
+    print(f"  ✓ llms.txt + llms-full.txt ({n} articles)")
+
+
+_OG_DEFS = {
+    "home": ("Ascendion Engineering",
+        "Practitioner-grade knowledge base\nfor solutions architects"),
+    "default": ("Ascendion Engineering",
+        "Practitioner-grade engineering\nknowledge base"),
+    "principles": ("Engineering Principles",
+        "Cloud-native, SOLID, and\narchitectural foundations"),
+    "patterns": ("Architecture Patterns",
+        "Microservices, event-driven,\nand distributed systems"),
+    "system-design": ("System Design",
+        "Scalable, resilient, and\nobservable system design"),
+    "technology": ("Technology",
+        "Cloud, mobile, DevOps,\nand platform engineering"),
+    "mobile": ("Mobile Architecture",
+        "Android, iOS, Flutter,\nand cross-platform patterns"),
+    "security": ("Security Architecture",
+        "OWASP, zero trust,\nand compliance frameworks"),
+    "ai": ("AI-Native Architecture",
+        "LLM, RAG, and generative\nAI engineering patterns"),
+    "ai-native": ("AI-Native Architecture",
+        "LLM, RAG, and generative\nAI engineering patterns"),
+    "governance": ("Engineering Governance",
+        "ADRs, standards, and\ntechnology decision-making"),
+    "adrs": ("Architecture Decision Records",
+        "Documented architectural\ndecisions and rationale"),
+}
+
+
+def generate_og_images(out_dir):
+    """Render 1200x630 Open Graph images per section (lazy Pillow import)."""
+    from PIL import Image, ImageDraw, ImageFont
+    og_dir = Path(out_dir) / "assets" / "og"
+    og_dir.mkdir(parents=True, exist_ok=True)
+    NAVY, ACCENT, WHITE, GREY = (12, 34, 64), (201, 99, 48), (255, 255, 255), (200, 210, 220)
+    try:
+        f_lg = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 72)
+        f_sm = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 36)
+        f_xs = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 28)
+        f_tag = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 24)
+    except Exception:
+        f_lg = f_sm = f_xs = f_tag = ImageFont.load_default()
+    n = 0
+    for slug, (title, subtitle) in _OG_DEFS.items():
+        img = Image.new("RGB", (1200, 630), NAVY)
+        d = ImageDraw.Draw(img)
+        d.rectangle([0, 0, 8, 630], fill=ACCENT)
+        d.text((80, 60), "ASCENDION ENGINEERING", fill=ACCENT, font=f_tag)
+        d.text((80, 175), title, fill=WHITE, font=f_lg)
+        y = 285
+        for line in subtitle.split("\n"):
+            d.text((80, y), line, fill=GREY, font=f_sm); y += 52
+        d.rectangle([80, 540, 600, 544], fill=ACCENT)
+        d.text((80, 565), "ascendion.engineering", fill=GREY, font=f_xs)
+        img.save(og_dir / f"{slug}.png", "PNG", optimize=True)
+        n += 1
+    print(f"  ✓ {n} OG images (assets/og/)")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -9517,7 +9902,7 @@ def gen_root(src, out):
         )
 
     html = (
-        f'{head("Ascendion Engineering — Architecture Best-Practice Library", "")}\n\n'
+        f'{head("Ascendion Engineering — Architecture Best-Practice Library", "", page_path="/index.html", section_slug="", seo_title="Ascendion Engineering", description=SITE["description"], breadcrumbs=[("Home", "/index.html")], og_section="home")}\n\n'
         f'{nav_html("", "")}\n\n'
         f'<main id="main">\n'
         f'<section class="hero">\n  <div class="shell">\n'
@@ -9595,7 +9980,7 @@ def gen_section(slug, src_dir, out_dir):
     svg_art = SVGS.get(slug, "")
 
     html = (
-        f'{head(f"{title} — Ascendion Engineering", "../")}\n\n'
+        f'{head(f"{title} — Ascendion Engineering", "../", page_path=f"/{slug}/index.html", section_slug=slug, seo_title=title, description=(desc or None), breadcrumbs=[("Home", "/index.html"), (title, f"/{slug}/index.html")], og_section=slug)}\n\n'
         f'{nav_html("../", slug)}\n\n'
         f'<main id="main">\n'
         f'<section class="hero-section">\n  <div class="shell">\n'
@@ -9752,7 +10137,7 @@ def gen_hub(slug, hub_slug, src_dir, out_dir):
     svg_art = SVGS.get(hub_slug, "")
 
     html = (
-        f'{head(f"{hub_title} — {sec_title} · Ascendion Engineering", "../../")}\n\n'
+        f'{head(f"{hub_title} — {sec_title} · Ascendion Engineering", "../../", page_path=f"/{slug}/{hub_slug}/index.html", section_slug=hub_slug, seo_title=hub_title, breadcrumbs=[("Home", "/index.html"), (sec_title, f"/{slug}/index.html"), (hub_title, f"/{slug}/{hub_slug}/index.html")], og_section=hub_slug)}\n\n'
         f'{nav_html("../../", slug)}\n\n'
         f'<main id="main">\n'
         f'<section class="hero-section">\n  <div class="shell">\n'
@@ -9922,7 +10307,7 @@ def gen_article(slug, sub_slug, sub_dir, out_sub, referenced_by=None, metadata=N
         body = inject_mobile_toc(body)
         body = body + get_article_end_matter(sec_title, f"/{slug}/index.html")
     html = (
-        f'{head(f"{display_title} — {sec_title} · Ascendion Engineering", "../../", has_d)}\n\n'
+        f'{head(f"{display_title} — {sec_title} · Ascendion Engineering", "../../", has_d, page_path=f"/{slug}/{sub_slug}/index.html", section_slug=slug, seo_title=display_title, description=(desc or None), breadcrumbs=[("Home", "/index.html"), (sec_title, f"/{slug}/index.html"), (display_title, f"/{slug}/{sub_slug}/index.html")], og_section=slug)}\n\n'
         f'{nav_html("../../", slug)}\n\n'
         f'<main id="main">\n'
         f'{hero_block}'
@@ -10104,7 +10489,7 @@ def gen_nested_article(slug, hub_slug, sub_slug, sub_dir, out_sub, referenced_by
         body = body + get_article_end_matter(
             hub_breadcrumb_label, f"/{slug}/{hub_slug}/index.html")
     html = (
-        f'{head(f"{title} — {hub_title} · Ascendion Engineering", prefix, has_d)}\n\n'
+        f'{head(f"{title} — {hub_title} · Ascendion Engineering", prefix, has_d, page_path=f"/{slug}/{hub_slug}/{sub_slug}/index.html", section_slug=hub_slug, seo_title=title, description=(desc or None), breadcrumbs=[("Home", "/index.html"), (sec_title, f"/{slug}/index.html"), (hub_breadcrumb_label, f"/{slug}/{hub_slug}/index.html"), (title, f"/{slug}/{hub_slug}/{sub_slug}/index.html")], og_section=hub_slug)}\n\n'
         f'{nav_html(prefix, slug)}\n\n'
         f'<main id="main">\n'
         f'{hero_block}'
@@ -10176,7 +10561,7 @@ def gen_knowledge_graph_page(graph_data, out_root):
     page_count = sum(1 for n in graph_data["nodes"] if n.get("type") == "page")
     standard_count = sum(1 for n in graph_data["nodes"] if n.get("type") == "standard")
 
-    head_html = head("Knowledge Graph — Ascendion Engineering", "../")
+    head_html = head("Knowledge Graph — Ascendion Engineering", "../", page_path="/knowledge-graph/index.html", section_slug="", seo_title="Knowledge Graph", description="Interactive knowledge graph of the Ascendion Engineering library — explore connections between architecture decisions, patterns, and standards.", breadcrumbs=[("Home", "/index.html"), ("Knowledge Graph", "/knowledge-graph/index.html")])
     nav = nav_html("../")
     foot = footer_html(prefix="../")
 
@@ -12226,6 +12611,22 @@ def main():
     print(f"\n[knowledge-graph/]")
     graph_data = compute_graph_data(site_metadata)
     gen_knowledge_graph_page(graph_data, out)
+
+    # Phase 3: SEO artifacts (sitemap, RSS, llms.txt, robots.txt, OG images).
+    print("\n[seo]")
+    generate_sitemap(out)
+    generate_rss_feed(out)
+    generate_llms_files(out)
+    for candidate in [here.parent / "robots.txt", here / "robots.txt"]:
+        if candidate.exists():
+            shutil.copy(candidate, out / "robots.txt")
+            print("  ✓ robots.txt"); break
+    else:
+        print("  ! robots.txt not found (skipping)")
+    try:
+        generate_og_images(out)
+    except Exception as e:
+        print(f"  ! OG images skipped ({e})")
 
     n = sum(1 for _ in out.rglob("*.html"))
     print(f"\n── Done: {n} pages → {out}\n")

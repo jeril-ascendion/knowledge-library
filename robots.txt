@@ -1,0 +1,50 @@
+# Ascendion Engineering — robots.txt
+# https://ascendion.engineering
+
+User-agent: *
+Allow: /
+Disallow: /search
+Disallow: /cdn-cgi/
+
+# Sitemaps
+Sitemap: https://ascendion.engineering/sitemap.xml
+
+# Google
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
+# AI crawlers — explicitly allow for AI search discoverability
+# ChatGPT / OpenAI
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+# Google Gemini / Bard
+User-agent: Google-Extended
+Allow: /
+
+# Anthropic Claude
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+
+# Common AI research crawlers
+User-agent: CCBot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
