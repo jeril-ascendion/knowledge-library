@@ -4147,7 +4147,8 @@ def md_to_html(text, current_path=""):
     body = "\n".join(out)
     if MD:
         html = markdown.markdown(body, extensions=[
-            TableExtension(), FencedCodeExtension(), "nl2br", "sane_lists"])
+            TableExtension(), FencedCodeExtension(), "nl2br", "sane_lists",
+            "toc"])
     else:
         result = []
         for p in re.split(r"\n{2,}", body):
@@ -4163,7 +4164,12 @@ def md_to_html(text, current_path=""):
                 result.append(f"<p>{p}</p>")
         html = "\n".join(result)
     html = _reshape_mobile_antipatterns(html)
-    return enhance_html(html, current_path)
+    html = enhance_html(html, current_path)
+    html = _tag_toc_table(html)
+    # Post-process fenced ```mermaid blocks into client-rendered mermaid divs.
+    # Run last so the unescaped diagram source is not re-processed by enhance_html.
+    html = render_mermaid_blocks(html)
+    return html
 
 
 def _reshape_mobile_antipatterns(html):
@@ -9117,6 +9123,66 @@ def nav_html(prefix, active=""):
     )
 
 
+# Governance footer block — injected at the bottom of the article body for
+# ADR pages only (slug == "adrs"). Scoped per-section in gen_article so it does
+# NOT appear on technology/, mobile/, or other sections.
+ADR_DOC_FOOTER = """
+<div class="adr-governance-footer">
+  <div class="adr-gov-grid">
+    <div class="adr-gov-item">
+      <span class="adr-gov-label">Maintained by</span>
+      <span class="adr-gov-value">Architecture Council</span>
+    </div>
+    <div class="adr-gov-item">
+      <span class="adr-gov-label">Review Cadence</span>
+      <span class="adr-gov-value">Annually or upon any Tier 2 architectural change</span>
+    </div>
+    <div class="adr-gov-item">
+      <span class="adr-gov-label">Change Requests</span>
+      <span class="adr-gov-value">Submitted as RFC to the Architecture Council for review</span>
+    </div>
+    <div class="adr-gov-item">
+      <span class="adr-gov-label">Version History</span>
+      <span class="adr-gov-value">Maintained in version control alongside this document</span>
+    </div>
+  </div>
+</div>
+"""
+
+
+def render_mermaid_blocks(html):
+    """Convert ```mermaid ... ``` fenced blocks to Mermaid render divs.
+
+    FencedCodeExtension emits <pre><code class="language-mermaid">…</code></pre>
+    with the diagram source HTML-escaped (& < > → entities). Mermaid's client
+    auto-render reads each .mermaid element's textContent — which decodes those
+    entities exactly once back to the intended diagram string (so &lt;b&gt; →
+    the literal "<b>" mermaid renders as bold via htmlLabels, and &amp;lt; →
+    "&lt;" which renders as a literal "<"). We therefore KEEP the escaping and
+    only swap the wrapper tag; unescaping here would inject real <b>/<br/> DOM
+    nodes that textContent strips, collapsing every multi-line label.
+
+    The surrounding <pre> is preserved so the `pre:has(.mermaid)` styling in
+    shared.css applies to inline diagrams the same as the main diagram-wrap."""
+    pattern = r'<code class="language-mermaid">(.*?)</code>'
+
+    def replace(match):
+        return f'<div class="mermaid">{match.group(1)}</div>'
+
+    return re.sub(pattern, replace, html, flags=re.DOTALL)
+
+
+def _tag_toc_table(html):
+    """Add class="toc-table" to the Table of Contents table so it picks up the
+    dedicated TOC styling. Detected by its distinctive header row
+    (# | Section | # | Section)."""
+    return re.sub(
+        r'<table>(\s*<thead>\s*<tr>\s*<th>#</th>\s*<th>Section</th>)',
+        r'<table class="toc-table">\1',
+        html, count=1,
+    )
+
+
 def footer_html(label="", prefix=""):
     return (
         f'<footer class="footer" role="button" tabindex="0" '
@@ -9500,7 +9566,8 @@ def gen_article(slug, sub_slug, sub_dir, out_sub, referenced_by=None, metadata=N
 
     diag_wrap_html = ""
     if has_d:
-        mmd = diagram.read_text(encoding="utf-8").replace("&", "&amp;")
+        mmd = (diagram.read_text(encoding="utf-8")
+               .replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
         diag_wrap_html = (
             f'<div class="diagram-wrap"><div class="mermaid">\n{mmd}\n  </div></div>\n'
         )
@@ -9586,6 +9653,10 @@ def gen_article(slug, sub_slug, sub_dir, out_sub, referenced_by=None, metadata=N
                 body, full_block,
                 ['Related Sections', 'Related', 'References'])
 
+    # Governance footer is scoped to the ADR section only.
+    adr_doc_footer = (
+        f'<div class="shell">{ADR_DOC_FOOTER}</div>\n' if slug == "adrs" else ""
+    )
     html = (
         f'{head(f"{display_title} — {sec_title} · Ascendion Engineering", "../../", has_d)}\n\n'
         f'{nav_html("../../", slug)}\n\n'
@@ -9595,6 +9666,7 @@ def gen_article(slug, sub_slug, sub_dir, out_sub, referenced_by=None, metadata=N
         f'  <div class="article-body">\n{body}\n'
         f'  </div>\n'
         f'</div>\n'
+        f'{adr_doc_footer}'
         f'</main>\n\n'
         f'{footer_html(f"{slug}/{sub_slug}/", prefix="../../")}\n\n'
         f'{WORDMARK_JS}\n</body>\n</html>'
@@ -9670,7 +9742,8 @@ def gen_nested_article(slug, hub_slug, sub_slug, sub_dir, out_sub, referenced_by
 
     diag_wrap_html = ""
     if has_d:
-        mmd = diagram.read_text(encoding="utf-8").replace("&", "&amp;")
+        mmd = (diagram.read_text(encoding="utf-8")
+               .replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
         diag_wrap_html = (
             f'<div class="diagram-wrap"><div class="mermaid">\n{mmd}\n  </div></div>\n'
         )
@@ -9748,6 +9821,10 @@ def gen_nested_article(slug, hub_slug, sub_slug, sub_dir, out_sub, referenced_by
                 body, full_block,
                 ['Related Sections', 'Related', 'References'])
 
+    # Governance footer is scoped to the ADR section only.
+    adr_doc_footer = (
+        f'<div class="shell">{ADR_DOC_FOOTER}</div>\n' if slug == "adrs" else ""
+    )
     html = (
         f'{head(f"{title} — {hub_title} · Ascendion Engineering", prefix, has_d)}\n\n'
         f'{nav_html(prefix, slug)}\n\n'
@@ -9757,6 +9834,7 @@ def gen_nested_article(slug, hub_slug, sub_slug, sub_dir, out_sub, referenced_by
         f'  <div class="article-body">\n{body}\n'
         f'  </div>\n'
         f'</div>\n'
+        f'{adr_doc_footer}'
         f'</main>\n\n'
         f'{footer_html(f"{slug}/{hub_slug}/{sub_slug}/", prefix=prefix)}\n\n'
         f'{WORDMARK_JS}\n</body>\n</html>'

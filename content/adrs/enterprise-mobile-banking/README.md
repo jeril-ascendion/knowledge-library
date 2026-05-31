@@ -22,6 +22,30 @@ The authoritative architecture decision record for banking and financial service
 | ARB Approval | Required |
 | Scope | iOS and Android Mobile Front End · Backend integration points where relevant to mobile contract obligations |
 
+---
+
+## Table of Contents
+
+| # | Section | # | Section |
+|---|---|---|---|
+| 1 | [Engineering Principles](#1-engineering-principles) | 16 | [Observability and Operational Excellence](#16-observability-and-operational-excellence) |
+| 2 | [Non-Functional Requirements](#2-non-functional-requirements) | 17 | [Mobile Reliability Engineering](#17-mobile-reliability-engineering) |
+| 3 | [Core Architecture Goals](#3-core-architecture-goals) | 18 | [CI/CD and Engineering Operations](#18-cicd-and-engineering-operations) |
+| 4 | [Technology Decisions — Native vs Cross-Platform](#4-technology-decisions) | 19 | [Testing Strategy](#19-testing-strategy) |
+| 5 | [Architecture Style and Layering](#5-architecture-style-and-layering) | 20 | [UX and Mobile Platform Considerations](#20-ux-and-mobile-platform-considerations) |
+| 6 | [Mobile State Management](#6-mobile-state-management) | 21 | [Runtime Architecture Flows](#21-runtime-architecture-flows) |
+| 7 | [Security and Compliance Architecture](#7-security-and-compliance-architecture) | 22 | [Lifecycle and Evolution Governance](#22-lifecycle-and-evolution-governance) |
+| 8 | [Secure Software Development Lifecycle](#8-secure-software-development-lifecycle-ssdlc) | 23 | [Build vs Buy Evaluation Framework](#23-build-vs-buy-evaluation-framework) |
+| 9 | [Offline and Reliability Strategy](#9-offline-and-reliability-strategy) | 24 | [AI/ML Integration Considerations](#24-aiml-integration-considerations) |
+| 10 | [API Integration Architecture](#10-api-integration-architecture) | 25 | [Organizational Scaling Model](#25-organizational-scaling-model) |
+| 11 | [Scalability and Modularization](#11-scalability-and-modularization) | 26 | [Anti-Patterns and Failure Scenarios](#26-anti-patterns-and-failure-scenarios) |
+| 12 | [Scalability Evolution Model](#12-scalability-evolution-model) | 27 | [Migration and Evolution Strategy](#27-migration-and-evolution-strategy) |
+| 13 | [Mobile Platform Engineering Strategy](#13-mobile-platform-engineering-strategy) | 28 | [Reference Architecture](#28-reference-architecture) |
+| 14 | [Dependency Governance](#14-dependency-governance) | 29 | [Decision Summary](#29-decision-summary) |
+| 15 | [Performance Engineering](#15-performance-engineering) | | |
+
+---
+
 ## Executive Summary
 
 The Enterprise Mobile Banking ADR mandates a security-first, reliability-driven mobile architecture for all banking and financial services mobile applications. Clean Architecture with MVVM governs internal structure. OAuth 2.0 + PKCE governs all authentication. OWASP MASVS Level 2 is the mandatory security compliance target. Offline-capable, observable, and deterministic state management is required across all critical user journeys. The architecture treats security over convenience, reliability over velocity, and explicit dependencies over implicit coupling as non-negotiable engineering principles.
@@ -1522,155 +1546,245 @@ Major framework upgrades (Swift version, Kotlin version, Compose major version, 
 
 ## 28. Reference Architecture
 
+### ADR-024: Canonical Reference Architecture — Logical, Security, Runtime, and Release Views
+
 ### 28.1 Logical Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        APPLICATION MODULE                           │
-│  Entry point, DI Assembly, Root Coordinator, App Lifecycle          │
-└──────────────────────────────┬──────────────────────────────────────┘
-                               │
-           ┌───────────────────┼───────────────────────┐
-           │                   │                       │
-┌──────────▼──────┐ ┌──────────▼──────┐ ┌────────────▼──────────────┐
-│  Feature Module │ │  Feature Module  │ │     Feature Module (N)    │
-│  Authentication │ │    Accounts      │ │  Payments / Transfers /   │
-│                 │ │                  │ │  Cards / Investments etc. │
-│  Presentation   │ │  Presentation    │ │  Presentation             │
-│  Domain         │ │  Domain          │ │  Domain                   │
-│  Data           │ │  Data            │ │  Data                     │
-└────────┬────────┘ └────────┬─────────┘ └─────────────┬─────────────┘
-         │                   │                          │
-         └──────────┬────────┘                          │
-                    │                                   │
-        ┌───────────▼───────────────────────────────────▼──────────────┐
-        │                    DOMAIN MODULES                             │
-        │    domain-account | domain-payment | domain-card | ...        │
-        │    (Shared entity types — no platform dependencies)           │
-        └───────────────────────────────────────────────────────────────┘
-                    │
-        ┌───────────▼───────────────────────────────────────────────────┐
-        │                    CORE MODULES                                │
-        │  core-networking | core-security | core-persistence           │
-        │  core-analytics  | core-featureflags | core-logging | core-di │
-        └───────────────────────────────────────────────────────────────┘
-                    │
-        ┌───────────▼───────────────────────────────────────────────────┐
-        │                   DESIGN SYSTEM MODULE                        │
-        │    Components | Tokens | Typography | Colors | Icons          │
-        └───────────────────────────────────────────────────────────────┘
+The application is structured as five module layers with strict
+inward-only dependency rules. Feature modules are domain-aligned
+vertical slices. Core modules provide shared infrastructure.
+The Design System provides all shared UI components.
+
+```mermaid
+%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':60,'rankSpacing':70,'useMaxWidth':true}}}%%
+flowchart TD
+    APP["<b>:app  —  Application Module</b><br/>Entry point · DI Assembly<br/>Root Coordinator · App Lifecycle"]
+
+    subgraph FEATURES["Feature Modules  —  Domain-Aligned Vertical Slices"]
+        direction LR
+        F1["<b>feature-authentication</b><br/>Login · Biometric · MFA<br/>Session Lifecycle"]
+        F2["<b>feature-accounts</b><br/>Balance · History<br/>Statement Download"]
+        F3["<b>feature-payments</b><br/>Transfers · Bill Pay<br/>Payee Management"]
+        F4["<b>feature-cards</b><br/>Card Management<br/>Freeze · PIN Change"]
+        FN["<b>feature-N</b><br/>Investments · Loans<br/>Onboarding · Settings"]
+    end
+
+    subgraph DOMAIN_MODS["Domain Modules  —  Shared Entity Types  —  No Platform Dependencies"]
+        direction LR
+        D1["<b>domain-account</b><br/>Account · Transaction<br/>AccountSummary"]
+        D2["<b>domain-payment</b><br/>Payment · Beneficiary<br/>TransferRequest"]
+        D3["<b>domain-card</b><br/>Card · CardLimit<br/>PINChangeRequest"]
+    end
+
+    subgraph CORE["Core Modules  —  Shared Infrastructure  —  No Feature Knowledge"]
+        direction LR
+        C1["<b>core-networking</b><br/>HTTP Client · Auth Interceptor<br/>Certificate Pinning"]
+        C2["<b>core-security</b><br/>Keychain/KeyStore<br/>Encryption · Biometric"]
+        C3["<b>core-persistence</b><br/>Encrypted SQLite<br/>Migrations"]
+        C4["<b>core-analytics</b><br/>Event Tracking<br/>PII Anonymisation"]
+        C5["<b>core-featureflags</b><br/>Flag Evaluation<br/>Kill Switches"]
+    end
+
+    DS["<b>design-system</b><br/>Components · Tokens · Typography<br/>Colours · Icons · Spacing<br/><i>No business logic · No network access</i>"]
+
+    APP --> F1 & F2 & F3 & F4 & FN
+    F1 & F2 --> D1
+    F3 --> D2
+    F4 --> D3
+    F1 & F2 & F3 & F4 & FN --> C1 & C2 & C3 & C4 & C5
+    F1 & F2 & F3 & F4 & FN --> DS
+
+    style APP fill:#1D4ED8,stroke:#1e3a5f,color:#ffffff
+    style FEATURES fill:#DBEAFE,stroke:#2563EB,stroke-width:2px
+    style DOMAIN_MODS fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+    style CORE fill:#FEF9C3,stroke:#CA8A04,stroke-width:2px
+    style F1 fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style F2 fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style F3 fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style F4 fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style FN fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style D1 fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style D2 fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style D3 fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style C1 fill:#FDE68A,stroke:#CA8A04,color:#713f12
+    style C2 fill:#FDE68A,stroke:#CA8A04,color:#713f12
+    style C3 fill:#FDE68A,stroke:#CA8A04,color:#713f12
+    style C4 fill:#FDE68A,stroke:#CA8A04,color:#713f12
+    style C5 fill:#FDE68A,stroke:#CA8A04,color:#713f12
+    style DS fill:#F3E8FF,stroke:#7C3AED,color:#4C1D95
 ```
 
 ### 28.2 Security Boundary Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                    HARDWARE TRUST ZONE                               │
-│    Secure Enclave (iOS) / StrongBox / TEE (Android)                 │
-│    Cryptographic key generation and storage                         │
-└────────────────────────────┬────────────────────────────────────────┘
-                             │  Key operations only — keys never leave
-┌────────────────────────────▼────────────────────────────────────────┐
-│                    OS TRUST ZONE                                     │
-│    Platform Keychain / KeyStore — key metadata                      │
-│    Biometric verification (LocalAuthentication / BiometricPrompt)   │
-│    Certificate trust evaluation                                     │
-└────────────────────────────┬────────────────────────────────────────┘
-                             │
-┌────────────────────────────▼────────────────────────────────────────┐
-│                    APPLICATION TRUST ZONE                           │
-│  (Authenticated session established — access token in memory)      │
-│    Session state management                                         │
-│    Encrypted local database (SQLCipher)                             │
-│    In-memory access token (never persisted)                         │
-│    Encrypted network traffic (TLS 1.3 + certificate pinning)       │
-└────────────────────────────┬────────────────────────────────────────┘
-                             │  TLS 1.3, Certificate-pinned
-┌────────────────────────────▼────────────────────────────────────────┐
-│                    NETWORK BOUNDARY                                  │
-│    API Gateway / Load Balancer                                      │
-│    Token validation (backend)                                       │
-│    Device attestation validation (backend)                         │
-└─────────────────────────────────────────────────────────────────────┘
+Defense-in-depth across four trust zones. Each zone provides
+layered protection — from hardware-rooted cryptography to
+application-level session management.
+
+```mermaid
+%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':60,'rankSpacing':70,'useMaxWidth':true}}}%%
+flowchart TD
+    subgraph HW["🔒  Zone 1 — Hardware Trust Zone  (Deepest Trust)"]
+        direction LR
+        SE["<b>Secure Enclave (iOS)</b><br/>Cryptographic key generation<br/>Keys never leave hardware<br/><i>Hardware-certified operations only</i>"]
+        SB["<b>StrongBox / TEE (Android)</b><br/>Hardware-backed KeyStore<br/>Key attestation certificates<br/><i>Tamper-resistant execution</i>"]
+    end
+
+    subgraph OS_ZONE["🛡  Zone 2 — OS Trust Zone"]
+        direction LR
+        KC["<b>Keychain (iOS)</b><br/>kSecAttrAccessibleWhenUnlockedThisDeviceOnly<br/>Not backed up · Device-bound"]
+        KS["<b>KeyStore (Android)</b><br/>EncryptedSharedPreferences<br/>Hardware-backed where available"]
+        BIO_OS["<b>Biometric Verification</b><br/>LocalAuthentication (iOS)<br/>BiometricPrompt (Android)<br/>Certificate trust evaluation"]
+    end
+
+    subgraph APP_ZONE["📱  Zone 3 — Application Trust Zone  (Post-Authentication)"]
+        direction LR
+        SESSION["<b>Session State</b><br/>Access token in memory only<br/>Never persisted to disk<br/>15-minute maximum lifetime"]
+        DB["<b>Encrypted Database</b><br/>SQLCipher at rest<br/>Key from Secure Enclave/KeyStore<br/>Full purge on secure logout"]
+        NET_APP["<b>Encrypted Network Traffic</b><br/>TLS 1.3 + SPKI pinning<br/>Certificate pinning verified<br/>on every request"]
+    end
+
+    subgraph NET_ZONE["🌐  Zone 4 — Network Boundary"]
+        direction LR
+        GW_SEC["<b>API Gateway</b><br/>Token validation<br/>Device attestation check<br/>Rate limiting"]
+        BACKEND_SEC["<b>Backend Services</b><br/>Session validity registry<br/>Server-side revocation<br/>Audit log preservation"]
+    end
+
+    SE & SB -->|"Key operations only\nKeys never leave"| KC & KS
+    KC & KS --> BIO_OS
+    BIO_OS -->|"Authentication established\nTrusted context begins"| SESSION
+    SESSION --> DB & NET_APP
+    NET_APP -->|"TLS 1.3\nCertificate-pinned"| GW_SEC
+    GW_SEC --> BACKEND_SEC
+
+    style HW fill:#FEE2E2,stroke:#DC2626,stroke-width:2px,color:#7f1d1d
+    style OS_ZONE fill:#FEF3C7,stroke:#D97706,stroke-width:2px,color:#78350F
+    style APP_ZONE fill:#DBEAFE,stroke:#2563EB,stroke-width:2px,color:#1e3a5f
+    style NET_ZONE fill:#DCFCE7,stroke:#16A34A,stroke-width:2px,color:#14532D
+    style SE fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style SB fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style KC fill:#FDE68A,stroke:#D97706,color:#78350F
+    style KS fill:#FDE68A,stroke:#D97706,color:#78350F
+    style BIO_OS fill:#FDE68A,stroke:#D97706,color:#78350F
+    style SESSION fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style DB fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style NET_APP fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style GW_SEC fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style BACKEND_SEC fill:#BBF7D0,stroke:#16A34A,color:#14532D
 ```
 
 ### 28.3 Runtime Interaction Architecture
 
-```
-User Action
-    │
-    ▼
-View / Composable
-    │ (UI intent)
-    ▼
-ViewModel
-    │ (executes use case)
-    ▼
-Use Case / Interactor
-    │ (calls repository)
-    ▼
-Repository Interface (Domain)
-    │
-    ├──────────────────────────────────────┐
-    │                                      │
-    ▼                                      ▼
-Network Data Source              Local Database Data Source
-(core-networking)                (core-persistence)
-    │                                      │
-    ▼                                      ▼
-Backend API                      Encrypted SQLite
-(TLS + Cert Pinning)             (SQLCipher)
-    │                                      │
-    └──────────────┬───────────────────────┘
-                   │ (mapped to domain entities)
-                   ▼
-Repository Implementation
-                   │
-                   ▼
-Use Case returns Result<DomainEntity, DomainError>
-                   │
-                   ▼
-ViewModel maps to ScreenState (sealed type)
-                   │
-                   ▼
-View observes ScreenState → renders
+The unidirectional data flow from user action through each
+architectural layer to the backend and back.
+
+```mermaid
+%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':55,'rankSpacing':65,'useMaxWidth':true}}}%%
+flowchart TD
+    UA["<b>User Action</b><br/>Tap · Input · Gesture"]
+    VIEW_RT["<b>View / Composable</b><br/>Emits UI intent<br/>Observes ScreenState"]
+    VM_RT["<b>ViewModel</b><br/>Executes Use Case<br/>Maps result to ScreenState sealed type"]
+    UC_RT["<b>Use Case / Interactor</b><br/>Applies domain rules<br/>Calls Repository interface"]
+    REPO_RT["<b>Repository Implementation</b><br/>Cache-first or Network-first strategy<br/>Maps DTO → Domain Entity"]
+
+    subgraph DATA_SOURCES["Data Sources"]
+        direction LR
+        NETWORK_RT["<b>Network DataSource</b><br/>core-networking<br/>TLS + Certificate Pinning"]
+        LOCAL_RT["<b>Local Database DataSource</b><br/>core-persistence<br/>Encrypted SQLite"]
+    end
+
+    BACKEND_RT["<b>Backend API</b><br/>REST · GraphQL · gRPC<br/>Token-validated · Pinned"]
+
+    UA --> VIEW_RT
+    VIEW_RT -->|"UI Intent"| VM_RT
+    VM_RT -->|"executes"| UC_RT
+    UC_RT -->|"calls interface"| REPO_RT
+    REPO_RT --> NETWORK_RT & LOCAL_RT
+    NETWORK_RT -->|"TLS 1.3"| BACKEND_RT
+    BACKEND_RT -->|"Response"| NETWORK_RT
+    LOCAL_RT -->|"Cached entity"| REPO_RT
+    NETWORK_RT -->|"Writes response\nto local DB"| LOCAL_RT
+    REPO_RT -->|"Domain Entity"| UC_RT
+    UC_RT -->|"Result&lt;T, Error&gt;"| VM_RT
+    VM_RT -->|"ScreenState sealed type"| VIEW_RT
+    VIEW_RT -->|"Renders"| UA
+
+    style UA fill:#1D4ED8,stroke:#1e3a5f,color:#ffffff
+    style VIEW_RT fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style VM_RT fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style UC_RT fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style REPO_RT fill:#FDE68A,stroke:#CA8A04,color:#713f12
+    style DATA_SOURCES fill:#FEF9C3,stroke:#CA8A04,stroke-width:2px
+    style NETWORK_RT fill:#FDE68A,stroke:#CA8A04,color:#713f12
+    style LOCAL_RT fill:#FDE68A,stroke:#CA8A04,color:#713f12
+    style BACKEND_RT fill:#BBF7D0,stroke:#16A34A,color:#14532D
 ```
 
 ### 28.4 Release Architecture
 
-```
-Developer Commit → PR → PR Pipeline (< 15 min)
-                              │
-                    Code Review + Approval
-                              │
-                         Merge to Main
-                              │
-                    Merge Pipeline (< 30 min)
-                              │
-              ┌───────────────┴───────────────┐
-              │               │               │
-           Unit Tests    Integration      Security
-           (parallel)    Tests            Scans
-              │               │               │
-              └───────────────┴───────────────┘
-                              │
-                    Release Candidate Cut
-                              │
-                    Release Pipeline
-                              │
-              ┌───────────────┴───────────────┐
-              │               │               │
-         Full Test        DAST Scan      Compliance
-         Suite            Run            Evidence
-              │               │               │
-              └───────────────┴───────────────┘
-                              │
-                    Canary Release (1% users)
-                              │
-                    Health Gate Evaluation (4 hours)
-                              │
-                    Progressive Rollout: 5% → 25% → 50% → 100%
-                    (with health gates between each step)
+Every release follows a mandatory pipeline with automated
+quality gates and progressive health-gated rollout.
+
+```mermaid
+%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':60,'rankSpacing':70,'useMaxWidth':true}}}%%
+flowchart TD
+    COMMIT["<b>Developer Commit</b><br/>Feature branch · Max 2 days"]
+
+    subgraph PR_PIPE["Pull Request Pipeline  —  Target &lt; 15 minutes"]
+        direction LR
+        COMPILE["Compilation\nAll modules"]
+        UNIT["Unit Tests\nParallel by module"]
+        SAST_PR["SAST · Lint\nDependency CVE scan"]
+        SIZE_CHK["Binary Size Delta\nAPI Contract validation"]
+    end
+
+    subgraph MERGE_PIPE["Merge Pipeline  —  Target &lt; 30 minutes"]
+        direction LR
+        FULL_TEST["Full Test Suite\nIntegration + UI critical flows"]
+        DAST["SAST + DAST\nSecrets scan · SBOM generation"]
+        PERF["Performance\nRegression check"]
+    end
+
+    subgraph RELEASE_PIPE["Release Pipeline"]
+        direction LR
+        ALL_TESTS["All Nightly Checks\n+ Penetration test (if scheduled)"]
+        COMPLIANCE["Compliance Evidence\nGeneration + Artifact signing"]
+        UPLOAD["App Store Upload\nApp Store Connect · Google Play"]
+    end
+
+    subgraph ROLLOUT["Progressive Rollout  —  Health Gates at Every Stage"]
+        direction LR
+        C1P["<b>Canary 1%</b><br/>4 hour hold<br/>Crash + ANR gate"]
+        C5P["<b>5%</b><br/>8 hour hold<br/>Transaction success gate"]
+        C25P["<b>25%</b><br/>24 hour hold<br/>Session duration gate"]
+        C50P["<b>50%</b><br/>24 hour hold<br/>Full metrics gate"]
+        C100P["<b>100%</b><br/>Full production"]
+    end
+
+    COMMIT --> PR_PIPE
+    PR_PIPE -->|"Code Review\n+ Approval"| MERGE_PIPE
+    MERGE_PIPE -->|"Release Candidate\nCut from main"| RELEASE_PIPE
+    RELEASE_PIPE --> C1P --> C5P --> C25P --> C50P --> C100P
+
+    style COMMIT fill:#1D4ED8,stroke:#1e3a5f,color:#ffffff
+    style PR_PIPE fill:#E5E7EB,stroke:#4B5563,stroke-width:2px
+    style MERGE_PIPE fill:#FEF9C3,stroke:#CA8A04,stroke-width:2px
+    style RELEASE_PIPE fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+    style ROLLOUT fill:#DBEAFE,stroke:#2563EB,stroke-width:2px
+    style COMPILE fill:#D1D5DB,stroke:#4B5563,color:#111827
+    style UNIT fill:#D1D5DB,stroke:#4B5563,color:#111827
+    style SAST_PR fill:#D1D5DB,stroke:#4B5563,color:#111827
+    style SIZE_CHK fill:#D1D5DB,stroke:#4B5563,color:#111827
+    style FULL_TEST fill:#FDE68A,stroke:#CA8A04,color:#713f12
+    style DAST fill:#FDE68A,stroke:#CA8A04,color:#713f12
+    style PERF fill:#FDE68A,stroke:#CA8A04,color:#713f12
+    style ALL_TESTS fill:#86EFAC,stroke:#16A34A,color:#14532D
+    style COMPLIANCE fill:#86EFAC,stroke:#16A34A,color:#14532D
+    style UPLOAD fill:#86EFAC,stroke:#16A34A,color:#14532D
+    style C1P fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style C5P fill:#93C5FD,stroke:#1D4ED8,color:#1e3a5f
+    style C25P fill:#60A5FA,stroke:#1D4ED8,color:#ffffff
+    style C50P fill:#3B82F6,stroke:#1D4ED8,color:#ffffff
+    style C100P fill:#1D4ED8,stroke:#1e3a5f,color:#ffffff
 ```
 
 ---

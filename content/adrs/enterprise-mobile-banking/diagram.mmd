@@ -1,110 +1,79 @@
-%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui, sans-serif','primaryColor':'#E8F4FD','primaryTextColor':'#0D1117','primaryBorderColor':'#0078D4','lineColor':'#555555','secondaryColor':'#FFF4EC','tertiaryColor':'#F0FFF4','clusterBkg':'#F8F9FA','clusterBorder':'#CED4DA','edgeLabelBackground':'#FFFFFF','nodeBorder':'#0078D4'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':60,'rankSpacing':72,'useMaxWidth':true}}}%%
+%%{init:{'theme':'base','themeVariables':{'fontSize':'15px','fontFamily':'IBM Plex Sans, system-ui, sans-serif','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','secondaryColor':'#D1FAE5','tertiaryColor':'#FEF3C7','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB','edgeLabelBackground':'#FFFFFF','nodeBorder':'#2563EB'},'flowchart':{'curve':'orthogonal','padding':32,'nodeSpacing':70,'rankSpacing':80,'useMaxWidth':true}}}%%
 flowchart TD
 
-    subgraph DEVICE["📱 Trusted Device — Application Trust Zone"]
-        direction TB
-        subgraph PRESENT["Presentation Layer — Compose / SwiftUI"]
-            VIEW["View / Composable\nUser Events · State Rendering\nNo Business Logic"]
-            VM["ViewModel\nUiState: StateFlow / @Observable\nLifecycle-Aware · No platform imports in domain"]
-        end
-        subgraph DOMAIN["Domain Layer — Pure Kotlin / Swift · Zero Platform Imports"]
-            UC["Use Cases\nOne per Business Operation\nReturns Result of T or DomainError"]
-            RI["Repository Interfaces\nDomain Contracts Only\nNo Implementations"]
-            DM["Domain Models\ndata class / struct\nBigDecimal for monetary values"]
-        end
-        subgraph DATA["Data Layer — Interface Adapters"]
-            RIMPL["Repository Implementations\nCoordinates Remote + Local"]
-            NET["Network DataSource\nRetrofit / URLSession\nOkHttp + CertificatePinner"]
-            LOCAL["Local DataSource\nRoom / SwiftData\nSQLCipher Encrypted"]
-            CRED["Secure Credential Storage\nAndroid Keystore\niOS Keychain · SecureEnclave"]
-        end
-        subgraph SEC_DEVICE["🛡 Runtime Security Controls"]
-            ATT["Device Attestation\nPlay Integrity API\nApple AppAttest"]
-            BIO["Biometric MFA\nBiometricPrompt BIOMETRIC_STRONG\nLocalAuthentication iOS"]
-            PIN_CERT["SPKI Certificate Pinning\nTLS 1.3 Mandatory\nCleartext Blocked"]
-        end
+    subgraph MOBILE["📱  Mobile Application  —  Clean Architecture"]
+        direction LR
+        UI["<b>View Layer</b><br/>Compose UI · SwiftUI<br/>Renders UiState · Emits Events<br/><i>No business logic</i>"]
+        VM["<b>ViewModel</b><br/>Holds UiState as StateFlow<br/>Delegates to Use Cases<br/><i>No platform imports</i>"]
+        UC["<b>Use Cases</b><br/>One per business operation<br/>Pure Kotlin / Swift<br/><i>Returns Result&lt;T, Error&gt;</i>"]
+        REPO["<b>Repository Layer</b><br/>Interfaces in Domain<br/>Implementations in Data<br/><i>SQLCipher + Keystore/Keychain</i>"]
     end
 
-    subgraph AUTH_PLANE["🔑 Authentication Plane — OAuth 2.0 + PKCE"]
-        IDP["Identity Provider\nOkta · Azure AD · OIDC\nAuthorization Server"]
-        PKCE_FLOW["PKCE Flow\ncode_verifier on-device\nNo client_secret in binary"]
-        TOKEN["Token Architecture\nAccess Token 15min — memory only\nRefresh Token 8hr — Keystore/Keychain"]
+    subgraph SECURITY["🛡  Security Controls"]
+        direction LR
+        AUTH["<b>OAuth 2.0 + PKCE</b><br/>Access token — memory only<br/>Refresh token — Keystore/Keychain<br/>No client_secret in binary"]
+        BIOMETRIC["<b>Biometric MFA</b><br/>BiometricPrompt Android<br/>LocalAuthentication iOS<br/>Step-up for high-value ops"]
+        PINNING["<b>Certificate Pinning</b><br/>SPKI hash pinning<br/>TLS 1.3 mandatory<br/>Cleartext HTTP blocked"]
+        ATTEST["<b>Device Attestation</b><br/>Play Integrity API<br/>Apple AppAttest<br/>Called on every transaction"]
     end
 
-    subgraph BFF_PLANE["⚡ Mobile BFF Layer — Mandatory · No Shared Web API"]
-        GW["API Gateway\nMobile Auth Enforcement\nRate Limiting · Field Selection"]
-        AGG["Aggregation Layer\nCompose Microservice Responses\nDelta Sync · since= parameter"]
-        CACHE_BFF["Response Cache\nETag / If-None-Match\nBrotli Compression"]
+    subgraph BFF["⚡  Mobile BFF  —  No Shared Web API"]
+        direction LR
+        GW["<b>API Gateway</b><br/>Mobile auth enforcement<br/>Rate limiting<br/>Field selection"]
+        AGG["<b>Aggregation Layer</b><br/>Composes microservice calls<br/>Delta sync support<br/>Brotli compression"]
     end
 
-    subgraph BACKEND["🏗 Backend Microservices"]
-        SVC1["Account Service"]
-        SVC2["Transaction Service"]
-        SVC3["Payment Service"]
-        SVC4["Notification Service\nAPNs / FCM\nPayload: notification_id only"]
+    subgraph BACKEND["🏗  Backend Microservices"]
+        direction LR
+        SVC_ACC["<b>Account Service</b>"]
+        SVC_TXN["<b>Transaction Service</b>"]
+        SVC_PAY["<b>Payment Service</b>"]
+        SVC_PUSH["<b>Push Service</b><br/>APNs · FCM<br/>Payload: ID only"]
     end
 
-    subgraph CICD_PLANE["⚙ CI/CD Pipeline — Fastlane + GitHub Actions"]
-        PR_GATE["PR Gate\nLint · Unit Tests 90%\nSAST · CVE Scan · Snapshot Diff"]
-        BUILD["Parallel Build Matrix\nAndroid ubuntu-latest\niOS macos-latest"]
-        SIGN["Code Signing\nfastlane Match iOS\nKeystore Base64 Secret Android"]
-        DIST["Distribute\nFirebase App Distribution\nTestFlight Internal"]
-        QA_GATE["QA Gate\nGitHub Environment Protection\nQA Lead Approval Required"]
-        ROLLOUT["Staged Rollout\n1%→5%→25%→50%→100%\nHealth Gates Between Stages"]
+    subgraph CICD["⚙  CI/CD Pipeline  —  Fastlane + GitHub Actions"]
+        direction LR
+        GATE_PR["<b>PR Gate</b><br/>Lint · Unit tests 90%<br/>SAST · CVE scan<br/>Snapshot diff"]
+        BUILD["<b>Parallel Build</b><br/>Android ubuntu-latest<br/>iOS macos-latest"]
+        SIGN["<b>Code Signing</b><br/>fastlane Match iOS<br/>Keystore secret Android"]
+        QA["<b>QA Gate</b><br/>Manual approval required<br/>GitHub Environments"]
+        SHIP["<b>Staged Rollout</b><br/>1% → 5% → 25%<br/>→ 50% → 100%<br/>Health gates enforced"]
     end
 
-    VIEW -->|"User Events"| VM
-    VM -->|"UiState sealed class"| VIEW
-    VM --> UC
-    UC --> RI
-    RI --> RIMPL
-    RIMPL --> NET & LOCAL
-    RIMPL --> CRED
-    NET -->|"TLS 1.3 + SPKI Pinning"| GW
+    UI -->|"Events"| VM
+    VM -->|"UiState"| UI
+    VM --> UC --> REPO
+    REPO -->|"TLS 1.3 + Pinning"| GW
     GW --> AGG
-    AGG --> CACHE_BFF
-    AGG --> SVC1 & SVC2 & SVC3
-    SVC4 -->|"Silent push · notification_id only"| DEVICE
-    IDP --> PKCE_FLOW --> TOKEN --> NET
-    ATT -.->|"Integrity verdict on every transaction"| DEVICE
-    BIO -.->|"Step-up auth for high-risk ops"| AUTH_PLANE
-    PIN_CERT -.->|"Enforced on all connections"| NET
-    PR_GATE --> BUILD --> SIGN --> DIST --> QA_GATE --> ROLLOUT
+    AGG --> SVC_ACC & SVC_TXN & SVC_PAY
+    SVC_PUSH -->|"Silent push · ID only"| MOBILE
+    AUTH --> REPO
+    BIOMETRIC -.->|"Step-up auth"| AUTH
+    PINNING -.->|"All connections"| REPO
+    ATTEST -.->|"Per transaction"| MOBILE
+    GATE_PR --> BUILD --> SIGN --> QA --> SHIP
 
-    style DEVICE fill:#EBF5FB,stroke:#1A5276,stroke-width:2px
-    style PRESENT fill:#E3F2FD,stroke:#1565C0,stroke-width:1.5px
-    style DOMAIN fill:#E8F5E9,stroke:#1B5E20,stroke-width:1.5px
-    style DATA fill:#FFF3E0,stroke:#E65100,stroke-width:1.5px
-    style SEC_DEVICE fill:#FFEBEE,stroke:#B71C1C,stroke-width:1.5px
-    style AUTH_PLANE fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px
-    style BFF_PLANE fill:#FFF8E1,stroke:#F57F17,stroke-width:2px
-    style BACKEND fill:#E8F5E9,stroke:#1B5E20,stroke-width:2px
-    style CICD_PLANE fill:#ECEFF1,stroke:#546E7A,stroke-width:2px
-    style VIEW fill:#BBDEFB,stroke:#1565C0
-    style VM fill:#BBDEFB,stroke:#1565C0
-    style UC fill:#C8E6C9,stroke:#1B5E20
-    style RI fill:#C8E6C9,stroke:#1B5E20
-    style DM fill:#C8E6C9,stroke:#1B5E20
-    style RIMPL fill:#FFE0B2,stroke:#E65100
-    style NET fill:#FFE0B2,stroke:#E65100
-    style LOCAL fill:#FFE0B2,stroke:#E65100
-    style CRED fill:#FFCCBC,stroke:#BF360C
-    style ATT fill:#FFCDD2,stroke:#B71C1C
-    style BIO fill:#FFCDD2,stroke:#B71C1C
-    style PIN_CERT fill:#FFCDD2,stroke:#B71C1C
-    style IDP fill:#E1BEE7,stroke:#6A1B9A
-    style PKCE_FLOW fill:#E1BEE7,stroke:#6A1B9A
-    style TOKEN fill:#E1BEE7,stroke:#6A1B9A
-    style GW fill:#FFF9C4,stroke:#F57F17
-    style AGG fill:#FFF9C4,stroke:#F57F17
-    style CACHE_BFF fill:#FFF9C4,stroke:#F57F17
-    style SVC1 fill:#DCEDC8,stroke:#558B2F
-    style SVC2 fill:#DCEDC8,stroke:#558B2F
-    style SVC3 fill:#DCEDC8,stroke:#558B2F
-    style SVC4 fill:#DCEDC8,stroke:#558B2F
-    style PR_GATE fill:#CFD8DC,stroke:#546E7A
-    style BUILD fill:#CFD8DC,stroke:#546E7A
-    style SIGN fill:#CFD8DC,stroke:#546E7A
-    style DIST fill:#CFD8DC,stroke:#546E7A
-    style QA_GATE fill:#B0BEC5,stroke:#37474F
-    style ROLLOUT fill:#90A4AE,stroke:#263238,color:#fff
+    style MOBILE fill:#DBEAFE,stroke:#1D4ED8,stroke-width:2px,color:#1e3a5f
+    style SECURITY fill:#FEE2E2,stroke:#DC2626,stroke-width:2px,color:#7f1d1d
+    style BFF fill:#FEF9C3,stroke:#CA8A04,stroke-width:2px,color:#713f12
+    style BACKEND fill:#DCFCE7,stroke:#16A34A,stroke-width:2px,color:#14532D
+    style CICD fill:#E5E7EB,stroke:#4B5563,stroke-width:2px,color:#111827
+    style UI fill:#BFDBFE,stroke:#1D4ED8,color:#1e3a5f
+    style VM fill:#BFDBFE,stroke:#1D4ED8,color:#1e3a5f
+    style UC fill:#BBF7D0,stroke:#15803D,color:#14532D
+    style REPO fill:#FDE68A,stroke:#D97706,color:#78350F
+    style AUTH fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style BIOMETRIC fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style PINNING fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style ATTEST fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style GW fill:#FDE68A,stroke:#CA8A04,color:#713f12
+    style AGG fill:#FDE68A,stroke:#CA8A04,color:#713f12
+    style SVC_ACC fill:#86EFAC,stroke:#16A34A,color:#14532D
+    style SVC_TXN fill:#86EFAC,stroke:#16A34A,color:#14532D
+    style SVC_PAY fill:#86EFAC,stroke:#16A34A,color:#14532D
+    style SVC_PUSH fill:#86EFAC,stroke:#16A34A,color:#14532D
+    style GATE_PR fill:#D1D5DB,stroke:#4B5563,color:#111827
+    style BUILD fill:#D1D5DB,stroke:#4B5563,color:#111827
+    style SIGN fill:#D1D5DB,stroke:#4B5563,color:#111827
+    style QA fill:#9CA3AF,stroke:#374151,color:#111827
+    style SHIP fill:#6B7280,stroke:#1F2937,color:#ffffff
