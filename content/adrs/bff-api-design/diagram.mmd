@@ -1,43 +1,64 @@
-%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px','clusterBkg':'#F8F9FA','clusterBorder':'#CED4DA'},'flowchart':{'curve':'orthogonal','padding':24}}}%%
-flowchart LR
-    subgraph Mobile["Mobile Application"]
-        REPO2["Repository<br/>Interface"]
-        APOLLO["Apollo Client<br/>GraphQL"]
-        LDB["Local Database<br/>Single Source of Truth"]
+%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB','edgeLabelBackground':'#FFFFFF'},'flowchart':{'curve':'orthogonal','padding':30,'nodeSpacing':65,'rankSpacing':75,'useMaxWidth':true}}}%%
+flowchart TD
+    subgraph MOBILE["📱  Mobile Application"]
+        direction LR
+        REPO_BFF["<b>Repository Layer</b><br/>Interface in Domain<br/>Implementation in Data"]
+        APOLLO["<b>API Client</b><br/>Apollo Kotlin · Apollo iOS<br/>Type-safe generated code"]
+        LOCAL_BFF["<b>Local Database</b><br/>Room · SwiftData<br/>Single source of truth"]
     end
-    subgraph BFF2["Mobile BFF Layer — MANDATORY"]
-        GW2["API Gateway<br/>Mobile Auth PKCE<br/>Rate Limiting"]
-        AGG["Aggregation Layer<br/>Field Selection<br/>Response Shaping"]
-        CACHE["Response Cache<br/>ETag · If-None-Match<br/>Brotli Compression"]
-        DELTA["Delta Sync<br/>?since=timestamp<br/>Tombstones 30 days"]
+    subgraph PROTOCOL["🔀  API Protocol Selection"]
+        direction LR
+        GQL["<b>GraphQL — PREFERRED</b><br/>Field selection native<br/>Subscriptions real-time<br/>Score: 4.83/5.0"]
+        REST_P["<b>REST — PERMITTED</b><br/>Cursor pagination<br/>?fields= selection<br/>Brotli compression"]
+        GRPC_P["<b>gRPC — SUPPLEMENTARY</b><br/>Protobuf binary<br/>Bidirectional streaming<br/>High-frequency only"]
     end
-    subgraph API["API Protocols"]
-        GQLP["GraphQL — PREFERRED<br/>Field Selection Native<br/>Subscriptions Real-time"]
-        RESTP["REST — PERMITTED<br/>Cursor Pagination<br/>Batch Endpoints"]
-        GRPCP["gRPC — SUPPLEMENTARY<br/>Protobuf Binary<br/>Bidirectional Streaming"]
+    subgraph BFF_LAYER["⚡  Mobile BFF Layer — Mandatory"]
+        GW_BFF["<b>API Gateway</b><br/>PKCE auth enforcement<br/>Rate limiting · Routing"]
+        AGG_BFF["<b>Aggregation Layer</b><br/>Composes microservice calls<br/>Field selection · Caching"]
+        DELTA["<b>Delta Sync</b><br/>?since=timestamp<br/>Tombstones 30 days"]
+        PUSH_BFF["<b>Push Manager</b><br/>APNs · FCM tokens<br/>Payload: ID only"]
     end
-    subgraph Services["Backend Microservices"]
-        US["User Service"]
-        TS["Transaction Service"]
-        PS["Product Service"]
-        PUSH2["Push Service<br/>APNs / FCM"]
+    subgraph CONTRACT["📋  Contract Testing — Pact"]
+        direction LR
+        CONSUMER["<b>Consumer Tests</b><br/>Mobile defines contract<br/>Per Repository method"]
+        BROKER["<b>Pact Broker</b><br/>Published on every<br/>mobile CI run"]
+        PROVIDER["<b>Provider Verification</b><br/>Backend CI validates<br/>Blocks deploy on failure"]
     end
-    subgraph Contract["Contract Testing"]
-        PACT["Pact Consumer Tests<br/>Mobile defines contract"]
-        BROKER["Pact Broker<br/>CI verification gate"]
+    subgraph BACKEND_BFF["🏗  Backend Microservices"]
+        direction LR
+        SVC_U["<b>User Service</b>"]
+        SVC_T["<b>Transaction Service</b>"]
+        SVC_P["<b>Product Service</b>"]
+        SVC_N["<b>Notification Service</b>"]
     end
-    REPO2 --> APOLLO --> GW2
-    GW2 --> AGG
-    AGG --> CACHE
-    AGG --> DELTA
-    AGG --> GQLP & RESTP & GRPCP
-    GQLP & RESTP & GRPCP --> US & TS & PS
-    PUSH2 -->|"notification_id only NO sensitive data"| Mobile
-    DELTA --> LDB
-    PACT --> BROKER
-    BROKER -.->|"Blocks deploy on failure"| Services
-    style Mobile fill:#E3F2FD,stroke:#1565C0
-    style BFF2 fill:#FFF8E1,stroke:#F57F17
-    style API fill:#F3E5F5,stroke:#6A1B9A
-    style Services fill:#E8F5E9,stroke:#1B5E20
-    style Contract fill:#FFEBEE,stroke:#B71C1C
+    REPO_BFF --> APOLLO --> GW_BFF
+    LOCAL_BFF <-->|"Delta sync watermark"| DELTA
+    GW_BFF --> AGG_BFF --> DELTA
+    AGG_BFF --> GQL & REST_P & GRPC_P
+    GQL & REST_P & GRPC_P --> SVC_U & SVC_T & SVC_P
+    PUSH_BFF --> SVC_N
+    SVC_N -.->|"Silent push · ID only"| MOBILE
+    CONSUMER --> BROKER --> PROVIDER
+    PROVIDER -.->|"Gates backend deploy"| BACKEND_BFF
+    style MOBILE fill:#DBEAFE,stroke:#2563EB,stroke-width:2px
+    style PROTOCOL fill:#FEF9C3,stroke:#CA8A04,stroke-width:2px
+    style BFF_LAYER fill:#FEF3C7,stroke:#D97706,stroke-width:2px
+    style CONTRACT fill:#F3E8FF,stroke:#7C3AED,stroke-width:2px
+    style BACKEND_BFF fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+    style REPO_BFF fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style APOLLO fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style LOCAL_BFF fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style GQL fill:#FEF08A,stroke:#CA8A04,color:#713f12
+    style REST_P fill:#FDE68A,stroke:#D97706,color:#713f12
+    style GRPC_P fill:#FCD34D,stroke:#B45309,color:#78350F
+    style GW_BFF fill:#FDE68A,stroke:#D97706,color:#78350F
+    style AGG_BFF fill:#FDE68A,stroke:#D97706,color:#78350F
+    style DELTA fill:#FDE68A,stroke:#D97706,color:#78350F
+    style PUSH_BFF fill:#FDE68A,stroke:#D97706,color:#78350F
+    style CONSUMER fill:#E9D5FF,stroke:#7C3AED,color:#4C1D95
+    style BROKER fill:#E9D5FF,stroke:#7C3AED,color:#4C1D95
+    style PROVIDER fill:#E9D5FF,stroke:#7C3AED,color:#4C1D95
+    style SVC_U fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style SVC_T fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style SVC_P fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style SVC_N fill:#BBF7D0,stroke:#16A34A,color:#14532D

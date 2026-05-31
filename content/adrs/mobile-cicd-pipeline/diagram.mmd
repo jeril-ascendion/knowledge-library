@@ -1,43 +1,53 @@
-%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px','clusterBkg':'#F8F9FA','clusterBorder':'#CED4DA'},'flowchart':{'curve':'orthogonal','padding':24}}}%%
-flowchart LR
-    GIT["git push to main"] --> MATRIX
-    subgraph MATRIX["GitHub Actions Matrix — Parallel"]
-        subgraph AND_PIPE["Android — ubuntu-latest"]
-            A1["Detekt Lint<br/>unit tests 90%<br/>Snapshot diff"]
-            A2["Gradle assembleRelease<br/>R8 Full Mode"]
-            A3["Keystore Decode<br/>Base64 GitHub Secret"]
-            A4["Firebase App Distribution<br/>Play Internal Track"]
-        end
-        subgraph IOS_PIPE["iOS — macos-latest"]
-            I1["SwiftLint<br/>unit tests 90%<br/>Snapshot diff"]
-            I2["Xcode Archive<br/>Release Config"]
-            I3["fastlane Match<br/>Encrypted Git Repo<br/>Dist Certificate + Profile"]
-            I4["TestFlight Internal"]
-        end
+%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB','edgeLabelBackground':'#FFFFFF'},'flowchart':{'curve':'orthogonal','padding':30,'nodeSpacing':60,'rankSpacing':72,'useMaxWidth':true}}}%%
+flowchart TD
+    GIT["<b>git push to main</b><br/>Trunk-based · Feature branch max 2 days"]
+    subgraph VALIDATE["Stage 1 — Validate · &lt; 8 min · Every PR"]
+        direction LR
+        LINT["<b>Lint · Static Analysis</b><br/>Detekt · SwiftLint<br/>Zero violations — blocks merge"]
+        UNIT_CI["<b>Unit Tests</b><br/>Use Cases ≥ 90%<br/>ViewModels ≥ 80%"]
+        SNAP_CI["<b>Snapshot Diff</b><br/>Zero pixel regressions<br/>All themes · Dynamic Type"]
+        SEC_CI["<b>Security Scan</b><br/>OWASP Dependency Check<br/>GitLeaks · Blocks P1/P2 CVE"]
     end
-    A1 --> A2 --> A3 --> A4
-    I1 --> I2 --> I3 --> I4
-    A4 & I4 --> QA
-    subgraph QA["QA Gate"]
-        QA_GATE["GitHub Environment<br/>Protection Rule<br/>QA Lead Approval Required"]
+    subgraph BUILD["Stage 2 — Parallel Build · Merge to Main"]
+        direction LR
+        AND_BUILD["<b>Android — ubuntu-latest</b><br/>Gradle assembleRelease<br/>R8 Full Mode · Baseline Profiles"]
+        IOS_BUILD["<b>iOS — macos-latest</b><br/>Xcode Archive · Release<br/>dSYM for Crashlytics"]
     end
-    QA_GATE --> RELEASE
-    subgraph RELEASE["Production Release"]
-        PLAY["Google Play<br/>Staged Rollout<br/>1%→5%→20%→100%"]
-        STORE["App Store<br/>Expedited Review<br/>Available if needed"]
+    subgraph SIGN["Stage 3 — Code Signing"]
+        direction LR
+        AND_SIGN["<b>Android Keystore</b><br/>Base64 GitHub Secret<br/>Play App Signing enrolled"]
+        IOS_SIGN["<b>fastlane Match</b><br/>Encrypted Git repo<br/>Auto-renews 30d before expiry"]
     end
-    subgraph GATES["Mandatory Quality Gates — All Block on Failure"]
-        G1["Use Case Coverage > 90%"]
-        G2["ViewModel Coverage > 80%"]
-        G3["Zero snapshot pixel regressions"]
-        G4["Zero Detekt/SwiftLint violations"]
-        G5["No P1/P2 CVEs — OWASP DC"]
-        G6["QA Lead sign-off"]
+    subgraph DIST["Stage 4 — QA Distribution"]
+        direction LR
+        FIREBASE["<b>Firebase App Distribution</b><br/>Android internal builds"]
+        TF["<b>TestFlight Internal</b><br/>iOS internal testing"]
     end
-    MATRIX -.->|"Enforces"| GATES
-    style MATRIX fill:#E3F2FD,stroke:#1565C0
-    style AND_PIPE fill:#E8F5E9,stroke:#1B5E20
-    style IOS_PIPE fill:#F3E5F5,stroke:#6A1B9A
-    style QA fill:#FFF3E0,stroke:#E65100
-    style RELEASE fill:#E8F5E9,stroke:#1B5E20
-    style GATES fill:#FFEBEE,stroke:#B71C1C
+    QA_CI{"<b>Stage 5 — QA Gate</b><br/>GitHub Environment Protection<br/>QA Lead approval required"}
+    subgraph RELEASE["Stage 6 — Production Release"]
+        direction LR
+        PLAY["<b>Google Play</b><br/>fastlane supply<br/>1%→5%→25%→50%→100%"]
+        APPSTORE["<b>App Store</b><br/>fastlane deliver<br/>Expedited review available"]
+    end
+    GIT --> VALIDATE --> BUILD --> SIGN --> DIST --> QA_CI
+    QA_CI -->|"Approved"| RELEASE
+    QA_CI -->|"Rejected"| GIT
+    style GIT fill:#1D4ED8,stroke:#1e3a5f,color:#ffffff
+    style VALIDATE fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+    style BUILD fill:#DBEAFE,stroke:#2563EB,stroke-width:2px
+    style SIGN fill:#FEE2E2,stroke:#DC2626,stroke-width:2px
+    style DIST fill:#FEF9C3,stroke:#CA8A04,stroke-width:2px
+    style QA_CI fill:#FEF3C7,stroke:#D97706,stroke-width:2px
+    style RELEASE fill:#F3E8FF,stroke:#7C3AED,stroke-width:2px
+    style LINT fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style UNIT_CI fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style SNAP_CI fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style SEC_CI fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style AND_BUILD fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style IOS_BUILD fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style AND_SIGN fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style IOS_SIGN fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style FIREBASE fill:#FDE68A,stroke:#CA8A04,color:#713f12
+    style TF fill:#FDE68A,stroke:#CA8A04,color:#713f12
+    style PLAY fill:#E9D5FF,stroke:#7C3AED,color:#4C1D95
+    style APPSTORE fill:#E9D5FF,stroke:#7C3AED,color:#4C1D95

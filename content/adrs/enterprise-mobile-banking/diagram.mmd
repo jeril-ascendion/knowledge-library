@@ -1,14 +1,12 @@
-%%{init:{'theme':'base','themeVariables':{'fontSize':'15px','fontFamily':'IBM Plex Sans, system-ui, sans-serif','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','secondaryColor':'#D1FAE5','tertiaryColor':'#FEF3C7','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB','edgeLabelBackground':'#FFFFFF','nodeBorder':'#2563EB'},'flowchart':{'curve':'orthogonal','padding':32,'nodeSpacing':70,'rankSpacing':80,'useMaxWidth':true}}}%%
+%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB','edgeLabelBackground':'#FFFFFF'},'flowchart':{'curve':'orthogonal','padding':30,'nodeSpacing':65,'rankSpacing':75,'useMaxWidth':true}}}%%
 flowchart TD
-
-    subgraph MOBILE["📱  Mobile Application  —  Clean Architecture"]
+    subgraph MOBILE["📱  Mobile Application — Clean Architecture"]
         direction LR
         UI["<b>View Layer</b><br/>Compose UI · SwiftUI<br/>Renders UiState · Emits Events<br/><i>No business logic</i>"]
-        VM["<b>ViewModel</b><br/>Holds UiState as StateFlow<br/>Delegates to Use Cases<br/><i>No platform imports</i>"]
-        UC["<b>Use Cases</b><br/>One per business operation<br/>Pure Kotlin / Swift<br/><i>Returns Result&lt;T, Error&gt;</i>"]
+        VM["<b>ViewModel</b><br/>Holds UiState as StateFlow<br/>Delegates to Use Cases<br/><i>No platform imports in domain</i>"]
+        UC["<b>Use Cases</b><br/>One per business operation<br/>Pure Kotlin / Swift<br/><i>Returns Result&lt;T, DomainError&gt;</i>"]
         REPO["<b>Repository Layer</b><br/>Interfaces in Domain<br/>Implementations in Data<br/><i>SQLCipher + Keystore/Keychain</i>"]
     end
-
     subgraph SECURITY["🛡  Security Controls"]
         direction LR
         AUTH["<b>OAuth 2.0 + PKCE</b><br/>Access token — memory only<br/>Refresh token — Keystore/Keychain<br/>No client_secret in binary"]
@@ -16,13 +14,11 @@ flowchart TD
         PINNING["<b>Certificate Pinning</b><br/>SPKI hash pinning<br/>TLS 1.3 mandatory<br/>Cleartext HTTP blocked"]
         ATTEST["<b>Device Attestation</b><br/>Play Integrity API<br/>Apple AppAttest<br/>Called on every transaction"]
     end
-
-    subgraph BFF["⚡  Mobile BFF  —  No Shared Web API"]
+    subgraph BFF["⚡  Mobile BFF — No Shared Web API"]
         direction LR
-        GW["<b>API Gateway</b><br/>Mobile auth enforcement<br/>Rate limiting<br/>Field selection"]
-        AGG["<b>Aggregation Layer</b><br/>Composes microservice calls<br/>Delta sync support<br/>Brotli compression"]
+        GW["<b>API Gateway</b><br/>Mobile auth enforcement<br/>Rate limiting · Field selection"]
+        AGG["<b>Aggregation Layer</b><br/>Composes microservice calls<br/>Delta sync · Brotli compression"]
     end
-
     subgraph BACKEND["🏗  Backend Microservices"]
         direction LR
         SVC_ACC["<b>Account Service</b>"]
@@ -30,34 +26,30 @@ flowchart TD
         SVC_PAY["<b>Payment Service</b>"]
         SVC_PUSH["<b>Push Service</b><br/>APNs · FCM<br/>Payload: ID only"]
     end
-
-    subgraph CICD["⚙  CI/CD Pipeline  —  Fastlane + GitHub Actions"]
+    subgraph CICD["⚙  CI/CD — Fastlane + GitHub Actions"]
         direction LR
-        GATE_PR["<b>PR Gate</b><br/>Lint · Unit tests 90%<br/>SAST · CVE scan<br/>Snapshot diff"]
+        GATE_PR["<b>PR Gate</b><br/>Lint · Unit tests 90%<br/>SAST · CVE scan · Snapshot diff"]
         BUILD["<b>Parallel Build</b><br/>Android ubuntu-latest<br/>iOS macos-latest"]
         SIGN["<b>Code Signing</b><br/>fastlane Match iOS<br/>Keystore secret Android"]
-        QA["<b>QA Gate</b><br/>Manual approval required<br/>GitHub Environments"]
-        SHIP["<b>Staged Rollout</b><br/>1% → 5% → 25%<br/>→ 50% → 100%<br/>Health gates enforced"]
+        QA["<b>QA Gate</b><br/>Manual approval required"]
+        SHIP["<b>Staged Rollout</b><br/>1%→5%→25%→50%→100%"]
     end
-
     UI -->|"Events"| VM
     VM -->|"UiState"| UI
     VM --> UC --> REPO
     REPO -->|"TLS 1.3 + Pinning"| GW
-    GW --> AGG
-    AGG --> SVC_ACC & SVC_TXN & SVC_PAY
+    GW --> AGG --> SVC_ACC & SVC_TXN & SVC_PAY
     SVC_PUSH -->|"Silent push · ID only"| MOBILE
     AUTH --> REPO
     BIOMETRIC -.->|"Step-up auth"| AUTH
     PINNING -.->|"All connections"| REPO
     ATTEST -.->|"Per transaction"| MOBILE
     GATE_PR --> BUILD --> SIGN --> QA --> SHIP
-
-    style MOBILE fill:#DBEAFE,stroke:#1D4ED8,stroke-width:2px,color:#1e3a5f
-    style SECURITY fill:#FEE2E2,stroke:#DC2626,stroke-width:2px,color:#7f1d1d
-    style BFF fill:#FEF9C3,stroke:#CA8A04,stroke-width:2px,color:#713f12
-    style BACKEND fill:#DCFCE7,stroke:#16A34A,stroke-width:2px,color:#14532D
-    style CICD fill:#E5E7EB,stroke:#4B5563,stroke-width:2px,color:#111827
+    style MOBILE fill:#DBEAFE,stroke:#1D4ED8,stroke-width:2px
+    style SECURITY fill:#FEE2E2,stroke:#DC2626,stroke-width:2px
+    style BFF fill:#FEF9C3,stroke:#CA8A04,stroke-width:2px
+    style BACKEND fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+    style CICD fill:#E5E7EB,stroke:#4B5563,stroke-width:2px
     style UI fill:#BFDBFE,stroke:#1D4ED8,color:#1e3a5f
     style VM fill:#BFDBFE,stroke:#1D4ED8,color:#1e3a5f
     style UC fill:#BBF7D0,stroke:#15803D,color:#14532D

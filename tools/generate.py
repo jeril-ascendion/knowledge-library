@@ -4165,7 +4165,6 @@ def md_to_html(text, current_path=""):
         html = "\n".join(result)
     html = _reshape_mobile_antipatterns(html)
     html = enhance_html(html, current_path)
-    html = _tag_toc_table(html)
     # Post-process fenced ```mermaid blocks into client-rendered mermaid divs.
     # Run last so the unescaped diagram source is not re-processed by enhance_html.
     html = render_mermaid_blocks(html)
@@ -9127,26 +9126,143 @@ def nav_html(prefix, active=""):
 # ADR pages only (slug == "adrs"). Scoped per-section in gen_article so it does
 # NOT appear on technology/, mobile/, or other sections.
 ADR_DOC_FOOTER = """
-<div class="adr-governance-footer">
-  <div class="adr-gov-grid">
-    <div class="adr-gov-item">
-      <span class="adr-gov-label">Maintained by</span>
-      <span class="adr-gov-value">Architecture Council</span>
+<div class="adr-colophon" role="contentinfo"
+     aria-label="Document governance information">
+  <div class="adr-colophon-stamp">
+    <span class="adr-colophon-stamp-mark">End of Document</span>
+    <span class="adr-colophon-stamp-rule" aria-hidden="true"></span>
+  </div>
+  <div class="adr-colophon-grid">
+    <div class="adr-colophon-item">
+      <span class="adr-colophon-key">Maintained by</span>
+      <span class="adr-colophon-val">Architecture Council</span>
     </div>
-    <div class="adr-gov-item">
-      <span class="adr-gov-label">Review Cadence</span>
-      <span class="adr-gov-value">Annually or upon any Tier 2 architectural change</span>
+    <div class="adr-colophon-item">
+      <span class="adr-colophon-key">Review Cadence</span>
+      <span class="adr-colophon-val">Annually or upon any
+        Tier&nbsp;2 architectural change</span>
     </div>
-    <div class="adr-gov-item">
-      <span class="adr-gov-label">Change Requests</span>
-      <span class="adr-gov-value">Submitted as RFC to the Architecture Council for review</span>
+    <div class="adr-colophon-item">
+      <span class="adr-colophon-key">Change Requests</span>
+      <span class="adr-colophon-val">Submitted as RFC to the
+        Architecture Council for review</span>
     </div>
-    <div class="adr-gov-item">
-      <span class="adr-gov-label">Version History</span>
-      <span class="adr-gov-value">Maintained in version control alongside this document</span>
+    <div class="adr-colophon-item">
+      <span class="adr-colophon-key">Version History</span>
+      <span class="adr-colophon-val">Maintained in version
+        control alongside this document</span>
     </div>
   </div>
 </div>
+"""
+
+
+def generate_adr_toc(html_body):
+    """Build a two-column Table of Contents from the H2 headings (with ids)
+    in the rendered article body. Returns '' when there are too few sections."""
+    headings = re.findall(
+        r'<h2[^>]*id="([^"]*)"[^>]*>(.*?)</h2>',
+        html_body, re.DOTALL
+    )
+    if len(headings) < 3:
+        return ""
+
+    def clean(t):
+        return re.sub(r'<[^>]+>', '', t).strip()
+
+    rows = []
+    for i in range(0, len(headings), 2):
+        lid, lt = headings[i]
+        lnum = str(i + 1)
+        left = (f'<td class="toc-num">{lnum}</td>'
+                f'<td><a href="#{lid}">{clean(lt)}</a></td>')
+        if i + 1 < len(headings):
+            rid, rt = headings[i + 1]
+            rnum = str(i + 2)
+            right = (f'<td class="toc-num">{rnum}</td>'
+                     f'<td><a href="#{rid}">{clean(rt)}</a></td>')
+        else:
+            right = '<td></td><td></td>'
+        rows.append(f'<tr>{left}{right}</tr>')
+    return (
+        '<div class="adr-toc" id="table-of-contents">'
+        '<div class="adr-toc-label" role="heading" '
+        'aria-level="2">Table of Contents</div>'
+        '<table class="adr-toc-table"><tbody>'
+        + ''.join(rows) +
+        '</tbody></table></div>'
+    )
+
+
+def inject_adr_toc(html_body):
+    """Insert the auto-generated TOC near the top of the article body. The H1
+    lives in the hero block (not the body) on this site, so we insert before
+    the first <h2> rather than after </h1>."""
+    toc = generate_adr_toc(html_body)
+    if not toc:
+        return html_body
+    # Insert immediately before the first H2 (start of the first real section).
+    m = re.search(r'<h2[^>]*>', html_body)
+    if not m:
+        return toc + html_body
+    return html_body[:m.start()] + toc + html_body[m.start():]
+
+
+# Floating "back to Table of Contents" button + section tracker. Appended
+# before </body> on ADR article pages only.
+ADR_TOC_SCRIPT = """
+<div class="toc-float-btn" id="tocFloatBtn" role="complementary"
+     aria-label="Return to Table of Contents">
+  <a href="#table-of-contents" class="toc-float-inner"
+     id="tocFloatInner"
+     aria-label="Scroll back to Table of Contents">
+    <span class="toc-float-arrow" aria-hidden="true">&#8593;</span>
+    <span class="toc-float-label">Table of Contents</span>
+    <span class="toc-float-section" id="tocFloatSection"></span>
+  </a>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('tocFloatBtn');
+  var inner=document.getElementById('tocFloatInner');
+  var sec=document.getElementById('tocFloatSection');
+  var tocEl=document.querySelector('.adr-toc');
+  var headings=Array.from(
+    document.querySelectorAll('.article-body h2[id]'));
+  if(!btn||!tocEl)return;
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        btn.classList.remove('toc-float-btn--visible');
+      } else {
+        btn.classList.add('toc-float-btn--visible');
+      }
+    });
+  },{threshold:0});
+  obs.observe(tocEl);
+  var secObs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting&&sec){
+        var t=e.target.textContent.trim()
+          .replace(/^ADR-[A-Z0-9-]+:\\s*/i,'');
+        sec.textContent=t.length>30?t.slice(0,28)+'\\u2026':t;
+      }
+    });
+  },{threshold:0.3,rootMargin:'-10% 0px -60% 0px'});
+  headings.forEach(function(h){secObs.observe(h);});
+  inner.addEventListener('click',function(e){
+    e.preventDefault();
+    tocEl.scrollIntoView({behavior:'smooth',block:'start'});
+    var lbl=tocEl.querySelector('.adr-toc-label');
+    if(lbl){lbl.setAttribute('tabindex','-1');
+             lbl.focus({preventScroll:true});}
+  });
+  inner.addEventListener('keydown',function(e){
+    if(e.key==='Enter'||e.key===' '){
+      e.preventDefault();inner.click();}
+  });
+})();
+</script>
 """
 
 
@@ -9170,17 +9286,6 @@ def render_mermaid_blocks(html):
         return f'<div class="mermaid">{match.group(1)}</div>'
 
     return re.sub(pattern, replace, html, flags=re.DOTALL)
-
-
-def _tag_toc_table(html):
-    """Add class="toc-table" to the Table of Contents table so it picks up the
-    dedicated TOC styling. Detected by its distinctive header row
-    (# | Section | # | Section)."""
-    return re.sub(
-        r'<table>(\s*<thead>\s*<tr>\s*<th>#</th>\s*<th>Section</th>)',
-        r'<table class="toc-table">\1',
-        html, count=1,
-    )
 
 
 def footer_html(label="", prefix=""):
@@ -9653,10 +9758,11 @@ def gen_article(slug, sub_slug, sub_dir, out_sub, referenced_by=None, metadata=N
                 body, full_block,
                 ['Related Sections', 'Related', 'References'])
 
-    # Governance footer is scoped to the ADR section only.
-    adr_doc_footer = (
-        f'<div class="shell">{ADR_DOC_FOOTER}</div>\n' if slug == "adrs" else ""
-    )
+    # ADR-only article enhancements: auto-TOC after the title, colophon at the
+    # end of the article body. Scoped to the adrs section.
+    if slug == "adrs":
+        body = inject_adr_toc(body)
+        body = body + ADR_DOC_FOOTER
     html = (
         f'{head(f"{display_title} — {sec_title} · Ascendion Engineering", "../../", has_d)}\n\n'
         f'{nav_html("../../", slug)}\n\n'
@@ -9666,11 +9772,13 @@ def gen_article(slug, sub_slug, sub_dir, out_sub, referenced_by=None, metadata=N
         f'  <div class="article-body">\n{body}\n'
         f'  </div>\n'
         f'</div>\n'
-        f'{adr_doc_footer}'
         f'</main>\n\n'
         f'{footer_html(f"{slug}/{sub_slug}/", prefix="../../")}\n\n'
         f'{WORDMARK_JS}\n</body>\n</html>'
     )
+    # Floating TOC button + section tracker — ADR pages only.
+    if slug == "adrs":
+        html = html.replace('</body>', ADR_TOC_SCRIPT + '\n</body>')
     # If this page has incoming references from other substantive pages,
     # inject a "Referenced by" section. Placed AFTER body construction but
     # BEFORE the final write — uses the metadata dict to render proper titles.
@@ -9821,10 +9929,11 @@ def gen_nested_article(slug, hub_slug, sub_slug, sub_dir, out_sub, referenced_by
                 body, full_block,
                 ['Related Sections', 'Related', 'References'])
 
-    # Governance footer is scoped to the ADR section only.
-    adr_doc_footer = (
-        f'<div class="shell">{ADR_DOC_FOOTER}</div>\n' if slug == "adrs" else ""
-    )
+    # ADR-only article enhancements: auto-TOC after the title, colophon at the
+    # end of the article body. Scoped to the adrs section.
+    if slug == "adrs":
+        body = inject_adr_toc(body)
+        body = body + ADR_DOC_FOOTER
     html = (
         f'{head(f"{title} — {hub_title} · Ascendion Engineering", prefix, has_d)}\n\n'
         f'{nav_html(prefix, slug)}\n\n'
@@ -9834,11 +9943,12 @@ def gen_nested_article(slug, hub_slug, sub_slug, sub_dir, out_sub, referenced_by
         f'  <div class="article-body">\n{body}\n'
         f'  </div>\n'
         f'</div>\n'
-        f'{adr_doc_footer}'
         f'</main>\n\n'
         f'{footer_html(f"{slug}/{hub_slug}/{sub_slug}/", prefix=prefix)}\n\n'
         f'{WORDMARK_JS}\n</body>\n</html>'
     )
+    if slug == "adrs":
+        html = html.replace('</body>', ADR_TOC_SCRIPT + '\n</body>')
 
     if referenced_by and metadata:
         chips = []

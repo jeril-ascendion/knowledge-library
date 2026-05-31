@@ -1,34 +1,55 @@
-%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px','clusterBkg':'#F8F9FA','clusterBorder':'#CED4DA'},'flowchart':{'curve':'orthogonal','padding':24}}}%%
+%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB','edgeLabelBackground':'#FFFFFF'},'flowchart':{'curve':'orthogonal','padding':30,'nodeSpacing':65,'rankSpacing':75,'useMaxWidth':true}}}%%
 flowchart TD
-    subgraph Presentation["Presentation Layer — Outermost Ring"]
-        UI2["Compose UI / SwiftUI<br/>User Events · State Rendering<br/>No Business Logic"]
-        VM2["ViewModel<br/>UiState: StateFlow / @Observable<br/>Lifecycle-Aware<br/>No Platform imports in Domain"]
+    subgraph PRESENTATION["🖥  Presentation Layer — Outermost Ring — Platform Specific"]
+        direction LR
+        VIEW_A["<b>View — Android</b><br/>Jetpack Compose<br/>collectAsStateWithLifecycle<br/>No business logic"]
+        VIEW_I["<b>View — iOS</b><br/>SwiftUI Views<br/>task + onChange modifiers<br/>No business logic"]
+        VM_A["<b>ViewModel — Android</b><br/>androidx.lifecycle.ViewModel<br/>UiState: StateFlow<br/>viewModelScope coroutines"]
+        VM_I["<b>ViewModel — iOS</b><br/>@Observable class<br/>MainActor isolated<br/>async/await Tasks"]
     end
-    subgraph Domain["Domain Layer — Business Rules — Zero Platform Imports"]
-        UC2["Use Cases<br/>One per Business Operation<br/>Pure Kotlin / Swift<br/>Returns Result-T"]
-        RI2["Repository Interfaces<br/>Abstractions Only<br/>No Implementations Here"]
-        DM2["Domain Models<br/>data class / struct<br/>Zero Android/iOS imports"]
+    subgraph DOMAIN["🏛  Domain Layer — Zero Platform Imports — Most Stable"]
+        direction LR
+        UC_D["<b>Use Cases</b><br/>One per business operation<br/>Single execute() method<br/>Returns Result&lt;T, DomainError&gt;"]
+        RI_D["<b>Repository Interfaces</b><br/>Protocol/Interface only<br/>No implementations<br/>Domain owns the contract"]
+        DM_D["<b>Domain Models</b><br/>data class · struct<br/>BigDecimal for monetary values<br/>Zero Android/iOS imports"]
     end
-    subgraph Data["Data Layer — Interface Adapters"]
-        RIMPL["Repository Implementations<br/>Coordinate Remote + Local"]
-        RDS2["Remote DataSource<br/>Retrofit / Apollo / URLSession<br/>DTO-to-Domain Mapping"]
-        LDS2["Local DataSource<br/>Room / SwiftData<br/>EncryptedSharedPrefs / Keychain"]
+    subgraph DATA["🗄  Data Layer — Interface Adapters"]
+        direction LR
+        RIMPL_D["<b>Repository Implementations</b><br/>Implements domain interface<br/>Cache strategy decision<br/>Maps DTO → Domain Entity"]
+        REMOTE_D["<b>Remote DataSource</b><br/>Retrofit · OkHttp (Android)<br/>URLSession (iOS)<br/>DTO models only"]
+        LOCAL_D["<b>Local DataSource</b><br/>Room + SQLCipher (Android)<br/>SwiftData FileProtection (iOS)<br/>Offline queue + cache"]
+        CRED_D["<b>Credential Storage</b><br/>Android Keystore<br/>iOS Keychain + SecureEnclave<br/>Access token — memory only"]
     end
-    subgraph Coverage["Test Coverage Gates — CI Enforced"]
-        UC_COV["Use Cases<br/>>= 90% coverage<br/>JUnit5 + Mockk / XCTest"]
-        VM_COV["ViewModels<br/>>= 80% coverage<br/>Turbine / Combine"]
-        SNAP["Snapshot Tests<br/>Paparazzi / iOSSnapshotTestCase<br/>All themes · All Dynamic Type"]
+    subgraph COVERAGE["✅  Mandatory Test Coverage — CI Gates"]
+        direction LR
+        UC_COV["<b>Use Case Coverage</b><br/>≥ 90% line coverage<br/>JUnit5 + Mockk<br/>XCTest + Swift Testing"]
+        VM_COV["<b>ViewModel Coverage</b><br/>≥ 80% line coverage<br/>Turbine (Flow)<br/>Combine-schedulers"]
+        SNAP["<b>Snapshot Tests</b><br/>Paparazzi (Android)<br/>iOSSnapshotTestCase<br/>All themes · All Dynamic Type"]
     end
-    UI2 -->|"User Events"| VM2
-    VM2 -->|"UiState"| UI2
-    VM2 --> UC2
-    UC2 --> RI2
-    RI2 --> RIMPL
-    RIMPL --> RDS2 & LDS2
-    UC2 -.->|"90% coverage"| UC_COV
-    VM2 -.->|"80% coverage"| VM_COV
-    UI2 -.->|"Snapshot"| SNAP
-    style Presentation fill:#E3F2FD,stroke:#1565C0
-    style Domain fill:#E8F5E9,stroke:#1B5E20
-    style Data fill:#FFF3E0,stroke:#E65100
-    style Coverage fill:#F3E5F5,stroke:#6A1B9A
+    VIEW_A & VIEW_I -->|"User Events"| VM_A & VM_I
+    VM_A & VM_I -->|"UiState"| VIEW_A & VIEW_I
+    VM_A & VM_I -->|"executes"| UC_D
+    UC_D -->|"calls interface"| RI_D
+    RI_D --> RIMPL_D
+    RIMPL_D --> REMOTE_D & LOCAL_D & CRED_D
+    UC_D -.->|"90% coverage gate"| UC_COV
+    VM_A & VM_I -.->|"80% coverage gate"| VM_COV
+    VIEW_A & VIEW_I -.->|"snapshot gate"| SNAP
+    style PRESENTATION fill:#DBEAFE,stroke:#2563EB,stroke-width:2px
+    style DOMAIN fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+    style DATA fill:#FEF3C7,stroke:#D97706,stroke-width:2px
+    style COVERAGE fill:#F3E8FF,stroke:#7C3AED,stroke-width:2px
+    style VIEW_A fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style VIEW_I fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style VM_A fill:#93C5FD,stroke:#1D4ED8,color:#1e3a5f
+    style VM_I fill:#93C5FD,stroke:#1D4ED8,color:#1e3a5f
+    style UC_D fill:#BBF7D0,stroke:#15803D,color:#14532D
+    style RI_D fill:#BBF7D0,stroke:#15803D,color:#14532D
+    style DM_D fill:#86EFAC,stroke:#16A34A,color:#14532D
+    style RIMPL_D fill:#FDE68A,stroke:#D97706,color:#78350F
+    style REMOTE_D fill:#FDE68A,stroke:#D97706,color:#78350F
+    style LOCAL_D fill:#FDE68A,stroke:#D97706,color:#78350F
+    style CRED_D fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style UC_COV fill:#E9D5FF,stroke:#7C3AED,color:#4C1D95
+    style VM_COV fill:#E9D5FF,stroke:#7C3AED,color:#4C1D95
+    style SNAP fill:#E9D5FF,stroke:#7C3AED,color:#4C1D95

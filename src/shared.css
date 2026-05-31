@@ -2416,50 +2416,214 @@ body.kg-search-modal-open {
   margin-bottom: 0.6rem;
 }
 
-/* ============================================================
-   ADR governance footer — scoped to adrs section pages
-   ============================================================ */
-.adr-governance-footer {
-  margin-top: 4rem;
-  padding: 2rem 2.5rem;
-  background: var(--nav-bg);
-  border-top: 3px solid var(--accent);
-  border-radius: 6px;
+/* ── ADR Table of Contents ─────────────────────────────── */
+.adr-toc {
+  margin: 1.5rem 0 2.5rem;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  padding: 1.5rem 1.75rem;
 }
-.adr-gov-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.5rem 2.5rem;
-}
-.adr-gov-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-.adr-gov-label {
+.adr-toc-label {
   font-family: var(--mono);
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--accent);
   font-weight: 700;
+  margin-bottom: 1rem;
 }
-.adr-gov-value {
-  font-size: 0.88rem;
-  color: rgba(255,255,255,0.80);
+.adr-toc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.adr-toc-table td {
+  padding: 0.35rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.adr-toc-table tr:last-child td { border-bottom: none; }
+.toc-num {
+  width: 2rem;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--accent);
+  font-weight: 700;
+}
+.adr-toc-table a {
+  color: var(--ink-2);
+  text-decoration: none;
   line-height: 1.55;
 }
+.adr-toc-table a:hover { color: var(--accent); }
 
-/* ============================================================
-   Inline Mermaid blocks rendered from fenced ```mermaid code
-   ============================================================ */
+/* ── ADR Document Colophon ─────────────────────────────── */
+.adr-colophon {
+  margin-top: 5rem;
+  padding-top: 2.5rem;
+  border-top: 2px solid var(--border);
+  position: relative;
+}
+.adr-colophon::before {
+  content: '';
+  position: absolute;
+  top: -2px; left: 0;
+  width: 48px; height: 2px;
+  background: var(--accent);
+}
+.adr-colophon-stamp {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 2rem;
+}
+.adr-colophon-stamp-mark {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.adr-colophon-stamp-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.adr-colophon-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0 3rem;
+  padding-bottom: 2.5rem;
+}
+.adr-colophon-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.adr-colophon-key {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-4, #888);
+}
+.adr-colophon-val {
+  font-size: 0.875rem;
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+@media (max-width: 900px) {
+  .adr-colophon-grid { grid-template-columns: repeat(2,1fr);
+                        gap: 1.75rem 3rem; }
+}
+@media (max-width: 560px) {
+  .adr-colophon-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+}
+@media print {
+  .adr-colophon { border-top: 1pt solid #999; }
+  .adr-colophon-stamp-mark { border: 1pt solid #C96330; }
+}
+
+/* ── Floating TOC Button ───────────────────────────────── */
+.toc-float-btn {
+  position: fixed;
+  bottom: 2.25rem; right: 2rem;
+  z-index: 900;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity 250ms ease, transform 250ms ease;
+}
+.toc-float-btn--visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.toc-float-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: var(--nav-bg);
+  color: rgba(255,255,255,0.92);
+  border: 1.5px solid var(--accent);
+  border-radius: 8px;
+  padding: 0.65rem 1.1rem 0.65rem 0.9rem;
+  min-height: 48px;
+  font-size: 0.82rem;
+  font-family: var(--sans, 'IBM Plex Sans', system-ui, sans-serif);
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.28);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 180ms ease, border-color 180ms ease,
+              box-shadow 180ms ease, transform 180ms ease;
+}
+.toc-float-inner:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 6px 22px rgba(201,99,48,0.38);
+  transform: translateY(-2px);
+}
+.toc-float-inner:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.22);
+}
+.toc-float-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  background: var(--accent);
+  border-radius: 4px;
+  flex-shrink: 0;
+  font-size: 0.9rem;
+  color: #fff;
+  transition: background 180ms ease, transform 180ms ease;
+}
+.toc-float-inner:hover .toc-float-arrow {
+  background: rgba(255,255,255,0.22);
+  transform: translateY(-1px);
+}
+.toc-float-label { color: inherit; font-size: 0.80rem; }
+.toc-float-section {
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  color: rgba(255,255,255,0.42);
+  border-left: 1px solid rgba(255,255,255,0.18);
+  padding-left: 0.6rem;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.toc-float-inner:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+@media (max-width: 480px) {
+  .toc-float-btn { bottom: 1.25rem; right: 1rem; }
+  .toc-float-label, .toc-float-section { display: none; }
+  .toc-float-inner { padding: 0.75rem; }
+}
+@media print { .toc-float-btn { display: none; } }
+
+/* ── Inline Mermaid diagram blocks from markdown ────────── */
 .article-body .mermaid {
   width: 100%;
   text-align: center;
   margin: 1.5rem 0 2.5rem;
 }
-.article-body pre:has(.mermaid),
-.article-body .diagram-wrap {
+.article-body pre:has(.mermaid) {
   background: #F8F9FA;
   border: 1px solid #DEE2E6;
   border-radius: 10px;
@@ -2469,38 +2633,4 @@ body.kg-search-modal-open {
   align-items: center;
   justify-content: center;
   min-height: 300px;
-}
-
-/* ============================================================
-   Table of Contents
-   ============================================================ */
-.article-body .toc-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1.5rem 0 2.5rem;
-  font-size: 0.88rem;
-}
-.article-body .toc-table td {
-  padding: 0.45rem 0.75rem;
-  border: 1px solid var(--border);
-  vertical-align: top;
-}
-.article-body .toc-table td:nth-child(1),
-.article-body .toc-table td:nth-child(3) {
-  width: 32px;
-  text-align: center;
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  color: var(--accent);
-  font-weight: 700;
-  background: var(--bg-subtle);
-}
-.article-body .toc-table a {
-  color: var(--ink-2);
-  text-decoration: none;
-  font-size: 0.85rem;
-}
-.article-body .toc-table a:hover {
-  color: var(--accent);
-  text-decoration: underline;
 }

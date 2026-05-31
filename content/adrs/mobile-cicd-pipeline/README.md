@@ -1,4 +1,4 @@
-# Mobile CI/CD Pipeline Tooling
+# ADR: Mobile CI/CD Pipeline Tooling
 
 > **ADR Reference:** `ADR-MOB-003`
 > **Alignment:** DORA Metrics | Fastlane Open Source | GitHub Actions | Google Play Console | App Store Connect | OWASP MASVS Cryptography
@@ -18,10 +18,11 @@ Mobile CI/CD presents unique engineering challenges absent from backend pipeline
 | Status | ACCEPTED |
 | Domain | Mobile DevOps / Platform Engineering |
 | ARB Approval | Required |
+| Stakeholders | Mobile DevOps Engineers · Release Managers · Platform Engineers · Security Architects · QA Lead |
 
 ## Executive Summary
 
-Fastlane combined with GitHub Actions is adopted as the standard mobile CI/CD pipeline for all Ascendion mobile projects. Fastlane manages code signing via fastlane Match, build automation, test execution, and store submission. GitHub Actions orchestrates the pipeline using matrix strategy to run Android and iOS builds in parallel. Xcode Cloud is adopted as a supplementary option for iOS-only projects. The pipeline enforces test coverage gates from ADR-MOB-001: Use Cases above 90%, ViewModels above 80%. All production releases require QA sign-off as a mandatory pipeline gate.
+**Decision:** Fastlane combined with GitHub Actions is adopted as the standard mobile CI/CD pipeline for all Ascendion mobile projects. Fastlane manages code signing via fastlane Match, build automation, test execution, and store submission. GitHub Actions orchestrates the pipeline using matrix strategy to run Android and iOS builds in parallel. Xcode Cloud is adopted as a supplementary option for iOS-only projects. The pipeline enforces test coverage gates from ADR-MOB-001: Use Cases above 90%, ViewModels above 80%. All production releases require QA sign-off as a mandatory pipeline gate.
 
 ## Decision Drivers
 
@@ -40,15 +41,19 @@ Fastlane combined with GitHub Actions is adopted as the standard mobile CI/CD pi
 Weighted score: **4.81 / 5.0**. fastlane Match solves code signing at the root — all certificates stored encrypted in a dedicated Git repo, every CI machine and developer clones fresh. GitHub Actions matrix runs Android (Linux) and iOS (macOS) in parallel, halving total pipeline time.
 
 ### Option B — Bitrise
-Weighted score: 3.46 / 5.0 — DISMISSED. Cost at scale ($450-900/month) exceeds GitHub Actions with self-hosted macOS runner. Vendor lock-in on pipeline configuration prevents migration.
+Weighted score: 3.46 / 5.0 — DISMISSED. Cost at scale ($450–900/month) exceeds GitHub Actions with self-hosted macOS runner. Vendor lock-in on pipeline configuration prevents migration.
 
-### Option C — Xcode Cloud (iOS supplement)
+### Option C — Xcode Cloud (iOS SUPPLEMENT)
 Apple-native CI. 25 free compute hours/month. Direct TestFlight integration. iOS/macOS only. Adopted as supplementary for iOS-only projects — cannot replace Fastlane for Android.
 
 ### Option D — Codemagic
 Weighted score: 3.72 / 5.0 — DISMISSED. Valid for Flutter projects but adds separate vendor dependency. GitHub Actions + Fastlane provides equivalent capability at lower per-project cost at Ascendion engagement volume.
 
-## Pipeline Architecture
+## Decision
+
+Fastlane + GitHub Actions is mandatory for all Ascendion mobile projects. The pipeline runs the six stages below, with the quality gates enforced as blocking conditions before merge and before production deploy.
+
+### Pipeline Architecture
 
 | Stage | Trigger | Android | iOS | Time |
 |---|---|---|---|---|
@@ -59,15 +64,7 @@ Weighted score: 3.72 / 5.0 — DISMISSED. Valid for Flutter projects but adds se
 | QA Gate | Manual | GitHub Environment protection rule | GitHub Environment protection rule | 24-48hr |
 | Release | Post-QA | Play staged rollout 1%→5%→20%→100% | App Store review submission | ~10 min |
 
-## Code Signing Standards
-
-### iOS — fastlane Match (Mandatory)
-All certificates and provisioning profiles stored encrypted in a dedicated private Git repository. Every CI machine and developer clones fresh using MATCH_PASSWORD encrypted secret. Certificate rotation: Match regenerates automatically 30 days before expiry. Eliminates the certificate-locked-to-one-Mac failure mode permanently.
-
-### Android — Keystore via GitHub Secrets (Mandatory)
-Release Keystore encoded as base64 stored as KEYSTORE_B64 encrypted secret. CI decodes to temporary file, configures Gradle signingConfigs, deletes after signing. Enrolled in Google Play App Signing — Google manages distribution key.
-
-## Mandatory Quality Gates
+### Mandatory Quality Gates
 
 | Gate | Tool | Threshold | Failure Action |
 |---|---|---|---|
@@ -78,17 +75,39 @@ Release Keystore encoded as base64 stored as KEYSTORE_B64 encrypted secret. CI d
 | Dependency CVE Scan | OWASP Dependency Check | No P1/P2 CVEs | Block merge, alert SA |
 | QA Sign-off | GitHub Environment Protection | QA Lead approval | Block production deploy |
 
-## Anti-Patterns to Avoid
+## Trade-off Analysis
 
-### 1. Manual Code Signing
-Engineer manually downloading provisioning profiles, building locally, uploading to TestFlight. Undocumented, unreproducible, fails when that engineer is unavailable.
+| Trade-off Accepted | Consequence | Mitigation |
+|---|---|---|
+| macOS runners cost ~10× Linux | iOS build minutes dominate pipeline cost | Matrix strategy runs Android on Linux; macOS minutes confined to the iOS build/sign jobs only |
+| Mandatory QA gate adds 24–48hr latency | Production release is not fully automated | GitHub Environment Protection makes the gate explicit and auditable; human QA catches what automated tests miss |
+| fastlane Match requires a shared encrypted certificate repo | Coordination + MATCH_PASSWORD secret management overhead | Certificates auto-renew 30 days before expiry; any CI machine or developer with the passphrase can sign |
 
-**CORRECT:** fastlane Match. All signing materials in encrypted repository. Any CI machine or developer with the passphrase can sign and release.
+## Implementation Guidance
 
-### 2. No QA Gate Before Production
-Pipeline automatically promotes to production after passing automated tests. Automated tests catch regressions; human QA catches usability and visual issues automated tests miss.
+### iOS Code Signing — fastlane Match (Mandatory)
+All certificates and provisioning profiles stored encrypted in a dedicated private Git repository. Every CI machine and developer clones fresh using MATCH_PASSWORD encrypted secret. Certificate rotation: Match regenerates automatically 30 days before expiry. Eliminates the certificate-locked-to-one-Mac failure mode permanently.
 
-**CORRECT:** GitHub Environment Protection Rule requiring QA Lead approval before any production release.
+### Android Code Signing — Keystore via GitHub Secrets (Mandatory)
+Release Keystore encoded as base64 stored as KEYSTORE_B64 encrypted secret. CI decodes to temporary file, configures Gradle signingConfigs, deletes after signing. Enrolled in Google Play App Signing — Google manages distribution key.
+
+### Pipeline Setup Steps
+1. Configure GitHub Actions matrix to run Android (ubuntu-latest) and iOS (macos-latest) in parallel
+2. Initialise fastlane Match against a dedicated encrypted certificate repository; store MATCH_PASSWORD as an encrypted secret
+3. Encode the Android release keystore as base64 and store as KEYSTORE_B64 encrypted secret; enrol in Play App Signing
+4. Wire the six quality gates as blocking checks before merge
+5. Configure GitHub Environment Protection requiring QA Lead approval before the production environment
+6. Configure staged rollout via fastlane supply (Play) and fastlane deliver (App Store)
+
+## Compliance Checkpoints
+
+| Checkpoint | Trigger | Owner | SLA |
+|---|---|---|---|
+| Pipeline Architecture Review | New mobile project setup | Platform Engineer | Before first release |
+| Code Signing Setup Review | Project initialisation | Mobile DevOps Lead | Before first build |
+| Dependency CVE Gate | Every CI build — automated | CI Pipeline | Real-time, blocks on P1/P2 |
+| QA Sign-off Gate | Every production release | QA Lead | Blocks production deploy |
+| Coverage Gate | Every PR — automated | CI Pipeline | Real-time |
 
 ## Related ADRs
 
@@ -105,3 +124,9 @@ Pipeline automatically promotes to production after passing automated tests. Aut
 3. Google — Play Console Staged Rollouts. support.google.com/googleplay/android-developer
 4. Forsgren et al. — Accelerate. IT Revolution, 2018.
 5. OWASP — Dependency Check. owasp.org/www-project-dependency-check
+
+> **⚠ Manual Code Signing** — Engineer manually downloading provisioning profiles, building locally, uploading to TestFlight. Undocumented, unreproducible, fails when that engineer is unavailable.
+> **CORRECT:** fastlane Match. All signing materials in encrypted repository. Any CI machine or developer with the passphrase can sign and release.
+
+> **⚠ No QA Gate Before Production** — Pipeline automatically promotes to production after passing automated tests. Automated tests catch regressions; human QA catches usability and visual issues automated tests miss.
+> **CORRECT:** GitHub Environment Protection Rule requiring QA Lead approval before any production release.

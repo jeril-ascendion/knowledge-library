@@ -1,32 +1,49 @@
-%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px','clusterBkg':'#F8F9FA','clusterBorder':'#CED4DA'},'flowchart':{'curve':'orthogonal','padding':24}}}%%
+%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB','edgeLabelBackground':'#FFFFFF'},'flowchart':{'curve':'orthogonal','padding':30,'nodeSpacing':60,'rankSpacing':72,'useMaxWidth':true}}}%%
 flowchart TD
-    subgraph Transport["Transport Security — Layer 1"]
-        TLS["TLS 1.3 Minimum<br/>Cleartext Blocked by Default<br/>Network Security Config (Android)<br/>App Transport Security (iOS)"]
-        PIN2["SPKI Hash Certificate Pinning<br/>OkHttp CertificatePinner<br/>iOS URLSession Challenge Handler<br/>Survives Certificate Renewal"]
+    subgraph L1["🌐  Layer 1 — Transport Security"]
+        direction LR
+        TLS_S["<b>TLS 1.3 Mandatory</b><br/>Cleartext HTTP blocked<br/>Network Security Config (Android)<br/>App Transport Security (iOS)"]
+        SPKI["<b>SPKI Hash Certificate Pinning</b><br/>OkHttp CertificatePinner<br/>iOS URLSession challenge handler<br/>Survives certificate renewal"]
     end
-    subgraph Auth2["Authentication — Layer 2"]
-        PKCE2["OAuth 2.0 + PKCE Mandatory<br/>AppAuth-Android · AppAuth-iOS<br/>NO client_secret in binary<br/>NO Implicit Flow"]
-        BIO2["Biometric MFA<br/>BiometricPrompt BIOMETRIC_STRONG<br/>LocalAuthentication iOS<br/>SecureEnclave-bound Keys"]
-        JWT2["JWT Validation<br/>Short-lived Access Tokens 15min<br/>Refresh in Hardware Storage<br/>Immediate Revocation on Risk"]
+    subgraph L2["🔑  Layer 2 — Authentication — OAuth 2.0 + PKCE"]
+        direction LR
+        PKCE_S["<b>OAuth 2.0 + PKCE</b><br/>AppAuth-Android · AppAuth-iOS<br/>code_verifier on-device<br/>NO client_secret in binary"]
+        BIO_S["<b>Biometric MFA</b><br/>BiometricPrompt BIOMETRIC_STRONG<br/>LocalAuthentication iOS<br/>Step-up for high-risk ops"]
+        TOKEN_S["<b>Token Architecture</b><br/>Access: memory only · 15 min<br/>Refresh: Keystore/Keychain<br/>Session: 5 min inactivity"]
     end
-    subgraph Storage2["Secure Storage — Layer 3"]
-        AKS2["Android Keystore<br/>Hardware-Backed AES-256<br/>SetUserAuthenticationRequired<br/>StrongBox on Pixel/Samsung"]
-        IOK2["iOS Keychain<br/>kSecAttrAccessibleWhenUnlockedThisDeviceOnly<br/>Not backed up to iCloud<br/>Device-bound"]
-        EDB2["Encrypted Database<br/>SQLCipher · EncryptedSharedPrefs<br/>FileProtection .complete (iOS)<br/>NO plaintext sensitive data"]
+    subgraph L3["🗄  Layer 3 — Secure Storage"]
+        direction LR
+        AKS_S["<b>Android Keystore</b><br/>Hardware-backed AES-256<br/>setUserAuthenticationRequired<br/>StrongBox where available"]
+        IOK_S["<b>iOS Keychain</b><br/>kSecAttrAccessibleWhenUnlockedThisDeviceOnly<br/>Not backed up · Device-bound<br/>SecureEnclave for biometric keys"]
+        EDB["<b>Encrypted Database</b><br/>SQLCipher + Room (Android)<br/>SwiftData FileProtection .complete<br/>Full purge on secure logout"]
     end
-    subgraph Binary2["Binary Protection — Layer 4"]
-        R8_2["R8 Full Mode<br/>debugable:false<br/>Exported Activities restricted<br/>ProGuard @Pii rule for logs"]
-        PI2["Google Play Integrity API<br/>MEETS_STRONG_INTEGRITY<br/>Call on every transaction"]
-        AA2["Apple AppAttest<br/>SecureEnclave attestation key<br/>Server assertion verification"]
+    subgraph L4["🛡  Layer 4 — Binary Protection"]
+        direction LR
+        R8_S["<b>Binary Hardening</b><br/>R8 Full Mode · debuggable:false<br/>@Pii annotation strips logs<br/>Exported Activities restricted"]
+        PI_S["<b>Play Integrity API</b><br/>MEETS_STRONG_INTEGRITY<br/>Called on every transaction<br/>Genuine device · Genuine app"]
+        AA_S["<b>Apple AppAttest</b><br/>SecureEnclave attestation key<br/>Server verifies assertion<br/>DeviceCheck fraud signal"]
     end
-    subgraph MASVS2["MASVS Compliance Levels"]
-        L1["MASVS Level 1<br/>All Applications<br/>Baseline OWASP controls"]
-        L2["MASVS Level 2<br/>Financial · Healthcare · Gov<br/>Full control set + attestation<br/>BSP Circular 982 / PCI-DSS"]
+    subgraph MASVS_S["📋  MASVS Compliance"]
+        direction LR
+        L1_APP["<b>MASVS Level 1</b><br/>All applications<br/>Baseline OWASP controls"]
+        L2_APP["<b>MASVS Level 2</b><br/>Financial · Healthcare · Gov<br/>BSP Circular 982 · PCI-DSS<br/>External pentest required"]
     end
-    Transport --> Auth2 --> Storage2 --> Binary2
-    Binary2 --> MASVS2
-    style Transport fill:#E8F5E9,stroke:#1B5E20
-    style Auth2 fill:#E3F2FD,stroke:#1565C0
-    style Storage2 fill:#FFF3E0,stroke:#E65100
-    style Binary2 fill:#FFEBEE,stroke:#B71C1C
-    style MASVS2 fill:#F3E5F5,stroke:#6A1B9A
+    L1 --> L2 --> L3 --> L4 --> MASVS_S
+    style L1 fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+    style L2 fill:#DBEAFE,stroke:#2563EB,stroke-width:2px
+    style L3 fill:#FEF3C7,stroke:#D97706,stroke-width:2px
+    style L4 fill:#FEE2E2,stroke:#DC2626,stroke-width:2px
+    style MASVS_S fill:#F3E8FF,stroke:#7C3AED,stroke-width:2px
+    style TLS_S fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style SPKI fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style PKCE_S fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style BIO_S fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style TOKEN_S fill:#93C5FD,stroke:#1D4ED8,color:#1e3a5f
+    style AKS_S fill:#FDE68A,stroke:#D97706,color:#78350F
+    style IOK_S fill:#FDE68A,stroke:#D97706,color:#78350F
+    style EDB fill:#FCD34D,stroke:#B45309,color:#78350F
+    style R8_S fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style PI_S fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style AA_S fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style L1_APP fill:#E9D5FF,stroke:#7C3AED,color:#4C1D95
+    style L2_APP fill:#C4B5FD,stroke:#6D28D9,color:#4C1D95

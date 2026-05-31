@@ -22,30 +22,6 @@ The authoritative architecture decision record for banking and financial service
 | ARB Approval | Required |
 | Scope | iOS and Android Mobile Front End · Backend integration points where relevant to mobile contract obligations |
 
----
-
-## Table of Contents
-
-| # | Section | # | Section |
-|---|---|---|---|
-| 1 | [Engineering Principles](#1-engineering-principles) | 16 | [Observability and Operational Excellence](#16-observability-and-operational-excellence) |
-| 2 | [Non-Functional Requirements](#2-non-functional-requirements) | 17 | [Mobile Reliability Engineering](#17-mobile-reliability-engineering) |
-| 3 | [Core Architecture Goals](#3-core-architecture-goals) | 18 | [CI/CD and Engineering Operations](#18-cicd-and-engineering-operations) |
-| 4 | [Technology Decisions — Native vs Cross-Platform](#4-technology-decisions) | 19 | [Testing Strategy](#19-testing-strategy) |
-| 5 | [Architecture Style and Layering](#5-architecture-style-and-layering) | 20 | [UX and Mobile Platform Considerations](#20-ux-and-mobile-platform-considerations) |
-| 6 | [Mobile State Management](#6-mobile-state-management) | 21 | [Runtime Architecture Flows](#21-runtime-architecture-flows) |
-| 7 | [Security and Compliance Architecture](#7-security-and-compliance-architecture) | 22 | [Lifecycle and Evolution Governance](#22-lifecycle-and-evolution-governance) |
-| 8 | [Secure Software Development Lifecycle](#8-secure-software-development-lifecycle-ssdlc) | 23 | [Build vs Buy Evaluation Framework](#23-build-vs-buy-evaluation-framework) |
-| 9 | [Offline and Reliability Strategy](#9-offline-and-reliability-strategy) | 24 | [AI/ML Integration Considerations](#24-aiml-integration-considerations) |
-| 10 | [API Integration Architecture](#10-api-integration-architecture) | 25 | [Organizational Scaling Model](#25-organizational-scaling-model) |
-| 11 | [Scalability and Modularization](#11-scalability-and-modularization) | 26 | [Anti-Patterns and Failure Scenarios](#26-anti-patterns-and-failure-scenarios) |
-| 12 | [Scalability Evolution Model](#12-scalability-evolution-model) | 27 | [Migration and Evolution Strategy](#27-migration-and-evolution-strategy) |
-| 13 | [Mobile Platform Engineering Strategy](#13-mobile-platform-engineering-strategy) | 28 | [Reference Architecture](#28-reference-architecture) |
-| 14 | [Dependency Governance](#14-dependency-governance) | 29 | [Decision Summary](#29-decision-summary) |
-| 15 | [Performance Engineering](#15-performance-engineering) | | |
-
----
-
 ## Executive Summary
 
 The Enterprise Mobile Banking ADR mandates a security-first, reliability-driven mobile architecture for all banking and financial services mobile applications. Clean Architecture with MVVM governs internal structure. OAuth 2.0 + PKCE governs all authentication. OWASP MASVS Level 2 is the mandatory security compliance target. Offline-capable, observable, and deterministic state management is required across all critical user journeys. The architecture treats security over convenience, reliability over velocity, and explicit dependencies over implicit coupling as non-negotiable engineering principles.

@@ -1,28 +1,44 @@
-%%{init:{'theme':'base','themeVariables':{'primaryColor':'#E8F4FD','primaryBorderColor':'#0078D4','lineColor':'#444444','fontFamily':'IBM Plex Sans','fontSize':'13px','clusterBkg':'#F8F9FA','clusterBorder':'#CED4DA'},'flowchart':{'curve':'orthogonal','padding':28}}}%%
+%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB','edgeLabelBackground':'#FFFFFF'},'flowchart':{'curve':'orthogonal','padding':30,'nodeSpacing':65,'rankSpacing':75,'useMaxWidth':true}}}%%
 flowchart TD
-    START(["Mobile Platform Decision Framework"]) --> Q1
-    Q1{"Frame rate SLA < 16ms OR deep device API?"}
-    Q1 -->|"YES NFC · Custom Camera · BLE"| NATIVE["Pure Native<br/>Kotlin + Swift<br/>100% Performance<br/>Maximum Platform APIs"]
-    Q1 -->|"NO"| Q2
-    Q2{"Existing JS/TS mobile team?"}
-    Q2 -->|"YES Expo ecosystem"| RN["React Native<br/>New Architecture<br/>JSI + Fabric<br/>Perf: 85-90% Native"]
-    Q2 -->|"NO"| Q3
-    Q3{"Existing .NET mobile codebase?"}
-    Q3 -->|"YES C# team only"| MAUI["MAUI<br/>C# / .NET<br/>Perf: 88% Native<br/>Restricted Use"]
-    Q3 -->|"NO"| Q4
-    Q4{"Complex shared domain logic needed?"}
-    Q4 -->|"YES + native UI required both platforms"| KMP["Kotlin Multiplatform<br/>Shared Use Cases<br/>Native UI per Platform<br/>Perf: 100% Native"]
-    Q4 -->|"NO New app default"| FLUTTER["Flutter — DEFAULT<br/>Dart · Impeller Renderer<br/>Perf: 95% Native<br/>TCO: 0.58× vs Native<br/>Single Codebase"]
-    subgraph ARB["Mandatory ARB Review Required"]
-        A1["Non-Flutter cross-platform selection"]
-        A2["React Native without New Architecture plan"]
-        A3["Native costing > 40% above Flutter equivalent"]
+    START(["<b>New Mobile Project</b><br/>Platform Decision Required"])
+    Q1{"<b>Frame rate SLA &lt; 16ms?</b><br/>OR deep device API needed?<br/>NFC · Custom Camera · BLE<br/>SecureEnclave Crypto"}
+    Q2{"<b>Existing JS/TS</b><br/>mobile team?"}
+    Q3{"<b>Existing .NET</b><br/>mobile codebase?"}
+    Q4{"<b>Complex shared</b><br/>domain logic?<br/>Two native UI teams?"}
+    NATIVE["<b>Pure Native</b><br/>Kotlin + Jetpack Compose<br/>Swift + SwiftUI<br/>Performance: 100%<br/>TCO: 1.0× baseline"]
+    FLUTTER["<b>Flutter — DEFAULT</b><br/>Dart · Impeller Renderer<br/>Performance: 95% native<br/>TCO: 0.58× baseline<br/>Weighted score: 4.38/5.0"]
+    RN["<b>React Native</b><br/>New Architecture · JSI + Fabric<br/>Performance: 85–90%<br/>TCO: 0.65× baseline"]
+    MAUI["<b>MAUI — RESTRICTED</b><br/>C# · .NET 8<br/>Existing .NET only<br/>Not for greenfield projects"]
+    KMP["<b>Kotlin Multiplatform</b><br/>Shared domain logic<br/>Native UI per platform<br/>Performance: 100%"]
+    subgraph ARB["⚠  ARB Review Required"]
+        direction LR
+        A1["Non-Flutter cross-platform"]
+        A2["RN without New Arch plan"]
+        A3["Native &gt;40% above Flutter cost"]
         A4["Mid-project platform switch"]
     end
-    NATIVE & RN & MAUI & KMP & FLUTTER -.->|"Document decision in ADR"| ARB
-    style NATIVE fill:#E8F5E9,stroke:#1B5E20
-    style FLUTTER fill:#E3F2FD,stroke:#0D47A1
-    style RN fill:#E8EAF6,stroke:#3949AB
-    style MAUI fill:#ECEFF1,stroke:#546E7A
-    style KMP fill:#F3E5F5,stroke:#6A1B9A
-    style ARB fill:#FFF3E0,stroke:#E65100
+    START --> Q1
+    Q1 -->|"YES"| NATIVE
+    Q1 -->|"NO"| Q2
+    Q2 -->|"YES"| RN
+    Q2 -->|"NO"| Q3
+    Q3 -->|"YES"| MAUI
+    Q3 -->|"NO"| Q4
+    Q4 -->|"YES"| KMP
+    Q4 -->|"NO"| FLUTTER
+    NATIVE & RN & MAUI & KMP -.->|"Document rationale"| ARB
+    style START fill:#1D4ED8,stroke:#1e3a5f,color:#ffffff
+    style Q1 fill:#FEF9C3,stroke:#CA8A04,color:#713f12
+    style Q2 fill:#FEF9C3,stroke:#CA8A04,color:#713f12
+    style Q3 fill:#FEF9C3,stroke:#CA8A04,color:#713f12
+    style Q4 fill:#FEF9C3,stroke:#CA8A04,color:#713f12
+    style NATIVE fill:#DCFCE7,stroke:#16A34A,stroke-width:2px,color:#14532D
+    style FLUTTER fill:#1D4ED8,stroke:#1e3a5f,stroke-width:3px,color:#ffffff
+    style RN fill:#EDE9FE,stroke:#7C3AED,stroke-width:2px,color:#4C1D95
+    style MAUI fill:#E5E7EB,stroke:#4B5563,stroke-width:2px,color:#374151
+    style KMP fill:#DBEAFE,stroke:#2563EB,stroke-width:2px,color:#1e3a5f
+    style ARB fill:#FEE2E2,stroke:#DC2626,stroke-width:2px
+    style A1 fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style A2 fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style A3 fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style A4 fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
