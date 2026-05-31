@@ -3820,30 +3820,63 @@ SVGS["mobile_decision_summary"] = """<svg viewBox="0 0 260 200" fill="none" xmln
 # ─────────────────────────────────────────────────────────────────────────────
 SVGS["enterprise_mobile_banking"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
 <style>
-@keyframes buildRise{0%,100%{transform:scaleY(0.2);opacity:0.2}50%{transform:scaleY(1);opacity:1}}
-@keyframes mobileConn{from{stroke-dashoffset:60}to{stroke-dashoffset:0}}
-@keyframes docPulse{0%,100%{opacity:0.3}50%{opacity:1}}
-.b1{animation:buildRise 3s 0s ease-in-out infinite;transform-origin:52px 160px}
-.b2{animation:buildRise 3s 0.4s ease-in-out infinite;transform-origin:84px 160px}
-.b3{animation:buildRise 3s 0.8s ease-in-out infinite;transform-origin:116px 160px}
-.mc{stroke-dasharray:60;animation:mobileConn 2s linear infinite}
-.dp{animation:docPulse 2s ease-in-out infinite}
+@keyframes buildPulse{0%,100%{stroke-width:1.5;opacity:0.7}50%{stroke-width:2.5;opacity:1}}
+@keyframes deviceConnect{from{stroke-dashoffset:80}to{stroke-dashoffset:0}}
+@keyframes packetUp{0%{transform:translateY(0);opacity:0}15%{opacity:1}85%{opacity:1}100%{transform:translateY(-52px);opacity:0}}
+@keyframes packetDown{0%{transform:translateY(-52px);opacity:0}15%{opacity:1}85%{opacity:1}100%{transform:translateY(0);opacity:0}}
+@keyframes windowLight{0%,100%{fill:#1a1a2e}33%{fill:#C96330}66%{fill:#1565C0}}
+@keyframes shieldPing{0%,100%{r:7;opacity:0.3}50%{r:10;opacity:0.8}}
+.bld{animation:buildPulse 3s ease-in-out infinite}
+.dc1{stroke-dasharray:80;animation:deviceConnect 2s 0s ease forwards}
+.dc2{stroke-dasharray:80;animation:deviceConnect 2s 0.5s ease forwards}
+.pu1{animation:packetUp 2.2s 0.2s ease-in-out infinite}
+.pu2{animation:packetUp 2.2s 1.1s ease-in-out infinite}
+.pd1{animation:packetDown 2.2s 0.6s ease-in-out infinite}
+.w1{animation:windowLight 3.6s 0s ease-in-out infinite}
+.w2{animation:windowLight 3.6s 0.6s ease-in-out infinite}
+.w3{animation:windowLight 3.6s 1.2s ease-in-out infinite}
+.w4{animation:windowLight 3.6s 1.8s ease-in-out infinite}
+.sp{animation:shieldPing 2.5s ease-in-out infinite}
 </style>
-<rect class="b1" x="28" y="80" width="48" height="100" rx="2" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
-<rect class="b2" x="80" y="60" width="48" height="120" rx="2" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
-<rect class="b3" x="132" y="40" width="48" height="140" rx="2" stroke="#C96330" stroke-width="2" fill="none"/>
-<rect x="40" y="90" width="8" height="8" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
-<rect x="56" y="90" width="8" height="8" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
-<rect x="92" y="70" width="8" height="8" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
-<rect x="108" y="70" width="8" height="8" rx="1" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
-<rect x="144" y="52" width="8" height="8" rx="1" stroke="#C96330" stroke-width="0.8" fill="none"/>
-<rect x="162" y="52" width="8" height="8" rx="1" stroke="#C96330" stroke-width="0.8" fill="none"/>
-<rect class="dp" x="198" y="50" width="52" height="72" rx="4" stroke="#C96330" stroke-width="1.5" fill="none"/>
-<text class="dp" x="224" y="78" text-anchor="middle" font-size="7" fill="#C96330" font-family="IBM Plex Mono">ADR</text>
-<text class="dp" x="224" y="90" text-anchor="middle" font-size="7" fill="#C96330" font-family="IBM Plex Mono">ENT-MOB</text>
-<text class="dp" x="224" y="102" text-anchor="middle" font-size="7" fill="#C96330" font-family="IBM Plex Mono">Banking</text>
-<line class="mc" x1="198" y1="86" x2="180" y2="100" stroke="#C96330" stroke-width="1.5" stroke-linecap="round"/>
-<text x="130" y="190" text-anchor="middle" font-size="8" fill="#888" font-family="IBM Plex Sans">Enterprise Banking Architecture</text>
+<!-- Enterprise building -->
+<rect class="bld" x="90" y="38" width="80" height="140" rx="2" stroke="#CCCCCC" stroke-width="1.5" fill="none"/>
+<rect x="94" y="42" width="72" height="2" fill="#C96330" opacity="0.6"/>
+<!-- Building windows grid -->
+<rect class="w1" x="100" y="52" width="14" height="12" rx="1"/>
+<rect class="w2" x="120" y="52" width="14" height="12" rx="1"/>
+<rect class="w3" x="140" y="52" width="14" height="12" rx="1"/>
+<rect class="w4" x="100" y="72" width="14" height="12" rx="1"/>
+<rect class="w1" x="120" y="72" width="14" height="12" rx="1"/>
+<rect class="w2" x="140" y="72" width="14" height="12" rx="1"/>
+<rect class="w3" x="100" y="92" width="14" height="12" rx="1"/>
+<rect class="w4" x="120" y="92" width="14" height="12" rx="1"/>
+<rect class="w1" x="140" y="92" width="14" height="12" rx="1"/>
+<rect class="w2" x="100" y="112" width="14" height="12" rx="1"/>
+<rect class="w3" x="120" y="112" width="14" height="12" rx="1"/>
+<rect class="w4" x="140" y="112" width="14" height="12" rx="1"/>
+<!-- Front door -->
+<rect x="116" y="152" width="28" height="26" rx="1" stroke="#AAAAAA" stroke-width="1" fill="none"/>
+<!-- Left mobile device -->
+<rect x="12" y="90" width="38" height="66" rx="6" stroke="#C96330" stroke-width="1.8" fill="none"/>
+<rect x="19" y="98" width="24" height="48" rx="2" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<circle cx="31" cy="152" r="3" stroke="#C96330" stroke-width="1" fill="none"/>
+<line x1="22" y1="95" x2="40" y2="95" stroke="#C96330" stroke-width="1.8" stroke-linecap="round"/>
+<!-- Right mobile device -->
+<rect x="210" y="90" width="38" height="66" rx="6" stroke="#C96330" stroke-width="1.8" fill="none"/>
+<rect x="217" y="98" width="24" height="48" rx="2" stroke="#AAAAAA" stroke-width="0.8" fill="none"/>
+<circle cx="229" cy="152" r="3" stroke="#C96330" stroke-width="1" fill="none"/>
+<line x1="220" y1="95" x2="238" y2="95" stroke="#C96330" stroke-width="1.8" stroke-linecap="round"/>
+<!-- Connection lines -->
+<line class="dc1" x1="50" y1="123" x2="90" y2="108" stroke="#C96330" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="80"/>
+<line class="dc2" x1="210" y1="123" x2="170" y2="108" stroke="#C96330" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="80"/>
+<!-- Data packets left to building -->
+<circle class="pu1" cx="72" cy="123" r="4.5" fill="#C96330"/>
+<circle class="pd1" cx="72" cy="108" r="4.5" fill="#1565C0"/>
+<!-- Data packets right to building -->
+<circle class="pu2" cx="188" cy="123" r="4.5" fill="#C96330"/>
+<!-- Shield over building (security) -->
+<circle class="sp" cx="130" cy="24" r="7" stroke="#C96330" stroke-width="1.5" fill="none"/>
+<path d="M127 24 L129.5 26.5 L134 21.5" stroke="#C96330" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>"""
 
 SVGS["bff_api_design"] = """<svg viewBox="0 0 260 200" fill="none" xmlns="http://www.w3.org/2000/svg">
