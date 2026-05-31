@@ -9613,6 +9613,157 @@ def build_seo_head(page_title, section_slug, page_path, description=None,
     )
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Google Analytics 4. Set GA4_MEASUREMENT_ID to the real ID (G-XXXXXXXXXX is a
+# placeholder — the build refuses to be deployed with it unchanged).
+# ─────────────────────────────────────────────────────────────────────────────
+GA4_MEASUREMENT_ID = "G-W7F7SG5F83"
+
+
+def _js_str(s):
+    """Escape a Python string for safe embedding inside a JS double-quoted string."""
+    return (str(s).replace("\\", "\\\\").replace('"', '\\"')
+            .replace("\n", " ").replace("\r", ""))
+
+
+def ga4_head_script(content_group=""):
+    """GA4 base tag for every page. send_page_view is OFF; a single manual
+    page_view (with content_group) fires here so every page — article or not —
+    is counted exactly once. Article event tracking (get_ga4_event_script) does
+    NOT re-fire page_view, so there is no double counting."""
+    cg = _js_str(content_group or "home")
+    return f"""  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id={GA4_MEASUREMENT_ID}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){{dataLayer.push(arguments);}}
+    gtag('js', new Date());
+    gtag('config', '{GA4_MEASUREMENT_ID}', {{
+      send_page_view: false,
+      anonymize_ip: true,
+      custom_map: {{
+        dimension1: 'section',
+        dimension2: 'content_type',
+        dimension3: 'article_slug'
+      }}
+    }});
+    gtag('event', 'page_view', {{
+      content_group: "{cg}",
+      page_title: document.title,
+      page_location: window.location.href
+    }});
+  </script>
+"""
+
+
+def get_ga4_event_script(section_slug, article_slug, page_title):
+    """GA4 custom-event tracking for article pages: scroll depth, reading time,
+    TOC clicks, floating-button usage, diagram views, reference clicks,
+    anti-pattern flips, and a content-group page_view."""
+    section_slug = _js_str(section_slug)
+    article_slug = _js_str(article_slug)
+    page_title = _js_str(page_title)
+    return f"""  <!-- GA4 Portal Event Tracking -->
+  <script>
+  (function() {{
+    if (typeof gtag !== 'function') return;
+    var PAGE_SECTION = "{section_slug}";
+    var PAGE_SLUG    = "{article_slug}";
+    var PAGE_TITLE   = "{page_title}";
+    gtag('set', {{section: PAGE_SECTION, content_type: "article", article_slug: PAGE_SLUG}});
+
+    var scrollDepths = [25, 50, 75, 90], firedDepths = {{}};
+    function checkScrollDepth() {{
+      var docHeight = Math.max(document.body.scrollHeight,
+        document.documentElement.scrollHeight) - window.innerHeight;
+      if (docHeight <= 0) return;
+      var pct = Math.round(((window.pageYOffset || window.scrollY) / docHeight) * 100);
+      scrollDepths.forEach(function(depth) {{
+        if (pct >= depth && !firedDepths[depth]) {{
+          firedDepths[depth] = true;
+          gtag('event', 'scroll_depth', {{event_category: 'Engagement',
+            event_label: PAGE_SLUG, scroll_depth_pct: depth, section: PAGE_SECTION}});
+        }}
+      }});
+    }}
+    window.addEventListener('scroll', checkScrollDepth, {{passive: true}});
+
+    var readingTimes = [30, 60, 120, 300], firedTimes = {{}}, activeTime = 0,
+        lastActive = Date.now(), isVisible = !document.hidden;
+    setInterval(function() {{
+      if (!isVisible) return;
+      var now = Date.now(), diff = (now - lastActive) / 1000;
+      if (diff < 3) activeTime += diff;
+      lastActive = now;
+      readingTimes.forEach(function(sec) {{
+        if (activeTime >= sec && !firedTimes[sec]) {{
+          firedTimes[sec] = true;
+          gtag('event', 'reading_time', {{event_category: 'Engagement',
+            event_label: PAGE_SLUG, reading_seconds: sec, section: PAGE_SECTION}});
+        }}
+      }});
+    }}, 1000);
+    document.addEventListener('visibilitychange', function() {{
+      isVisible = !document.hidden; lastActive = Date.now();
+    }});
+
+    var tocEl = document.querySelector('.article-toc, .adr-toc');
+    if (tocEl) {{
+      tocEl.querySelectorAll('a[href^="#"]').forEach(function(a) {{
+        a.addEventListener('click', function() {{
+          gtag('event', 'toc_click', {{event_category: 'Navigation',
+            event_label: a.textContent.trim().slice(0, 50),
+            toc_target: a.getAttribute('href'), article_slug: PAGE_SLUG}});
+        }});
+      }});
+    }}
+
+    var floatBtn = document.getElementById('tocFloatInner');
+    if (floatBtn) {{
+      floatBtn.addEventListener('click', function() {{
+        gtag('event', 'float_toc_click', {{event_category: 'Navigation',
+          event_label: PAGE_SLUG, section: PAGE_SECTION}});
+      }});
+    }}
+
+    document.querySelectorAll('.diagram-wrap, .mermaid').forEach(function(diag, i) {{
+      var fired = false;
+      new IntersectionObserver(function(entries) {{
+        entries.forEach(function(e) {{
+          if (e.isIntersecting && !fired) {{
+            fired = true;
+            gtag('event', 'diagram_viewed', {{event_category: 'Content',
+              event_label: PAGE_SLUG, diagram_index: i + 1, section: PAGE_SECTION}});
+          }}
+        }});
+      }}, {{threshold: 0.5}}).observe(diag);
+    }});
+
+    document.querySelectorAll('.article-body a[href^="http"]').forEach(function(a) {{
+      a.addEventListener('click', function() {{
+        gtag('event', 'reference_click', {{event_category: 'Outbound',
+          event_label: a.href, link_text: a.textContent.trim().slice(0, 80),
+          article_slug: PAGE_SLUG}});
+      }});
+    }});
+
+    document.querySelectorAll('.antipattern-card').forEach(function(card, i) {{
+      var fired = false;
+      card.addEventListener('mouseenter', function() {{
+        if (!fired) {{
+          fired = true;
+          gtag('event', 'antipattern_flip', {{event_category: 'Engagement',
+            event_label: PAGE_SLUG, card_index: i + 1}});
+        }}
+      }});
+    }});
+    // page_view is fired once in the head tag (ga4_head_script) with
+    // content_group — not repeated here, to avoid double counting.
+  }})();
+  </script>
+"""
+
+
 def head(title, css, has_mermaid=False, page_path=None, section_slug="",
          description=None, breadcrumbs=None, seo_title=None, og_section=None):
     m = ""
@@ -9642,7 +9793,7 @@ def head(title, css, has_mermaid=False, page_path=None, section_slug="",
         f'  <link rel="alternate" type="application/rss+xml" '
         f'title="Ascendion Engineering Updates" href="/feed.xml">\n'
         f'  <link rel="stylesheet" href="{css}shared.css">\n'
-        f'{m}</head>\n<body>\n'
+        f'{m}{ga4_head_script(section_slug)}</head>\n<body>\n'
         f'<a class="skip-link" href="#main">Skip to main content</a>'
     )
 
@@ -10325,6 +10476,10 @@ def gen_article(slug, sub_slug, sub_dir, out_sub, referenced_by=None, metadata=N
         html = html.replace('</body>', ADR_TOC_SCRIPT + '\n</body>')
     else:
         html = html.replace('</body>', MOBILE_TOC_SCRIPT + '\n</body>')
+    # GA4 custom-event tracking — article pages.
+    html = html.replace(
+        '</body>',
+        get_ga4_event_script(slug, sub_slug, display_title) + '\n</body>')
     # If this page has incoming references from other substantive pages,
     # inject a "Referenced by" section. Placed AFTER body construction but
     # BEFORE the final write — uses the metadata dict to render proper titles.
@@ -10506,6 +10661,10 @@ def gen_nested_article(slug, hub_slug, sub_slug, sub_dir, out_sub, referenced_by
         html = html.replace('</body>', ADR_TOC_SCRIPT + '\n</body>')
     else:
         html = html.replace('</body>', MOBILE_TOC_SCRIPT + '\n</body>')
+    # GA4 custom-event tracking — article pages (section = hub for mobile etc.).
+    html = html.replace(
+        '</body>',
+        get_ga4_event_script(hub_slug, sub_slug, title) + '\n</body>')
 
     if referenced_by and metadata:
         chips = []
