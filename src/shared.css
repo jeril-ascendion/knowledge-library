@@ -2329,7 +2329,7 @@ body.kg-search-modal-open {
   padding: 2.5rem 2rem;
   margin: 0 0 2.5rem;
   overflow-x: auto;
-  min-height: 320px;
+  min-height: 380px;
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -2337,8 +2337,8 @@ body.kg-search-modal-open {
 }
 .diagram-wrap .mermaid {
   width: 100%;
-  min-width: 600px;
-  font-size: 14px;
+  min-width: 640px;
+  font-size: 16px;
 }
 .diagram-label {
   font-family: var(--mono);

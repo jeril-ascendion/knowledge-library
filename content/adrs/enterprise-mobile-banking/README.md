@@ -1532,62 +1532,64 @@ vertical slices. Core modules provide shared infrastructure.
 The Design System provides all shared UI components.
 
 ```mermaid
-%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':60,'rankSpacing':70,'useMaxWidth':true}}}%%
+%%{init:{'theme':'base','themeVariables':{'fontSize':'16px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#CED4DA','edgeLabelBackground':'#FFFFFF'},'flowchart':{'curve':'orthogonal','padding':36,'nodeSpacing':60,'rankSpacing':80,'useMaxWidth':true}}}%%
 flowchart TD
-    APP["<b>:app  —  Application Module</b><br/>Entry point · DI Assembly<br/>Root Coordinator · App Lifecycle"]
 
-    subgraph FEATURES["Feature Modules  —  Domain-Aligned Vertical Slices"]
+    APP["<b>:app — Application Module</b><br/>Entry point · DI Assembly<br/>Root Coordinator · App Lifecycle<br/>Depends on all feature modules"]
+
+    subgraph FEAT["Feature Modules — Domain-Aligned Vertical Slices"]
         direction LR
-        F1["<b>feature-authentication</b><br/>Login · Biometric · MFA<br/>Session Lifecycle"]
+        F1["<b>feature-auth</b><br/>Login · Biometric<br/>MFA · Session"]
         F2["<b>feature-accounts</b><br/>Balance · History<br/>Statement Download"]
         F3["<b>feature-payments</b><br/>Transfers · Bill Pay<br/>Payee Management"]
         F4["<b>feature-cards</b><br/>Card Management<br/>Freeze · PIN Change"]
-        FN["<b>feature-N</b><br/>Investments · Loans<br/>Onboarding · Settings"]
+        F5["<b>feature-N</b><br/>Investments · Loans<br/>Onboarding · Settings"]
     end
 
-    subgraph DOMAIN_MODS["Domain Modules  —  Shared Entity Types  —  No Platform Dependencies"]
+    subgraph CORE["Core Modules — Shared Infrastructure — No Feature Knowledge"]
+        direction LR
+        C1["<b>core-networking</b><br/>HTTP Client<br/>Auth Interceptor<br/>Cert Pinning"]
+        C2["<b>core-security</b><br/>Keychain/KeyStore<br/>Encryption<br/>Biometric"]
+        C3["<b>core-persistence</b><br/>Encrypted SQLite<br/>Migrations"]
+        C4["<b>core-analytics</b><br/>Event Tracking<br/>PII Anonymisation"]
+        C5["<b>core-featureflags</b><br/>Flag Evaluation<br/>Kill Switches"]
+    end
+
+    subgraph DOMAIN["Domain Modules — Shared Entity Types — Zero Platform Imports"]
         direction LR
         D1["<b>domain-account</b><br/>Account · Transaction<br/>AccountSummary"]
         D2["<b>domain-payment</b><br/>Payment · Beneficiary<br/>TransferRequest"]
         D3["<b>domain-card</b><br/>Card · CardLimit<br/>PINChangeRequest"]
     end
 
-    subgraph CORE["Core Modules  —  Shared Infrastructure  —  No Feature Knowledge"]
-        direction LR
-        C1["<b>core-networking</b><br/>HTTP Client · Auth Interceptor<br/>Certificate Pinning"]
-        C2["<b>core-security</b><br/>Keychain/KeyStore<br/>Encryption · Biometric"]
-        C3["<b>core-persistence</b><br/>Encrypted SQLite<br/>Migrations"]
-        C4["<b>core-analytics</b><br/>Event Tracking<br/>PII Anonymisation"]
-        C5["<b>core-featureflags</b><br/>Flag Evaluation<br/>Kill Switches"]
-    end
+    DS["<b>design-system</b><br/>Components · Tokens<br/>Typography · Colours<br/>Icons · Spacing"]
 
-    DS["<b>design-system</b><br/>Components · Tokens · Typography<br/>Colours · Icons · Spacing<br/><i>No business logic · No network access</i>"]
-
-    APP --> F1 & F2 & F3 & F4 & FN
+    APP --> FEAT
     F1 & F2 --> D1
     F3 --> D2
     F4 --> D3
-    F1 & F2 & F3 & F4 & FN --> C1 & C2 & C3 & C4 & C5
-    F1 & F2 & F3 & F4 & FN --> DS
+    FEAT -->|"Import Core modules"| CORE
+    FEAT -->|"Import Design System"| DS
 
     style APP fill:#1D4ED8,stroke:#1e3a5f,color:#ffffff
-    style FEATURES fill:#DBEAFE,stroke:#2563EB,stroke-width:2px
-    style DOMAIN_MODS fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+    style FEAT fill:#DBEAFE,stroke:#2563EB,stroke-width:2px
     style CORE fill:#FEF9C3,stroke:#CA8A04,stroke-width:2px
+    style DOMAIN fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+    style DS fill:#F3E8FF,stroke:#7C3AED,stroke-width:2px
     style F1 fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
     style F2 fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
     style F3 fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
     style F4 fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
-    style FN fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
-    style D1 fill:#BBF7D0,stroke:#16A34A,color:#14532D
-    style D2 fill:#BBF7D0,stroke:#16A34A,color:#14532D
-    style D3 fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style F5 fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
     style C1 fill:#FDE68A,stroke:#CA8A04,color:#713f12
     style C2 fill:#FDE68A,stroke:#CA8A04,color:#713f12
     style C3 fill:#FDE68A,stroke:#CA8A04,color:#713f12
     style C4 fill:#FDE68A,stroke:#CA8A04,color:#713f12
     style C5 fill:#FDE68A,stroke:#CA8A04,color:#713f12
-    style DS fill:#F3E8FF,stroke:#7C3AED,color:#4C1D95
+    style D1 fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style D2 fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style D3 fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style DS fill:#E9D5FF,stroke:#7C3AED,color:#4C1D95
 ```
 
 ### 28.2 Security Boundary Architecture
@@ -1597,7 +1599,7 @@ layered protection — from hardware-rooted cryptography to
 application-level session management.
 
 ```mermaid
-%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':60,'rankSpacing':70,'useMaxWidth':true}}}%%
+%%{init:{'theme':'base','themeVariables':{'fontSize':'16px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':60,'rankSpacing':70,'useMaxWidth':true}}}%%
 flowchart TD
     subgraph HW["🔒  Zone 1 — Hardware Trust Zone  (Deepest Trust)"]
         direction LR
@@ -1654,7 +1656,7 @@ The unidirectional data flow from user action through each
 architectural layer to the backend and back.
 
 ```mermaid
-%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':55,'rankSpacing':65,'useMaxWidth':true}}}%%
+%%{init:{'theme':'base','themeVariables':{'fontSize':'16px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':55,'rankSpacing':65,'useMaxWidth':true}}}%%
 flowchart TD
     UA["<b>User Action</b><br/>Tap · Input · Gesture"]
     VIEW_RT["<b>View / Composable</b><br/>Emits UI intent<br/>Observes ScreenState"]
@@ -1701,7 +1703,7 @@ Every release follows a mandatory pipeline with automated
 quality gates and progressive health-gated rollout.
 
 ```mermaid
-%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':60,'rankSpacing':70,'useMaxWidth':true}}}%%
+%%{init:{'theme':'base','themeVariables':{'fontSize':'16px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB'},'flowchart':{'curve':'orthogonal','padding':28,'nodeSpacing':60,'rankSpacing':70,'useMaxWidth':true}}}%%
 flowchart TD
     COMMIT["<b>Developer Commit</b><br/>Feature branch · Max 2 days"]
 

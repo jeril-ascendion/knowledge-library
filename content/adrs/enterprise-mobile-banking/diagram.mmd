@@ -1,69 +1,68 @@
-%%{init:{'theme':'base','themeVariables':{'fontSize':'15px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB','edgeLabelBackground':'#FFFFFF'},'flowchart':{'curve':'orthogonal','padding':32,'nodeSpacing':55,'rankSpacing':70,'useMaxWidth':true}}}%%
-flowchart TD
+%%{init:{'theme':'base','themeVariables':{'fontSize':'16px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#CED4DA','edgeLabelBackground':'#FFFFFF'},'flowchart':{'curve':'orthogonal','padding':36,'nodeSpacing':60,'rankSpacing':80,'useMaxWidth':true}}}%%
+flowchart LR
 
-    subgraph SEC["🛡  Security Layer"]
-        direction LR
-        PKCE["<b>OAuth 2.0 + PKCE</b><br/>Access token: memory only<br/>Refresh: Keystore / Keychain"]
-        PIN["<b>Certificate Pinning</b><br/>SPKI hash · TLS 1.3<br/>Cleartext blocked"]
-        ATT["<b>Device Attestation</b><br/>Play Integrity · AppAttest<br/>Per transaction"]
+    subgraph CICD["⚙  CI/CD Pipeline"]
+        direction TB
+        PR["<b>PR Gate</b><br/>Lint · Unit Tests<br/>SAST · CVE Scan"]
+        BUILD["<b>Parallel Build</b><br/>Android ubuntu-latest<br/>iOS macos-latest"]
+        SIGN["<b>Code Signing</b><br/>fastlane Match iOS<br/>Keystore Android"]
+        ROLLOUT["<b>Staged Rollout</b><br/>1% → 5% → 25%<br/>50% → 100%"]
+        PR --> BUILD --> SIGN --> ROLLOUT
     end
 
     subgraph APP["📱  Mobile Application — Clean Architecture"]
-        direction LR
-        VIEW["<b>View Layer</b><br/>Compose · SwiftUI<br/>No business logic"]
+        direction TB
+        VIEW["<b>View Layer</b><br/>Jetpack Compose · SwiftUI<br/>No business logic"]
         VM["<b>ViewModel</b><br/>UiState: StateFlow<br/>Delegates to Use Cases"]
-        UC["<b>Use Cases</b><br/>One per operation<br/>Returns Result&lt;T, Error&gt;"]
-        REPO["<b>Repository</b><br/>Interface in Domain<br/>Impl in Data Layer"]
+        UC["<b>Use Cases</b><br/>One per business operation<br/>Returns Result&lt;T, DomainError&gt;"]
+        REPO["<b>Repository</b><br/>Interface: Domain Layer<br/>Impl: Data Layer"]
+        VIEW -->|"Events"| VM
+        VM -->|"delegates"| UC
+        UC -->|"calls"| REPO
     end
 
-    subgraph BFF["⚡  Mobile BFF — No Shared Web API"]
-        direction LR
-        GW["<b>API Gateway</b><br/>Mobile auth enforcement<br/>Rate limiting"]
-        AGG["<b>Aggregation</b><br/>Composes microservices<br/>Delta sync · Brotli"]
+    subgraph SEC["🛡  Security Controls"]
+        direction TB
+        PKCE["<b>OAuth 2.0 + PKCE</b><br/>Access token: memory only<br/>Refresh: Keystore / Keychain"]
+        BIO["<b>Biometric MFA</b><br/>BiometricPrompt Android<br/>LocalAuthentication iOS"]
+        PIN["<b>Certificate Pinning</b><br/>SPKI hash · TLS 1.3<br/>Cleartext HTTP blocked"]
+        ATT["<b>Device Attestation</b><br/>Play Integrity API<br/>Apple AppAttest"]
     end
 
-    subgraph BACK["🏗  Backend Services"]
-        direction LR
-        SVC1["<b>Account Service</b>"]
-        SVC2["<b>Transaction Service</b>"]
-        SVC3["<b>Payment Service</b>"]
-        PUSH["<b>Push Service</b><br/>APNs · FCM<br/>ID only — no PII"]
+    subgraph BFF["⚡  Mobile BFF + Backend"]
+        direction TB
+        GW["<b>API Gateway</b><br/>Mobile auth enforcement<br/>Rate limiting · Routing"]
+        AGG["<b>Aggregation Layer</b><br/>Composes microservices<br/>Delta sync · Brotli"]
+        SVC["<b>Backend Services</b><br/>Account · Transaction<br/>Payment · Cards"]
+        PUSH["<b>Push Service</b><br/>APNs · FCM<br/>Payload: ID only — no PII"]
+        GW --> AGG --> SVC
     end
 
-    subgraph CICD["⚙  CI/CD Pipeline"]
-        direction LR
-        PR["<b>PR Gate</b><br/>Lint · Tests · SAST<br/>CVE scan"]
-        BUILD["<b>Parallel Build</b><br/>Android · iOS"]
-        SHIP["<b>Staged Rollout</b><br/>1%→5%→25%→50%→100%"]
-    end
-
-    VIEW -->|"Events"| VM -->|"delegates"| UC -->|"calls"| REPO
-    REPO -->|"TLS 1.3"| GW
-    GW --> AGG --> SVC1 & SVC2 & SVC3
+    CICD -.->|"Deploys"| APP
+    REPO -->|"TLS 1.3 + Pinning"| GW
+    PKCE -->|"Auth tokens"| REPO
+    BIO -.->|"Step-up auth"| PKCE
+    PIN -.->|"All connections"| REPO
+    ATT -.->|"Per transaction"| REPO
     PUSH -.->|"Silent push"| APP
-    PKCE --> REPO
-    PIN -.->|"Enforced"| REPO
-    ATT -.->|"Per transaction"| APP
-    PR --> BUILD --> SHIP
 
-    style SEC fill:#FEE2E2,stroke:#DC2626,stroke-width:2px
-    style APP fill:#DBEAFE,stroke:#2563EB,stroke-width:2px
-    style BFF fill:#FEF9C3,stroke:#CA8A04,stroke-width:2px
-    style BACK fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
-    style CICD fill:#E5E7EB,stroke:#4B5563,stroke-width:2px
-    style PKCE fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
-    style PIN fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
-    style ATT fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
-    style VIEW fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
-    style VM fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
-    style UC fill:#BBF7D0,stroke:#15803D,color:#14532D
-    style REPO fill:#FDE68A,stroke:#D97706,color:#78350F
-    style GW fill:#FDE68A,stroke:#CA8A04,color:#713f12
-    style AGG fill:#FDE68A,stroke:#CA8A04,color:#713f12
-    style SVC1 fill:#BBF7D0,stroke:#16A34A,color:#14532D
-    style SVC2 fill:#BBF7D0,stroke:#16A34A,color:#14532D
-    style SVC3 fill:#BBF7D0,stroke:#16A34A,color:#14532D
-    style PUSH fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style CICD fill:#E5E7EB,stroke:#4B5563,stroke-width:2px,color:#111827
+    style APP fill:#DBEAFE,stroke:#2563EB,stroke-width:2px,color:#1e3a5f
+    style SEC fill:#FEE2E2,stroke:#DC2626,stroke-width:2px,color:#7f1d1d
+    style BFF fill:#DCFCE7,stroke:#16A34A,stroke-width:2px,color:#14532D
     style PR fill:#D1D5DB,stroke:#4B5563,color:#111827
     style BUILD fill:#D1D5DB,stroke:#4B5563,color:#111827
-    style SHIP fill:#6B7280,stroke:#1F2937,color:#ffffff
+    style SIGN fill:#D1D5DB,stroke:#4B5563,color:#111827
+    style ROLLOUT fill:#6B7280,stroke:#374151,color:#ffffff
+    style VIEW fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style VM fill:#93C5FD,stroke:#1D4ED8,color:#1e3a5f
+    style UC fill:#BBF7D0,stroke:#15803D,color:#14532D
+    style REPO fill:#FDE68A,stroke:#D97706,color:#78350F
+    style PKCE fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style BIO fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style PIN fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style ATT fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style GW fill:#86EFAC,stroke:#16A34A,color:#14532D
+    style AGG fill:#86EFAC,stroke:#16A34A,color:#14532D
+    style SVC fill:#BBF7D0,stroke:#15803D,color:#14532D
+    style PUSH fill:#BBF7D0,stroke:#15803D,color:#14532D
