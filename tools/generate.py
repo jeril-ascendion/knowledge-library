@@ -9168,7 +9168,13 @@ def generate_adr_toc(html_body):
         return ""
 
     def clean(t):
-        return re.sub(r'<[^>]+>', '', t).strip()
+        # Strip HTML tags, then the redundant leading section-number prefix
+        # ("1. ", "29. ") or ADR-code prefix — the TOC row number already
+        # indicates position, so the prefix in the heading text is noise.
+        t = re.sub(r'<[^>]+>', '', t).strip()
+        t = re.sub(r'^\d+\.\s+', '', t)
+        t = re.sub(r'^ADR-[A-Z0-9-]+:\s+', '', t)
+        return t
 
     rows = []
     for i in range(0, len(headings), 2):
@@ -9286,7 +9292,13 @@ def generate_mobile_toc(html_body, label="On This Page"):
         return ""
 
     def clean(t):
-        return re.sub(r'<[^>]+>', '', t).strip()
+        # Strip HTML tags, then the redundant leading section-number prefix
+        # ("1. ", "29. ") or ADR-code prefix — the TOC row number already
+        # indicates position, so the prefix in the heading text is noise.
+        t = re.sub(r'<[^>]+>', '', t).strip()
+        t = re.sub(r'^\d+\.\s+', '', t)
+        t = re.sub(r'^ADR-[A-Z0-9-]+:\s+', '', t)
+        return t
 
     rows = []
     for i in range(0, len(headings), 2):

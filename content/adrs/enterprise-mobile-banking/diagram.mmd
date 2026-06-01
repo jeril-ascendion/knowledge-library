@@ -1,71 +1,69 @@
-%%{init:{'theme':'base','themeVariables':{'fontSize':'14px','fontFamily':'IBM Plex Sans, system-ui, sans-serif','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB','edgeLabelBackground':'#FFFFFF'},'flowchart':{'curve':'orthogonal','padding':30,'nodeSpacing':65,'rankSpacing':75,'useMaxWidth':true}}}%%
+%%{init:{'theme':'base','themeVariables':{'fontSize':'15px','fontFamily':'IBM Plex Sans, system-ui','primaryColor':'#DBEAFE','primaryTextColor':'#1e3a5f','primaryBorderColor':'#2563EB','lineColor':'#374151','clusterBkg':'#F9FAFB','clusterBorder':'#D1D5DB','edgeLabelBackground':'#FFFFFF'},'flowchart':{'curve':'orthogonal','padding':32,'nodeSpacing':55,'rankSpacing':70,'useMaxWidth':true}}}%%
 flowchart TD
-    subgraph MOBILE["📱  Mobile Application — Clean Architecture"]
+
+    subgraph SEC["🛡  Security Layer"]
         direction LR
-        UI["<b>View Layer</b><br/>Compose UI · SwiftUI<br/>Renders UiState · Emits Events<br/><i>No business logic</i>"]
-        VM["<b>ViewModel</b><br/>Holds UiState as StateFlow<br/>Delegates to Use Cases<br/><i>No platform imports in domain</i>"]
-        UC["<b>Use Cases</b><br/>One per business operation<br/>Pure Kotlin / Swift<br/><i>Returns Result&lt;T, DomainError&gt;</i>"]
-        REPO["<b>Repository Layer</b><br/>Interfaces in Domain<br/>Implementations in Data<br/><i>SQLCipher + Keystore/Keychain</i>"]
+        PKCE["<b>OAuth 2.0 + PKCE</b><br/>Access token: memory only<br/>Refresh: Keystore / Keychain"]
+        PIN["<b>Certificate Pinning</b><br/>SPKI hash · TLS 1.3<br/>Cleartext blocked"]
+        ATT["<b>Device Attestation</b><br/>Play Integrity · AppAttest<br/>Per transaction"]
     end
-    subgraph SECURITY["🛡  Security Controls"]
+
+    subgraph APP["📱  Mobile Application — Clean Architecture"]
         direction LR
-        AUTH["<b>OAuth 2.0 + PKCE</b><br/>Access token — memory only<br/>Refresh token — Keystore/Keychain<br/>No client_secret in binary"]
-        BIOMETRIC["<b>Biometric MFA</b><br/>BiometricPrompt Android<br/>LocalAuthentication iOS<br/>Step-up for high-value ops"]
-        PINNING["<b>Certificate Pinning</b><br/>SPKI hash pinning<br/>TLS 1.3 mandatory<br/>Cleartext HTTP blocked"]
-        ATTEST["<b>Device Attestation</b><br/>Play Integrity API<br/>Apple AppAttest<br/>Called on every transaction"]
+        VIEW["<b>View Layer</b><br/>Compose · SwiftUI<br/>No business logic"]
+        VM["<b>ViewModel</b><br/>UiState: StateFlow<br/>Delegates to Use Cases"]
+        UC["<b>Use Cases</b><br/>One per operation<br/>Returns Result&lt;T, Error&gt;"]
+        REPO["<b>Repository</b><br/>Interface in Domain<br/>Impl in Data Layer"]
     end
+
     subgraph BFF["⚡  Mobile BFF — No Shared Web API"]
         direction LR
-        GW["<b>API Gateway</b><br/>Mobile auth enforcement<br/>Rate limiting · Field selection"]
-        AGG["<b>Aggregation Layer</b><br/>Composes microservice calls<br/>Delta sync · Brotli compression"]
+        GW["<b>API Gateway</b><br/>Mobile auth enforcement<br/>Rate limiting"]
+        AGG["<b>Aggregation</b><br/>Composes microservices<br/>Delta sync · Brotli"]
     end
-    subgraph BACKEND["🏗  Backend Microservices"]
+
+    subgraph BACK["🏗  Backend Services"]
         direction LR
-        SVC_ACC["<b>Account Service</b>"]
-        SVC_TXN["<b>Transaction Service</b>"]
-        SVC_PAY["<b>Payment Service</b>"]
-        SVC_PUSH["<b>Push Service</b><br/>APNs · FCM<br/>Payload: ID only"]
+        SVC1["<b>Account Service</b>"]
+        SVC2["<b>Transaction Service</b>"]
+        SVC3["<b>Payment Service</b>"]
+        PUSH["<b>Push Service</b><br/>APNs · FCM<br/>ID only — no PII"]
     end
-    subgraph CICD["⚙  CI/CD — Fastlane + GitHub Actions"]
+
+    subgraph CICD["⚙  CI/CD Pipeline"]
         direction LR
-        GATE_PR["<b>PR Gate</b><br/>Lint · Unit tests 90%<br/>SAST · CVE scan · Snapshot diff"]
-        BUILD["<b>Parallel Build</b><br/>Android ubuntu-latest<br/>iOS macos-latest"]
-        SIGN["<b>Code Signing</b><br/>fastlane Match iOS<br/>Keystore secret Android"]
-        QA["<b>QA Gate</b><br/>Manual approval required"]
+        PR["<b>PR Gate</b><br/>Lint · Tests · SAST<br/>CVE scan"]
+        BUILD["<b>Parallel Build</b><br/>Android · iOS"]
         SHIP["<b>Staged Rollout</b><br/>1%→5%→25%→50%→100%"]
     end
-    UI -->|"Events"| VM
-    VM -->|"UiState"| UI
-    VM --> UC --> REPO
-    REPO -->|"TLS 1.3 + Pinning"| GW
-    GW --> AGG --> SVC_ACC & SVC_TXN & SVC_PAY
-    SVC_PUSH -->|"Silent push · ID only"| MOBILE
-    AUTH --> REPO
-    BIOMETRIC -.->|"Step-up auth"| AUTH
-    PINNING -.->|"All connections"| REPO
-    ATTEST -.->|"Per transaction"| MOBILE
-    GATE_PR --> BUILD --> SIGN --> QA --> SHIP
-    style MOBILE fill:#DBEAFE,stroke:#1D4ED8,stroke-width:2px
-    style SECURITY fill:#FEE2E2,stroke:#DC2626,stroke-width:2px
+
+    VIEW -->|"Events"| VM -->|"delegates"| UC -->|"calls"| REPO
+    REPO -->|"TLS 1.3"| GW
+    GW --> AGG --> SVC1 & SVC2 & SVC3
+    PUSH -.->|"Silent push"| APP
+    PKCE --> REPO
+    PIN -.->|"Enforced"| REPO
+    ATT -.->|"Per transaction"| APP
+    PR --> BUILD --> SHIP
+
+    style SEC fill:#FEE2E2,stroke:#DC2626,stroke-width:2px
+    style APP fill:#DBEAFE,stroke:#2563EB,stroke-width:2px
     style BFF fill:#FEF9C3,stroke:#CA8A04,stroke-width:2px
-    style BACKEND fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
+    style BACK fill:#DCFCE7,stroke:#16A34A,stroke-width:2px
     style CICD fill:#E5E7EB,stroke:#4B5563,stroke-width:2px
-    style UI fill:#BFDBFE,stroke:#1D4ED8,color:#1e3a5f
-    style VM fill:#BFDBFE,stroke:#1D4ED8,color:#1e3a5f
+    style PKCE fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style PIN fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style ATT fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
+    style VIEW fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
+    style VM fill:#BFDBFE,stroke:#2563EB,color:#1e3a5f
     style UC fill:#BBF7D0,stroke:#15803D,color:#14532D
     style REPO fill:#FDE68A,stroke:#D97706,color:#78350F
-    style AUTH fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
-    style BIOMETRIC fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
-    style PINNING fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
-    style ATTEST fill:#FCA5A5,stroke:#DC2626,color:#7f1d1d
     style GW fill:#FDE68A,stroke:#CA8A04,color:#713f12
     style AGG fill:#FDE68A,stroke:#CA8A04,color:#713f12
-    style SVC_ACC fill:#86EFAC,stroke:#16A34A,color:#14532D
-    style SVC_TXN fill:#86EFAC,stroke:#16A34A,color:#14532D
-    style SVC_PAY fill:#86EFAC,stroke:#16A34A,color:#14532D
-    style SVC_PUSH fill:#86EFAC,stroke:#16A34A,color:#14532D
-    style GATE_PR fill:#D1D5DB,stroke:#4B5563,color:#111827
+    style SVC1 fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style SVC2 fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style SVC3 fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style PUSH fill:#BBF7D0,stroke:#16A34A,color:#14532D
+    style PR fill:#D1D5DB,stroke:#4B5563,color:#111827
     style BUILD fill:#D1D5DB,stroke:#4B5563,color:#111827
-    style SIGN fill:#D1D5DB,stroke:#4B5563,color:#111827
-    style QA fill:#9CA3AF,stroke:#374151,color:#111827
     style SHIP fill:#6B7280,stroke:#1F2937,color:#ffffff
